@@ -5,7 +5,8 @@
 from PyQt5.QtWidgets import (QLineEdit, QSlider, QPushButton, QVBoxLayout,
                              QApplication, QWidget, QLabel, QCheckBox,
                              QRadioButton,QTextEdit, QHBoxLayout, QFileDialog,
-                             QAction, qApp, QMainWindow, QMenuBar, QSlider)
+                             QAction, qApp, QMainWindow, QMenuBar, QSlider,
+                             QGridLayout, QTabWidget)
 from PyQt5 import QtGui, QtCore
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
@@ -41,7 +42,6 @@ class EEG_graph(object):
 
 class FFT_graph(object):
     """
-
     """
     def __init__(self, freq_plot, data_queue, n_data_created, pen_color):
         self.data_queue = data_queue
@@ -66,22 +66,33 @@ class FFT_graph(object):
                 self.curve_freq[ch].setPen(self.pen_color[ch])
 
 
+class App(QMainWindow):
+
+    def __init__(self, data_queue, n_data_created):
+        super().__init__()
+        self.setWindowTitle('basic graph')
+        # Add a menu bar
+        self.create_menu_bar()
+        # message at the bottom
+        self.statusBar().showMessage('Message in statusbar.')
+
+        self.simple_graph = MultiChannelsPyQtGraph(data_queue, n_data_created)
+        self.setCentralWidget(self.simple_graph)
+        self.simple_graph.start_timer()
+
+        self.show()
+
+    def create_menu_bar(self):
+        main_menu = self.menuBar()
+        menu_item = ['&File', '&Edit', '&View','&Navigate',
+                     '&Code', '&Refactor', 'R&un', '&Tools']
+        for item in menu_item:
+            main_menu.addMenu(item)
 
 
-
-#IIIIIIIIIIIIIIIIIICCCCCCCCCCCCCCCCCCCCIIIIIIIIIIIIIIIIIIIIII
-
-
-
-
-
-
-
-
-class MultiChannelsPyQtGraph(QMainWindow):
+class MultiChannelsPyQtGraph(QWidget):
     def __init__(self, data_queue, n_data_created):
         """
-
         """
         super(MultiChannelsPyQtGraph, self).__init__()
         self.data_queue = data_queue
@@ -94,35 +105,51 @@ class MultiChannelsPyQtGraph(QMainWindow):
         self.N_CH = len(self.data_queue)
         self.eeg_plots = []
 
-        # Init all the main part of the window
-        self.init_pyqt()
+        # Init the timer
+        self.timer = QtCore.QTimer()
+
+        self.init_win()
+
+    def init_win(self):
+        self.layout = QVBoxLayout(self)
+
+        # Initialize tab screen
+        self.tabs = QTabWidget()
+        self.tab1 = QWidget()
+        self.tab2 = QWidget()
+
+        # Add tabs
+        self.tabs.addTab(self.tab1, "Tab 1")
+        self.tabs.addTab(self.tab2, "Tab 2")
+
+        # Compose tabs
+        self.create_tab1()
+        self.create_tab2()
+
+        # Add tabs to widget
+        self.layout.addWidget(self.tabs)
+        self.setLayout(self.layout)
+
+
+    def create_tab1(self):
+        self.tab1.layout = QGridLayout(self)
+        # Create the plots
         self.init_eeg_plot()
         self.init_fft_plot()
-
-    def init_pyqt(self):
-        """
-
-        """
-        self.setWindowTitle('PolyCOOL cest trop cool')
-        self.timer = QtCore.QTimer()
-        # PyQt5 elements
-        self.b_EEG = QtGui.QPushButton('EEG plots')
-        self.b_FFT = QtGui.QPushButton('FFT plot')
-        # Create the layout
-        self.layout = pg.LayoutWidget()
-        self.layout.addWidget(self.b_EEG, row=0, col=1)
-        self.layout.addWidget(self.b_FFT, row=0, col=3)
-        # Assign number to each channel
+        # # assign pushButton
         self.assign_n_to_ch()
-        # Assign button for action on every channel
         self.assign_action_to_ch()
-        # Create the menu
-        self.create_menu_bar()
 
-        self.statusBar().showMessage('Message in statusbar.')
-        self.setCentralWidget(self.layout)
-        self.setGeometry(100, 100, 1200, 900)
-        self.show()
+        # self.pb2 = QPushButton("pb2")
+        # self.pb3 = QPushButton("pb3")
+        # self.pb4 = QPushButton("pb4")
+        # self.tab2.layout.addWidget(self.pb2, 3, 0, 1, 1)
+        # self.tab2.layout.addWidget(self.pb3, 4, 0, 1, 1)
+        # self.tab2.layout.addWidget(self.pb4, 5, 0, 1, 1)
+        self.tab1.setLayout(self.tab1.layout)
+
+    def create_tab2(self):
+        pass
 
     def assign_n_to_ch(self):
         for ch in range(self.N_CH):
@@ -131,54 +158,60 @@ class MultiChannelsPyQtGraph(QMainWindow):
                                 + ': {color}; '.format(color=self.button_color[ch])
                                 + 'min-width: 14px}')
             b_on_off_ch.setStyleSheet(style)
-            self.layout.addWidget(item=b_on_off_ch, row=ch*3+2, col=0, rowspan=1)
+            row = ch*3+2
+            col = 0
+            rowspan = 1
+            self.tab1.layout.addWidget(b_on_off_ch, row, col, rowspan, 1)
 
     def assign_action_to_ch(self):
         for ch in range(self.N_CH):
             for b_n in range(self.BUTTON_PER_CH):
                 b_action_ch = QtGui.QPushButton('act ' + str(ch*3 + b_n))
                 b_action_ch.clicked.connect(self.print_allo)
-                self.layout.addWidget(item=b_action_ch,
-                                      row=ch*3 + b_n + 1, col=2, rowspan=1)
+                row = ch*3 + b_n + 1
+                col = 2
+                rowspan = 1
+                self.tab1.layout.addWidget(b_action_ch, row, col, rowspan, 1)
 
     def print_allo(self):
         print('allo les dudddes ... ')
 
-    def create_menu_bar(self):
-        main_menu = self.menuBar()
-        menu_item = ['&File', '&Edit', '&View','&Navigate',
-                     '&Code', '&Refactor', 'R&un', '&Tools']
-        for item in menu_item:
-            main_menu.addMenu(item)
-
     def init_eeg_plot(self):
         """
-
         """
         for ch in range(self.N_CH):
-            plot = pg.PlotWidget(background=(3, 3, 3))
-            plot.plotItem.showGrid(x=True, y=True, alpha=0.1)
+            self.eeg_plot = pg.PlotWidget(background=(3, 3, 3))
+            self.eeg_plot.plotItem.showGrid(x=True, y=True, alpha=0.1)
             # Add the label only for the last channel as they all have the same
             if ch == 7:
-                plot.plotItem.setLabel(axis='bottom', text='Time', units='s')  # Todo : ALEXM : verifier l'uniter
-                plot.plotItem.setLabel(axis='left', text='Amplitude', units='v')
-            self.layout.addWidget(plot, row=ch*3+1, col=1, rowspan=3)
+                self.eeg_plot.plotItem.setLabel(axis='bottom', text='Time', units='s')  # Todo : ALEXM : verifier l'uniter
+                self.eeg_plot.plotItem.setLabel(axis='left', text='Amplitude', units='v')
+            # Add the widget to the layout at the proper position
+            row = ch*3+1
+            col = 1
+            rowspan = 3
+            self.tab1.layout.addWidget(self.eeg_plot, row, col, rowspan, 1)
 
-            self.eeg_plots.append(EEG_graph(plot, self.data_queue[ch],
+            self.eeg_plots.append(EEG_graph(self.eeg_plot, self.data_queue[ch],
                                             self.n_data_created,
                                             self.pen_color[ch]))
             self.timer.timeout.connect(self.eeg_plots[ch].update_eeg_plotting)
 
     def init_fft_plot(self):
         """
-
         """
-        plot = pg.PlotWidget(background=(3, 3, 3))
-        plot.plotItem.showGrid(x=True, y=True, alpha=0.3)
-        plot.plotItem.setLabel(axis='bottom', text='Frequency', units='Hz')   # Todo : ALEXM : verifier l'uniter
-        plot.plotItem.setLabel(axis='left', text='Amplitude', units='None')
-        self.layout.addWidget(plot, row=1, col=3, rowspan=12)
-        self.fft_plot = FFT_graph(plot, self.data_queue, self.n_data_created,
+        # Create the plot widget and its characteristics
+        self.fft_plot = pg.PlotWidget(background=(3, 3, 3))
+        self.fft_plot.plotItem.showGrid(x=True, y=True, alpha=0.3)
+        self.fft_plot.plotItem.setLabel(axis='bottom', text='Frequency', units='Hz')   # Todo : ALEXM : verifier l'uniter
+        self.fft_plot.plotItem.setLabel(axis='left', text='Amplitude', units='None')
+        row = 1
+        col = 3
+        rowspan = 24
+        # Add to tab layout
+        self.tab1.layout.addWidget(self.fft_plot, row, col, rowspan, 1)
+        # Associate the plot to an FFT_graph object
+        self.fft_plot = FFT_graph(self.fft_plot, self.data_queue, self.n_data_created,
                                   self.pen_color)
         self.timer.timeout.connect(self.fft_plot.update_fft_plotting)
 

@@ -4,7 +4,7 @@ import numpy as np
 import threading
 # My packages
 from generated_signal import CreateData, CreateDataFromFile
-from visualisation_with_pyqt import MultiChannelsPyQtGraph#, App
+from visualisation_with_pyqt import MultiChannelsPyQtGraph, App
 from save_to_file import WriteDataToFile
 # PyQt5
 from PyQt5.QtWidgets import QApplication
@@ -36,9 +36,9 @@ def main():
     # Dark theme
     app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
 
-    multi_ch = MultiChannelsPyQtGraph(data_queue, n_data_created)
-    multi_ch.start_timer()
-    # multi_ch = App(data_queue, n_data_created)
+    # multi_ch = MultiChannelsPyQtGraph(data_queue, n_data_created)
+    # multi_ch.start_timer()
+    multi_ch = App(data_queue, n_data_created)
     sys.exit(app.exec_())
 
 

@@ -49,7 +49,7 @@ class MyTableWidget(QWidget):
         self.tab1.layout.addWidget(self.pushButton1)
         self.tab1.setLayout(self.tab1.layout)
 
-        # Add tabs to widget        
+        # Add tabs to widget
         self.layout.addWidget(self.tabs)
         self.setLayout(self.layout)
 
@@ -64,3 +64,5 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     ex = App()
     sys.exit(app.exec_())
+
+
