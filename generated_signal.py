@@ -15,14 +15,14 @@ class CreateData(threading.Thread):
         super(CreateData, self).__init__()
         self.data_queue = data_queue
         self.N_Ch = 8
-        self.N_data = len(self.data_queue[0])
+        self.N_DATA = len(self.data_queue[0])
         self.n_val_created = n_data_created
         self.freq_counter = FrequencyCounter(loop_name='creatingFakeData')
-        self.t = np.linspace(0, 2 * pi, self.N_data)
+        self.t = np.linspace(0, 2 * pi, self.N_DATA)
         self.s1 = sin(self.t)
         self.s2 = sin(2 * self.t)
         self.s3 = sin(5 * self.t)
-        self.s4 = sin(10 * self.t)
+        self.s4 = 2 * sin(10 * self.t)
 
     def run(self):
         """Create random data and a time stamp for each of them"""
@@ -32,8 +32,20 @@ class CreateData(threading.Thread):
             # Print frequency of the run function once every second
             self.freq_counter.print_freq(self.n_val_created[0])
             for ch in range(self.N_Ch):
-                self.data_queue[ch].append(self.s1[self.i] + self.s3[self.i]
-                                         + self.s4[self.i] + random())
+                if ch == 0:
+                    self.data_queue[ch].append(self.s1[self.i] + self.s3[self.i]
+                                             + self.s4[self.i] + random())
+                elif ch == 1: 
+                    self.data_queue[ch].append(self.s1[self.i])
+                elif ch == 2:
+                    self.data_queue[ch].append(self.s2[self.i])
+                elif ch == 3: 
+                    self.data_queue[ch].append(self.s3[self.i])
+                elif ch == 4: 
+                    self.data_queue[ch].append(self.s4[self.i])
+                else: 
+                    self.data_queue[ch].append(random())
+
             time.sleep(0.004)
 
 

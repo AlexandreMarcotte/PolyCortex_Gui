@@ -4,8 +4,14 @@ import numpy as np
 import threading
 # My packages
 from generated_signal import CreateData, CreateDataFromFile
-from visualisation_with_pyqt import MultiChannelsPyQtGraph
+from visualisation_with_pyqt import MultiChannelsPyQtGraph#, App
 from save_to_file import WriteDataToFile
+# PyQt5
+from PyQt5.QtWidgets import QApplication
+import sys
+# Dark theme
+import qdarkstyle
+
 
 def main():
     DEQUE_LEN = 200
@@ -26,9 +32,16 @@ def main():
     write_data_to_file.start()
 
     # Start the multigraphes
-    multich_plot = MultiChannelsPyQtGraph(data_queue, n_data_created)
-    multich_plot.exec_plot()
+    app = QApplication(sys.argv)
+    # Dark theme
+    app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
+
+    multi_ch = MultiChannelsPyQtGraph(data_queue, n_data_created)
+    multi_ch.start_timer()
+    # multi_ch = App(data_queue, n_data_created)
+    sys.exit(app.exec_())
 
 
 if __name__ == '__main__':
     main()
+self.graphicsView = QtWidgets.QGraphicsView(self.centralwidget)
