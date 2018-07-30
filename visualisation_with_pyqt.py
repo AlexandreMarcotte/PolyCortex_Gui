@@ -2,11 +2,10 @@
 
 # PLOTING the EEG data
 # Graph the data
-from PyQt5.QtWidgets import (QLineEdit, QSlider, QPushButton, QVBoxLayout,
-                             QApplication, QWidget, QLabel, QCheckBox,
-                             QRadioButton,QTextEdit, QHBoxLayout, QFileDialog,
-                             QAction, qApp, QMainWindow, QMenuBar, QSlider,
-                             QGridLayout, QTabWidget)
+from PyQt5.QtWidgets import \
+    (QLineEdit, QSlider, QPushButton, QVBoxLayout, QApplication, QWidget,
+     QLabel, QCheckBox, QRadioButton,QTextEdit, QHBoxLayout, QFileDialog,
+     QAction, qApp, QMainWindow, QMenuBar, QSlider, QGridLayout, QTabWidget)
 from PyQt5 import QtGui, QtCore
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
@@ -16,10 +15,11 @@ import pyqtgraph as pg
 from collections import deque
 import threading
 from numpy.fft import fft, fftfreq
-# My packages
-from frequency_counter import FrequencyCounter
 import sched, time
 import sys
+from random import randint
+# My packages
+from frequency_counter import FrequencyCounter
 
 
 class EEG_graph(object):
@@ -59,11 +59,11 @@ class FFT_graph(object):
 
     def update_fft_plotting(self):
         # Calculate FFT
-        if self.n_data_created[0] % 100 == 0:
-            for ch in range(self.N_CH):
-                ch_fft = fft(self.data_queue[ch])
-                self.curve_freq[ch].setData(abs(ch_fft[:len(ch_fft) // 2]))      # TODO: ALEXM prendre abs ou real? avec real il y a des valeurs negatives est-ce que c'est normal?
-                self.curve_freq[ch].setPen(self.pen_color[ch])
+        # if self.n_data_created[0] % 100 == 0:
+        for ch in range(self.N_CH):
+            ch_fft = fft(self.data_queue[ch])
+            self.curve_freq[ch].setData(abs(ch_fft[:len(ch_fft) // 2]))      # TODO: ALEXM prendre abs ou real? avec real il y a des valeurs negatives est-ce que c'est normal?
+            self.curve_freq[ch].setPen(self.pen_color[ch])
 
 
 class App(QMainWindow):
@@ -105,10 +105,25 @@ class MultiChannelsPyQtGraph(QWidget):
         self.N_CH = len(self.data_queue)
         self.eeg_plots = []
 
+        # P300 experiment
+        self.char = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
+                     'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
+                     'Y', 'Z', '1', '2', '3', '4', '5', '6', '7', '8', '9', '_']
+
         # Init the timer
-        self.timer = QtCore.QTimer()
+        self.timer_eeg = QtCore.QTimer()
+        self.timer_fft = QtCore.QTimer()
+        self.timer_p300 = QtCore.QTimer()
+
+        self.init_font()
 
         self.init_win()
+
+    def init_font(self):
+        self.font = QtGui.QFont()
+        self.font.setFamily('FreeMono')
+        self.font.setBold(True)
+        self.font.setPointSize(50)
 
     def init_win(self):
         self.layout = QVBoxLayout(self)
@@ -119,8 +134,8 @@ class MultiChannelsPyQtGraph(QWidget):
         self.tab2 = QWidget()
 
         # Add tabs
-        self.tabs.addTab(self.tab1, "Tab 1")
-        self.tabs.addTab(self.tab2, "Tab 2")
+        self.tabs.addTab(self.tab1, "EEG & FFT")
+        self.tabs.addTab(self.tab2, "P300 experiment")
 
         # Compose tabs
         self.create_tab1()
@@ -140,16 +155,34 @@ class MultiChannelsPyQtGraph(QWidget):
         self.assign_n_to_ch()
         self.assign_action_to_ch()
 
-        # self.pb2 = QPushButton("pb2")
-        # self.pb3 = QPushButton("pb3")
-        # self.pb4 = QPushButton("pb4")
-        # self.tab2.layout.addWidget(self.pb2, 3, 0, 1, 1)
-        # self.tab2.layout.addWidget(self.pb3, 4, 0, 1, 1)
-        # self.tab2.layout.addWidget(self.pb4, 5, 0, 1, 1)
         self.tab1.setLayout(self.tab1.layout)
 
     def create_tab2(self):
-        pass
+        self.DARK_GREY = '#585858'  # (88, 88, 88)
+        self.LIGHT_GREY = '#C8C8C8'  # (200, 200, 200)
+        self.tab2.layout = QGridLayout(self)
+        self.timer_p300.timeout.connect(self.update_p300)
+
+    def update_p300(self):
+        # Select a new random position for the cross
+        rand_h = randint(0, 5)
+        rand_v = randint(0, 5)
+        # Draw all characters
+        for i, c in enumerate(self.char):
+            pos_v = i//6
+            pos_h = i%6
+            text = QLabel(c)
+            text.setFont(self.font)
+            # Put lighter color on the selected cross
+            if pos_h == rand_h or pos_v == rand_v:
+                color = self.LIGHT_GREY
+            else:
+                color = self.DARK_GREY
+            style = ('QLabel { color : ' + '{color}'.format(color=color) + ' }')
+            text.setStyleSheet(style)
+            self.tab2.layout.addWidget(text, pos_v, pos_h, 1, 1)
+
+        self.tab2.setLayout(self.tab2.layout)
 
     def assign_n_to_ch(self):
         for ch in range(self.N_CH):
@@ -195,7 +228,7 @@ class MultiChannelsPyQtGraph(QWidget):
             self.eeg_plots.append(EEG_graph(self.eeg_plot, self.data_queue[ch],
                                             self.n_data_created,
                                             self.pen_color[ch]))
-            self.timer.timeout.connect(self.eeg_plots[ch].update_eeg_plotting)
+            self.timer_eeg.timeout.connect(self.eeg_plots[ch].update_eeg_plotting)
 
     def init_fft_plot(self):
         """
@@ -213,7 +246,48 @@ class MultiChannelsPyQtGraph(QWidget):
         # Associate the plot to an FFT_graph object
         self.fft_plot = FFT_graph(self.fft_plot, self.data_queue, self.n_data_created,
                                   self.pen_color)
-        self.timer.timeout.connect(self.fft_plot.update_fft_plotting)
+        self.timer_fft.timeout.connect(self.fft_plot.update_fft_plotting)
 
     def start_timer(self):
-        self.timer.start(0)
+        self.timer_eeg.start(0)
+        self.timer_fft.start(500)
+        self.timer_p300.start(700)
+
+
+
+# class P300(MultiChannelsPyQtGraph):
+#     def __init__(self, data_queue, n_data_created):
+#         super(P300, self).__init__(data_queue, n_data_created)
+#         self.init_font()
+#         self.char = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
+#                      'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
+#                      'Y', 'Z', '1', '2', '3', '4', '5', '6', '7', '8', '9', '_']
+#         DARK_GREY = '#585858'  # (88, 88, 88)
+#         LIGHT_GREY = '#C8C8C8'  # (200, 200, 200)
+#
+#         rand_h = randint(0, 5)
+#         rand_v = randint(0, 5)
+#
+#         # Draw all characters
+#         for i, c in enumerate(self.char):
+#             pos_v = i//6
+#             pos_h = i%6
+#             text = QLabel(c)
+#             text.setFont(self.font)
+#             if pos_h == rand_h or pos_v == rand_v:
+#                 color = LIGHT_GREY
+#             else:
+#                 color = DARK_GREY
+#             style = ('QLabel { color : ' + '{color}'.format(color=color) + ' }')
+#             text.setStyleSheet(style)
+#             self.tab2.layout.addWidget(text, pos_v, pos_h, 1, 1)
+#
+#         self.tab2.setLayout(self.tab2.layout)
+#
+#     def init_font(self):
+#         self.font = QtGui.QFont()
+#         self.font.setFamily('FreeMono')
+#         self.font.setBold(True)
+#         self.font.setPointSize(50)
+
+    # def update(self):
