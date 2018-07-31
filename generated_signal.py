@@ -3,26 +3,28 @@ import pyqtgraph as pg
 from pyqtgraph.Qt import QtGui, QtCore
 import threading
 # from Queue import Queue
-import time
 from random import random
 from frequency_counter import FrequencyCounter
 from math import pi
 from numpy import sin
+from time import time, sleep
 
 
 class CreateData(threading.Thread):
-    def __init__(self, data_queue, n_data_created):
+    def __init__(self, data_queue, t_queue, t_init, n_data_created):
         super(CreateData, self).__init__()
         self.data_queue = data_queue
+        self.t_queue = t_queue
+        self.t_init = t_init
         self.N_Ch = 8
         self.N_DATA = len(self.data_queue[0])
         self.n_val_created = n_data_created
         self.freq_counter = FrequencyCounter(loop_name='creatingFakeData')
         self.t = np.linspace(0, 2 * pi, self.N_DATA)
         self.s1 = sin(self.t)
-        self.s2 = sin(2 * self.t)
-        self.s3 = sin(5 * self.t)
-        self.s4 = 2 * sin(10 * self.t)
+        self.s2 = sin(20 * self.t)
+        self.s3 = sin(40 * self.t)
+        self.s4 = 2 * sin(60 * self.t)
 
     def run(self):
         """Create random data and a time stamp for each of them"""
@@ -46,7 +48,8 @@ class CreateData(threading.Thread):
                 else: 
                     self.data_queue[ch].append(random())
 
-            time.sleep(0.004)
+            self.t_queue.append(time() - self.t_init)
+            sleep(0.0017)
 
 
 class CreateDataFromFile(threading.Thread):
