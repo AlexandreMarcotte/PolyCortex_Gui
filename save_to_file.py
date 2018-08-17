@@ -9,7 +9,6 @@ class WriteDataToFile(threading.Thread):
         self.data_queue = data_queue
         self.N_DATA = len(self.data_queue[0])
         self.lock = lock
-        # self.written_to_file = False
 
     def run(self):
         self.write_to_file()
@@ -17,10 +16,8 @@ class WriteDataToFile(threading.Thread):
     def write_to_file(self):
         while 1:
             sleep(0.001)
-            # print(self.n_val_created)
             if self.n_val_created[0] % self.N_DATA == 0:
                 self.lock.acquire()
-                with open('csv_eeg_data.csv', 'a') as f:
-                    # print('write to file...')
+                with open('csv_eeg_data.csv', 'w') as f:
                     np.savetxt(f, np.transpose(self.data_queue), delimiter=',')
                 self.lock.release()
