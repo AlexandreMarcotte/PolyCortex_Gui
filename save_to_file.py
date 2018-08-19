@@ -18,6 +18,6 @@ class WriteDataToFile(threading.Thread):
             sleep(0.001)
             if self.n_val_created[0] % self.N_DATA == 0:
                 self.lock.acquire()
-                with open('csv_eeg_data.csv', 'w') as f:
+                with open('csv_eeg_data.csv', 'a') as f:
                     np.savetxt(f, np.transpose(self.data_queue), delimiter=',')
                 self.lock.release()

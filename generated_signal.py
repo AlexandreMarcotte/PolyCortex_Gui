@@ -3,7 +3,7 @@ import pyqtgraph as pg
 from pyqtgraph.Qt import QtGui, QtCore
 import threading
 from collections import deque
-from random import random
+from random import random, randint
 from frequency_counter import FrequencyCounter
 from math import pi
 from numpy import sin
@@ -75,11 +75,16 @@ class CreateData(threading.Thread):
             # Print frequency of the run function once every second
             self.freq_counter.print_freq(self.n_val_created[0])
             for ch in range(self.N_Ch):
+                rnd_impulse = randint(0, 100)
+                if rnd_impulse == 0:
+                    imp = 5
+                else:
+                    imp = 0
                 if ch == 0:
                     self.data_queue[ch].append(self.s1[self.i] + self.s3[self.i]
-                                             + self.s4[self.i] + random())
+                                             + self.s4[self.i] + random() + imp)
                 elif ch == 1: 
-                    self.data_queue[ch].append(self.s1[self.i])
+                    self.data_queue[ch].append(self.s1[self.i] + 5)
                 elif ch == 2:
                     self.data_queue[ch].append(self.s2[self.i])
                 elif ch == 3: 
@@ -124,6 +129,7 @@ def read_data_from_file(file_name, n_ch):
         for _ in f:
             n_data += 1
 
+    print('n_data', n_data)
     # Create the data structure as a deque
     data = [deque(np.zeros(n_data),
                   maxlen=n_data) for _ in range(n_ch)]

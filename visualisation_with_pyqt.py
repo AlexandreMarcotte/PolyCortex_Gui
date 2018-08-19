@@ -12,6 +12,7 @@ from PyQt5.QtCore import Qt, pyqtSlot
 from PyQt5.QtGui import QPixmap
 
 # from pyqtgraph.Qt import QtGui
+import os
 import numpy as np
 import pyqtgraph as pg
 from collections import deque
@@ -32,6 +33,7 @@ class App(QMainWindow):
     def __init__(self, data_queue, t_queue, t_init, n_data_created):
         super(App, self).__init__()
         self.setWindowTitle('--OpenBCI graph--')
+        self.setWindowIcon(QtGui.QIcon('polycortex_logo.png'))
         # Add a menu bar
         self.create_menu_bar()
         # message at the bottom
@@ -45,10 +47,18 @@ class App(QMainWindow):
 
     def create_menu_bar(self):
         main_menu = self.menuBar()
-        menu_item = ['&File', '&Edit', '&View','&Navigate',
-                     '&Code', '&Refactor', 'R&un', '&Tools']
-        for item in menu_item:
-            main_menu.addMenu(item)
+        # File
+        self.menuFile = QMenu(title='File')
+        # # Action
+        self.quit_action = QtGui.QAction('&Quit')
+        self.quit_action.setShortcut('Ctrl+Q')
+        self.quit_action.setStatusTip('Leave The App')
+        # self.quit_action.triggered.connect(....)
+        self.menuFile.addAction(self.quit_action)
+        # Edit
+        main_menu.addMenu(self.menuFile)
+        main_menu.addMenu('&Edit')
+
 
 
 class MultiChannelsPyQtGraph(QWidget):
@@ -82,6 +92,8 @@ class MultiChannelsPyQtGraph(QWidget):
                           'Y', 'Z', '1', '2', '3', '4',
                           '5', '6', '7', '8', '9', '_']
         self.show_p300 = True
+        # buttons action
+        self.buttons_action = []
 
         # Init the timer
         self.timer_eeg = QtCore.QTimer()
@@ -104,11 +116,14 @@ class MultiChannelsPyQtGraph(QWidget):
         self.tab1 = QWidget()
         self.tab2 = QWidget()
         self.tab3 = QWidget()
+        self.tab4 = QWidget()
 
         # Add tabs
         self.tabs.addTab(self.tab1, "EEG & FFT live graph")
         self.tabs.addTab(self.tab2, "P300 experiment")
         self.tabs.addTab(self.tab3, "EEG static graph")
+        self.tabs.addTab(self.tab4, "3D representation")
+
 
         # Compose tabs
         self.create_tab1()
@@ -123,7 +138,7 @@ class MultiChannelsPyQtGraph(QWidget):
         # write data to file:
         lock = threading.Lock()
         self.write_data_to_file = WriteDataToFile(self.data_queue,
-                                             self.n_data_created, lock)
+                                                  self.n_data_created, lock)
         self.write_data_to_file.start()
 
     def create_tab1(self):
@@ -241,10 +256,11 @@ class MultiChannelsPyQtGraph(QWidget):
             col = no % 6
             row = no // 6
             # Change the color on the row and column selected from the random
+            # # Selected row
             if rand_col == col or rand_row == row:
-                char_color = '#F00'
+                char_color = '#111'
             else:
-                char_color = '#00F'
+                char_color = '#888'
 
             char = pg.TextItem(fill=(0, 0, 0), anchor=(0.5,0))
             html = """<span style="color: {char_color};
@@ -264,10 +280,10 @@ class MultiChannelsPyQtGraph(QWidget):
 
     @pyqtSlot()
     def start_p300(self):
-        self.timer_p300.start(100)
+        self.timer_p300.start(200)
 
     def stop_p300_button(self):
-        b_stop = QtGui.QPushButton('STOP_P300')
+        b_stop = QtGui.QPushButton('Stop Data Stream')
         b_stop.clicked.connect(partial(self.stop_p300))
         row = 0; col = 1; rowspan = 1; colspan = 1
         self.tab2.layout.addWidget(b_stop, row, col, rowspan, colspan)
@@ -280,7 +296,8 @@ class MultiChannelsPyQtGraph(QWidget):
 
     # ------------ OPENBCI ----------------
     def start_openbci_button(self):
-        b_start = QtGui.QPushButton('START_OPENBCI')
+        b_start = QtGui.QPushButton('Start Data Stream')
+        b_start.setStyleSheet("background-color: rgba(0, 100, 0, 0.5)")
         b_start.clicked.connect(partial(self.start_OpenBCI))
         row = 0; col = 1; rowspan = 1
         self.tab1.layout.addWidget(b_start, row, col, rowspan, 1)
@@ -305,9 +322,10 @@ class MultiChannelsPyQtGraph(QWidget):
         self.init_saving()
 
     def stop_openbci_button(self):
-        b_stop = QtGui.QPushButton('STOP_OPENBCI')
+        b_stop = QtGui.QPushButton('Stop Data Stream')
+        b_stop.setStyleSheet("background-color: rgba(100, 0, 0, 0.5)")
         b_stop.clicked.connect(partial(self.stop_OpenBCI))
-        row = 0; col = 3; rowspan = 1
+        row = 0; col = 4; rowspan = 1
         self.tab1.layout.addWidget(b_stop, row, col, rowspan, 1)
 
     @pyqtSlot()
@@ -347,18 +365,26 @@ class MultiChannelsPyQtGraph(QWidget):
     def assign_action_to_ch(self):
         for ch in range(self.N_CH):
             for b_n in range(self.N_BUTTON_PER_CH):
-                # Show an horizontale line at the average of the signal
+                label = QtGui.QLabel()
+                # Show an horizontal line at the average of the signal
                 if b_n % self.N_BUTTON_PER_CH == 0:
-                    b = QtGui.QPushButton('avg')
-                    # b.clicked.connect(partial(self.show_avg, ch, 10))
+                    # Create an average action
+                    b = QtGui.QPushButton('avg')                               # TODO: ALEXM remove redondancy
+                    b.setStyleSheet("background-color: rgba(5, 5, 5, 0.3)")
+                    b.setCheckable(True)
+                    b.clicked.connect(partial(self.show_avg, b_n, ch))
                 elif b_n % self.N_BUTTON_PER_CH == 1:
+                    # Create a max action
                     b = QtGui.QPushButton('max')
+                    b.setStyleSheet("background-color: rgba(5, 5, 5, 0.3)")
+                    b.setCheckable(True)
+                    b.clicked.connect(partial(self.show_max, b_n, ch))
                     # b.clicked.connect(partial())
 
                 # Set position and size of the button values
-                row = ch*3 + b_n + 2  # +2 because there are two rows of b before
-                col = 2; rowspan = 1
-                self.tab1.layout.addWidget(b, row, col, rowspan, 1)
+                row=ch*3 + b_n + 2  # +2 because there are two rows of b before
+                col=2; rowspan=1; colspan=1
+                self.tab1.layout.addWidget(b, row, col, rowspan, colspan)
 
             # Add a vertical line to delimitate the action for each channel
             row = ch * 3 + 2 + 2; col = 2; rowspan = 1
@@ -368,9 +394,21 @@ class MultiChannelsPyQtGraph(QWidget):
             self.line.setFrameShadow(QFrame.Sunken)
             self.tab1.layout.addWidget(self.line, row, col, rowspan, 1)
 
+    @pyqtSlot()                                                                # TODO: ALEXM remove this duplicate
+    def show_avg(self, b_n, ch):
+        # Update the average label
+        self.ch_action = ChAction(self.data_queue, self.tab1, b_n, ch)
+        self.timer_avg = QtCore.QTimer()
+        self.timer_avg.timeout.connect(self.ch_action.update_avg)
+        self.timer_avg.start(250)
+
     @pyqtSlot()
-    def create_pulse(self, ch, intensity):
-        self.data_queue[ch].append(intensity)
+    def show_max(self, b_n, ch):
+        # Update the average label
+        self.ch_action = ChAction(self.data_queue, self.tab1, b_n, ch)
+        self.timer_avg = QtCore.QTimer()
+        self.timer_avg.timeout.connect(self.ch_action.update_max)
+        self.timer_avg.start(250)
 
     def init_eeg_plot(self):
         """
@@ -408,13 +446,38 @@ class MultiChannelsPyQtGraph(QWidget):
                                         units='Hz')                            # Todo : ALEXM : verifier l'uniter
         self.fft_plot.plotItem.setLabel(axis='left', text='Amplitude',
                                         units='None')
-        row = 1 + 1; col = 3; rowspan = 24
+        row = 1 + 1; col = 4; rowspan = 24
         # Add to tab layout
         self.tab1.layout.addWidget(self.fft_plot, row, col, rowspan, 1)
         # Associate the plot to an FFT_graph object
         self.fft_plot = FFT_graph(self.fft_plot, self.data_queue, self.t_queue,
                                   self.n_data_created, self.pen_color)
         self.timer_fft.timeout.connect(self.fft_plot.update_fft_plotting)
+
+
+class ChAction(object):
+    def __init__(self, data_queue, tab, b_n, ch):
+        self.data_queue = data_queue
+        self.b_n = b_n
+        self.ch = ch
+        self.tab = tab
+
+    def update_avg(self):                                                      # TODO: ALEXM eliminate duplicate of these two actions
+        # Create the average label
+        avg_label = QtGui.QLabel(
+            f' : {np.round(np.average(self.data_queue[self.ch]), 2)} Vrms')
+        # Set position of the label
+        row = self.ch * 3 + self.b_n + 2; col = 2; rowspan = 1; colspan = 1
+        self.tab.layout.addWidget(avg_label, row, col + 1, rowspan, colspan)
+
+    def update_max(self):
+        # Create the average label
+        avg_label = QtGui.QLabel(
+            f' : {np.round(np.max(self.data_queue[self.ch]), 2)} Vrms')
+        # Set position of the label
+        row = self.ch * 3 + self.b_n + 2; col = 2; rowspan = 1; colspan = 1
+        self.tab.layout.addWidget(avg_label, row, col + 1, rowspan, colspan)
+
 
 
 class StaticGraphUpdate(object): 
@@ -498,44 +561,3 @@ class FFT_graph(object):
             # Keep all frequency possibles                                                  # TODO: Change frequency in function of time
             self.curve_freq[ch].setData(freq_range, abs(ch_fft[1:self.N_DATA//2]))         # TODO: ALEXM prendre abs ou real? avec real il y a des valeurs negatives est-ce que c'est normal?
             self.curve_freq[ch].setPen(self.pen_color[ch])
-
-
-
-
-
-# class P300(MultiChannelsPyQtGraph):
-#     def __init__(self, data_queue, n_data_created):
-#         super(P300, self).__init__(data_queue, n_data_created)
-#         self.init_font()
-#         self.char = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
-#                      'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
-#                      'Y', 'Z', '1', '2', '3', '4', '5', '6', '7', '8', '9', '_']
-#         DARK_GREY = '#585858'  # (88, 88, 88)
-#         LIGHT_GREY = '#C8C8C8'  # (200, 200, 200)
-#
-#         rand_h = randint(0, 5)
-#         rand_v = randint(0, 5)
-#
-#         # Draw all characters
-#         for i, c in enumerate(self.char):
-#             pos_v = i//6
-#             pos_h = i%6
-#             text = QLabel(c)
-#             text.setFont(self.font)
-#             if pos_h == rand_h or pos_v == rand_v:
-#                 color = LIGHT_GREY
-#             else:
-#                 color = DARK_GREY
-#             style = ('QLabel { color : ' + '{color}'.format(color=color) + ' }')
-#             text.setStyleSheet(style)
-#             self.tab2.layout.addWidget(text, pos_v, pos_h, 1, 1)
-#
-#         self.tab2.setLayout(self.tab2.layout)
-#
-#     def init_font(self):
-#         self.font = QtGui.QFont()
-#         self.font.setFamily('FreeMono')
-#         self.font.setBold(True)
-#         self.font.setPointSize(50)
-
-    # def update(self):
