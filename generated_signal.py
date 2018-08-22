@@ -57,7 +57,7 @@ class CreateData(threading.Thread):
         self.data_queue = data_queue
         self.t_queue = t_queue
         self.t_init = t_init
-        self.N_Ch = 8
+        self.N_CH = 8
         self.N_DATA = len(self.data_queue[0])
         self.n_val_created = n_data_created
         self.freq_counter = FrequencyCounter(loop_name='creatingFakeData')
@@ -74,7 +74,7 @@ class CreateData(threading.Thread):
             self.i = self.n_val_created[0] % len(self.t)
             # Print frequency of the run function once every second
             self.freq_counter.print_freq(self.n_val_created[0])
-            for ch in range(self.N_Ch):
+            for ch in range(self.N_CH):
                 rnd_impulse = randint(0, 100)
                 if rnd_impulse == 0:
                     imp = 5
