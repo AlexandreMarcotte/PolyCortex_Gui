@@ -19,6 +19,7 @@ from tab1 import Tab1
 from tab2 import Tab2
 from tab3 import Tab3
 from tab4 import Tab4
+from tab5 import Tab5
 
 class OpenBciGui(QMainWindow):
 
@@ -69,8 +70,6 @@ class Tabs(QWidget):
         self.t_init = t_init
         self.n_data_created = n_data_created
 
-        self.timer_p300 = QtCore.QTimer()
-
         self.init_font()
 
         self.init_win()
@@ -92,10 +91,10 @@ class Tabs(QWidget):
 
         # Add tabs
         self.tabs.addTab(self.tab1, "EEG & FFT live graph")
-        self.tabs.addTab(self.tab2, "P300 experiment")
+        self.tabs.addTab(self.tab2, "Experiments")
         self.tabs.addTab(self.tab3, "EEG static graph")
         self.tabs.addTab(self.tab4, "3D representation")
-        # self.tabs.addTab(self.tab5, "Mini Game")
+        self.tabs.addTab(self.tab5, "Mini Game")
 
         # Compose tabs
         # - Tab 1
@@ -103,7 +102,7 @@ class Tabs(QWidget):
                      self.t_queue, self.t_init)
         tab_1.create_tab1()
         # - Tab 2
-        tab_2 = Tab2(self, self.tab2, self.timer_p300)
+        tab_2 = Tab2(self, self.tab2)
         tab_2.create_tab2()
         # - Tab 3
         tab_3 = Tab3(self, self.tab3, self.data_queue)
@@ -111,6 +110,9 @@ class Tabs(QWidget):
         # - Tab 4
         tab_4 = Tab4(self, self.tab4)
         tab_4.create_tab4()
+        # - Tab 5
+        tab_5 = Tab5(self, self.tab5)
+        tab_5.create_tab5()
 
         # Add tabs to widget
         self.layout.addWidget(self.tabs)

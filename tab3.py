@@ -29,20 +29,19 @@ class Tab3(object):
 
     def open_data_from_file(self):
         # Create button to open date file
-        open_file = QtGui.QPushButton('Open file containing data')
-        open_file.setStyleSheet("background-color: rgba(0, 0, 150, 0.5)")
-
-        open_file.clicked.connect(partial(self.open_static_data_file))
-        row=0; col=0; rowspan=1; colspan=1
-        self.tab3.layout.addWidget(open_file, row, col, rowspan, colspan)
+        chose_file = QtGui.QPushButton('Chose file containing data')
+        chose_file.setStyleSheet("background-color: rgba(0, 0, 150, 0.5)")
+        chose_file.clicked.connect(partial(self.open_static_data_file))
+        row=0; col=3; rowspan=1; colspan=1
+        self.tab3.layout.addWidget(chose_file, row, col, rowspan, colspan)
         # Create text box to show or enter path to data file
         self.data_path = QtGui.QLineEdit(self.static_graph_file_name)
-        row=0; col=1; rowspan=1; colspan=1
+        row=0; col=1; rowspan=1; colspan=2
         self.tab3.layout.addWidget(self.data_path, row, col, rowspan, colspan)
         # Read the data from the file
-        self.open_file_b = QtGui.QPushButton('OPEN File')
+        self.open_file_b = QtGui.QPushButton('Open File')
         self.open_file_b.clicked.connect(partial(self.create_stationnary_plot))
-        row=16; col=0; rowspan=1; colspan=1
+        row=0; col=4; rowspan=1; colspan=1
         self.tab3.layout.addWidget(self.open_file_b, row, col, rowspan, colspan)
 
     @pyqtSlot()
@@ -77,18 +76,18 @@ class Tab3(object):
             self.all_data_plot.setXRange(0, 2000)
 
             # Portion of the graph
-            row=graph_num*2+1; col=0; rowspan=1; colspan=1
+            row=graph_num*2+1; col=1; rowspan=1; colspan=2
             self.tab3.layout.addWidget(self.crosshair_plot, row,
                                        col, rowspan, colspan)
             # All the values open from the saved file
-            row=graph_num*2+1; col=1; rowspan=1; colspan=1
+            row=graph_num*2+1; col=3; rowspan=1; colspan=2
             self.tab3.layout.addWidget(self.all_data_plot, row,
                                        col, rowspan, colspan)
             # # Slider to scoll through all data
             self.slider = QSlider(Qt.Horizontal)
             self.slider.setMinimum(0)
             self.slider.setMaximum(N_DATA)
-            row=graph_num*2+2; col=1; rowspan=1; colspan=1
+            row=graph_num*2+2; col=3; rowspan=1; colspan=2
             self.tab3.layout.addWidget(self.slider, row, col, rowspan, colspan)
             self.update_slider_graph = UpdateSliderGraph(self.slider,
                                                          self.all_data_plot,
@@ -117,6 +116,18 @@ class Tab3(object):
                 self.static_graph_update[graph_num].update_region)
 
             self.region.setRegion([0, 200])
+            # Create the number button
+            self.assign_n_to_ch()
+
+    def assign_n_to_ch(self):
+        for ch in range(self.N_CH):
+            # +1 so the number str start at 1
+            b_on_off_ch = QtGui.QPushButton(str(ch + 1))
+            style = ('QPushButton { min-width: 14px}')
+            b_on_off_ch.setStyleSheet(style)
+            # Set position and size of the button values
+            row=ch*2+1; col=0; rowspan=1
+            self.tab3.layout.addWidget(b_on_off_ch, row, col, rowspan, 1)
 
 
 class StaticGraphUpdate(object):

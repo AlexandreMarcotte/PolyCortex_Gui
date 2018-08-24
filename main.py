@@ -12,6 +12,7 @@ import qdarkstyle
 
 
 def main():
+
     DEQUE_LEN = 1250
     N_CH = 8
     data_queue = [deque(np.zeros(DEQUE_LEN),
@@ -22,10 +23,11 @@ def main():
 
     # Start the multigraphes
     app = QApplication(sys.argv)
-    # Dark theme
+    # Apply dark theme
     app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
-
+    # Create the Gui
     open_bci_gui = OpenBciGui(data_queue, t_queue, t_init, n_data_created)
+    # start the main tread that contains all the timers
     sys.exit(app.exec_())
 
 

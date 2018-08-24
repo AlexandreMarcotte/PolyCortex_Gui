@@ -28,7 +28,11 @@ class Tab1(object):
         self.t_queue = t_queue
         self.t_init = t_init
 
-        self.pen_color = ['r', 'y', 'g', 'c', 'b', 'm', (100, 100, 100), 'w']
+        DEQUE_LEN = 1250
+        self.zero_data_queue = deque(np.zeros(DEQUE_LEN), maxlen=DEQUE_LEN)
+
+        self.pen_color = ['r', 'y', 'g', 'c', 'b', 'm',
+                          (100, 100, 100), 'w', 'k']
         self.button_color = ['red', 'yellow', 'green', 'cyan',
                              'blue', 'magenta', 'grey', 'white']
         self.N_BUTTON_PER_CH = 2
@@ -52,7 +56,7 @@ class Tab1(object):
         self.timer_avg = QtCore.QTimer()
         # Init the timer
         self.timers_eeg = []
-        for _ in range(self.N_CH):
+        for _ in range(self.N_CH + 1):
             self.timers_eeg.append(QtCore.QTimer())
         self.timer_fft = QtCore.QTimer()
 
@@ -116,11 +120,11 @@ class Tab1(object):
         open_file = QtGui.QPushButton('Save Data')
         open_file.setStyleSheet("background-color: rgba(0, 0, 0, 0.4)")
 
-        row=26; col=1; rowspan=1; colspan=1
+        row=29; col=1; rowspan=1; colspan=1
         self.tab1.layout.addWidget(open_file, row, col, rowspan, colspan)
         # Create text box to show or enter path to data file
         self.data_path = QtGui.QLineEdit('csv_eeg_data.csv')
-        row=26; col=4; rowspan=1; colspan=3
+        row=29; col=4; rowspan=1; colspan=3
         self.tab1.layout.addWidget(self.data_path, row, col, rowspan, colspan)
 
     def start_openbci_timer(self):
@@ -213,7 +217,7 @@ class Tab1(object):
                                         units='Hz')  # Todo : ALEXM : verifier l'uniter
         self.fft_plot.plotItem.setLabel(axis='left', text='Amplitude',
                                         units='None')
-        row=1 + 1; col=4; rowspan=24
+        row=1 + 1; col=4; rowspan=25
         # Add to tab layout
         self.tab1.layout.addWidget(self.fft_plot, row, col, rowspan, 1)
         # Associate the plot to an FFT_graph object
@@ -224,27 +228,31 @@ class Tab1(object):
     def init_eeg_plot(self):
         """
         """
-        for ch in range(self.N_CH):
+        for ch in range(self.N_CH + 1):
             self.eeg_plot = pg.PlotWidget(background=(3, 3, 3))
             self.eeg_plot.plotItem.showGrid(x=True, y=True, alpha=0.1)
             # Add the label only for the last channel as they all have the same
             self.eeg_plot.plotItem.setLabel(axis='left', units='v')
-            if ch == 7:
+            if ch == 8:
                 self.eeg_plot.plotItem.setLabel(axis='bottom', text='Time',
                                                 units='s')  # Todo : ALEXM : verifier l'uniter
-                rowspan = 3
+                rowspan = 1
+                queue = self.zero_data_queue # So that we don't see it
             else:
+
                 self.eeg_plot.plotItem.hideAxis('bottom')
                 rowspan = 3
+                queue = self.data_queue[ch]
             # Add the widget to the layout at the proper position
-            row=ch * 3 + 1 + 1; col=1
+            row=ch * 3 + 2; col=1
 
             self.tab1.layout.addWidget(self.eeg_plot, row, col, rowspan, 1)
-
-            self.eeg_plots.append(EEG_graph(self.eeg_plot, self.data_queue[ch],
+            # Update plotting
+            self.eeg_plots.append(EEG_graph(self.eeg_plot, queue,
                                             self.t_queue, self.t_init,
                                             self.n_data_created,
                                             self.pen_color[ch]))
+
             self.timers_eeg[ch].timeout.connect(self.eeg_plots[ch].update_eeg_plotting)
 
     def init_saving(self):

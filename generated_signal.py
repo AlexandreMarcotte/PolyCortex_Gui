@@ -119,7 +119,7 @@ class CreateDataFromFile(threading.Thread):
                     self.data_queue[ch_no].append(float(ch))
 
                 self.t_queue.append(time() - self.t_init)
-                sleep(0.004)
+                sleep(0.04)
 
 
 def read_data_from_file(file_name, n_ch):
