@@ -23,7 +23,8 @@ from tab5 import Tab5
 
 class OpenBciGui(QMainWindow):
 
-    def __init__(self, data_queue, t_queue, t_init, n_data_created):
+    def __init__(self, data_queue, t_queue, experiment_queue, experiment_type,
+                 t_init, n_data_created):
         super(OpenBciGui, self).__init__()
         self.setWindowTitle('--OpenBCI graph--')
         self.setWindowIcon(QtGui.QIcon('polycortex_logo.png'))
@@ -32,8 +33,8 @@ class OpenBciGui(QMainWindow):
         # message at the bottom
         self.statusBar().showMessage('Running the experiment ...')
 
-        self.simple_graph = Tabs(data_queue, t_queue,
-                                 t_init, n_data_created)                        # TODO: ALEXM divide this part in many objects
+        self.simple_graph = Tabs(data_queue, t_queue, experiment_queue,
+                                 experiment_type, t_init, n_data_created)      # TODO: ALEXM divide this part in many objects
         self.setCentralWidget(self.simple_graph)
 
         self.show()
@@ -60,13 +61,16 @@ class OpenBciGui(QMainWindow):
 
 
 class Tabs(QWidget):
-    def __init__(self, data_queue, t_queue, t_init, n_data_created):
+    def __init__(self, data_queue, t_queue, experiment_queue, experiment_type,
+                 t_init, n_data_created):
         """
         """
         super(Tabs, self).__init__()
         self.data_queue = data_queue
+        self.experiment_type = experiment_type
         self.N_CH = len(self.data_queue)
         self.t_queue = t_queue
+        self.experiment_queue = experiment_queue
         self.t_init = t_init
         self.n_data_created = n_data_created
 
@@ -99,10 +103,11 @@ class Tabs(QWidget):
         # Compose tabs
         # - Tab 1
         tab_1 = Tab1(self, self.tab1, self.n_data_created, self.data_queue,
-                     self.t_queue, self.t_init)
+                     self.t_queue, self.experiment_queue, self.experiment_type,
+                     self.t_init)
         tab_1.create_tab1()
         # - Tab 2
-        tab_2 = Tab2(self, self.tab2)
+        tab_2 = Tab2(self, self.tab2, self.experiment_type)
         tab_2.create_tab2()
         # - Tab 3
         tab_3 = Tab3(self, self.tab3, self.data_queue)

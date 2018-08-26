@@ -13,7 +13,8 @@ import logging
 import open_bci_v3 as bci
 
 
-def stream_data_from_OpenBCI(data_queue, t_queue, t_init, n_data_created): 
+def stream_data_from_OpenBCI(data_queue, t_queue, experiment_queue,
+                             experiment_type, t_init, n_data_created):
     port = '/dev/ttyUSB0'  # if using Linux
     # (if encounter error: [Errno 13] could not open port /dev/ttyUSB0: Permission denied => see: https://askubuntu.com/questions/58119/changing-permissions-on-serial-port   then restart your computer
     # port = 'COM3'  # if using Windows
@@ -24,7 +25,10 @@ def stream_data_from_OpenBCI(data_queue, t_queue, t_init, n_data_created):
     print("Board Instantiated")
     sleep(5)
 
-    OpenBCI_sampler = SampleDataFromOPENBCI(board, data_queue, t_queue, t_init,
+    OpenBCI_sampler = SampleDataFromOPENBCI(board, data_queue,
+                                            experiment_queue,
+                                            experiment_type,
+                                            t_queue, t_init,
                                             n_data_created)
     OpenBCI_sampler.start()
     
@@ -32,30 +36,43 @@ def stream_data_from_OpenBCI(data_queue, t_queue, t_init, n_data_created):
     
     
 class SampleDataFromOPENBCI(threading.Thread):
-    def __init__(self, board, data_queue, t_queue, t_init, n_data_created):
+    def __init__(self, board, data_queue, experiment_queue, experiment_type,
+                 t_queue, t_init, n_data_created):
         super(SampleDataFromOPENBCI, self).__init__()
         self.board = board
         self.data_queue = data_queue
         self.t_queue = t_queue
         self.t_init = t_init
         self.n_data_created = n_data_created
+        self.experiment_queue = experiment_queue
+        self.experiment_type = experiment_type 
         
     def run(self):
+        # Previously and Working
         self.board.start_streaming(self.add_data_to_queue)
-        
+
     def add_data_to_queue(self, sample):
         for ch, one_sample in enumerate(sample.channel_data):
             self.data_queue[ch].append(one_sample)
         self.n_data_created[0] += 1
-        # print('n_data_created', self.n_data_created)
         self.t_queue.append(time() - self.t_init)
+        # Add experiment type values
+        if self.experiment_type[0] != 0:
+            self.experiment_queue.append(self.experiment_type[0])
+            self.experiment_type[0] = 0
+        else:
+            self.experiment_queue.append(0)
 
 
 class CreateData(threading.Thread):
-    def __init__(self, data_queue, t_queue, t_init, n_data_created):
+    def __init__(self, data_queue, t_queue, experiment_queue, experiment_type,
+                 t_init, n_data_created):
         super(CreateData, self).__init__()
         self.data_queue = data_queue
         self.t_queue = t_queue
+        self.experiment_queue = experiment_queue
+        self.experiment_type = experiment_type
+
         self.t_init = t_init
         self.N_CH = 8
         self.N_DATA = len(self.data_queue[0])
@@ -95,6 +112,13 @@ class CreateData(threading.Thread):
                     self.data_queue[ch].append(random())
 
             self.t_queue.append(time() - self.t_init)
+            # Add experiment type values 
+            if self.experiment_type[0] != 0:
+                self.experiment_queue.append(self.experiment_type[0])
+                self.experiment_type[0] = 0
+            else:
+                self.experiment_queue.append(0)
+
             sleep(0.0017)
 
 
@@ -114,14 +138,14 @@ class CreateDataFromFile(threading.Thread):
         with open('csv_eeg_data.csv', 'r') as f:
             for all_ch_line in f:
                 self.n_data_created[0] += 1
-                all_ch_line = all_ch_line.strip().split(',')
+                all_ch_line = all_ch_line.strip().split(',')[0:8]
                 for ch_no, ch in enumerate(all_ch_line):
                     self.data_queue[ch_no].append(float(ch))
 
                 self.t_queue.append(time() - self.t_init)
-                sleep(0.04)
+                # sleep(0.04) # TODO: ALEXM this delta t could be calculated from the saved time in the file
 
-
+# Used in the tab 3 where we create static graphes
 def read_data_from_file(file_name, n_ch):
     n_data = 0
     # Count the total number of data point

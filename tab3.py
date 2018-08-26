@@ -110,7 +110,7 @@ class Tab3(object):
 
             # Connect all the update functions
             self.region.sigRegionChanged.connect(
-                self.static_graph_update[graph_num].update_cross_hair_plot_range)
+                self.static_graph_update[graph_num].update_portion_plot_range)
 
             self.crosshair_plot.sigRangeChanged.connect(
                 self.static_graph_update[graph_num].update_region)
@@ -140,7 +140,7 @@ class StaticGraphUpdate(object):
         rgn = viewRange[0]
         self.region.setRegion(rgn)
 
-    def update_cross_hair_plot_range(self):
+    def update_portion_plot_range(self):
         """ Update the cross_hair_plot range based on the region position """
         minX, maxX = self.region.getRegion()
         self.crosshair_plot.setXRange(minX, maxX, padding=0)

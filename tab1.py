@@ -19,14 +19,20 @@ from generated_signal import (stream_data_from_OpenBCI, CreateData,
                               CreateDataFromFile)
 from save_to_file import WriteDataToFile
 
+from copy import deepcopy
+
 
 class Tab1(object):
     def __init__(self, main_window, tab1, n_data_created, data_queue, t_queue,
-                 t_init):
+                 experiment_queue, experiment_type, t_init):
         self.main_window = main_window
         self.tab1 = tab1
         self.t_queue = t_queue
+        self.experiment_queue = experiment_queue
+        self.experiment_type = experiment_type
         self.t_init = t_init
+
+        self.lock = threading.Lock()
 
         DEQUE_LEN = 1250
         self.zero_data_queue = deque(np.zeros(DEQUE_LEN), maxlen=DEQUE_LEN)
@@ -45,9 +51,12 @@ class Tab1(object):
         self.N_CH = len(self.data_queue)
         self.eeg_plots = []
 
-        # Openbci
+        # Chose one of these three place to stream the data
         self.stream_from_board = False
-        self.save_path = 'csv_eeg_data.csv'
+        self.stream_fake_data = True
+        self.stream_saved_data = False
+
+        self.save_path = 'eeg_data.csv'
 
         # Buttons action
         self.action_buttons = []
@@ -86,16 +95,22 @@ class Tab1(object):
         # -----Start streaming data from the OPENBCI board ------
         if self.stream_from_board:
             self.board = stream_data_from_OpenBCI(self.data_queue, self.t_queue,
+                                                  self.experiment_queue,
+                                                  self.experiment_type,
                                                   self.t_init,
                                                   self.n_data_created)
-        else:
+        elif self.stream_fake_data:
             # Create fake data for test case
             create_data = CreateData(self.data_queue, self.t_queue,
+                                     self.experiment_queue, self.experiment_type,
                                      self.t_init, self.n_data_created)
             create_data.start()
-            # create_data = CreateDataFromFile(self.data_queue, self.t_queue,
-            #                                  self.t_init, self.n_data_created)
-            # create_data.start()
+
+        elif self.stream_saved_data:
+            create_data = CreateDataFromFile(self.data_queue, self.t_queue,
+                                             self.t_init, self.n_data_created)
+            create_data.start()
+
         self.start_openbci_timer()
         # SAVE the data received to file
         self.init_saving()
@@ -129,7 +144,7 @@ class Tab1(object):
 
     def start_openbci_timer(self):
         for timer in self.timers_eeg:
-            timer.start(0)
+            timer.start()
         self.timer_fft.start(2000)
 
     def stop_openbci_timer(self):
@@ -230,12 +245,14 @@ class Tab1(object):
         """
         for ch in range(self.N_CH + 1):
             self.eeg_plot = pg.PlotWidget(background=(3, 3, 3))
-            self.eeg_plot.plotItem.showGrid(x=True, y=True, alpha=0.1)
+            self.eeg_plot.plotItem.showGrid(x=True, y=True, alpha=0.2)
+            # Use log scale to have a better visualization of the FFT data
+            
             # Add the label only for the last channel as they all have the same
             self.eeg_plot.plotItem.setLabel(axis='left', units='v')
             if ch == 8:
                 self.eeg_plot.plotItem.setLabel(axis='bottom', text='Time',
-                                                units='s')  # Todo : ALEXM : verifier l'uniter
+                                                units='s')                     # Todo : ALEXM : verifier l'uniter
                 rowspan = 1
                 queue = self.zero_data_queue # So that we don't see it
             else:
@@ -249,43 +266,76 @@ class Tab1(object):
             self.tab1.layout.addWidget(self.eeg_plot, row, col, rowspan, 1)
             # Update plotting
             self.eeg_plots.append(EEG_graph(self.eeg_plot, queue,
+                                            self.experiment_queue,
                                             self.t_queue, self.t_init,
                                             self.n_data_created,
-                                            self.pen_color[ch]))
+                                            self.pen_color[ch], ch, self.lock))
 
             self.timers_eeg[ch].timeout.connect(self.eeg_plots[ch].update_eeg_plotting)
 
     def init_saving(self):
         # write data to file:
-        lock = threading.Lock()
-        self.write_data_to_file = WriteDataToFile(self.data_queue,
-                                                  self.n_data_created, lock)
+        self.write_data_to_file = WriteDataToFile(self.data_queue, self.t_queue,
+                                                  self.experiment_queue,
+                                                  self.n_data_created, self.lock)
         self.write_data_to_file.start()
 
 
 class EEG_graph(object):
     """
     """
-    def __init__(self, eeg_plot, one_ch_deque, t_queue, t_init,
-                 n_data_created, pen_color):
+    def __init__(self, eeg_plot, one_ch_deque, experiment_queue, t_queue, t_init,
+                 n_data_created, pen_color, ch, lock):
         self.eeg_plot = eeg_plot
         self.one_ch_deque = one_ch_deque
+        self.experiment_queue = experiment_queue
         self.t_queue = t_queue
         self.t_init = t_init
         self.n_data_created = n_data_created[0]
+        self.ch = ch
+        self.lock = lock
 
         self.N_DATA = len(one_ch_deque)
         self.curve_eeg = self.eeg_plot.plot(self.t_queue,
                                             deque(np.zeros(self.N_DATA),
                                             maxlen=self.N_DATA))
         self.curve_eeg.setPen(pen_color)
+        # Show the position where events in experiments happen
+        self.regions = []
+        red = (255, 0, 0, 40)
+        green = (0, 255, 0, 40)
+        blue = (0, 0, 255, 40)
+        yellow = (255, 255, 0, 40)
+        purple = (146, 56, 219, 40)
+        self.region_brush = [red, green, blue, yellow, purple]
+        self.brush = self.region_brush[1]
+        self.exp_queue_temp = self.experiment_queue
+
+        for line_no in range(6):
+            self.regions.append(pg.LinearRegionItem())
+            self.eeg_plot.addItem(self.regions[line_no], ignoreBounds=True)
+            self.regions[line_no].setRegion([0, 0])
 
     def update_eeg_plotting(self):
-        # WARNING: When I plot with the time, the quality of the signal degrade
-        self.curve_eeg.setData(self.t_queue, self.one_ch_deque)
-        # self.curve_eeg.setData(self.one_ch_deque)
-        # h_line = pg.InfiniteLine(angle=0, movable=False)
-        # self.eeg_plot.addItem(h_line, ignoreBounds=True)
+        if self.ch == 8:
+            # WARNING: When I plot with the time, the quality of the signal degrade
+            self.curve_eeg.setData(self.t_queue, self.one_ch_deque)
+            # Put the queue in a temp so that it's only changes once every cycle
+            self.exp_queue_temp = self.experiment_queue
+        else:
+            self.curve_eeg.setData(self.one_ch_deque)
+            # Add vertical lines where experiment events happen (then add box with text)
+            # Do all these action in one line so that its not split with an other thread    TODO: ALEXM Use a lock instead (didn't seems to work)
+            non_zero_type = np.array(self.exp_queue_temp)[np.nonzero(np.array(self.exp_queue_temp))[0]]
+            non_zero_pos = np.nonzero(np.array(self.exp_queue_temp))[0]
+
+            # Set the position of the regions delimiting events
+            if non_zero_type != []:
+                for no, (pos, n_z_type) in enumerate(zip(non_zero_pos, non_zero_type)):
+                    self.brush = self.region_brush[int(n_z_type)]
+                    self.regions[no].setBrush(self.brush)
+                    self.regions[no].setRegion([pos, pos+150])
+
 
     def remove_ch_from_plotting(self):
         pass

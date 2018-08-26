@@ -12,10 +12,11 @@ from random import randint
 
 
 class Tab2(object):
-    def __init__(self, main_window, tab2):
+    def __init__(self, main_window, tab2, experiment_type):
         self.main_window = main_window
         # The second tab that was created inside the main window object
         self.tab2 = tab2
+        self.experiment_type = experiment_type
 
     def create_tab2(self):
         self.DARK_GREY = '#585858'  # (88, 88, 88)
@@ -28,7 +29,7 @@ class Tab2(object):
         self.tab2.layout.addWidget(self.area)
 
         # EMG
-        emg_dock = EmgDock(self.area)
+        emg_dock = EmgDock(self.area, self.experiment_type)
         # P300
         p300_dock = P300Dock(self.area, emg_dock.emg_dock)
         p300_dock.create_p300_dock()
@@ -39,10 +40,10 @@ class Tab2(object):
 class Action(object):
     def __init__(self, action_txt, wait_txt, pos, type, color='#FF0'):
         self.pos = pos
-        self.type_dict = {'Left PINCH': 0, 'Left CLOSE': 1,
-                          'Right PINCH': 2, 'Right CLOSE': 3}
+        self.type_dict = {'Left PINCH': 1, 'Left CLOSE': 2,
+                          'Right PINCH': 3, 'Right CLOSE': 4}
         self.type_num = self.type_dict[type]
-        self.column = 5 * self.type_num + 2.5
+        self.column = 5 * (self.type_num-1) + 2.5
         self.pos = pos
         self.action_txt = action_txt
         self.wait_txt = wait_txt
@@ -75,9 +76,10 @@ class Action(object):
 
 
 class EmgDock(object):
-    def __init__(self, area):
+    def __init__(self, area, experiment_type):
         # Plot variables
         self.area = area
+        self.experiment_type = experiment_type
         # Variables
         self.N_ACTION = 4
         self.actions = []
@@ -87,8 +89,8 @@ class EmgDock(object):
         # [ _, fifth batch], [ _, sixth batch] ...
         # The number tells the number of this type to spawn in the curent batch
         # Every item needs to have the same number of number in its list
-        self.action_order = {'Left PINCH': [1, 1], 'Left CLOSE': [1, 4],
-                             'Right PINCH': [3, 3], 'Right CLOSE': [2, 2]}
+        self.action_order = {'Left PINCH': [5, 5], 'Left CLOSE': [5, 5],
+                             'Right PINCH': [5, 5], 'Right CLOSE': [5, 5]}
         self.next_action = []
         self.action_itt = 0
         self.init_action_order()
@@ -145,9 +147,8 @@ class EmgDock(object):
         except IndexError:
             print('End of EMG Experiment')
             # self.stop_emg()
-            pass
         # Create a new action:
-        action = Action(action_txt=self.type, wait_txt='WAIT...', pos=14,
+        action = Action(action_txt=self.type, wait_txt='WAIT...', pos=8,
                         type=self.type)
         # Plot this new action
         self.emg_plot.addItem(action.plot_obj)
@@ -159,16 +160,16 @@ class EmgDock(object):
     def update_plot(self):
         for action in self.actions:
             # update the listed position of the action
-            action.pos -= 0.08
+            action.pos -= 0.12
             # If the action text went is bellow the activation line
             if 2 <= action.pos <= 3 and action.is_waiting:
-                print('COOL')
+                self.experiment_type[0] = action.type_num
                 action.activate_html()
                 action.is_waiting = False
             # update the position of the action
             action.plot_obj.setPos(action.column, action.pos)
             # If the action is about to get out of the screen remove it
-            if len(self.actions) > 8:
+            if len(self.actions) > 3:
                 self.emg_plot.removeItem(self.actions[0].plot_obj)
                 self.actions.pop(0)
 

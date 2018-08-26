@@ -18,6 +18,8 @@ def main():
     data_queue = [deque(np.zeros(DEQUE_LEN),
                   maxlen=DEQUE_LEN) for _ in range(N_CH)]  # One deque per channel initialize at 0
     t_queue = deque(np.zeros(DEQUE_LEN), maxlen=DEQUE_LEN)
+    experiment_queue = deque(np.zeros(DEQUE_LEN), maxlen=DEQUE_LEN)
+    experiment_type = [0]
     t_init = time()
     n_data_created = [1]
 
@@ -26,10 +28,13 @@ def main():
     # Apply dark theme
     app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
     # Create the Gui
-    open_bci_gui = OpenBciGui(data_queue, t_queue, t_init, n_data_created)
+    open_bci_gui = OpenBciGui(data_queue, t_queue, experiment_queue,
+                              experiment_type, t_init, n_data_created)
     # start the main tread that contains all the timers
     sys.exit(app.exec_())
 
 
 if __name__ == '__main__':
     main()
+
+

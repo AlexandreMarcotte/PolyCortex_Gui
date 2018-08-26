@@ -16,18 +16,25 @@ class Tab5(object):
     def __init__(self, main_window, tab5):
         self.main_window = main_window
         self.tab5 = tab5
-        #
-        # # Collect events until released
-        # game_3d = Game3D()
-        # listen_keybr = keyboard.Listener(on_press=game_3d.on_press,
-        #                                  on_release=game_3d.on_release)
-        # listen_keybr.start()
+
+        self.create_tab5()
 
     def create_tab5(self):
-        pass
+        self.tab5.layout = QHBoxLayout(self.main_window)
+        # Collect events until released
+        game_3d = Game3D(self.tab5)
+        listen_keybr = keyboard.Listener(on_press=game_3d.on_press,
+                                         on_release=game_3d.on_release)
+        listen_keybr.start()
+
+        self.tab5.setLayout(self.tab5.layout)
+
 
 class Game3D(object):
-    def __init__(self):
+    def __init__(self, tab5):
+        # Variables
+        self.tab5 = tab5
+
         self.init_landscape()
         self.init_character()
 
@@ -74,9 +81,9 @@ class Game3D(object):
                 food.mesh.translate(0, food.y - old_y, 0)
 
     def init_landscape(self):
-        self.app = QtGui.QApplication([])
+        # self.app = QtGui.QApplication([])
         self.w = gl.GLViewWidget()
-        self.w.show()
+        self.tab5.layout.addWidget(self.w)
         self.w.setWindowTitle('pyqtgraph example: GL Shaders')
         self.w.setCameraPosition(distance=60, azimuth=-90)
         g = gl.GLGridItem()
