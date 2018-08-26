@@ -20,6 +20,7 @@ from generated_signal import (stream_data_from_OpenBCI, CreateData,
 from save_to_file import WriteDataToFile
 
 from copy import deepcopy
+import time
 
 
 class Tab1(object):
@@ -74,21 +75,38 @@ class Tab1(object):
         # Create the plots
         self.init_eeg_plot()
         self.init_fft_plot()
+        self.init_wave_plot()
         # assign pushButton
         self.start_openbci_button()
         self.stop_openbci_button()
         self.save_data_to_file()
         self.assign_n_to_ch()
         self.assign_action_to_ch()
+        self.stream_combo_box()
+        self.add_polycortex_banner()
 
         self.tab1.setLayout(self.tab1.layout)
+
+    def add_polycortex_banner(self):
+        polycortex_banner = QLabel(self.main_window)
+        polycortex_banner.setPixmap(QtGui.QPixmap('polycortex_banner.png'))
+        row=29; col=1; rowspan=1; colspan=1
+        self.tab1.layout.addWidget(polycortex_banner, row, col, rowspan, colspan)
+
+    def stream_combo_box(self):
+        stream_combo = QComboBox(self.main_window)
+        stream_combo.addItem('Stream from board')
+        stream_combo.addItem('Stream fake data')
+        stream_combo.addItem('Stream from file')
+        row=0; col=1; rowspan=1; colspan=4
+        self.tab1.layout.addWidget(stream_combo, row, col, rowspan, colspan)
 
     def start_openbci_button(self):
         b_start = QtGui.QPushButton('Start Data Stream')
         b_start.setStyleSheet("background-color: rgba(0, 100, 0, 0.5)")
         b_start.clicked.connect(partial(self.start_OpenBCI))
-        row=0; col=1; rowspan=1
-        self.tab1.layout.addWidget(b_start, row, col, rowspan, 1)
+        row=0; col=7; rowspan=1; colspan=2
+        self.tab1.layout.addWidget(b_start, row, col, rowspan, colspan)
 
     @pyqtSlot()
     def start_OpenBCI(self):
@@ -119,8 +137,8 @@ class Tab1(object):
         b_stop = QtGui.QPushButton('Stop Data Stream')
         b_stop.setStyleSheet("background-color: rgba(100, 0, 0, 0.5)")
         b_stop.clicked.connect(partial(self.stop_OpenBCI))
-        row=0; col=4; rowspan=1
-        self.tab1.layout.addWidget(b_stop, row, col, rowspan, 1)
+        row=0; col=9; rowspan=1; colspan=2
+        self.tab1.layout.addWidget(b_stop, row, col, rowspan, colspan)
 
     @pyqtSlot()
     def stop_OpenBCI(self):
@@ -135,11 +153,11 @@ class Tab1(object):
         open_file = QtGui.QPushButton('Save Data')
         open_file.setStyleSheet("background-color: rgba(0, 0, 0, 0.4)")
 
-        row=29; col=1; rowspan=1; colspan=1
+        row=29; col=7; rowspan=1; colspan=4
         self.tab1.layout.addWidget(open_file, row, col, rowspan, colspan)
         # Create text box to show or enter path to data file
         self.data_path = QtGui.QLineEdit('csv_eeg_data.csv')
-        row=29; col=4; rowspan=1; colspan=3
+        row=29; col=2; rowspan=1; colspan=3
         self.tab1.layout.addWidget(self.data_path, row, col, rowspan, colspan)
 
     def start_openbci_timer(self):
@@ -161,7 +179,8 @@ class Tab1(object):
                      + ': {color}; '.format(color=self.button_color[ch])
                      + 'min-width: 14px}')
             b_on_off_ch.setStyleSheet(style)
-            ch_number_action = ChNumberAction(self.timers_eeg, ch)
+            ch_number_action = ChNumberAction(self.data_queue, self.timers_eeg,
+                                              ch)
             b_on_off_ch.toggled.connect(partial(ch_number_action.stop_ch))
             # Set position and size of the button values
             row=ch * 3 + 2; col=0; rowspan=1
@@ -195,14 +214,14 @@ class Tab1(object):
                                               self.action_buttons[tot_b_num]))
                 # Set position and size of the button values
                 row=pos
-                col=2; rowspan=1; colspan=1
+                col=5; rowspan=1; colspan=1
                 self.tab1.layout.addWidget(b, row, col, rowspan, colspan)
                 pos += 1
                 # Change the total number of buttons
                 tot_b_num += 1
 
             # Add a vertical line to delineate the action for each channel
-            row = pos; col = 2; rowspan = 1; colspan = 1
+            row = pos; col = 5; rowspan = 1; colspan = 1
             self.line = QFrame(self.main_window)
             self.line.setGeometry(QtCore.QRect())
             self.line.setFrameShape(QFrame.HLine)
@@ -222,6 +241,13 @@ class Tab1(object):
         self.timer_avg.timeout.connect(action_button.update_max)
         self.timer_avg.start(600)
 
+    def init_saving(self):
+        # write data to file:
+        self.write_data_to_file = WriteDataToFile(self.data_queue, self.t_queue,
+                                                  self.experiment_queue,
+                                                  self.n_data_created, self.lock)
+        self.write_data_to_file.start()
+
     def init_fft_plot(self):
         """
         """
@@ -232,11 +258,11 @@ class Tab1(object):
                                         units='Hz')  # Todo : ALEXM : verifier l'uniter
         self.fft_plot.plotItem.setLabel(axis='left', text='Amplitude',
                                         units='None')
-        row=1 + 1; col=4; rowspan=25
+        row=2; col=7; rowspan=15; colspan=4
         # Add to tab layout
-        self.tab1.layout.addWidget(self.fft_plot, row, col, rowspan, 1)
-        # Associate the plot to an FFT_graph object
-        self.fft_plot = FFT_graph(self.fft_plot, self.data_queue, self.t_queue,
+        self.tab1.layout.addWidget(self.fft_plot, row, col, rowspan, colspan)
+        # Associate the plot to an FftGraph object
+        self.fft_plot = FftGraph(self.fft_plot, self.data_queue, self.t_queue,
                                   self.n_data_created, self.pen_color)
         self.timer_fft.timeout.connect(self.fft_plot.update_fft_plotting)
 
@@ -247,7 +273,7 @@ class Tab1(object):
             self.eeg_plot = pg.PlotWidget(background=(3, 3, 3))
             self.eeg_plot.plotItem.showGrid(x=True, y=True, alpha=0.2)
             # Use log scale to have a better visualization of the FFT data
-            
+
             # Add the label only for the last channel as they all have the same
             self.eeg_plot.plotItem.setLabel(axis='left', units='v')
             if ch == 8:
@@ -261,11 +287,11 @@ class Tab1(object):
                 rowspan = 3
                 queue = self.data_queue[ch]
             # Add the widget to the layout at the proper position
-            row=ch * 3 + 2; col=1
+            row=ch * 3 + 2; col=1; colspan=4
 
-            self.tab1.layout.addWidget(self.eeg_plot, row, col, rowspan, 1)
+            self.tab1.layout.addWidget(self.eeg_plot, row, col, rowspan, colspan)
             # Update plotting
-            self.eeg_plots.append(EEG_graph(self.eeg_plot, queue,
+            self.eeg_plots.append(EegGraph(self.eeg_plot, queue,
                                             self.experiment_queue,
                                             self.t_queue, self.t_init,
                                             self.n_data_created,
@@ -273,15 +299,45 @@ class Tab1(object):
 
             self.timers_eeg[ch].timeout.connect(self.eeg_plots[ch].update_eeg_plotting)
 
-    def init_saving(self):
-        # write data to file:
-        self.write_data_to_file = WriteDataToFile(self.data_queue, self.t_queue,
-                                                  self.experiment_queue,
-                                                  self.n_data_created, self.lock)
-        self.write_data_to_file.start()
+    def init_wave_plot(self):
+        """
+        """
+        self.wave_plot = pg.PlotWidget(background=(3, 3, 3))
+        self.wave_plot.plotItem.setLabel(axis='left', text='Power',
+                                        units='None')
+        self.wave_plot.plotItem.hideAxis('bottom')
+        row=17; col=7; rowspan=10; colspan=4
+        # Add to tab layout
+        self.tab1.layout.addWidget(self.wave_plot, row, col, rowspan, colspan)
+        # Create the bar chart only for the first channel
+        self.one_ch_deque = self.data_queue[0]
+        self.wave_plot = WaveGraph(self.wave_plot, self.one_ch_deque)
+        # self.wave_plot.timeout.connect(self.wave_plot.update_wave_plotting)
 
 
-class EEG_graph(object):
+class WaveGraph(object):
+    def __init__(self, wave_plot, one_ch_deque):
+        self.wave_plot = wave_plot
+        self.one_ch_deque = one_ch_deque
+
+        x = np.arange(10)
+        y1 = np.sin(x)
+        y2 = 1.1 * np.sin(x + 1)
+        y3 = 1.2 * np.sin(x + 2)
+
+        bg1 = pg.BarGraphItem(x=x, height=y1, width=0.3, brush='r')
+        bg2 = pg.BarGraphItem(x=x + 0.33, height=y2, width=0.3, brush='g')
+        bg3 = pg.BarGraphItem(x=x + 0.66, height=y3, width=0.3, brush='b')
+
+        wave_plot.addItem(bg1)
+        wave_plot.addItem(bg2)
+        wave_plot.addItem(bg3)
+
+    def update_wave_plotting(self):
+        pass
+
+
+class EegGraph(object):
     """
     """
     def __init__(self, eeg_plot, one_ch_deque, experiment_queue, t_queue, t_init,
@@ -344,7 +400,7 @@ class EEG_graph(object):
         # Faire un timer par channel instead
 
 
-class FFT_graph(object):
+class FftGraph(object):
     """
     """
     def __init__(self, freq_plot, data_queue, t_queue, n_data_created,
@@ -377,7 +433,8 @@ class FFT_graph(object):
 
 
 class ChNumberAction(object):
-    def __init__(self, timers_eeg, ch):
+    def __init__(self, data_queue, timers_eeg, ch):
+        self.data_queue = data_queue
         self.timers_eeg = timers_eeg
         self.ch = ch
 

@@ -42,7 +42,34 @@ class Tab3(object):
         self.open_file_b = QtGui.QPushButton('Open File')
         self.open_file_b.clicked.connect(partial(self.create_stationnary_plot))
         row=0; col=4; rowspan=1; colspan=1
+
+        self.add_static_plot_and_numbers()
+
         self.tab3.layout.addWidget(self.open_file_b, row, col, rowspan, colspan)
+
+    def add_static_plot_and_numbers(self):
+        self.regions = []
+        self.portion_plots = []
+        self.all_data_plots = []
+        for no in range(self.N_CH):
+            # Region of selection in the 'all_data_plot'
+            self.regions.append(pg.LinearRegionItem())
+            # Instanciate the plot containing the crosshair
+            self.portion_plots.append(pg.PlotWidget())
+            # Instanciate the plot containing all the data
+            self.all_data_plots.append(pg.PlotWidget())
+            self.all_data_plots[no].setXRange(0, 2000)
+
+            # Portion of the graph
+            row=no*2+1; col=1; rowspan=1; colspan=2
+            self.tab3.layout.addWidget(self.portion_plots[no], row,
+                                       col, rowspan, colspan)
+            # All the values open from the saved file
+            row=no*2+1; col=3; rowspan=1; colspan=2
+            self.tab3.layout.addWidget(self.all_data_plots[no], row,
+                                       col, rowspan, colspan)
+            # Create the number button
+            self.assign_n_to_ch()
 
     @pyqtSlot()
     def open_static_data_file(self):
@@ -66,58 +93,56 @@ class Tab3(object):
         self.static_graph_update = []
         self.sliders = []
 
-        for graph_num, graph_data in enumerate(self.data):
-            # Region of selection in the 'all_data_plot'
-            self.region = pg.LinearRegionItem()
-            # Instanciate the plot containing the crosshair
-            self.crosshair_plot = pg.PlotWidget()
-            # Instanciate the plot containing all the data
-            self.all_data_plot = pg.PlotWidget()
-            self.all_data_plot.setXRange(0, 2000)
-
-            # Portion of the graph
-            row=graph_num*2+1; col=1; rowspan=1; colspan=2
-            self.tab3.layout.addWidget(self.crosshair_plot, row,
-                                       col, rowspan, colspan)
-            # All the values open from the saved file
-            row=graph_num*2+1; col=3; rowspan=1; colspan=2
-            self.tab3.layout.addWidget(self.all_data_plot, row,
-                                       col, rowspan, colspan)
+        for no, graph_data in enumerate(self.data):
+            # # Region of selection in the 'all_data_plot'
+            # self.region = pg.LinearRegionItem()
+            # # Instanciate the plot containing the crosshair
+            # self.crosshair_plot = pg.PlotWidget()
+            # # Instanciate the plot containing all the data
+            # self.all_data_plot = pg.PlotWidget()
+            # self.all_data_plot.setXRange(0, 2000)
+            #
+            # # Portion of the graph
+            # row=graph_num*2+1; col=1; rowspan=1; colspan=2
+            # self.tab3.layout.addWidget(self.crosshair_plot, row,
+            #                            col, rowspan, colspan)
+            # # All the values open from the saved file
+            # row=graph_num*2+1; col=3; rowspan=1; colspan=2
+            # self.tab3.layout.addWidget(self.all_data_plot, row,
+            #                            col, rowspan, colspan)
             # # Slider to scoll through all data
             self.slider = QSlider(Qt.Horizontal)
             self.slider.setMinimum(0)
             self.slider.setMaximum(N_DATA)
-            row=graph_num*2+2; col=3; rowspan=1; colspan=2
+            row=no*2+2; col=3; rowspan=1; colspan=2
             self.tab3.layout.addWidget(self.slider, row, col, rowspan, colspan)
             self.update_slider_graph = UpdateSliderGraph(self.slider,
-                                                         self.all_data_plot,
-                                                         self.region,
+                                                         self.all_data_plots[no],
+                                                         self.regions[no],
                                                          self.slider_last)
             self.sliders.append(self.update_slider_graph)
             self.slider.valueChanged.connect(
-                self.sliders[graph_num].update_graph_range)
+                self.sliders[no].update_graph_range)
 
             # Tell the ViewBox to exclude this item when doing auto-range calculations.
-            self.all_data_plot.addItem(self.region, ignoreBounds=True)
-            self.crosshair_plot.setAutoVisible(y=True)
+            self.all_data_plots[no].addItem(self.regions[no], ignoreBounds=True)
+            self.portion_plots[no].setAutoVisible(y=True)
 
-            self.crosshair_plot.plot(graph_data, pen="g")
-            self.all_data_plot.plot(graph_data, pen="w")
+            self.portion_plots[no].plot(graph_data, pen="g")
+            self.all_data_plots[no].plot(graph_data, pen="w")
 
             # Create 8 update function object, one for every plot
             self.static_graph_update.append(
-                StaticGraphUpdate(self.region, self.crosshair_plot))
+                StaticGraphUpdate(self.regions[no], self.portion_plots[no]))
 
             # Connect all the update functions
-            self.region.sigRegionChanged.connect(
-                self.static_graph_update[graph_num].update_portion_plot_range)
+            self.regions[no].sigRegionChanged.connect(
+                self.static_graph_update[no].update_portion_plot_range)
 
-            self.crosshair_plot.sigRangeChanged.connect(
-                self.static_graph_update[graph_num].update_region)
+            self.portion_plots[no].sigRangeChanged.connect(
+                self.static_graph_update[no].update_region)
 
-            self.region.setRegion([0, 200])
-            # Create the number button
-            self.assign_n_to_ch()
+            self.regions[no].setRegion([0, 200])
 
     def assign_n_to_ch(self):
         for ch in range(self.N_CH):

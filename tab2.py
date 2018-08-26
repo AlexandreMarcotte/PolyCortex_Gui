@@ -117,7 +117,7 @@ class EmgDock(object):
 
     def instantiate_emg_plot(self):
         self.emg_plot = pg.PlotWidget()
-        self.emg_plot.setYRange(0, 14)
+        self.emg_plot.setYRange(0, 8)
         self.emg_plot.setXRange(0, 20)
         self.emg_plot.plotItem.hideAxis('bottom')
         self.emg_plot.plotItem.hideAxis('left')
@@ -160,7 +160,7 @@ class EmgDock(object):
     def update_plot(self):
         for action in self.actions:
             # update the listed position of the action
-            action.pos -= 0.12
+            action.pos -= 0.09
             # If the action text went is bellow the activation line
             if 2 <= action.pos <= 3 and action.is_waiting:
                 self.experiment_type[0] = action.type_num
@@ -182,8 +182,8 @@ class EmgDock(object):
 
     @pyqtSlot()
     def start_emg(self):
-        self.spawn_timer.start(1000)
-        self.plot_timer.start(20)
+        self.spawn_timer.start(1200)
+        self.plot_timer.start(50)
 
     def stop_emg_button(self):
         b_stop = QtGui.QPushButton('STOP EMG')

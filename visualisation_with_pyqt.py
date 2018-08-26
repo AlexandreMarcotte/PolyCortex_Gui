@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-# PLOTING the EEG data
-# Graph the data
 from PyQt5.QtWidgets import *
 from PyQt5 import QtGui, QtCore
 from PyQt5.QtCore import Qt, pyqtSlot
@@ -26,6 +24,14 @@ class OpenBciGui(QMainWindow):
     def __init__(self, data_queue, t_queue, experiment_queue, experiment_type,
                  t_init, n_data_created):
         super(OpenBciGui, self).__init__()
+        self.data_queue = data_queue
+        self.t_queue = t_queue
+        self.experiment_queue = experiment_queue
+        self.experiment_type = experiment_type
+        self.t_init = t_init
+        self.n_data_created = n_data_created
+    
+    def create_gui(self):
         self.setWindowTitle('--OpenBCI graph--')
         self.setWindowIcon(QtGui.QIcon('polycortex_logo.png'))
         # Add a menu bar
@@ -33,8 +39,9 @@ class OpenBciGui(QMainWindow):
         # message at the bottom
         self.statusBar().showMessage('Running the experiment ...')
 
-        self.simple_graph = Tabs(data_queue, t_queue, experiment_queue,
-                                 experiment_type, t_init, n_data_created)      # TODO: ALEXM divide this part in many objects
+        self.simple_graph = Tabs(self.data_queue, self.t_queue,
+                                 self.experiment_queue, self.experiment_type,
+                                 self.t_init, self.n_data_created)             # TODO: ALEXM divide this part in many objects
         self.setCentralWidget(self.simple_graph)
 
         self.show()
@@ -42,7 +49,7 @@ class OpenBciGui(QMainWindow):
     def create_menu_bar(self):
         main_menu = self.menuBar()
         # File
-        self.menuFile = QMenu(title='Stream from...')
+        self.menuFile = QMenu(title='&File')
         # # Action
         self.openbci = QtGui.QAction('OpenBci')                                # TODO: ALEXM Utiliser une liste déroulante plutot
         self.openbci.setShortcut('Ctrl+O')

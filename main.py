@@ -30,6 +30,7 @@ def main():
     # Create the Gui
     open_bci_gui = OpenBciGui(data_queue, t_queue, experiment_queue,
                               experiment_type, t_init, n_data_created)
+    open_bci_gui.create_gui()
     # start the main tread that contains all the timers
     sys.exit(app.exec_())
 
