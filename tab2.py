@@ -117,13 +117,13 @@ class EmgDock(object):
 
     def instantiate_emg_plot(self):
         self.emg_plot = pg.PlotWidget()
-        self.emg_plot.setYRange(0, 8)
+        self.emg_plot.setYRange(0, 6.5)
         self.emg_plot.setXRange(0, 20)
         self.emg_plot.plotItem.hideAxis('bottom')
         self.emg_plot.plotItem.hideAxis('left')
         # Vertical and horizontal delineation lines
         vLine = pg.InfiniteLine(angle=90, pos=10, movable=False)
-        hLine = pg.InfiniteLine(angle=0, pos=3, movable=False)
+        hLine = pg.InfiniteLine(angle=0, pos=1.5, movable=False)
         self.emg_plot.addItem(vLine, ignoreBounds=True)
         self.emg_plot.addItem(hLine, ignoreBounds=True)
 
@@ -148,7 +148,7 @@ class EmgDock(object):
             print('End of EMG Experiment')
             # self.stop_emg()
         # Create a new action:
-        action = Action(action_txt=self.type, wait_txt='WAIT...', pos=8,
+        action = Action(action_txt=self.type, wait_txt='WAIT...', pos=6.5,
                         type=self.type)
         # Plot this new action
         self.emg_plot.addItem(action.plot_obj)
@@ -160,16 +160,16 @@ class EmgDock(object):
     def update_plot(self):
         for action in self.actions:
             # update the listed position of the action
-            action.pos -= 0.09
+            action.pos -= 0.05
             # If the action text went is bellow the activation line
-            if 2 <= action.pos <= 3 and action.is_waiting:
+            if 0 <= action.pos <= 1.5 and action.is_waiting:
                 self.experiment_type[0] = action.type_num
                 action.activate_html()
                 action.is_waiting = False
             # update the position of the action
             action.plot_obj.setPos(action.column, action.pos)
             # If the action is about to get out of the screen remove it
-            if len(self.actions) > 3:
+            if len(self.actions) > 5:
                 self.emg_plot.removeItem(self.actions[0].plot_obj)
                 self.actions.pop(0)
 
@@ -183,7 +183,7 @@ class EmgDock(object):
     @pyqtSlot()
     def start_emg(self):
         self.spawn_timer.start(1200)
-        self.plot_timer.start(50)
+        self.plot_timer.start(30)
 
     def stop_emg_button(self):
         b_stop = QtGui.QPushButton('STOP EMG')
@@ -251,7 +251,7 @@ class P300Dock(object):
         # clear the widget on the screen at every display to add a new batch
         self.p300_plot.clear()
         # Add all number to the plot
-        for no, one_char in enumerate(self.p300_char):
+        for no, one_char in enumerate(self.p300_char):                         # TODO: Improve ALEXM instead of adding label and removing them all after each itteration just change the style of the label in black (see label for average and max)
             col = no % 6
             row = no // 6
             # Change the color on the row and column selected from the random

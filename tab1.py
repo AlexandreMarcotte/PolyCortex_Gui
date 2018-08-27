@@ -73,9 +73,14 @@ class Tab1(object):
     def create_tab1(self):
         self.tab1.layout = QGridLayout(self.main_window)
         # Create the plots
+        # - EEG
         self.init_eeg_plot()
+        # - FFT
         self.init_fft_plot()
+        self.fft_checkbox()
+        # - Wave plot
         self.init_wave_plot()
+        self.wave_plot_checkbox()
         # assign pushButton
         self.start_openbci_button()
         self.stop_openbci_button()
@@ -86,6 +91,23 @@ class Tab1(object):
         self.add_polycortex_banner()
 
         self.tab1.setLayout(self.tab1.layout)
+
+    def fft_checkbox(self):
+        cb = QCheckBox('Show FFT', self.main_window)
+        row=16; col=8; rowspan=1; colspan=1
+        self.tab1.layout.addWidget(cb, row, col, rowspan, colspan)
+        cb.stateChanged.connect(self.start_fft)
+
+    def start_fft(self, state):
+        if state == QtCore.Qt.Checked:
+            self.timer_fft.start(2000)
+        else:
+            self.timer_fft.stop()
+
+    def wave_plot_checkbox(self):
+        cb = QCheckBox('Show wave plot', self.main_window)
+        row=16; col=10; rowspan=1; colspan=1
+        self.tab1.layout.addWidget(cb, row, col, rowspan, colspan)
 
     def add_polycortex_banner(self):
         polycortex_banner = QLabel(self.main_window)
@@ -163,12 +185,10 @@ class Tab1(object):
     def start_openbci_timer(self):
         for timer in self.timers_eeg:
             timer.start()
-        self.timer_fft.start(2000)
 
     def stop_openbci_timer(self):
         for timer in self.timers_eeg:
             timer.stop()
-        self.timer_fft.stop()
 
     def assign_n_to_ch(self):
         for ch in range(self.N_CH):
@@ -252,13 +272,13 @@ class Tab1(object):
         """
         """
         # Create the plot widget and its characteristics
-        self.fft_plot = pg.PlotWidget(background=(3, 3, 3))
+        self.fft_plot = pg.PlotWidget(background=(3, 3, 3), title='FFT Plot')
         self.fft_plot.plotItem.showGrid(x=True, y=True, alpha=0.3)
         self.fft_plot.plotItem.setLabel(axis='bottom', text='Frequency',
                                         units='Hz')  # Todo : ALEXM : verifier l'uniter
         self.fft_plot.plotItem.setLabel(axis='left', text='Amplitude',
                                         units='None')
-        row=2; col=7; rowspan=15; colspan=4
+        row=2; col=7; rowspan=14; colspan=4
         # Add to tab layout
         self.tab1.layout.addWidget(self.fft_plot, row, col, rowspan, colspan)
         # Associate the plot to an FftGraph object
@@ -302,7 +322,7 @@ class Tab1(object):
     def init_wave_plot(self):
         """
         """
-        self.wave_plot = pg.PlotWidget(background=(3, 3, 3))
+        self.wave_plot = pg.PlotWidget(background=(3, 3, 3), title='Wave Plot')
         self.wave_plot.plotItem.setLabel(axis='left', text='Power',
                                         units='None')
         self.wave_plot.plotItem.hideAxis('bottom')
@@ -453,19 +473,33 @@ class ActionButton(object):
         self.ch = ch
         self.tab = tab
         self.pos = pos
+        self.style = ("""QLabel {background-color: rgba(0, 0, 0, 0); 
+                         color: rgba(150, 150, 150, 150)}""")
 
-    def update_avg(self):                                                      # TODO: ALEXM eliminate duplicate of these two actions
-        # Create the average label
-        avg_label = QtGui.QLabel(
-            f' : {np.round(np.average(self.data_queue[self.ch]), 2)} Vrms')
+        self.create_avg_button()
+        self.create_max_button()
+
+    def create_avg_button(self):
+        self.avg_label = QtGui.QLabel()
+        self.avg_label.setStyleSheet(self.style)
         # Set position of the label
-        row = self.pos; col = 2; rowspan = 1; colspan = 1
-        self.tab.layout.addWidget(avg_label, row, col + 1, rowspan, colspan)
+        row=self.pos; col=3; rowspan=1; colspan=1
+        self.tab.layout.addWidget(self.avg_label, row, col+1, rowspan, colspan)
+
+    def update_avg(self):
+        # Create the average label
+        avg_val = ' '*20 + f'{np.round(np.average(self.data_queue[self.ch]), 2)} Vrms'
+        self.avg_label.setText(avg_val)
+
+    def create_max_button(self):
+        # Create the average label                                             # TODO: ALEXM Enlever la répétition
+        self.max_label = QtGui.QLabel()
+        self.max_label.setStyleSheet(self.style)
+        # Set position of the label
+        row=self.pos; col=3; rowspan=1; colspan=1
+        self.tab.layout.addWidget(self.max_label, row, col+1, rowspan, colspan)
 
     def update_max(self):
-        # Create the average label
-        avg_label = QtGui.QLabel(
-            f' : {np.round(np.max(self.data_queue[self.ch]), 2)} Vrms')
-        # Set position of the label
-        row = self.pos; col = 2; rowspan = 1; colspan = 1
-        self.tab.layout.addWidget(avg_label, row, col + 1, rowspan, colspan)
+        max_val = ' ' * 20 + f'{np.round(np.max(self.data_queue[self.ch]), 2)} Vrms'
+        self.max_label.setText(max_val)
+

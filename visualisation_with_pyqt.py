@@ -32,7 +32,7 @@ class OpenBciGui(QMainWindow):
         self.n_data_created = n_data_created
     
     def create_gui(self):
-        self.setWindowTitle('--OpenBCI graph--')
+        self.setWindowTitle('OpenBCI GUI')
         self.setWindowIcon(QtGui.QIcon('polycortex_logo.png'))
         # Add a menu bar
         self.create_menu_bar()
