@@ -12,9 +12,13 @@ from time import time, sleep
 import logging
 import open_bci_v3 as bci
 
+# My modules
+from init_variables import InitVariables
+
 
 def stream_data_from_OpenBCI(data_queue, t_queue, experiment_queue,
-                             experiment_type, t_init, n_data_created):
+                             experiment_type, t_init, n_data_created,
+                             all_data, all_t, all_experiment_val):
     port = '/dev/ttyUSB0'  # if using Linux
     # (if encounter error: [Errno 13] could not open port /dev/ttyUSB0: Permission denied => see: https://askubuntu.com/questions/58119/changing-permissions-on-serial-port   then restart your computer
     # port = 'COM3'  # if using Windows
@@ -25,11 +29,10 @@ def stream_data_from_OpenBCI(data_queue, t_queue, experiment_queue,
     print("Board Instantiated")
     sleep(5)
 
-    OpenBCI_sampler = SampleDataFromOPENBCI(board, data_queue,
-                                            experiment_queue,
-                                            experiment_type,
-                                            t_queue, t_init,
-                                            n_data_created)
+    OpenBCI_sampler = SampleDataFromOPENBCI(board, data_queue, experiment_queue,
+                                            experiment_type,t_queue, t_init,
+                                            n_data_created, all_data, all_t,
+                                            all_experiment_val)
     OpenBCI_sampler.start()
     
     return board
@@ -37,11 +40,18 @@ def stream_data_from_OpenBCI(data_queue, t_queue, experiment_queue,
     
 class SampleDataFromOPENBCI(threading.Thread):
     def __init__(self, board, data_queue, experiment_queue, experiment_type,
-                 t_queue, t_init, n_data_created):
-        super(SampleDataFromOPENBCI, self).__init__()
+                 t_queue, t_init, n_data_created, all_data, all_t, all_experiment_val):
+        super().__init__()
         self.board = board
+
+        # Queue
         self.data_queue = data_queue
         self.t_queue = t_queue
+        # All data for saving
+        self.all_data = all_data
+        self.all_t = all_t
+        self.all_experiment_val = all_experiment_val
+
         self.t_init = t_init
         self.n_data_created = n_data_created
         self.experiment_queue = experiment_queue
@@ -54,23 +64,36 @@ class SampleDataFromOPENBCI(threading.Thread):
     def add_data_to_queue(self, sample):
         for ch, one_sample in enumerate(sample.channel_data):
             self.data_queue[ch].append(one_sample)
+            self.all_data[ch].append(one_sample)
         self.n_data_created[0] += 1
-        self.t_queue.append(time() - self.t_init)
+        # Time
+        current_time = time() - self.t_init
+        self.t_queue.append(current_time)
+        self.all_t.append(current_time)
         # Add experiment type values
         if self.experiment_type[0] != 0:
-            self.experiment_queue.append(self.experiment_type[0])
+            typ = self.experiment_type[0]
+            self.experiment_queue.append(typ)
+            self.all_experiment_val.append(typ)
             self.experiment_type[0] = 0
         else:
             self.experiment_queue.append(0)
+            self.all_experiment_val.append(0)
 
 
-class CreateData(threading.Thread):
+class CreateData(threading.Thread, InitVariables):
     def __init__(self, data_queue, t_queue, experiment_queue, experiment_type,
-                 t_init, n_data_created):
-        super(CreateData, self).__init__()
+                 t_init, n_data_created, all_data, all_t, all_experiment_val):
+        super().__init__()
+        # Queue
         self.data_queue = data_queue
         self.t_queue = t_queue
         self.experiment_queue = experiment_queue
+        # All data for saving
+        self.all_data = all_data
+        self.all_t = all_t
+        self.all_experiment_val = all_experiment_val
+
         self.experiment_type = experiment_type
 
         self.t_init = t_init
@@ -83,6 +106,10 @@ class CreateData(threading.Thread):
         self.s2 = sin(20 * self.t)
         self.s3 = sin(40 * self.t)
         self.s4 = 2 * sin(60 * self.t)
+
+    def add_signal_to_queue(self, signal, ch):
+        self.data_queue[ch].append(signal)
+        self.all_data[ch].append(signal)
 
     def run(self):
         """Create random data and a time stamp for each of them"""
@@ -98,44 +125,53 @@ class CreateData(threading.Thread):
                 else:
                     imp = 0
                 if ch == 0:
-                    self.data_queue[ch].append(self.s1[self.i] + self.s3[self.i]
-                                             + self.s4[self.i] + random() + imp)
-                elif ch == 1: 
-                    self.data_queue[ch].append(self.s1[self.i] + 5)
+                    signal = self.s1[self.i] + self.s3[self.i] \
+                             + self.s4[self.i] + random() + imp
+                elif ch == 1:
+                    signal = self.s1[self.i] + 5
                 elif ch == 2:
-                    self.data_queue[ch].append(self.s2[self.i])
-                elif ch == 3: 
-                    self.data_queue[ch].append(self.s3[self.i])
-                elif ch == 4: 
-                    self.data_queue[ch].append(self.s4[self.i])
-                else: 
-                    self.data_queue[ch].append(random())
+                    signal = self.s2[self.i]
+                elif ch == 3:
+                    signal = self.s3[self.i]
+                elif ch == 4:
+                    signal = self.s4[self.i]
+                else:
+                    signal = random()
 
-            self.t_queue.append(time() - self.t_init)
+                self.add_signal_to_queue(signal, ch)
+
+            # Add current time
+            current_t = time() - self.t_init
+            self.t_queue.append(current_t)
+            self.all_t.append(current_t)
+
             # Add experiment type values 
             if self.experiment_type[0] != 0:
                 self.experiment_queue.append(self.experiment_type[0])
+                self.all_experiment_val.append(self.experiment_type[0])
                 self.experiment_type[0] = 0
             else:
                 self.experiment_queue.append(0)
+                self.all_experiment_val.append(0)
 
             sleep(0.0017)
 
 
 class CreateDataFromFile(threading.Thread):
-    def __init__(self, data_queue, t_queue, t_init, n_data_created):
+    def __init__(self, data_queue, t_queue, t_init, n_data_created, file_name):
         super(CreateDataFromFile, self).__init__()
         self.data_queue = data_queue
         self.n_data_created = n_data_created
         self.t_queue = t_queue
         self.t_init = t_init
         self.N_DATA = len(self.data_queue)
+        self.file_name = file_name
 
     def run(self):
         self.write_to_file()
 
     def write_to_file(self):
-        with open('csv_eeg_data.csv', 'r') as f:
+        with open(self.file_name, 'r') as f:
             for all_ch_line in f:
                 self.n_data_created[0] += 1
                 all_ch_line = all_ch_line.strip().split(',')[0:8]
@@ -143,10 +179,10 @@ class CreateDataFromFile(threading.Thread):
                     self.data_queue[ch_no].append(float(ch))
 
                 self.t_queue.append(time() - self.t_init)
-                # sleep(0.04) # TODO: ALEXM this delta t could be calculated from the saved time in the file
+                sleep(0.002) # TODO: ALEXM this delta t could be calculated from the saved time in the file
 
 # Used in the tab 3 where we create static graphes
-def read_data_from_file(file_name, n_ch):
+def read_data_from_file(file_name, n_ch=8):
     n_data = 0
     # Count the total number of data point
     with open(file_name, 'r') as f:
@@ -155,13 +191,17 @@ def read_data_from_file(file_name, n_ch):
 
     print('n_data', n_data)
     # Create the data structure as a deque
-    data = [deque(np.zeros(n_data),
-                  maxlen=n_data) for _ in range(n_ch)]
+    data = [deque(np.zeros(n_data), maxlen=n_data) for _ in range(n_ch)]
+    t = deque(np.zeros(n_data), maxlen=n_data)
+    exp = deque(np.zeros(n_data), maxlen=n_data)
 
     # Read all the lines in the file and add them to the data deque
     with open(file_name, 'r') as f:
         for all_ch_line in f:
             all_ch_line = all_ch_line.strip().split(',')
-            for ch_no, ch in enumerate(all_ch_line):
+            eeg_ch = all_ch_line[0:8]
+            t.append(float(all_ch_line[8:9][0]))
+            exp.append(float(all_ch_line[9:10][0]))
+            for ch_no, ch in enumerate(eeg_ch):
                 data[ch_no].append(float(ch))
-    return data
+    return data, t, exp
