@@ -45,10 +45,9 @@ class Tab2:
 class Action:
     def __init__(self, action_txt, wait_txt, pos, type, color='#FF0'):
         self.pos = pos
-        self.type_dict = {'Left PINCH': 1, 'Left CLOSE': 2,
-                          'Right PINCH': 3, 'Right CLOSE': 4}
+        self.type_dict = {'Do Action': 1}
         self.type_num = self.type_dict[type]
-        self.column = 5 * (self.type_num-1) + 2.5
+        self.column = self.type_num
         self.pos = pos
         self.action_txt = action_txt
         self.wait_txt = wait_txt
@@ -95,16 +94,15 @@ class EmgDock:
         self.area = area
         self.experiment_type = experiment_type
         # Variables
-        self.N_ACTION = 4
+        self.N_ACTION = 1
         self.actions = []
-        self.all_types = ['Left PINCH', 'Left CLOSE', 'Right PINCH', 'Right CLOSE']
+        self.all_types = ['Do Action']
         # How to read the action_order that is planned:
         # [first batch, _ ], [second batch, _ ], [third batch, _ ] ...
         # [ _, fifth batch], [ _, sixth batch] ...
         # The number tells the number of this type to spawn in the curent batch
         # Every item needs to have the same number of number in its list
-        self.action_order = {'Left PINCH': [25, 25], 'Left CLOSE': [25, 25],
-                             'Right PINCH': [25, 25], 'Right CLOSE': [25, 25]}
+        self.action_order = {'Do Action': [25]}
         self.next_action = []
         self.action_itt = 0
         self.init_action_order()
@@ -135,14 +133,9 @@ class EmgDock:
         self.emg_plot.setXRange(0, 20)
         self.emg_plot.plotItem.hideAxis('bottom')
         self.emg_plot.plotItem.hideAxis('left')
-        # Vertical and horizontal delineation lines
-        vLine = pg.InfiniteLine(angle=90, pos=10, movable=False)
-        hLine = pg.InfiniteLine(angle=0, pos=1.5, movable=False)
-        self.emg_plot.addItem(vLine, ignoreBounds=True)
-        self.emg_plot.addItem(hLine, ignoreBounds=True)
 
     def init_action_order(self):
-        for n in range(len(self.action_order['Left PINCH'])):
+        for n in range(len(self.action_order['Do Action'])):
             for action_name, num in self.action_order.items():
                 for _ in range(num[n]):
                     self.next_action.append(action_name)
@@ -248,7 +241,7 @@ class P300Dock:
 
     def instantiate_p300_plot(self):
         p300_plot = pg.PlotWidget()
-        p300_plot.setXRange(-2, 7)
+        p300_plot.setXRange(-2, 2)
         p300_plot.setYRange(-1, 5)
         p300_plot.hideAxis('bottom')
         p300_plot.hideAxis('left')

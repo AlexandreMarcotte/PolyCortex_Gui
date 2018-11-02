@@ -80,7 +80,7 @@ class MainWindow(QWidget, InitVariables):
 
     def init_win(self):
         self.layout = QVBoxLayout(self)
-
+                                                                               # TODO: corriger la facon de créer les tab (faire en sorte que les classes tab inherite de la classe widget pour pouvoir .addTab avec mes propres classes)
         # Initialize tab screen
         self.tabs = QTabWidget()
         self.tab1 = QWidget()
