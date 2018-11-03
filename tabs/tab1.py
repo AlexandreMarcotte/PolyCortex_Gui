@@ -37,6 +37,7 @@ class Tab1(InitVariables):
         self.tab1 = tab1
         self.experiment_type = experiment_type
         self.experiment_queue = experiment_queue
+
         self.last_classified_type = [0]
         
         self.lock = threading.Lock()
@@ -57,8 +58,6 @@ class Tab1(InitVariables):
         self.N_CH = len(self.data_queue)
         self.eeg_plots = []
 
-        # Chose one of these three place to stream the data
-        self.stream_origin = 'Stream fake data'
         self.choose_file = None
 
         self.time = datetime.datetime.now()
@@ -101,7 +100,7 @@ class Tab1(InitVariables):
         self.save_data_to_file()
         self.assign_n_to_ch()
         self.assign_action_to_ch()
-        self.add_stream_combo_box(2)
+        # self.add_stream_combo_box(2)
         self.add_banner()
 
         self.tab1.setLayout(self.tab1.layout)
@@ -142,12 +141,6 @@ class Tab1(InitVariables):
         self.area.addDock(self.banner_dock, 'bottom', self.wave_dock)
         self.banner_layout = pg.LayoutWidget()
         self.banner_dock.addWidget(self.banner_layout)
-        # - Choose streaming file dock
-        self.stream_dock = Dock('Choose stream', size=(1, 1))
-        self.stream_dock.hideTitleBar()
-        self.area.addDock(self.stream_dock, 'top')
-        self.stream_layout = pg.LayoutWidget()
-        self.stream_dock.addWidget(self.stream_layout)
 
     def fft_on_off_button(self):
         b = QPushButton('Show FFT', self.main_window)
@@ -182,27 +175,6 @@ class Tab1(InitVariables):
         row=0; col=1; rowspan=1; colspan=1
         self.banner_layout.addWidget(open_bci_banner, row, col, rowspan, colspan)
 
-    def add_stream_combo_box(self, colspan):
-        self.stream_combo = QComboBox(self.main_window)
-        self.stream_combo.addItem('Stream fake data')
-        self.stream_combo.addItem('Stream from OpenBCI')
-        self.stream_combo.addItem('Stream from file')
-        # Change the streaming origin depending on which element is selected
-        self.stream_combo.currentIndexChanged.connect(self.streaming_origin)
-        row=0; col=0; rowspan=1
-        self.stream_layout.addWidget(self.stream_combo, row, col, rowspan, colspan)
-
-    def streaming_origin(self):
-        self.stream_origin = self.stream_combo.currentText()
-        if self.stream_combo.currentText() == 'Stream from file' and not self.choose_file:
-            self.add_choose_streaming_file_b()
-            # Remove the combo box widget
-            # self.eeg_layout.removeWidget(self.stream_combo)
-            # self.stream_combo.deleteLater()
-            # self.stream_combo = None
-            # # Add an other one with a smaller size
-            # self.add_stream_combo_box(1)
-
     def add_choose_streaming_file_b(self):
         # Create button to open date file
         self.choose_file = QtGui.QPushButton('Choose streaming file')
@@ -232,12 +204,12 @@ class Tab1(InitVariables):
     @pyqtSlot()
     def start_streaming_data(self):
         # -----Start streaming data from OPENBCI board ------
-        if self.stream_origin == 'Stream from OpenBCI':
+        if self.stream_origin[0] == 'Stream from OpenBCI':
             self.board = stream_data_from_OpenBCI(
                 self.data_queue, self.t_queue, self.experiment_queue,
                 self.experiment_type, self.t_init, self.n_data_created,
                 self.all_data, self.all_t, self.all_experiment_val)
-        elif self.stream_origin == 'Stream fake data':
+        elif self.stream_origin[0] == 'Stream fake data':
             # Create fake data for test case
             create_data = CreateData(
                 self.data_queue, self.t_queue, self.experiment_queue,
@@ -245,7 +217,7 @@ class Tab1(InitVariables):
                 self.all_data, self.all_t, self.all_experiment_val)
             create_data.start()
 
-        elif self.stream_origin == 'Stream from file':
+        elif self.stream_origin[0] == 'Stream from file':
             create_data = CreateDataFromFile(
                 self.data_queue, self.t_queue, self.t_init, self.n_data_created,
                 self.stream_path)
@@ -265,7 +237,7 @@ class Tab1(InitVariables):
 
     @pyqtSlot()
     def stop_OpenBCI(self):
-        if self.stream_origin == 'Stream from OpenBCI':
+        if self.stream_origin[0] == 'Stream from OpenBCI':
             self.board.stop()
         self.stop_openbci_timer()
         # Stop saving process

@@ -93,7 +93,7 @@ class EmgDock:
         # Variables
         self.actions = []
         self.action_name = 'ACTION'
-        self.num_of_action = 5
+        self.num_of_action = 20
         self.action_itt = 0
 
         self.end_experiment = False

@@ -18,3 +18,5 @@ class InitVariables:
         self.all_data = [deque(np.zeros(self.DEQUE_LEN)) for _ in range(self.N_CH)] 
         self.all_t = deque(np.zeros(self.DEQUE_LEN))
         self.all_experiment_val = deque(np.zeros(self.DEQUE_LEN))
+        # Variable change in the menubar
+        self.stream_origin = ['Stream fake data']
