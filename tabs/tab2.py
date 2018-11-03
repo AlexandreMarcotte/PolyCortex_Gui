@@ -23,8 +23,8 @@ class Tab2:
         self.experiment_queue = experiment_queue
 
     def create_tab2(self):
-        self.DARK_GREY = '#585858'  # (88, 88, 88)
-        self.LIGHT_GREY = '#C8C8C8'  # (200, 200, 200)
+        self.DARK_GREY = '#585858'  # hexa
+        self.LIGHT_GREY = '#C8C8C8'
         # Insert the tab layout inside the main window frame
         self.tab2.layout = QHBoxLayout(self.main_window)
         # Add docs to the tab
@@ -43,12 +43,9 @@ class Tab2:
 
 
 class Action:
-    def __init__(self, action_txt, wait_txt, pos, type, color='#FF0'):
-        self.pos = pos
-        self.type_dict = {'Do Action': 1}
-        self.type_num = self.type_dict[type]
-        self.column = self.type_num
-        self.pos = pos
+    def __init__(self, action_txt, wait_txt, y_pos, x_pos, color='#FF0'):
+        self.x_pos = x_pos
+        self.y_pos = y_pos
         self.action_txt = action_txt
         self.wait_txt = wait_txt
         self.color = color
@@ -65,7 +62,7 @@ class Action:
                                </span><br><span style="color: {self.color};
                                font-size: 14pt;">{self.wait_txt}</span></div>"""
         self.plot_obj.setHtml(self.action_html)
-        self.plot_obj.setPos(self.column, self.pos)
+        self.plot_obj.setPos(self.x_pos, self.y_pos)
 
     def activate_html(self):
         """Change the color  and text of the action text to indicate it's
@@ -94,18 +91,12 @@ class EmgDock:
         self.area = area
         self.experiment_type = experiment_type
         # Variables
-        self.N_ACTION = 1
         self.actions = []
-        self.all_types = ['Do Action']
-        # How to read the action_order that is planned:
-        # [first batch, _ ], [second batch, _ ], [third batch, _ ] ...
-        # [ _, fifth batch], [ _, sixth batch] ...
-        # The number tells the number of this type to spawn in the curent batch
-        # Every item needs to have the same number of number in its list
-        self.action_order = {'Do Action': [25]}
-        self.next_action = []
+        self.action_name = 'ACTION'
+        self.num_of_action = 5
         self.action_itt = 0
-        self.init_action_order()
+
+        self.end_experiment = False
 
         self.create_emg_dock()
 
@@ -125,20 +116,18 @@ class EmgDock:
         # Start and stop button
         self.start_emg_button()
         self.stop_emg_button()
-        # self.stop_emg_button()
 
     def instantiate_emg_plot(self):
         self.emg_plot = pg.PlotWidget()
-        self.emg_plot.setYRange(0, 6.5)
+        self.emg_plot.setYRange(0.7, 6.5)
         self.emg_plot.setXRange(0, 20)
         self.emg_plot.plotItem.hideAxis('bottom')
         self.emg_plot.plotItem.hideAxis('left')
-
-    def init_action_order(self):
-        for n in range(len(self.action_order['Do Action'])):
-            for action_name, num in self.action_order.items():
-                for _ in range(num[n]):
-                    self.next_action.append(action_name)
+        # Vertical and horizontal delineation lines
+        # vLine = pg.InfiniteLine(angle=90, pos=10, movable=False)
+        hLine = pg.InfiniteLine(angle=0, pos=1.5, movable=False)
+        # self.emg_plot.addItem(vLine, ignoreBounds=True)
+        self.emg_plot.addItem(hLine, ignoreBounds=True)
 
     def init_spawn_timer(self):
         self.spawn_timer = QtCore.QTimer()
@@ -149,37 +138,49 @@ class EmgDock:
         self.plot_timer.timeout.connect(self.update_plot)
 
     def update_spawn(self):
-        try:
-            self.type = self.next_action[self.action_itt]
-        except IndexError:
-            print('End of EMG Experiment')
-            # self.stop_emg()
-        # Create a new action:
-        action = Action(action_txt=self.type, wait_txt='WAIT...', pos=6.5,
-                        type=self.type)
-        # Plot this new action
-        self.emg_plot.addItem(action.plot_obj)
-        # Add it to the list of actions
-        self.actions.append(action)
-        # Incremente the action_itt so that we have the next action planified next
-        self.action_itt += 1
+        # Stop spawning value when we reach the number of experiment events
+        if self.action_itt < self.num_of_action:
+            # Create a new action:
+            action = Action(action_txt=self.action_name, wait_txt='WAIT...',
+                            y_pos=6.5, x_pos=10)
+            # Plot this new action
+            self.emg_plot.addItem(action.plot_obj)
+            # Add it to the list of actions
+            self.actions.append(action)
+            self.action_itt += 1
+        else:
+            self.end_experiment = True
 
     def update_plot(self):
         for action in self.actions:
             # update the listed position of the action
-            action.pos -= 0.05
-            # If the action text went is bellow the activation line
-            if 0 <= action.pos <= 1.5 and action.is_waiting:
-                print('exp type', self.experiment_type)
-                self.experiment_type[0] = action.type_num
+            action.y_pos -= 0.04
+            # If the action text event is bellow the horiz. activation line
+            if 0 <= action.y_pos <= 1.5 and action.is_waiting:
+                # self.experiment_type[0] = action.type_num
                 action.activate_html()
                 action.is_waiting = False
             # update the position of the action
-            action.plot_obj.setPos(action.column, action.pos)
-            # If the action is about to get out of the screen remove it
-            if len(self.actions) > 10:
+            action.plot_obj.setPos(action.x_pos, action.y_pos)
+            # If the action leave the screen remove it
+            if action.y_pos < 0:
                 self.emg_plot.removeItem(self.actions[0].plot_obj)
                 self.actions.pop(0)
+        # Stop spawning value when we reach the number of experiment events
+        if self.actions == [] and self.end_experiment:
+            print('End of EMG Experiment reached')
+            self.show_end_txt()
+            self.stop_emg()
+
+    def show_end_txt(self):
+        self.end_txt = pg.TextItem(anchor=(0, 0), fill=(0, 0, 0, 0))
+        self.end_txt_html = f"""<div style="text-align: center">
+                               <br><span style="color: {'#EEE'};
+                               font-size: 30pt;">{'End of experiment...'}
+                               </span></div>"""
+        self.end_txt.setHtml(self.end_txt_html)
+        self.end_txt.setPos(7, 5)
+        self.emg_plot.addItem(self.end_txt)
 
     def start_emg_button(self):
         b_start = QtGui.QPushButton('START EMG')

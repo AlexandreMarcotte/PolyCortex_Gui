@@ -1,0 +1,20 @@
+cycler==0.10.0
+kiwisolver==1.0.1
+matplotlib==3.0.1
+nibabel==2.3.1
+numpy==1.15.3
+pygame==1.9.4
+pynput==1.4
+pyopengl==3.1.0
+pyparsing==2.3.0
+pyqt5-sip==4.19.13
+pyqt5==5.11.3
+pyqtgraph==0.10.0
+pyserial==3.4
+python-dateutil==2.7.5
+python-xlib==0.23 ; 'linux' in sys_platform
+qdarkstyle==2.6.1
+scikit-learn==0.20.0
+scipy==1.1.0
+six==1.11.0
+sklearn==0.0
