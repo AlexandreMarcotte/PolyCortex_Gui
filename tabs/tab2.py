@@ -10,17 +10,13 @@ from functools import partial
 
 from random import randint
 
-# My packages
-from init_variables import InitVariables
-
 
 class Tab2:
-    def __init__(self, main_window, tab2, experiment_type, experiment_queue):
+    def __init__(self, main_window, tab2, gv):
         self.main_window = main_window
         # The second tab that was created inside the main window object
         self.tab2 = tab2
-        self.experiment_type = experiment_type
-        self.experiment_queue = experiment_queue
+        self.gv = gv
 
     def create_tab2(self):
         self.DARK_GREY = '#585858'  # hexa
@@ -31,7 +27,7 @@ class Tab2:
         self.area = DockArea()
         self.tab2.layout.addWidget(self.area)
         # EMG
-        emg_dock = EmgDock(self.area, self.experiment_type)
+        emg_dock = EmgDock(self.area, self.gv)
         # N100
         n100_dock = N100Dock(self.area, emg_dock.emg_dock)
         n100_dock.create_n100_dock()
@@ -86,10 +82,10 @@ class N100Dock:
         self.area.addDock(self.n100_dock, 'above', self.emg_dock)
 
 class EmgDock:
-    def __init__(self, area, experiment_type):
+    def __init__(self, area, gv):
         # Plot variables
         self.area = area
-        self.experiment_type = experiment_type
+        self.gv = gv
         # Variables
         self.actions = []
         self.action_name = 'ACTION'
@@ -157,7 +153,7 @@ class EmgDock:
             action.y_pos -= 0.04
             # If the action text event is bellow the horiz. activation line
             if 0 <= action.y_pos <= 1.5 and action.is_waiting:
-                # self.experiment_type[0] = action.type_num
+                # self.gv.experiment_type[0] = action.type_num
                 action.activate_html()
                 action.is_waiting = False
             # update the position of the action

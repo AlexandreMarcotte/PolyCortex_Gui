@@ -2,7 +2,7 @@ from collections import deque
 import numpy as np
 from time import time
 
-class InitVariables:
+class GlobVar:
     def __init__(self):
         self.N_CH = 8
         self.DEQUE_LEN = 1250
@@ -19,4 +19,4 @@ class InitVariables:
         self.all_t = deque(np.zeros(self.DEQUE_LEN))
         self.all_experiment_val = deque(np.zeros(self.DEQUE_LEN))
         # Variable change in the menubar
-        self.stream_origin = ['Stream fake data']
+        self.stream_origin = ['Stream from fake data']

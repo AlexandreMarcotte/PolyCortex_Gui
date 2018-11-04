@@ -10,9 +10,6 @@ from functools import partial
 
 from random import randint
 
-# My packages
-from init_variables import InitVariables
-
 
 class Tab4:
     def __init__(self, main_window, tab):

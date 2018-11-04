@@ -24,19 +24,17 @@ from signal_manipulation import uniformize_data
 from time import time
 
 # -- My packages --
-from init_variables import InitVariables
 from generated_signal import (stream_data_from_OpenBCI, CreateData,
                               CreateDataFromFile)
 # from save_to_file import WriteDataToFile
 # from visualisation_with_pyqt import MainWindow
 
-class Tab1(InitVariables):
-    def __init__(self, main_window, tab1, experiment_type, experiment_queue):
+class Tab1:
+    def __init__(self, main_window, tab1, gv):
         super().__init__()
         self.main_window = main_window
         self.tab1 = tab1
-        self.experiment_type = experiment_type
-        self.experiment_queue = experiment_queue
+        self.gv = gv
 
         self.last_classified_type = [0]
         
@@ -54,8 +52,8 @@ class Tab1(InitVariables):
         # they trigger
         self.action_button_func = []
 
-        # self.n_data_created = n_data_created
-        self.N_CH = len(self.data_queue)
+        # self.gv.n_data_created = n_data_created
+        self.gv.N_CH = len(self.gv.data_queue)
         self.eeg_plots = []
 
         self.choose_file = None
@@ -71,7 +69,7 @@ class Tab1(InitVariables):
     def init_timers(self):
         # EEG timers
         self.timers_eeg = []
-        for _ in range(self.N_CH + 1):
+        for _ in range(self.gv.N_CH + 1):
             self.timers_eeg.append(QtCore.QTimer())
         # FFT timer
         self.timer_fft = QtCore.QTimer()
@@ -204,23 +202,15 @@ class Tab1(InitVariables):
     @pyqtSlot()
     def start_streaming_data(self):
         # -----Start streaming data from OPENBCI board ------
-        if self.stream_origin[0] == 'Stream from OpenBCI':
-            self.board = stream_data_from_OpenBCI(
-                self.data_queue, self.t_queue, self.experiment_queue,
-                self.experiment_type, self.t_init, self.n_data_created,
-                self.all_data, self.all_t, self.all_experiment_val)
-        elif self.stream_origin[0] == 'Stream fake data':
+        if self.gv.stream_origin[0] == 'Stream from OpenBCI':
+            self.board = stream_data_from_OpenBCI(self.gv)
+        elif self.gv.stream_origin[0] == 'Stream from fake data':
             # Create fake data for test case
-            create_data = CreateData(
-                self.data_queue, self.t_queue, self.experiment_queue,
-                self.experiment_type, self.t_init, self.n_data_created,
-                self.all_data, self.all_t, self.all_experiment_val)
+            create_data = CreateData(self.gv)
             create_data.start()
 
-        elif self.stream_origin[0] == 'Stream from file':
-            create_data = CreateDataFromFile(
-                self.data_queue, self.t_queue, self.t_init, self.n_data_created,
-                self.stream_path)
+        elif self.gv.stream_origin[0] == 'Stream from file':
+            create_data = CreateDataFromFile(self.gv, self.stream_path)
             create_data.start()
 
         self.start_openbci_timer()
@@ -237,7 +227,7 @@ class Tab1(InitVariables):
 
     @pyqtSlot()
     def stop_OpenBCI(self):
-        if self.stream_origin[0] == 'Stream from OpenBCI':
+        if self.gv.stream_origin[0] == 'Stream from OpenBCI':
             self.board.stop()
         self.stop_openbci_timer()
         # Stop saving process
@@ -273,29 +263,29 @@ class Tab1(InitVariables):
         print(f'Save data to file...')
 
         with open(self.save_path, 'w') as f:
-            # Make sure all the queue in self.all_data are the same length
-            all_len = [len(d) for d in self.all_data] + [len(self.all_t)] \
-                    + [len(self.all_experiment_val)]
+            # Make sure all the queue in self.gv.all_data are the same length
+            all_len = [len(d) for d in self.gv.all_data] + [len(self.gv.all_t)] \
+                    + [len(self.gv.all_experiment_val)]
             print(all_len)
             min_len = min(all_len)
             # Remove extra data
-            for i in range(len(self.all_data)):
-                if len(self.all_data[i]) > min_len:
+            for i in range(len(self.gv.all_data)):
+                if len(self.gv.all_data[i]) > min_len:
                     print('plus grand')
-                    self.all_data[i].pop()
+                    self.gv.all_data[i].pop()
 
-            if len(self.all_t) > min_len:
-                self.all_t.pop()
+            if len(self.gv.all_t) > min_len:
+                self.gv.all_t.pop()
 
-            if len(self.all_experiment_val) > min_len:
+            if len(self.gv.all_experiment_val) > min_len:
                 self.all_experiment_data.pop()
 
             # Create the proper dimension for the concatenation
-            t_queue = np.array(self.all_t)[None, :]
-            experiment_queue = np.array(self.all_experiment_val)[None, :]
+            t_queue = np.array(self.gv.all_t)[None, :]
+            experiment_queue = np.array(self.gv.all_experiment_val)[None, :]
 
             # Concatenate
-            save_val = np.concatenate((self.all_data, t_queue,
+            save_val = np.concatenate((self.gv.all_data, t_queue,
                                        experiment_queue))
             # Save
             np.savetxt(f, np.transpose(save_val), delimiter=',')
@@ -312,7 +302,7 @@ class Tab1(InitVariables):
             timer.stop()
 
     def assign_n_to_ch(self):
-        for ch in range(self.N_CH):
+        for ch in range(self.gv.N_CH):
             # +1 so the number str start at 1
             b_on_off_ch = QtGui.QPushButton(str(ch + 1))
             b_on_off_ch.setCheckable(True)
@@ -321,8 +311,7 @@ class Tab1(InitVariables):
                      + ': {color}; '.format(color=self.button_color[ch])
                      + 'min-width: 14px}')
             b_on_off_ch.setStyleSheet(style)
-            ch_number_action = ChNumberAction(self.data_queue, self.timers_eeg,
-                                              ch)
+            ch_number_action = ChNumberAction(self.timers_eeg, ch)
             b_on_off_ch.toggled.connect(partial(ch_number_action.stop_ch))
             # Set position and size of the button values
             row=ch*3+3; col=0; rowspan=1
@@ -331,11 +320,11 @@ class Tab1(InitVariables):
     def assign_action_to_ch(self):
         pos = 3  # Start the position at two because the buttons start on the second row
         tot_b_num = 0
-        for ch in range(self.N_CH):
+        for ch in range(self.gv.N_CH):
             for b_n in range(self.N_BUTTON_PER_CH):
                 # Create an action object and add it to the list of all actions
                 # in the tab
-                action_button = ActionButton(self.data_queue, self.eeg_layout,
+                action_button = ActionButton(self.gv, self.eeg_layout,
                                              b_n, ch, pos)
                 self.action_buttons.append(action_button)
                 # Average
@@ -389,9 +378,9 @@ class Tab1(InitVariables):
         pass
         # write data to file:
         # self.write_data_to_file = WriteDataToFile(self.save_path,
-        #                                           self.data_queue, self.t_queue,
-        #                                           self.experiment_queue,
-        #                                           self.n_data_created, self.lock)
+        #                                           self.gv.data_queue, self.gv.t_queue,
+        #                                           self.gv.experiment_queue,
+        #                                           self.gv.n_data_created, self.lock)
         # # self.write_data_to_file.start()
         # self.write_data_to_file.at_exit_job()
 
@@ -409,14 +398,13 @@ class Tab1(InitVariables):
         # Add to tab layout
         self.fft_layout.addWidget(self.fft_plot, row, col, rowspan, colspan)
         # Associate the plot to an FftGraph object
-        self.fft_plot_obj = FftGraph(self.fft_plot, self.data_queue, self.t_queue,
-                                  self.n_data_created, self.pen_color)
+        self.fft_plot_obj = FftGraph(self.fft_plot, self.gv, self.pen_color)
         self.timer_fft.timeout.connect(self.fft_plot_obj.update_fft_plotting)
 
     def init_eeg_plot(self):
         """
         """
-        for ch in range(self.N_CH + 1):
+        for ch in range(self.gv.N_CH + 1):
             self.eeg_plot = pg.PlotWidget(background=(3, 3, 3))
             self.eeg_plot.plotItem.showGrid(x=True, y=True, alpha=0.2)
             # Use log scale to have a better visualization of the FFT data
@@ -432,16 +420,13 @@ class Tab1(InitVariables):
 
                 self.eeg_plot.plotItem.hideAxis('bottom')
                 rowspan = 3
-                queue = self.data_queue[ch]
+                queue = self.gv.data_queue[ch]
             # Add the widget to the layout at the proper position
             row=ch*3+3; col=1; colspan=2
 
             self.eeg_layout.addWidget(self.eeg_plot, row, col, rowspan, colspan)
             # Update plotting
-            self.eeg_plots.append(EegGraph(self.eeg_plot, queue,
-                                           self.experiment_queue,
-                                           self.t_queue, self.t_init,
-                                           self.n_data_created,
+            self.eeg_plots.append(EegGraph(self.eeg_plot, queue, self.gv,
                                            self.pen_color[ch], ch, self.lock,
                                            self.last_classified_type))
 
@@ -458,14 +443,14 @@ class Tab1(InitVariables):
         # Add to tab layout
         self.wave_layout.addWidget(self.wave_plot, row, col, rowspan, colspan)
         # Create the bar chart only for the first channel
-        self.one_ch_deque = self.data_queue[0]
+        self.one_ch_deque = self.gv.data_queue[0]
         self.wave_plot_obj = WaveGraph(self.wave_plot, self.one_ch_deque)
         # self.timer_show_classif.timeout.connect(self.wave_plot_obj.update_wave_plotting)
         mne_head = QLabel(self.main_window)
         mne_head.setPixmap(QtGui.QPixmap('./logo/mne_head.png'))
         row=2; col=0; rowspan=1; colspan=1
         self.wave_layout.addWidget(mne_head, row, col, rowspan, colspan)
-        
+
     def init_show_classif_plot(self):
         # --- Bar chart ---
         self.show_classif_plot = pg.PlotWidget(background=(3, 3, 3))
@@ -489,11 +474,11 @@ class Tab1(InitVariables):
         self.show_classif_layout.addWidget(self.n_classif_plot,
                                            row, col, rowspan, colspan)
         # Create the object to update the bar chart graph and the line graph
-        self.live_classification = LiveClassification(self.data_queue,
+        self.live_classification = LiveClassification(self.gv,
                                                       self.show_classif_plot,
                                                       self.n_classif_plot,
                                                       self.last_classified_type,
-                                                      self.n_data_created)
+                                                      self.gv.n_data_created)
         self.timer_classif.timeout.connect(
                 self.live_classification.update_all)
 
@@ -509,7 +494,7 @@ class WaveGraph:
         self.wave_plot.addItem(self.bg1)
 
     def update_wave_plotting(self):
-        # Remove All item from the graph 
+        # Remove All item from the graph
         self.wave_plot.clear()
         self.y = np.random.random(10)
         self.bg1 = pg.BarGraphItem(x=self.x, height=self.y, width=1, brush='b')
@@ -519,21 +504,18 @@ class WaveGraph:
 class EegGraph:
     """
     """
-    def __init__(self, eeg_plot, one_ch_deque, experiment_queue, t_queue, t_init,
-                 n_data_created, pen_color, ch, lock, last_classified_type):
+    def __init__(self, eeg_plot, one_ch_deque, gv, pen_color, ch, lock,
+                 last_classified_type):
         self.eeg_plot = eeg_plot
         self.one_ch_deque = one_ch_deque
-        self.experiment_queue = experiment_queue
-        self.t_queue = t_queue
-        self.t_init = t_init
-        self.n_data_created = n_data_created
-        self.last_n_data_created = n_data_created[0]
+        self.gv = gv
+        self.last_n_data_created = self.gv.n_data_created[0]
         self.ch = ch
         self.lock = lock
         self.last_classified_type = last_classified_type
 
         self.N_DATA = len(one_ch_deque)
-        self.curve_eeg = self.eeg_plot.plot(self.t_queue,
+        self.curve_eeg = self.eeg_plot.plot(self.gv.t_queue,
                                             deque(np.zeros(self.N_DATA),
                                             maxlen=self.N_DATA))
         self.curve_eeg.setPen(pen_color)
@@ -546,7 +528,7 @@ class EegGraph:
         purple = (146, 56, 219, 40)
         self.region_brush = [red, green, blue, yellow, purple]
         self.brush = self.region_brush[1]
-        self.exp_queue_temp = self.experiment_queue
+        self.exp_queue_temp = self.gv.experiment_queue
         # Show classification live on the grap
         self.r_in_use = []
         self.r_waiting = []
@@ -560,9 +542,9 @@ class EegGraph:
     def update_eeg_plotting(self):
         if self.ch == 8:
             # WARNING: When I plot with the time, the quality of the signal degrade
-            self.curve_eeg.setData(self.t_queue, self.one_ch_deque)
+            self.curve_eeg.setData(self.gv.t_queue, self.one_ch_deque)
             # Put the queue in a temp so that it's only changes once every cycle
-            self.exp_queue_temp = self.experiment_queue
+            self.exp_queue_temp = self.gv.experiment_queue
             # self.last_classified_type[0] = 0
         else:
             self.curve_eeg.setData(self.one_ch_deque)
@@ -594,8 +576,8 @@ class EegGraph:
                     self.last_classified_type[0] = 0
                 # keep track of the number of data that was created between call
                 # to this function so that the regions pos is updated accordingly
-                delta_data = self.n_data_created[0] - self.last_n_data_created
-                self.last_n_data_created = self.n_data_created[0]
+                delta_data = self.gv.n_data_created[0] - self.last_n_data_created
+                self.last_n_data_created = self.gv.n_data_created[0]
                 # Move regions that are in use at every itteration
                 if self.r_in_use:
                     for r_no in self.r_in_use:
@@ -626,41 +608,37 @@ class EegGraph:
 class FftGraph:
     """
     """
-    def __init__(self, freq_plot, data_queue, t_queue, n_data_created,
-                 pen_color):
-        self.data_queue = data_queue
-        self.t_queue = t_queue
-        self.n_data_created = n_data_created
+    def __init__(self, freq_plot, gv, pen_color):
+        self.gv = gv
         self.freq_plot = freq_plot
         self.pen_color = pen_color
 
-        self.N_DATA = len(self.data_queue[0])
-        self.N_CH = len(self.data_queue)
+        self.N_DATA = len(self.gv.data_queue[0])
+        self.gv.N_CH = len(self.gv.data_queue)
 
         self.curve_freq = []
-        for ch in range(self.N_CH):
+        for ch in range(self.gv.N_CH):
             self.curve_freq.append(freq_plot.plot(deque(np.zeros(self.N_DATA),
                                                         maxlen=self.N_DATA)))
 
     def update_fft_plotting(self):
         remove_first_data = 2
         # interval of time from the first to the last value that was add to the queue
-        delta_t = (self.t_queue[-1] - self.t_queue[0])
+        delta_t = (self.gv.t_queue[-1] - self.gv.t_queue[0])
         # Calculate FFT (Remove freq 0 because it gives a really high value on the graph
         freq_range = np.linspace(remove_first_data, self.N_DATA//2/delta_t,
                                  self.N_DATA//2 - remove_first_data)
 
-        for ch in range(self.N_CH):
-            ch_fft = fft(self.data_queue[ch])
+        for ch in range(self.gv.N_CH):
+            ch_fft = fft(self.gv.data_queue[ch])
             # Keep all frequency possibles                                                  # TODO: Change frequency in function of time
             self.curve_freq[ch].setData(freq_range,
-                                        np.log(abs(ch_fft[remove_first_data:self.N_DATA//2])))         # TODO: ALEXM prendre abs ou real? avec real il y a des valeurs negatives est-ce que c'est normal?
+                                        abs(ch_fft[remove_first_data:self.N_DATA//2]))         # TODO: ALEXM prendre abs ou real? avec real il y a des valeurs negatives est-ce que c'est normal?
             self.curve_freq[ch].setPen(self.pen_color[ch])
 
 
 class ChNumberAction:
-    def __init__(self, data_queue, timers_eeg, ch):
-        self.data_queue = data_queue
+    def __init__(self, timers_eeg, ch):
         self.timers_eeg = timers_eeg
         self.ch = ch
 
@@ -673,8 +651,8 @@ class ChNumberAction:
 
 
 class ActionButton:
-    def __init__(self, data_queue, layout, b_n, ch, pos):
-        self.data_queue = data_queue
+    def __init__(self, gv, layout, b_n, ch, pos):
+        self.gv = gv
         self.b_n = b_n
         self.ch = ch
         # self.tab = tab
@@ -700,7 +678,7 @@ class ActionButton:
 
     def update_avg(self):
         # Create the average label
-        avg_val = ' '*70 + f'{np.round(np.average(self.data_queue[self.ch]), 2)} Vrms'
+        avg_val = ' '*70 + f'{np.round(np.average(self.gv.data_queue[self.ch]), 2)} Vrms'
         self.avg_label.setText(avg_val)
 
     def create_max_button(self):
@@ -711,7 +689,7 @@ class ActionButton:
         self.layout.addWidget(self.max_label, row, col, rowspan, colspan)
 
     def update_max(self):
-        max_val = ' ' *70 + f'{np.round(np.max(self.data_queue[self.ch]), 2)} Vrms'
+        max_val = ' ' *70 + f'{np.round(np.max(self.gv.data_queue[self.ch]), 2)} Vrms'
         self.max_label.setText(max_val)
 
     @QtCore.pyqtSlot(bool)                                                            # TODO: ALEXM remove this duplicate
@@ -736,9 +714,9 @@ class ActionButton:
 
 
 class LiveClassification:
-    def __init__(self, data_queue, show_classif_plot, n_classif_plot,
+    def __init__(self, gv, show_classif_plot, n_classif_plot,
                  last_classified_type, n_data_created):
-        self.data_queue = data_queue
+        self.gv = gv
         self.last_classified_type = last_classified_type
         self.clf = joblib.load('linear_svm_fitted_model.pkl')
         self.n_tot_predict = 0
@@ -774,7 +752,7 @@ class LiveClassification:
         self.update_n_classif_plotting()
 
     def classify_incoming_data(self):
-        data_queue = np.array(self.data_queue[3])
+        data_queue = np.array(self.gv.data_queue[3])
         emg_signal = data_queue[-170:]
         # Evaluate the classificaiton type
         if emg_signal.any():  # if all not all zero array

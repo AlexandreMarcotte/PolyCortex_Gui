@@ -10,12 +10,11 @@ import numpy as np
 from sklearn.externals import joblib
 import matplotlib.pyplot as plt
 # My packages
-from init_variables import InitVariables
 from generated_signal import read_data_from_file
 from signal_manipulation import uniformize_data
+from global_variable import GlobVar
 
-
-class Tab3(InitVariables):
+class Tab3(GlobVar):
     def __init__(self, main_window, tab3):
         super().__init__()
         self.main_window = main_window

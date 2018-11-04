@@ -4,7 +4,6 @@ from pyqtgraph.Qt import QtGui, QtCore
 import threading
 from collections import deque
 from random import random, randint
-from frequency_counter import FrequencyCounter
 from math import pi
 from numpy import sin
 from time import time, sleep
@@ -13,12 +12,9 @@ import logging
 import open_bci_v3 as bci
 
 # My modules
-from init_variables import InitVariables
 
 
-def stream_data_from_OpenBCI(data_queue, t_queue, experiment_queue,
-                             experiment_type, t_init, n_data_created,
-                             all_data, all_t, all_experiment_val):
+def stream_data_from_OpenBCI(gv):
     port = '/dev/ttyUSB0'  # if using Linux
     # (if encounter error: [Errno 13] could not open port /dev/ttyUSB0: Permission denied => see: https://askubuntu.com/questions/58119/changing-permissions-on-serial-port   then restart your computer
     # port = 'COM3'  # if using Windows
@@ -29,33 +25,17 @@ def stream_data_from_OpenBCI(data_queue, t_queue, experiment_queue,
     print("Board Instantiated")
     sleep(5)
 
-    OpenBCI_sampler = SampleDataFromOPENBCI(board, data_queue, experiment_queue,
-                                            experiment_type,t_queue, t_init,
-                                            n_data_created, all_data, all_t,
-                                            all_experiment_val)
+    OpenBCI_sampler = SampleDataFromOPENBCI(board, gv)
     OpenBCI_sampler.start()
     
     return board
     
     
 class SampleDataFromOPENBCI(threading.Thread):
-    def __init__(self, board, data_queue, experiment_queue, experiment_type,
-                 t_queue, t_init, n_data_created, all_data, all_t, all_experiment_val):
+    def __init__(self, board, gv):
         super().__init__()
         self.board = board
-
-        # Queue
-        self.data_queue = data_queue
-        self.t_queue = t_queue
-        # All data for saving
-        self.all_data = all_data
-        self.all_t = all_t
-        self.all_experiment_val = all_experiment_val
-
-        self.t_init = t_init
-        self.n_data_created = n_data_created
-        self.experiment_queue = experiment_queue
-        self.experiment_type = experiment_type 
+        self.gv = gv
         
     def run(self):
         # Previously and Working
@@ -63,108 +43,91 @@ class SampleDataFromOPENBCI(threading.Thread):
 
     def add_data_to_queue(self, sample):
         for ch, one_sample in enumerate(sample.channel_data):
-            self.data_queue[ch].append(one_sample)
-            self.all_data[ch].append(one_sample)
-        self.n_data_created[0] += 1
+            self.gv.data_queue[ch].append(one_sample)
+            self.gv.all_data[ch].append(one_sample)
+        self.gv.n_data_created[0] += 1
         # Time
-        current_time = time() - self.t_init
-        self.t_queue.append(current_time)
-        self.all_t.append(current_time)
+        current_time = time() - self.gv.t_init
+        self.gv.t_queue.append(current_time)
+        self.gv.all_t.append(current_time)
         # Add experiment type values
-        if self.experiment_type[0] != 0:
-            typ = self.experiment_type[0]
-            self.experiment_queue.append(typ)
-            self.all_experiment_val.append(typ)
-            self.experiment_type[0] = 0
+        if self.gv.experiment_type[0] != 0:
+            typ = self.gv.experiment_type[0]
+            self.gv.experiment_queue.append(typ)
+            self.gv.all_experiment_val.append(typ)
+            self.gv.experiment_type[0] = 0
         else:
-            self.experiment_queue.append(0)
-            self.all_experiment_val.append(0)
+            self.gv.experiment_queue.append(0)
+            self.gv.all_experiment_val.append(0)
 
 
-class CreateData(threading.Thread, InitVariables):
-    def __init__(self, data_queue, t_queue, experiment_queue, experiment_type,
-                 t_init, n_data_created, all_data, all_t, all_experiment_val):
+class CreateData(threading.Thread):
+    def __init__(self, gv):
         super().__init__()
-        # Queue
-        self.data_queue = data_queue
-        self.t_queue = t_queue
-        self.experiment_queue = experiment_queue
-        # All data for saving
-        self.all_data = all_data
-        self.all_t = all_t
-        self.all_experiment_val = all_experiment_val
-
-        self.experiment_type = experiment_type
-
-        self.t_init = t_init
-        self.N_CH = 8
-        self.N_DATA = len(self.data_queue[0])
-        self.n_val_created = n_data_created
-        self.freq_counter = FrequencyCounter(loop_name='creatingFakeData')
-        self.t = np.linspace(0, 2 * pi, self.N_DATA)
+        self.gv = gv
+        # Variable necessary to generate fake signal
+        ## time
+        self.t = np.linspace(0, 2 * pi, self.gv.DEQUE_LEN)
+        ## signal shape
         self.s1 = sin(self.t)
         self.s2 = sin(20 * self.t)
         self.s3 = sin(40 * self.t)
         self.s4 = 2 * sin(60 * self.t)
 
     def add_signal_to_queue(self, signal, ch):
-        self.data_queue[ch].append(signal)
-        self.all_data[ch].append(signal)
+        self.gv.data_queue[ch].append(signal)
+        self.gv.all_data[ch].append(signal)
 
     def run(self):
         """Create random data and a time stamp for each of them"""
         while 1:
-            self.n_val_created[0] += 1
-            self.i = self.n_val_created[0] % len(self.t)
-            # Print frequency of the run function once every second
-            self.freq_counter.print_freq(self.n_val_created[0])
-            for ch in range(self.N_CH):
+            self.gv.n_data_created[0] += 1
+            i = self.gv.n_data_created[0] % len(self.t)
+
+            for ch in range(self.gv.N_CH):
                 rnd_impulse = randint(0, 100)
+                # Set impulse size to be added to the signal
                 if rnd_impulse == 0:
                     imp = 5
                 else:
                     imp = 0
                 if ch == 0:
-                    signal = self.s1[self.i] + self.s3[self.i] \
-                             + self.s4[self.i] + random() + imp
+                    signal = self.s1[i] + self.s3[i]+ self.s4[i] + random() + imp
                 elif ch == 1:
-                    signal = self.s1[self.i] + 5
+                    signal = self.s1[i] + 5
                 elif ch == 2:
-                    signal = self.s2[self.i]
+                    signal = self.s2[i]
                 elif ch == 3:
-                    signal = self.s3[self.i]
+                    signal = self.s3[i]
                 elif ch == 4:
-                    signal = self.s4[self.i]
+                    signal = self.s4[i]
                 else:
                     signal = random()
 
                 self.add_signal_to_queue(signal, ch)
 
             # Add current time
-            current_t = time() - self.t_init
-            self.t_queue.append(current_t)
-            self.all_t.append(current_t)
+            current_t = time() - self.gv.t_init
+            self.gv.t_queue.append(current_t)
+            self.gv.all_t.append(current_t)
 
             # Add experiment type values 
-            if self.experiment_type[0] != 0:
-                self.experiment_queue.append(self.experiment_type[0])
-                self.all_experiment_val.append(self.experiment_type[0])
-                self.experiment_type[0] = 0
+            if self.gv.experiment_type[0] != 0:
+                self.gv.experiment_queue.append(self.gv.experiment_type[0])
+                self.gv.all_experiment_val.append(self.gv.experiment_type[0])
+                self.gv.experiment_type[0] = 0
             else:
-                self.experiment_queue.append(0)
-                self.all_experiment_val.append(0)
+                self.gv.experiment_queue.append(0)
+                self.gv.all_experiment_val.append(0)
 
             sleep(0.0017)
 
 
 class CreateDataFromFile(threading.Thread):
-    def __init__(self, data_queue, t_queue, t_init, n_data_created, file_name):
+    def __init__(self, gv, file_name):
         super(CreateDataFromFile, self).__init__()
-        self.data_queue = data_queue
-        self.n_data_created = n_data_created
-        self.t_queue = t_queue
-        self.t_init = t_init
-        self.N_DATA = len(self.data_queue)
+        self.gv = gv
+        self.N_DATA = len(self.gv.data_queue)
         self.file_name = file_name
 
     def run(self):
@@ -173,12 +136,12 @@ class CreateDataFromFile(threading.Thread):
     def write_to_file(self):
         with open(self.file_name, 'r') as f:
             for all_ch_line in f:
-                self.n_data_created[0] += 1
+                self.gv.n_data_created[0] += 1
                 all_ch_line = all_ch_line.strip().split(',')[0:8]
                 for ch_no, ch in enumerate(all_ch_line):
-                    self.data_queue[ch_no].append(float(ch))
+                    self.gv.data_queue[ch_no].append(float(ch))
 
-                self.t_queue.append(time() - self.t_init)
+                self.gv.t_queue.append(time() - self.gv.t_init)
                 sleep(0.002) # TODO: ALEXM this delta t could be calculated from the saved time in the file
 
 # Used in the tab 3 where we create static graphes
