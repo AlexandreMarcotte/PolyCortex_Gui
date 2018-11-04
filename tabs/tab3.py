@@ -12,13 +12,13 @@ import matplotlib.pyplot as plt
 # My packages
 from generated_signal import read_data_from_file
 from signal_manipulation import uniformize_data
-from global_variable import GlobVar
 
-class Tab3(GlobVar):
-    def __init__(self, main_window, tab3):
+class Tab3:
+    def __init__(self, main_window, tab_w, gv):
         super().__init__()
         self.main_window = main_window
-        self.tab3 = tab3
+        self.tab_w = tab_w
+        self.gv = gv
         # Stationnary graph
         self.full_graph_x_range = 8000
         self.slider_last = 0
@@ -35,19 +35,21 @@ class Tab3(GlobVar):
         # Classification model
         self.clf = joblib.load('linear_svm_fitted_model.pkl')
         self.avg_emg_class_type = np.load('avg_emg_class_type.npy')
-        self.classified_data = [[] for _ in range(8)]
+        self.classified_data = [[] for _ in range(self.gv.N_CH)]
         self.classified_once_every = 6
         self.classified_pos = 250
         self.emg_signal_len = 170
+        # Create the tab itself
+        self.create_tab()
 
-    def create_tab3(self):
-        self.tab3.layout = QGridLayout(self.main_window)
+    def create_tab(self):
+        self.tab_w.layout = QGridLayout(self.main_window)
         # Create two different layout split by a QSplitter
         self.create_layouts()
         # Place things on the two layouts
         self.open_data_from_file()
         # Set the layout
-        self.tab3.setLayout(self.tab3.layout)
+        self.tab_w.setLayout(self.tab_w.layout)
 
     def create_layouts(self):
         # Create open file layout:
@@ -76,8 +78,8 @@ class Tab3(GlobVar):
         # Add the spliter to the entire tab
         self.scroll.setWidget(layout_splitter)
         # Add widget to the main layout
-        self.tab3.layout.addWidget(self.open_file_group)
-        self.tab3.layout.addWidget(self.scroll)
+        self.tab_w.layout.addWidget(self.open_file_group)
+        self.tab_w.layout.addWidget(self.scroll)
 
     def open_data_from_file(self):
         # Create button to open date file
@@ -116,7 +118,7 @@ class Tab3(GlobVar):
     def create_stationnary_plot(self):
         # Read data from file
         data, t, exp = read_data_from_file(self.data_path.text(),
-                                                n_ch=self.N_CH)
+                                                n_ch=self.gv.N_CH)
         N_DATA = len(data[0])
 
         self.static_portion_graph_update = []
@@ -135,15 +137,11 @@ class Tab3(GlobVar):
             # Full plot
             self.all_data_plots[ch].plot(ch_data, pen='w')
             self.add_sliders(ch, N_DATA)
-            self.add_sliding_region(ch_data, ch)
+            self.add_sliding_region(ch)
             # Create classification graph and plot
             self.classify_ch_data(ch, ch_data)
             self.classif_plots[ch].plot(self.classified_data[ch], pen='b')
-    # def change_avg_classif_plot(self):
-    #     pass
-    #
-    # def create_classif_graph(self):
-    #
+
     def classify_ch_data(self, ch, ch_data):
         print('len', len(ch_data))
         ch_data = np.array(ch_data)
@@ -159,7 +157,7 @@ class Tab3(GlobVar):
                 self.classified_data[ch].append(class_type)
             self.pos += self.classified_once_every
         
-    def add_sliding_region(self, ch_data, no):
+    def add_sliding_region(self, no):
         """
         Add Sliding region on the graph that will be add where experiment
         events occured during the training
@@ -171,8 +169,7 @@ class Tab3(GlobVar):
         self.all_data_plots[no].setAutoVisible(y=True)
         self.portion_plots[no].setAutoVisible(y=True)
 
-        # - - Update the left side based on the right side region and slider
-        # pos
+        # - - Update the left side based on the right side region and slider pos
         # - Portion graph
         # Create 8 update function object, one for every portion plot
         self.static_portion_graph_update.append(
@@ -275,14 +272,14 @@ class Tab3(GlobVar):
         self.avg_classif_curves = []
         # Layout
         self.full_ch_layouts = []
-        for ch in range(self.N_CH):
+        for ch in range(self.gv.N_CH):
             # Portion graph
             self.add_portion_static_plot(ch)
             # Full graph
             self.add_full_static_graph(ch)
     #
     # def assign_n_to_ch(self):
-    #     for ch in range(self.N_CH):
+    #     for ch in range(self.gv.N_CH):
     #         # +1 so the number str start at 1
     #         b_on_off_ch = QtGui.QPushButton(str(ch + 1))
     #         style = ("""QPushButton { background-color: rgba(40, 40, 40, 100);

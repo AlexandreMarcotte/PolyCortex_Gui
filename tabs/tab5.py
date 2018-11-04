@@ -13,27 +13,27 @@ import threading
 from random import randint
 
 class Tab5:
-    def __init__(self, main_window, tab5):
+    def __init__(self, main_window, tab_w):
         self.main_window = main_window
-        self.tab5 = tab5
+        self.tab_w = tab_w
+        # Create the tab itself
+        self.create_tab()
 
-        self.create_tab5()
-
-    def create_tab5(self):
-        self.tab5.layout = QHBoxLayout(self.main_window)
+    def create_tab(self):
+        self.tab_w.layout = QHBoxLayout(self.main_window)
         # Collect events until released
-        game_3d = Game3D(self.tab5)
+        game_3d = Game3D(self.tab_w)
         listen_keybr = keyboard.Listener(on_press=game_3d.on_press,
                                          on_release=game_3d.on_release)
         listen_keybr.start()
 
-        self.tab5.setLayout(self.tab5.layout)
+        self.tab_w.setLayout(self.tab_w.layout)
 
 
 class Game3D:
     def __init__(self, tab5):
         # Variables
-        self.tab5 = tab5
+        self.tab_w = tab5
 
         self.init_landscape()
         self.init_character()
@@ -83,7 +83,7 @@ class Game3D:
     def init_landscape(self):
         # self.app = QtGui.QApplication([])
         self.w = gl.GLViewWidget()
-        self.tab5.layout.addWidget(self.w)
+        self.tab_w.layout.addWidget(self.w)
         self.w.setWindowTitle('pyqtgraph example: GL Shaders')
         self.w.setCameraPosition(distance=60, azimuth=-90)
         g = gl.GLGridItem()

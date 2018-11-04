@@ -9,16 +9,18 @@ import pyqtgraph.opengl as gl
 import numpy as np
 
 class Tab6:
-    def __init__(self, main_window, tab6):
+    def __init__(self, main_window, tab_w):
         self.main_window = main_window
-        self.tab6 = tab6
+        self.tab_w = tab_w
+        # Create the tab itself
+        self.create_tab()
 
-    def create_tab6(self):
-        self.tab6.layout = QHBoxLayout(self.main_window)
+    def create_tab(self):
+        self.tab_w.layout = QHBoxLayout(self.main_window)
 
         self.create_3D_brain_volume()
 
-        self.tab6.setLayout(self.tab6.layout)
+        self.tab_w.setLayout(self.tab_w.layout)
 
     def create_3D_brain_volume(self):
         # get MRI data
@@ -30,7 +32,7 @@ class Tab6:
         w = gl.GLViewWidget()
         w.setCameraPosition(0, 0, 90)
         w.opts['distance'] = 500
-        self.tab6.layout.addWidget(w)
+        self.tab_w.layout.addWidget(w)
         # w.show()
         # create color image channels
         d2 = np.empty(data.shape + (4,), dtype=np.ubyte)

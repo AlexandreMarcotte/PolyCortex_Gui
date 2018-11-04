@@ -12,20 +12,22 @@ from random import randint
 
 
 class Tab2:
-    def __init__(self, main_window, tab2, gv):
+    def __init__(self, main_window, tab_w, gv):
         self.main_window = main_window
         # The second tab that was created inside the main window object
-        self.tab2 = tab2
+        self.tab_w = tab_w
         self.gv = gv
+        # Create the tab itself
+        self.create_tab()
 
-    def create_tab2(self):
+    def create_tab(self):
         self.DARK_GREY = '#585858'  # hexa
         self.LIGHT_GREY = '#C8C8C8'
         # Insert the tab layout inside the main window frame
-        self.tab2.layout = QHBoxLayout(self.main_window)
+        self.tab_w.layout = QHBoxLayout(self.main_window)
         # Add docs to the tab
         self.area = DockArea()
-        self.tab2.layout.addWidget(self.area)
+        self.tab_w.layout.addWidget(self.area)
         # EMG
         emg_dock = EmgDock(self.area, self.gv)
         # N100
@@ -35,7 +37,7 @@ class Tab2:
         p300_dock = P300Dock(self.area, emg_dock.emg_dock)
         p300_dock.create_p300_dock()
 
-        self.tab2.setLayout(self.tab2.layout)
+        self.tab_w.setLayout(self.tab_w.layout)
 
 
 class Action:
