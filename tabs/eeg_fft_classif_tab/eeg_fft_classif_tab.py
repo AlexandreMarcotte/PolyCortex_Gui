@@ -17,6 +17,7 @@ import time
 import datetime
 import atexit
 import math
+import os
 # Classification
 from sklearn.externals import joblib
 import matplotlib.pyplot as plt
@@ -24,8 +25,8 @@ from signal_manipulation import uniformize_data
 from time import time
 
 # -- My packages --
-from generated_signal import (stream_data_from_OpenBCI, CreateData,
-                              CreateDataFromFile)
+from generate_signal.generated_signal import (
+    stream_data_from_OpenBCI, CreateData, CreateDataFromFile)
 # from save_to_file import WriteDataToFile
 # from visualisation_with_pyqt import MainWindow
 
@@ -726,7 +727,8 @@ class LiveClassification:
                  last_classified_type, n_data_created):
         self.gv = gv
         self.last_classified_type = last_classified_type
-        self.clf = joblib.load('linear_svm_fitted_model.pkl')
+        clf_path = 'machine_learning/linear_svm_fitted_model.pkl'
+        self.clf = joblib.load(os.path.join(os.getcwd(), clf_path))
         self.n_tot_predict = 0
         self.last_classif = np.array([0 for _ in range(15)])
         self.i = 0

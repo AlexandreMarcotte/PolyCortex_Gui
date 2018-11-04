@@ -7,6 +7,7 @@ from nibabel import load
 import pyqtgraph.opengl as gl
 
 import numpy as np
+import os
 
 class Brain3DTab:
     def __init__(self, main_window, tab_w):
@@ -24,7 +25,8 @@ class Brain3DTab:
 
     def create_3D_brain_volume(self):
         # get MRI data
-        nii = load('inplane001.nii')
+        nii_path = 'tabs/brain_3D_tab/inplane001.nii'
+        nii = load(os.path.join(os.getcwd(), nii_path))
         data = nii.get_data()
         # To complete for the lack of sampling in the third dimension
         data = np.repeat(data, repeats=4, axis=2)

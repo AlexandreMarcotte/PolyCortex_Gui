@@ -2,7 +2,7 @@
 from collections import deque
 import numpy as np
 # My packages
-from visualisation_with_pyqt import OpenBciGui
+from main_window_menubar_and_tabs import OpenBciGui
 # PyQt5
 from PyQt5.QtWidgets import QApplication
 import sys

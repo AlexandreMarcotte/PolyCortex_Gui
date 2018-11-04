@@ -7,11 +7,9 @@ from random import random, randint
 from math import pi
 from numpy import sin
 from time import time, sleep
-# OpenBCI
 import logging
-import open_bci_v3 as bci
-
-# My modules
+# OpenBCI hardware module
+import openbci_hardware_interface.open_bci_v3 as bci
 
 
 def stream_data_from_OpenBCI(gv):

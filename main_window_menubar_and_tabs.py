@@ -10,7 +10,7 @@ from time import time
 
 from functools import partial
 # My packages
-from global_variable import GlobVar
+from app.global_variables import GlobVar
 # -- Tabs --
 from tabs.eeg_fft_classif_tab.eeg_fft_classif_tab import EegFftClassifTab
 from tabs.experiment_tab.experiment_tab import ExperimentTab

@@ -9,8 +9,9 @@ import random
 import numpy as np
 from sklearn.externals import joblib
 import matplotlib.pyplot as plt
+import os
 # My packages
-from generated_signal import read_data_from_file
+from generate_signal.generated_signal import read_data_from_file
 from signal_manipulation import uniformize_data
 
 class StaticGraphTab:
@@ -33,8 +34,10 @@ class StaticGraphTab:
         self.region_brush = [self.red, self.green, self.blue,
                              self.yellow, self.purple]
         # Classification model
-        self.clf = joblib.load('linear_svm_fitted_model.pkl')
-        self.avg_emg_class_type = np.load('avg_emg_class_type.npy')
+        clf_path = 'machine_learning/linear_svm_fitted_model.pkl'
+        self.clf = joblib.load(os.path.join(os.getcwd(), clf_path))
+        avg_emg_path = 'tabs/static_graph_tab/avg_emg_class_type.npy'
+        self.avg_emg_class_type = np.load(os.path.join(os.getcwd(), avg_emg_path))
         self.classified_data = [[] for _ in range(self.gv.N_CH)]
         self.classified_once_every = 6
         self.classified_pos = 250
