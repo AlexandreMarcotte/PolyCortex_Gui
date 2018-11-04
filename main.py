@@ -10,15 +10,9 @@ import sys
 import qdarkstyle
 
 import atexit
-# Game
-from game.main import RunGame
 
 
 def main():
-    # Game
-    # run_game = RunGame()
-    # run_game.start()
-
     # Start the multigraphes
     app = QApplication(sys.argv)
     # Apply dark theme
