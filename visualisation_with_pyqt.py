@@ -9,6 +9,7 @@ import os
 import numpy as np
 from time import time
 
+from functools import partial
 # My packages
 from global_variable import GlobVar
 # -- Tabs --
@@ -18,6 +19,8 @@ from tabs.tab3 import Tab3
 from tabs.tab4 import Tab4
 from tabs.tab5 import Tab5
 from tabs.tab6 import Tab6
+# Game
+from game.main import RunGame
 
 
 class OpenBciGui(QMainWindow):
@@ -41,49 +44,69 @@ class OpenBciGui(QMainWindow):
 
     def create_menu_bar(self):
         main_menu = self.menuBar()
-        # ---File---
-        self.menuFile = QMenu(title='&System Control Panel')
+        self.controlPanel = QMenu('&System Control Panel')
         ## Action
-        ### OpenBCI
+        # OpenBCI
+        self.create_openbci_menu()
+        # Fake data
+        self.create_stream_fake_data_menu()
+        # From File
+        self.create_stream_from_file_menu()
+        # Connect the btn in the menubar to the print name function
+        for btn in [self.openbci, self.fake_data, self.choose_file]:
+            btn.triggered.connect(partial(self.choose_stream, btn))
+
+        main_menu.addMenu(self.controlPanel)
+        self.create_menu_start_game()
+        main_menu.addMenu(self.menuGame)
+
+    def choose_stream(self, btn):
+        """Create a function that will print the name of the menubar
+        btn that was selected"""
+        self.gv.stream_origin[0] = btn.name
+
+    def start_the_game(self):
+        """Start the miniGame"""
+        run_game = RunGame()
+        run_game.start()
+
+    def create_openbci_menu(self):
         self.openbci = QtGui.QAction(QIcon('./logo/openbci_logo.png'),
-                                     'OpenBci')                                # TODO: ALEXM Utiliser une liste déroulante plutot
+                                     'OpenBci')  # TODO: ALEXM Utiliser une liste déroulante plutot
         self.openbci.setShortcut('Ctrl+O')
         self.openbci.setStatusTip('Stream data from Openbci...')
         self.openbci.name = 'Stream from OpenBCI'
-        ### Fake data
+        self.controlPanel.addAction(self.openbci)
+
+    def create_stream_fake_data_menu(self):
         self.fake_data = QtGui.QAction('Fake data')
-        self.fake_data.setStatusTip("""Stream data from artificially 
-                                       generated data...""")
+        self.fake_data.setStatusTip(
+            """Stream data from artificially generated data...""")
         self.fake_data.name = 'Stream from fake data'
-        ### From File
-        self.from_file = QtGui.QAction('From file')
-        self.from_file.setStatusTip("""Stream data from previously  
-                                       saved file...""")
-        self.from_file.name = 'Stream from file'
+        self.controlPanel.addAction(self.fake_data)
 
-        # Connect the btn in the menubar to the print name function
-        for btn in [self.openbci, self.fake_data, self.from_file]:
-            btn.triggered.connect(self.make_callback(btn))
-        # self.quit_action.triggered.connect(....)
-        self.menuFile.addAction(self.openbci)
-        self.menuFile.addAction(self.fake_data)
-        self.menuFile.addAction(self.from_file)
+    def create_stream_from_file_menu(self):
+        self.from_file = QMenu(title='From file')
+        self.from_file.setStatusTip(
+            """Stream data from previously saved file...""")
+        self.controlPanel.addMenu(self.from_file)
 
-        main_menu.addMenu(self.menuFile)
+        self.choose_file = QtGui.QAction('From file')
+        self.choose_file.setStatusTip(
+            """Choose the file from which you want to stream data...""")
+        self.from_file.addAction(self.choose_file)
+        self.choose_file.name = 'Stream from file'
+
+    def create_menu_start_game(self):
         # ---Start game---
-        self.menuEdit = QMenu(title='&Start game')
-        main_menu.addMenu(self.menuEdit)
-
-    def make_callback(self, btn):
-        """Create the callback with a function factory (closure)"""
-        def print_btn_selected():
-            """Create a function that will print the name of the menubar
-            btn that was selected"""
-            self.gv.stream_origin[0] = btn.name
-        return print_btn_selected
+        self.menuGame = QMenu(title='&Start game')
+        self.start_game = QtGui.QAction('Start game...')
+        self.start_game.setStatusTip("""Press to start the mini game...""")
+        self.start_game.triggered.connect(self.start_the_game)
+        self.menuGame.addAction(self.start_game)
 
 
-class MainWindow(QWidget):
+class MainWindow(QWidget):                                                     # TODO: ALEXM, Change the name of this class so that it fit the model of all the class that are include inside each other in the pyqt framework
     def __init__(self, gv):
         """
         """
@@ -97,50 +120,25 @@ class MainWindow(QWidget):
         self.font.setPointSize(50)
 
     def init_win(self):
-        self.layout = QVBoxLayout(self)
+        """Create the layout ant add all the required tabs to it"""
+        layout = QVBoxLayout(self)
 
-
-
-        # Initialize tab screen
-        self.tabs = QTabWidget()
+        tabs_w_list = QTabWidget()
 
         tabs_name = ['EEG & FFT live graph', 'Experiments', 'EEG static graph',
                      'Mini Game', '3D representation']
-        self.tab1 = QWidget()
-        self.tab2 = QWidget()
-        self.tab3 = QWidget()
-        # self.tab4 = QWidget()
-        self.tab5 = QWidget()
-        self.tab6 = QWidget()
+        tabs_class = [Tab1, Tab2, Tab3, Tab5, Tab6]
+        tabs_w = []
 
-
-        # Add tabs
-        self.tabs.addTab(self.tab1, 'EEG & FFT live graph')
-        self.tabs.addTab(self.tab2, 'Experiments')
-        self.tabs.addTab(self.tab3, 'EEG static graph')
-        self.tabs.addTab(self.tab5, 'Mini Game')
-        self.tabs.addTab(self.tab6, '3D representation')
-
-        # Compose tabs
-        # - Tab 1
-        self.tab_1 = Tab1(self, self.tab1, self.gv)
-        self.tab_1.create_tab1()
-        # - Tab 2
-        self.tab_2 = Tab2(self, self.tab2, self.gv)
-        self.tab_2.create_tab2()
-        # - Tab 3
-        self.tab_3 = Tab3(self, self.tab3)
-        self.tab_3.create_tab3()
-
-        # - Tab 5
-        self.tab_5 = Tab5(self, self.tab5)
-        self.tab_5.create_tab5()
-        
-        # - Tab 6
-        self.tab_6 = Tab6(self, self.tab6)
-        self.tab_6.create_tab6()
+        for i, tab_name in enumerate(tabs_name):
+            tabs_w.append(QWidget())
+            tabs_w_list.addTab(tabs_w[i], tab_name)
+            if i <= 2:
+                tabs_class[i](self, tabs_w[i], self.gv)
+            else:
+                tabs_class[i](self, tabs_w[i])
 
         # Add tabs to widget
-        self.layout.addWidget(self.tabs)
-        self.setLayout(self.layout)
+        layout.addWidget(tabs_w_list)
+        self.setLayout(layout)
 
