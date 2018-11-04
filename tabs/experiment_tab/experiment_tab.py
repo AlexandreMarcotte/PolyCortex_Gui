@@ -11,7 +11,7 @@ from functools import partial
 from random import randint
 
 
-class Tab2:
+class ExperimentTab:
     def __init__(self, main_window, tab_w, gv):
         self.main_window = main_window
         # The second tab that was created inside the main window object

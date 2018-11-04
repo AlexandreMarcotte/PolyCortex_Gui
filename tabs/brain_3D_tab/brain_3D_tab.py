@@ -8,7 +8,7 @@ import pyqtgraph.opengl as gl
 
 import numpy as np
 
-class Tab6:
+class Brain3DTab:
     def __init__(self, main_window, tab_w):
         self.main_window = main_window
         self.tab_w = tab_w

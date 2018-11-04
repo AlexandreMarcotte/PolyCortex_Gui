@@ -12,7 +12,7 @@ from pynput import keyboard
 import threading
 from random import randint
 
-class Tab5:
+class MiniGameTab:
     def __init__(self, main_window, tab_w):
         self.main_window = main_window
         self.tab_w = tab_w

@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 from PyQt5.QtWidgets import *
 from PyQt5 import QtGui, QtCore
 from PyQt5.QtCore import Qt, pyqtSlot
@@ -13,12 +12,12 @@ from functools import partial
 # My packages
 from global_variable import GlobVar
 # -- Tabs --
-from tabs.tab1 import Tab1
-from tabs.tab2 import Tab2
-from tabs.tab3 import Tab3
-from tabs.tab4 import Tab4
-from tabs.tab5 import Tab5
-from tabs.tab6 import Tab6
+from tabs.eeg_fft_classif_tab.eeg_fft_classif_tab import EegFftClassifTab
+from tabs.experiment_tab.experiment_tab import ExperimentTab
+from tabs.static_graph_tab.static_graph_tab import StaticGraphTab
+# from tabs.tab4.tab import Tab4
+from tabs.mini_game_tab.mini_game_tab import MiniGameTab
+from tabs.brain_3D_tab.brain_3D_tab import Brain3DTab
 # Game
 from game.main import RunGame
 
@@ -126,8 +125,9 @@ class MainWindow(QWidget):                                                     #
         tabs_w_list = QTabWidget()
 
         tabs_name = ['EEG & FFT live graph', 'Experiments', 'EEG static graph',
-                     'Mini Game', '3D representation']
-        tabs_class = [Tab1, Tab2, Tab3, Tab5, Tab6]
+                     'Mini Game', '3D brain']
+        tabs_class = [EegFftClassifTab, ExperimentTab, StaticGraphTab,
+                      MiniGameTab, Brain3DTab]
         tabs_w = []
 
         for i, tab_name in enumerate(tabs_name):

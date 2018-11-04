@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 from generated_signal import read_data_from_file
 from signal_manipulation import uniformize_data
 
-class Tab3:
+class StaticGraphTab:
     def __init__(self, main_window, tab_w, gv):
         super().__init__()
         self.main_window = main_window

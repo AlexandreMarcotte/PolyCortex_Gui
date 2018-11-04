@@ -29,11 +29,11 @@ from generated_signal import (stream_data_from_OpenBCI, CreateData,
 # from save_to_file import WriteDataToFile
 # from visualisation_with_pyqt import MainWindow
 
-class Tab1:
-    def __init__(self, main_window, tab1, gv):
+class EegFftClassifTab:
+    def __init__(self, main_window, tab_w, gv):
         super().__init__()
         self.main_window = main_window
-        self.tab_w = tab1
+        self.tab_w = tab_w
         self.gv = gv
 
         self.last_classified_type = [0]
