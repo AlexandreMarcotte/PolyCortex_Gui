@@ -2,7 +2,7 @@
 from collections import deque
 import numpy as np
 # My packages
-from main_window_menubar_and_tabs import OpenBciGui
+from main_window_menubar_and_tabs import MainWindow
 # PyQt5
 from PyQt5.QtWidgets import QApplication
 import sys
@@ -18,12 +18,12 @@ def main():
     # Apply dark theme
     app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
     # Create the Gui
-    open_bci_gui = OpenBciGui()
-    open_bci_gui.create_gui()
+    openbci_gui = MainWindow()
+    openbci_gui.create_mainwindow()
 
     @atexit.register   # work only if click on x on the window
     def save_data_at_exit():
-        open_bci_gui.main_window.tab_1.write_to_file()
+        open_bci_gui.main_window.tab_1.write_to_file()                         # TODO: ALEXM: kill all the thread here
 
     # start the main tread that contains all the timers
     sys.exit(app.exec_())

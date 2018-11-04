@@ -25,10 +25,11 @@ from signal_manipulation import uniformize_data
 from time import time
 
 # -- My packages --
-from generate_signal.generated_signal import (
-    stream_data_from_OpenBCI, CreateData, CreateDataFromFile)
+from generate_signal.from_openbci import stream_data_from_OpenBCI
+from generate_signal.from_fake_data import CreateFakeData
+from generate_signal.from_file import CreateDataFromFile
 # from save_to_file import WriteDataToFile
-# from visualisation_with_pyqt import MainWindow
+
 
 class EegFftClassifTab:
     def __init__(self, main_window, tab_w, gv):
@@ -213,7 +214,7 @@ class EegFftClassifTab:
             self.board = stream_data_from_OpenBCI(self.gv)
         elif self.gv.stream_origin[0] == 'Stream from fake data':
             # Create fake data for test case
-            create_data = CreateData(self.gv)
+            create_data = CreateFakeData(self.gv)
             create_data.start()
 
         elif self.gv.stream_origin[0] == 'Stream from file':

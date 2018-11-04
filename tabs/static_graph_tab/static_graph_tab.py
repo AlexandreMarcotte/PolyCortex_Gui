@@ -11,7 +11,7 @@ from sklearn.externals import joblib
 import matplotlib.pyplot as plt
 import os
 # My packages
-from generate_signal.generated_signal import read_data_from_file
+from generate_signal.from_file import read_data_from_file
 from signal_manipulation import uniformize_data
 
 class StaticGraphTab:
