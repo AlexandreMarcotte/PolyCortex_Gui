@@ -33,7 +33,7 @@ class Tab1:
     def __init__(self, main_window, tab1, gv):
         super().__init__()
         self.main_window = main_window
-        self.tab1 = tab1
+        self.tab_w = tab1
         self.gv = gv
 
         self.last_classified_type = [0]
@@ -50,7 +50,7 @@ class Tab1:
         self.N_BUTTON_PER_CH = 4
         # Contain all the button for all the channels with the specif action
         # they trigger
-        self.action_button_func = []
+        self.actn_btns_func = []
 
         # self.gv.n_data_created = n_data_created
         self.gv.N_CH = len(self.gv.data_queue)
@@ -62,9 +62,11 @@ class Tab1:
         self.save_path = f'./csv_saved_files/2exp_pinch_close_{self.time}.csv'
         self.stream_path = f'./experiment_csv/2exp_pinch_close_2018-08-29 19:44:54.567417.csv'
         # Buttons action
-        self.action_buttons = []
+        self.actn_btns = []
         # Init the timer
         self.init_timers()
+        # Create the tab itself
+        self.create_tab()
 
     def init_timers(self):
         # EEG timers
@@ -76,11 +78,11 @@ class Tab1:
         # Classification timer
         self.timer_classif = QtCore.QTimer()
 
-    def create_tab1(self):
-        self.tab1.layout = QHBoxLayout(self.main_window)
+    def create_tab(self):
+        self.tab_w.layout = QHBoxLayout(self.main_window)
         # Add docs to the tab
         self.area = DockArea()
-        self.tab1.layout.addWidget(self.area)
+        self.tab_w.layout.addWidget(self.area)
         self.create_docks()
         # Create the plots
         # - EEG
@@ -101,7 +103,7 @@ class Tab1:
         # self.add_stream_combo_box(2)
         self.add_banner()
 
-        self.tab1.setLayout(self.tab1.layout)
+        self.tab_w.setLayout(self.tab_w.layout)
 
     def create_docks(self):
         # - EEG
@@ -109,7 +111,11 @@ class Tab1:
         self.area.addDock(self.eeg_dock, 'left')
         # Add the layout to the dock
         self.eeg_layout = pg.LayoutWidget()
-        self.eeg_dock.addWidget(self.eeg_layout)
+        # Create scrolling region for portion graph
+        self.scroll = QScrollArea()
+        self.scroll.setWidgetResizable(True)
+        self.scroll.setWidget(self.eeg_layout)
+        self.eeg_dock.addWidget(self.scroll)
         # - FFT
         self.fft_dock = Dock('FFT', size=(5,10))
         self.area.addDock(self.fft_dock, 'right')
@@ -326,40 +332,33 @@ class Tab1:
                 # in the tab
                 action_button = ActionButton(self.gv, self.eeg_layout,
                                              b_n, ch, pos)
-                self.action_buttons.append(action_button)
+                self.actn_btns.append(action_button)
                 # Average
                 if b_n % self.N_BUTTON_PER_CH == 0:
-                    # Create an average action
-                    b = QtGui.QPushButton('A')  # TODO: ALEXM remove redondancy
-                    b.setToolTip('Show average value of queue')
-                    b.setCheckable(True)
-                    b.toggled.connect(partial(self.action_buttons[tot_b_num].show_avg))
                     col = 3
+                    b = self.create_actn_btn(
+                        tot_b_num, 'A', tip='Show average value of queue')
+                    b.toggled.connect(partial(self.actn_btns[tot_b_num].show_avg))
+
                 # Max
                 elif b_n % self.N_BUTTON_PER_CH == 1:
-                    # Create a max action
-                    b = QtGui.QPushButton('M')
-                    b.setToolTip('Show max value of queue')
-                    b.setCheckable(True)
-                    b.toggled.connect(partial(self.action_buttons[tot_b_num].show_max))
                     col = 3
+                    # Create a max action
+                    b = self.create_actn_btn(
+                        tot_b_num, 'M', tip='Show max value of queue')
+                    b.toggled.connect(partial(self.actn_btns[tot_b_num].show_max))
+
                 # Detection
                 elif b_n % self.N_BUTTON_PER_CH == 2:
-                    pos-=2
-                    b = QtGui.QPushButton('D')
-                    b.setToolTip('Show detected class patern')
-                    b.setCheckable(True)
-                    col = 4
+                    pos-=2; col = 4
+                    b = self.create_actn_btn(
+                        tot_b_num, 'D', tip='Show detected class patern')
                 # Other function
                 elif b_n % self.N_BUTTON_PER_CH == 3:
-                    b = QtGui.QPushButton('O')
-                    b.setToolTip('Show other action')
-                    b.setCheckable(True)
                     col = 4
-
+                    b = self.create_actn_btn(tot_b_num, 'O', 'Show other action')
                 # Set position and size of the button values
-                row=pos
-                rowspan=1; colspan=1
+                row=pos; rowspan=1; colspan=1
                 self.eeg_layout.addWidget(b, row, col, rowspan, colspan)
                 pos += 1
                 # Change the total number of buttons
@@ -370,11 +369,18 @@ class Tab1:
             self.line = QFrame(self.main_window)
             self.line.setGeometry(QtCore.QRect())
             self.line.setFrameShape(QFrame.HLine)
-            self.line.setFrameShadow(QFrame.Sunken)
+            # self.line.setFrameShadow(QFrame.Sunken)
             self.eeg_layout.addWidget(self.line, row, col, rowspan, colspan)
             pos += 1
+    
+    def create_actn_btn(self, tot_b_num, actn_letter, actn_func=None,
+                        tip='', checkable=True):
+        b = QtGui.QPushButton(actn_letter)
+        b.setToolTip(tip)
+        b.setCheckable(checkable)
+        return b
 
-    def init_saving(self):
+    def init_saving(self):  #KEEP THIS PORTION OF THE CODE (COMMENTED SO THAT IT DOESNT ALWAYS SAVE)
         pass
         # write data to file:
         # self.write_data_to_file = WriteDataToFile(self.save_path,
@@ -446,10 +452,12 @@ class Tab1:
         self.one_ch_deque = self.gv.data_queue[0]
         self.wave_plot_obj = WaveGraph(self.wave_plot, self.one_ch_deque)
         # self.timer_show_classif.timeout.connect(self.wave_plot_obj.update_wave_plotting)
+        """
         mne_head = QLabel(self.main_window)
         mne_head.setPixmap(QtGui.QPixmap('./logo/mne_head.png'))
         row=2; col=0; rowspan=1; colspan=1
         self.wave_layout.addWidget(mne_head, row, col, rowspan, colspan)
+        """
 
     def init_show_classif_plot(self):
         # --- Bar chart ---
