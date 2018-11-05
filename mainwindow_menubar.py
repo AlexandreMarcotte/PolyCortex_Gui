@@ -5,9 +5,6 @@ from PyQt5.QtCore import Qt, pyqtSlot
 from PyQt5.QtGui import QPixmap, QIcon
 # from pyqtgraph.Qt import QtGui
 import os
-import numpy as np
-from time import time
-
 from functools import partial
 # My packages
 from app.global_variables import GlobVar
@@ -24,7 +21,7 @@ class MainWindow(QMainWindow):
                              # in many of this project classes
     
     def create_mainwindow(self):
-        self.setWindowTitle('OpenBCI GUI')
+        self.setWindowTitle('Openbci Gui')
         self.setWindowIcon(QtGui.QIcon('./logo/polycortex_logo.png'))
         x=0; y=0; w=1200; h=900
         self.setGeometry(x,y,w,h)

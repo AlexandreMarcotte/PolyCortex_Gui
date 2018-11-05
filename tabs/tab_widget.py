@@ -28,13 +28,16 @@ class TabWidget(QWidget):                                                     # 
                       MiniGameTab, Brain3DTab]
 
         for i, tab_name in enumerate(tabs_name):
+            # Create a list of QWidgets
             tabs_w.append(QWidget())
+            # Add each QWidgets to a QTabWidget structure
             tabs_w_list.addTab(tabs_w[i], tab_name)
+            # Create tabs
             if i <= 2:
                 tabs_class[i](self, tabs_w[i], self.gv)
             else:
                 tabs_class[i](self, tabs_w[i])
 
-        # Add tabs to widget
+        # Add tabs to the window layout
         layout.addWidget(tabs_w_list)
         self.setLayout(layout)

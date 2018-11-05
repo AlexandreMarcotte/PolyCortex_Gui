@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 import os
 # My packages
 from generate_signal.from_file import read_data_from_file
-from signal_manipulation import uniformize_data
+from data_processing_pipeline.uniformize_data import uniformize_data
 
 class StaticGraphTab:
     def __init__(self, main_window, tab_w, gv):

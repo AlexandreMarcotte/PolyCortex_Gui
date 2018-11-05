@@ -20,3 +20,6 @@ class GlobVar:
         self.all_experiment_val = deque(np.zeros(self.DEQUE_LEN))
         # Variable change in the menubar
         self.stream_origin = ['Stream from fake data']
+        # Classification
+        self.last_classified_type = [0]
+

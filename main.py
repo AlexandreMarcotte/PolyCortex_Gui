@@ -2,7 +2,7 @@
 from collections import deque
 import numpy as np
 # My packages
-from main_window_menubar_and_tabs import MainWindow
+from mainwindow_menubar import MainWindow
 # PyQt5
 from PyQt5.QtWidgets import QApplication
 import sys
