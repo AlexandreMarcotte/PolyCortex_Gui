@@ -1,3 +1,5 @@
+from PyQt5 import QtCore
+
 from sklearn.externals import joblib
 import os
 import numpy as np
@@ -6,11 +8,48 @@ from collections import deque
 from data_processing_pipeline.uniformize_data import uniformize_data
 from time import time
 
-class ClassifGraph:
-    def __init__(self, gv, show_classif_plot, n_classif_plot,
-                 last_classified_type, n_data_created):
+# Classification
+from data_processing_pipeline.uniformize_data import uniformize_data
+
+class ClassifPlotCreator: 
+    def __init__(self, gv, layout):
         self.gv = gv
-        self.last_classified_type = last_classified_type
+        self.layout = layout
+        self.timer = QtCore.QTimer()
+        
+    def init_show_classif_plot(self):
+        self.create_bar_chart()
+        self.n_classif_plot = self.create_n_classif_plot()
+        # Create the object to update the bar chart graph and the line graph
+        ClassifGraph(self.gv, plot, self.n_classif_plot)
+    
+        self.timer.timeout.connect(self.classification_graph.update_all)
+    
+    def create_bar_chart(self): 
+        # --- Bar chart ---
+        bar_chart = pg.PlotWidget(background=(3, 3, 3))
+        bar_chart.plotItem.setLabel(axis='left', text='Power', units='None')
+        bar_chart.setYRange(0, 12)
+        # Add to tab layout
+        self.layout.addWidget(bar_chart, 0, 0, 1, 1)
+    
+    def create_n_classif_plot(self): 
+        """Number of classification per type graph
+           create the plot widget and its characteristics """
+        n_classif_plot = pg.PlotWidget(background=(3, 3, 3))
+        n_classif_plot.plotItem.showGrid(x=True, y=True, alpha=0.3)
+        n_classif_plot.plotItem.setLabel(axis='bottom',
+                                              text='n classification time')
+        n_classif_plot.plotItem.setLabel(axis='left',
+                                              text='n classification')
+        # Add to tab layout
+        self.layout.addWidget(n_classif_plot, 1, 0, 1, 1)
+        return n_classif_plot
+        
+
+class ClassifGraph:
+    def __init__(self, gv, show_classif_plot, n_classif_plot):
+        self.gv = gv
         clf_path = 'machine_learning/linear_svm_fitted_model.pkl'
         self.clf = joblib.load(os.path.join(os.getcwd(), clf_path))
         self.n_tot_predict = 0
@@ -71,13 +110,13 @@ class ClassifGraph:
         # Type CLOSE
         if self.y[6] >= 4:
             self.y = np.array(np.zeros(9))
-            self.last_classified_type[0] = 6
+            self.gv.last_classified_type[0] = 6
             self.refract_period_init_t = time()
             self.is_refract_period = True
         # Type PINCH
         elif self.y[7] >= 4:
             self.y = np.array(np.zeros(9))
-            self.last_classified_type[0] = 7
+            self.gv.last_classified_type[0] = 7
             self.refract_period_init_t = time()
             self.is_refract_period = True
 

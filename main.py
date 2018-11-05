@@ -1,8 +1,6 @@
 # General packages
 from collections import deque
 import numpy as np
-# My packages
-from mainwindow_menubar import MainWindow
 # PyQt5
 from PyQt5.QtWidgets import QApplication
 import sys
@@ -10,6 +8,9 @@ import sys
 import qdarkstyle
 
 import atexit
+
+# My packages
+from mainwindow_menubar import MainWindow
 
 
 def main():

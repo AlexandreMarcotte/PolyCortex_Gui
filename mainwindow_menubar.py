@@ -45,7 +45,7 @@ class MainWindow(QMainWindow):
         self.create_stream_fake_data_menu()
         # From File
         self.create_stream_from_file_menu()
-        # Connect the btn in the menubar to the print name function
+        # Connect the btn in the menubar to the choose stream function
         for btn in [self.openbci, self.fake_data, self.choose_file]:
             btn.triggered.connect(partial(self.choose_stream, btn))
 
@@ -84,6 +84,19 @@ class MainWindow(QMainWindow):
         """Create a function that will print the name of the menubar
         btn that was selected"""
         self.gv.stream_origin[0] = btn.name
+
+        if btn.name == 'Stream from file':
+            self.choose_streaming_file()
+
+    def choose_streaming_file(self):
+        # From: https://pythonspot.com/pyqt5-file-dialog/
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        file_name, _ = QFileDialog.getOpenFileName(
+            self.main_window, "QFileDialog.getOpenFileName()", "",
+            "All Files (*);;Python Files (*.py)", options=options)
+        if file_name:
+            self.stream_path = file_name
 
     def create_menu_start_game(self):
         # ---Start game---

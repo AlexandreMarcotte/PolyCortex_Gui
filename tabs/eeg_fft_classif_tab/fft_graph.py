@@ -1,7 +1,6 @@
 from collections import deque
 import numpy as np
 from numpy.fft import fft, fftfreq
-import pyqtgraph as pg
 from functools import partial
 
 from PyQt5.QtWidgets import *
@@ -11,43 +10,45 @@ from PyQt5.QtCore import Qt, pyqtSlot
 import pyqtgraph as pg
 from pyqtgraph.dockarea import *
 
+# My packages 
+from app.colors import *
+
 
 class FftGraph:
     """
     """
-    def __init__(self, main_window, fft_layout, timer_fft, gv, pen_color):
+    def __init__(self, main_window, layout, gv):
         self.main_window = main_window
-        self.fft_layout = fft_layout
-        self.timer_fft = timer_fft
+        self.layout = layout
+        self.timer = QtCore.QTimer()
         self.gv = gv
-        self.pen_color = pen_color
 
         self.N_DATA = self.gv.DEQUE_LEN
         self.curve_freq = []
         
-        self.init_fft_plot()
+        self.init_plot()
 
-    def init_fft_plot(self):
+    def init_plot(self):
         """
         """
         # Create the plot widget and its characteristics
-        self.fft_plot = pg.PlotWidget(background=(3, 3, 3))
-        self.fft_plot.plotItem.showGrid(x=False, y=True, alpha=0.3)
-        self.fft_plot.plotItem.setLabel(axis='bottom', text='Frequency',
+        self.plot = pg.PlotWidget(background=(3, 3, 3))
+        self.plot.plotItem.showGrid(x=False, y=True, alpha=0.3)
+        self.plot.plotItem.setLabel(axis='bottom', text='Frequency',
                                    units='Hz')                                 # Todo : ALEXM : verifier l'uniter
-        self.fft_plot.plotItem.setLabel(axis='left', text='Amplitude',
+        self.plot.plotItem.setLabel(axis='left', text='Amplitude',
                                    units='None')
         # Add to tab layout
-        self.fft_layout.addWidget(self.fft_plot, 1, 0, 1, 1)
+        self.layout.addWidget(self.plot, 1, 0, 1, 1)
         for ch in range(self.gv.N_CH):
             self.curve_freq.append(
-                self.fft_plot.plot(deque(np.zeros(self.N_DATA), maxlen=self.N_DATA)))
+                self.plot.plot(deque(np.zeros(self.N_DATA), maxlen=self.N_DATA)))
         # Associate the plot to an FftGraph object
-        self.timer_fft.timeout.connect(self.update_fft_plotting)
+        self.timer.timeout.connect(self.update_plotting)
         # Create the on button
-        self.fft_on_off_button()
+        self.on_off_button()
 
-    def update_fft_plotting(self):
+    def update_plotting(self):
         remove_first_data = 2
         # interval of time from the first to the last value that was add to the queue
         delta_t = (self.gv.t_queue[-1] - self.gv.t_queue[0])
@@ -59,18 +60,18 @@ class FftGraph:
             # Keep all frequency possibles                                                  # TODO: Change frequency in function of time
             self.curve_freq[ch].setData(freq_range,
                                         abs(ch_fft[remove_first_data:self.N_DATA//2]))         # TODO: ALEXM prendre abs ou real? avec real il y a des valeurs negatives est-ce que c'est normal?
-            self.curve_freq[ch].setPen(self.pen_color[ch])
+            self.curve_freq[ch].setPen(pen_colors[ch])
 
-    def fft_on_off_button(self):
+    def on_off_button(self):
         b = QPushButton('Show FFT', self.main_window)
         b.setStyleSheet("background-color: rgba(0, 0, 80, 0.4)")
-        self.fft_layout.addWidget(b, 0, 0, 1, 1)
+        self.layout.addWidget(b, 0, 0, 1, 1)
         b.setCheckable(True)
-        b.toggled.connect(partial(self.start_fft))
+        b.toggled.connect(partial(self.start))
 
     @QtCore.pyqtSlot(bool)
-    def start_fft(self, checked):
+    def start(self, checked):
         if checked:
-            self.timer_fft.start(250)
+            self.timer.start(250)
         else:
-            self.timer_fft.stop()
+            self.timer.stop()

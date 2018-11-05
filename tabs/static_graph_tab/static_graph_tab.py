@@ -13,6 +13,7 @@ import os
 # My packages
 from generate_signal.from_file import read_data_from_file
 from data_processing_pipeline.uniformize_data import uniformize_data
+from app.colors import *
 
 class StaticGraphTab:
     def __init__(self, main_window, tab_w, gv):
@@ -25,14 +26,7 @@ class StaticGraphTab:
         self.slider_last = 0
         self.static_graph_file_name = './experiment_csv/2exp_pinch_close_2018-08-29 19:44:54.567417.csv'
         # Brush color for region delimiting experimentation events
-        self.pale_red = (255, 0, 0, 35)
-        self.red = (255, 0, 0, 50)
-        self.green = (0, 255, 0, 50)
-        self.blue = (0, 0, 255, 50)
-        self.yellow = (255, 255, 0, 50)
-        self.purple = (146, 56, 219, 50)
-        self.region_brush = [self.red, self.green, self.blue,
-                             self.yellow, self.purple]
+        self.region_brush = [red, green, blue, yellow, purple]
         # Classification model
         clf_path = 'machine_learning/linear_svm_fitted_model.pkl'
         self.clf = joblib.load(os.path.join(os.getcwd(), clf_path))
@@ -89,20 +83,15 @@ class StaticGraphTab:
         chose_file = QtGui.QPushButton('Choose file containing data')
         chose_file.setStyleSheet("background-color: rgba(0, 0, 150, 0.5)")
         chose_file.clicked.connect(partial(self.open_static_data_file))
-        row=0; col=0; rowspan=1; colspan=1
-        self.open_file_layout.addWidget(chose_file,
-                                        row, col, rowspan, colspan)
+        self.open_file_layout.addWidget(chose_file, 0, 0, 1, 1)
         # Create text box to show or enter path to data file
         self.data_path = QtGui.QLineEdit(self.static_graph_file_name)
-        row=0; col=1; rowspan=1; colspan=1
-        self.open_file_layout.addWidget(self.data_path,
-                                        row, col, rowspan, colspan)
+        self.open_file_layout.addWidget(self.data_path, 0, 1, 1, 1)
         # Read the data from the file
         self.open_file_b = QtGui.QPushButton('Open File')
         self.open_file_b.clicked.connect(partial(self.create_stationnary_plot))
         row=0; col=2; rowspan=1; colspan=1
-        self.open_file_layout.addWidget(self.open_file_b,
-                                        row, col, rowspan, colspan)
+        self.open_file_layout.addWidget(self.open_file_b, 0, 2, 1, 1)
         self.add_static_plots()
 
     @pyqtSlot()
@@ -195,9 +184,7 @@ class StaticGraphTab:
         # # Slider to scoll through all data
         self.slider = QSlider(Qt.Horizontal)
         self.slider.setRange(0, N_DATA)
-        row=ch*2+2; col=0; rowspan=1; colspan=1
-        self.full_ch_layouts[ch].addWidget(self.slider,
-                                           row, col, rowspan, colspan)
+        self.full_ch_layouts[ch].addWidget(self.slider, ch*2+2, 0, 1, 1)
         self.update_slider_graph = UpdateSliderGraph(
                 self.slider, self.all_data_plots[ch],
                 self.regions[ch], self.slider_last,
@@ -240,13 +227,13 @@ class StaticGraphTab:
         self.portion_plots[ch].addItem(self.portion_regions[ch])
         self.portion_regions[ch].setRegion(
                 [self.classified_pos, self.classified_pos+self.emg_signal_len])
-        self.portion_regions[ch].setBrush(self.pale_red)
+        self.portion_regions[ch].setBrush(pale_red)
         # Classification graph (line down)
         self.classif_regions.append(pg.LinearRegionItem())
         self.classif_plots[ch].addItem(self.classif_regions[ch])
         self.classif_regions[ch].setRegion(
                 [self.classified_pos, self.classified_pos])
-        self.classif_regions[ch].setBrush(self.pale_red)
+        self.classif_regions[ch].setBrush(pale_red)
         # Connect the rectangular region in the emg graph to the line shaped
         # one in the classification data graph
         self.classif_region_updates.append(
@@ -280,17 +267,6 @@ class StaticGraphTab:
             self.add_portion_static_plot(ch)
             # Full graph
             self.add_full_static_graph(ch)
-    #
-    # def assign_n_to_ch(self):
-    #     for ch in range(self.gv.N_CH):
-    #         # +1 so the number str start at 1
-    #         b_on_off_ch = QtGui.QPushButton(str(ch + 1))
-    #         style = ("""QPushButton { background-color: rgba(40, 40, 40, 100);
-    #                     min-width: 14px}""")
-    #         b_on_off_ch.setStyleSheet(style)
-    #         # Set position and size of the button values
-    #         row=ch*2+1; col=0; rowspan=1
-    #         self.portion_graph_layout.addWidget(b_on_off_ch, row, col, rowspan, 1)
 
     def add_portion_static_plot(self, ch):
         # - Portion
@@ -304,16 +280,10 @@ class StaticGraphTab:
         # Instantiate the average classification
         self.avg_classif_plots.append(pg.PlotWidget())
         # Portion of the graph
-        row=ch*2; col=3; rowspan=1; colspan=1
-        self.portion_ch_layouts[ch].addWidget(self.portion_plots[ch],
-                                              row, col, rowspan, colspan)
+        self.portion_ch_layouts[ch].addWidget(self.portion_plots[ch],ch*2,3,1,1)
         # Classification plot
-        row=ch*2+1; col=3; rowspan=1; colspan=1
-        self.portion_ch_layouts[ch].addWidget(self.classif_plots[ch],
-                                              row, col, rowspan, colspan)
-        row=ch*2; col=0; rowspan=2; colspan=3
-        self.portion_ch_layouts[ch].addWidget(self.avg_classif_plots[ch],
-                                              row, col, rowspan, colspan)
+        self.portion_ch_layouts[ch].addWidget(self.classif_plots[ch],ch*2+1,3,1,1)
+        self.portion_ch_layouts[ch].addWidget(self.avg_classif_plots[ch],ch*2,0,2,3)
         # Add number of the current classification in the plot's right corner
         self.all_char_class_type.append(pg.TextItem(fill=(0, 0, 0), anchor=(0.5, 0)))
         html = f'0'
@@ -342,9 +312,7 @@ class StaticGraphTab:
         self.all_data_plots[ch].setXRange(0, self.full_graph_x_range)
 
         # All the values open from the saved file
-        row=ch*2+1; col=0; rowspan=1; colspan=1
-        self.full_ch_layouts[ch].addWidget(self.all_data_plots[ch],
-                                           row, col, rowspan, colspan)
+        self.full_ch_layouts[ch].addWidget(self.all_data_plots[ch],ch*2+1,0,1,1)
         # Add these group by channel to the right side of the separation
         self.full_graph_layout.addWidget(self.full_graph_ch_group)
 
@@ -378,7 +346,6 @@ class ClassifRegionUpdate:
         # Update the average classification grap (complete left)
         r_left = self.portion_region.boundingRect().left()
         # r_right = self.portion_region.boundingRect().right()
-
         try:
             classified_type = self.classified_data[int(r_left)]
             html = f'{classified_type}'
@@ -430,4 +397,3 @@ class UpdateSliderGraph:
         # Update the region position based on the delta position of the slider
         self.portion_region.setRegion([r_right + delta_slider,
                                        r_left + delta_slider])
-
