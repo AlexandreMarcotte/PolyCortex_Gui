@@ -10,41 +10,60 @@ from time import time
 
 # Classification
 from data_processing_pipeline.uniformize_data import uniformize_data
+from app.colors import *
+from app.activation_b import activation_b
 
 class ClassifPlotCreator: 
     def __init__(self, gv, layout):
+        print('cool')
         self.gv = gv
         self.layout = layout
         self.timer = QtCore.QTimer()
+
+        self.init_show_classif_plot()
         
     def init_show_classif_plot(self):
-        self.create_bar_chart()
-        self.n_classif_plot = self.create_n_classif_plot()
+        bar_chart = self.create_bar_chart()
+        n_classif_plot = self.create_n_classif_plot()
+        self.on_off_button()
+
         # Create the object to update the bar chart graph and the line graph
-        ClassifGraph(self.gv, plot, self.n_classif_plot)
-    
+        self.classification_graph = ClassifGraph(
+            self.gv, bar_chart, n_classif_plot)
         self.timer.timeout.connect(self.classification_graph.update_all)
     
     def create_bar_chart(self): 
         # --- Bar chart ---
-        bar_chart = pg.PlotWidget(background=(3, 3, 3))
+        bar_chart = pg.PlotWidget(background=dark_grey)
         bar_chart.plotItem.setLabel(axis='left', text='Power', units='None')
         bar_chart.setYRange(0, 12)
         # Add to tab layout
-        self.layout.addWidget(bar_chart, 0, 0, 1, 1)
+        self.layout.addWidget(bar_chart, 1, 0)
+        return bar_chart
     
     def create_n_classif_plot(self): 
         """Number of classification per type graph
            create the plot widget and its characteristics """
-        n_classif_plot = pg.PlotWidget(background=(3, 3, 3))
+        n_classif_plot = pg.PlotWidget(background=dark_grey)
         n_classif_plot.plotItem.showGrid(x=True, y=True, alpha=0.3)
         n_classif_plot.plotItem.setLabel(axis='bottom',
                                               text='n classification time')
-        n_classif_plot.plotItem.setLabel(axis='left',
-                                              text='n classification')
+        n_classif_plot.plotItem.setLabel(axis='left', text='n classification')
         # Add to tab layout
-        self.layout.addWidget(n_classif_plot, 1, 0, 1, 1)
+        self.layout.addWidget(n_classif_plot, 2, 0)
         return n_classif_plot
+
+    def on_off_button(self):
+        """Assign pushbutton for starting and stoping the stream"""
+        activation_b(self.layout, 'Start classification', self.start,
+                     (0, 0), 'rgba(0, 0, 80, 0.4)', toggle=True)
+
+    @QtCore.pyqtSlot(bool)
+    def start(self, checked):
+        if checked:
+            self.timer.start(100)
+        else:
+            self.timer.stop()
         
 
 class ClassifGraph:
@@ -52,7 +71,6 @@ class ClassifGraph:
         self.gv = gv
         clf_path = 'machine_learning/linear_svm_fitted_model.pkl'
         self.clf = joblib.load(os.path.join(os.getcwd(), clf_path))
-        self.n_tot_predict = 0
         self.last_classif = np.array([0 for _ in range(15)])
         self.i = 0
         # Classification
@@ -70,8 +88,8 @@ class ClassifGraph:
         self.refract_period_init_t = 0
         self.is_refract_period = False
         for ch in range(self.N_CLASSIF_TYPE):
-            self.curve_n_classif.append(n_classif_plot.plot(deque(np.zeros(N_DATA),
-                                                                  maxlen=N_DATA)))
+            self.curve_n_classif.append(
+                n_classif_plot.plot(deque(np.zeros(N_DATA), maxlen=N_DATA)))
 
     def init_show_classif(self):
         self.x = np.arange(9)
@@ -127,6 +145,7 @@ class ClassifGraph:
 
     def update_bar_chart_plotting(self):
         # Remove All item from the graph
+        print('ouin ouin')
         self.show_classif_plot.clear()
         self.bg1 = pg.BarGraphItem(x=self.x, height=self.y, width=1, brush='b')
         self.show_classif_plot.addItem(self.bg1)
@@ -137,7 +156,8 @@ class ClassifGraph:
             if classif_type:
                 self.curve_n_classif[classif_type].setData(
                     self.n_classif_queue[classif_type])
-                self.curve_n_classif[classif_type].setPen(self.pen_color[classif_type])
+                self.curve_n_classif[classif_type].setPen(
+                                                self.pen_color[classif_type])
 
 
 

@@ -14,10 +14,11 @@ class CreateFakeData(threading.Thread):
         ## time
         self.t = np.linspace(0, 2 * pi, self.gv.DEQUE_LEN)
         ## signal shape
-        self.s1 = sin(self.t)
-        self.s2 = sin(20 * self.t)
-        self.s3 = sin(40 * self.t)
-        self.s4 = 2 * sin(60 * self.t)
+        self.m = 1000
+        self.s1 = self.m * sin(self.t)
+        self.s2 = self.m * sin(20 * self.t)
+        self.s3 = self.m * sin(40 * self.t)
+        self.s4 = self.m * 2 * sin(60 * self.t)
 
     def add_signal_to_queue(self, signal, ch):
         self.gv.data_queue[ch].append(signal)
@@ -31,13 +32,13 @@ class CreateFakeData(threading.Thread):
 
             for ch in range(self.gv.N_CH):
                 rnd_impulse = randint(0, 100)
-                # Set impulse size to be added to the signal
+                # Set impulse size to be added to the signal once every 100 data
                 if rnd_impulse == 0:
-                    imp = 5
+                    imp = 5 * self.m
                 else:
                     imp = 0
                 if ch == 0:
-                    signal = self.s1[i] + self.s3[i]+ self.s4[i] + random() + imp
+                    signal = self.s1[i] + self.s3[i]+ self.s4[i] + random()*self.m + imp
                 elif ch == 1:
                     signal = self.s1[i] + 5
                 elif ch == 2:
@@ -47,7 +48,7 @@ class CreateFakeData(threading.Thread):
                 elif ch == 4:
                     signal = self.s4[i]
                 else:
-                    signal = random()
+                    signal = random() * self.m
 
                 self.add_signal_to_queue(signal, ch)
 

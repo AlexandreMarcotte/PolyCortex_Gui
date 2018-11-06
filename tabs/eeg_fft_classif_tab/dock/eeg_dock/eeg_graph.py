@@ -15,6 +15,7 @@ from .ch_number_action import ChNumberAction
 from .action_button import ActionButton
 
 from app.colors import *
+from app.activation_b import activation_b
             
 
 class EegPlotsCreator:
@@ -64,12 +65,14 @@ class EegPlotsCreator:
 
     def create_buttons(self):
         """Assign pushbutton for starting and stoping the stream"""
-        self.start_streaming_b()
-        self.stop_streaming_b()
+        activation_b(self.layout, 'Start streaming', self.start_streaming,
+                     (2, 1), 'rgba(0, 100, 0, 0.5)')
+        activation_b(self.layout, 'Stop streaming', self.stop_streaming,
+                     (2, 2), 'rgba(100, 0, 0, 0.5)')
 
     def create_plot(self, ch):
         """Create a plot for all eeg signals and the last to keep track of time"""
-        plot = pg.PlotWidget(background=(3, 3, 3))
+        plot = pg.PlotWidget(background=dark_grey)
         plot.plotItem.showGrid(x=True, y=True, alpha=0.2)
         plot.plotItem.setLabel(axis='left', units='v')
         # Create the last plot only to keep track of the time (with zeros as q)
@@ -116,20 +119,8 @@ class EegPlotsCreator:
             ch_number_action = ChNumberAction(self.timers, ch)
             b_on_off_ch.toggled.connect(partial(ch_number_action.stop_ch))
             # Set position and size of the button values
-            self.layout.addWidget(b_on_off_ch, ch*4+4, 0, 1, 1)
-            
-    def start_streaming_b(self):
-        b_start = QtGui.QPushButton('Start streaming')
-        b_start.setStyleSheet("background-color: rgba(0, 100, 0, 0.5)")
-        b_start.clicked.connect(partial(self.start_streaming))
-        self.layout.addWidget(b_start, 2, 1, 1, 1)
+            self.layout.addWidget(b_on_off_ch, ch*4+4, 0)
 
-    def stop_streaming_b(self):
-        b_stop = QtGui.QPushButton('Stop streaming')
-        b_stop.setStyleSheet("background-color: rgba(100, 0, 0, 0.5)")
-        b_stop.clicked.connect(partial(self.stop_streaming))
-        self.layout.addWidget(b_stop, 2, 2, 1, 1)
-        
     @pyqtSlot()
     def start_streaming(self):
         # -----Start streaming data from OPENBCI board ------
@@ -160,8 +151,6 @@ class EegPlotsCreator:
     def start_timers(self):
         for tm in self.timers:
             tm.start()
-        # Start live classification
-        # self.timer_classif.start(0)     # TODO: Start the classification from an other button !
 
     def stop_timers(self):
         for tm in self.timers:
@@ -272,39 +261,39 @@ class Regions:
                 self.regions[no][1].setBrush(brush)
                 self.regions[no][1].setRegion([pos, pos+150])
 
-     # def classif_event(self):
-     #    if self.ch == 3:
-     #        # Create region if event occure and add it to the list that update
-     #        # Their position. And if there is enough region left
-     #        if self.last_classified_type[0] and self.r_waiting:
-     #            spawn_region = self.r_waiting.pop()
-     #            # Select brush type based on event type
-     #            brush = self.region_brush[self.last_classified_type[0] - 6]
-     #            self.regions[spawn_region][1].setBrush(brush)
-     #            self.regions[spawn_region][1].setRegion([self.N_DATA-170,
-     #                                                     self.N_DATA])
-     #            self.r_in_use.append(spawn_region)
-     #            self.last_classified_type[0] = 0
-     #        # keep track of the number of data that was created between call
-     #        # to this function so that the regions pos is updated accordingly
-     #        delta_data = self.gv.n_data_created[0] - self.last_n_data_created
-     #        self.last_n_data_created = self.gv.n_data_created[0]
-     #        # Move regions that are in use at every itteration
-     #        if self.r_in_use:
-     #            for r_no in self.r_in_use:
-     #                self.regions[r_no][0] -= delta_data
-     #                pos = self.regions[r_no][0]
-     #                self.regions[r_no][1].setRegion([pos-170, pos])
-     #                # Remove region out of view
-     #                if self.regions[r_no][0] < 0:
-     #                    self.r_waiting.append(r_no)
-     #                    self.regions[r_no][1].setRegion([self.N_DATA,
-     #                                                     self.N_DATA])
-     #                    self.regions[r_no][0] = self.N_DATA
-     #                    self.r_to_delete.append(r_no)
-     #
-     #        # Remove the regions that are out of the view
-     #        if self.r_to_delete:
-     #            self.r_in_use = [x for x in self.r_in_use \
-     #                             if x not in self.r_to_delete]
-     #            self.r_to_delete = []
+    def classif_event(self):
+        if self.ch == 3:
+            # Create region if event occure and add it to the list that update
+            # Their position. And if there is enough region left
+            if self.last_classified_type[0] and self.r_waiting:
+                spawn_region = self.r_waiting.pop()
+                # Select brush type based on event type
+                brush = self.region_brush[self.last_classified_type[0] - 6]
+                self.regions[spawn_region][1].setBrush(brush)
+                self.regions[spawn_region][1].setRegion([self.N_DATA - 170,
+                                                         self.N_DATA])
+                self.r_in_use.append(spawn_region)
+                self.last_classified_type[0] = 0
+            # keep track of the number of data that was created between call
+            # to this function so that the regions pos is updated accordingly
+            delta_data = self.gv.n_data_created[0] - self.last_n_data_created
+            self.last_n_data_created = self.gv.n_data_created[0]
+            # Move regions that are in use at every itteration
+            if self.r_in_use:
+                for r_no in self.r_in_use:
+                    self.regions[r_no][0] -= delta_data
+                    pos = self.regions[r_no][0]
+                    self.regions[r_no][1].setRegion([pos - 170, pos])
+                    # Remove region out of view
+                    if self.regions[r_no][0] < 0:
+                        self.r_waiting.append(r_no)
+                        self.regions[r_no][1].setRegion([self.N_DATA,
+                                                         self.N_DATA])
+                        self.regions[r_no][0] = self.N_DATA
+                        self.r_to_delete.append(r_no)
+
+            # Remove the regions that are out of the view
+            if self.r_to_delete:
+                self.r_in_use = [x for x in self.r_in_use \
+                                 if x not in self.r_to_delete]
+                self.r_to_delete = []

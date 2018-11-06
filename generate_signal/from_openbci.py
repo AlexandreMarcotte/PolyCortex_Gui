@@ -1,7 +1,7 @@
 import threading
 import logging
 # OpenBCI hardware module
-import openbci_hardware_interface.open_bci_v3 as bci
+import openbci_interface.open_bci_v3 as bci
 
 
 def stream_data_from_OpenBCI(gv):

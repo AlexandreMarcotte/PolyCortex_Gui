@@ -22,8 +22,8 @@ class MainWindow(QMainWindow):
     
     def create_mainwindow(self):
         self.setWindowTitle('Openbci Gui')
-        self.setWindowIcon(QtGui.QIcon('./logo/polycortex_logo.png'))
-        x=0; y=0; w=1200; h=900
+        self.setWindowIcon(QtGui.QIcon('./img/polycortex_logo.png'))
+        x=0; y=0; w=1350; h=950
         self.setGeometry(x,y,w,h)
         # Add a menu bar
         self.create_menu_bar()
@@ -54,7 +54,7 @@ class MainWindow(QMainWindow):
         main_menu.addMenu(self.menuGame)
 
     def create_openbci_menu(self):
-        self.openbci = QtGui.QAction(QIcon('./logo/openbci_logo.png'),
+        self.openbci = QtGui.QAction(QIcon('./img/openbci_logo.png'),
                                      'OpenBci')  # TODO: ALEXM Utiliser une liste déroulante plutot
         self.openbci.setShortcut('Ctrl+O')
         self.openbci.setStatusTip('Stream data from Openbci...')
