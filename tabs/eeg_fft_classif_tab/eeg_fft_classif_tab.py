@@ -7,7 +7,7 @@ from pyqtgraph.dockarea import *
 
 # -- My packages --
 ## Graphes
-from .dock.eeg_dock.eeg_graph import EegPlotsCreator
+from .dock.eeg_dock.eeg_plots_creator import EegPlotsCreator
 from .dock.wave_dock.wave_graph import WaveGraph
 from .dock.fft_dock.fft_graph import FftGraph
 from .dock.classif_dock.classification_graph import ClassifPlotCreator

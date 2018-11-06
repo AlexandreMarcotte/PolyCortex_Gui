@@ -11,3 +11,7 @@ pen_colors = ['r', 'y', 'g', 'c', 'b', 'm',
               (100, 100, 100), 'w', 'k']
 button_colors = ['red', 'yellow', 'green', 'cyan',
                 'blue', 'magenta', 'grey', 'white']
+
+dark_blue = 'rgba(0, 0, 80, 0.4)'
+green_b = 'rgba(0, 100, 0, 0.5)'
+red_b =  'rgba(100, 0, 0, 0.5)'

@@ -67,8 +67,8 @@ class FftGraph:
             self.curve_freq[ch].setPen(pen_colors[ch])
 
     def on_off_button(self):
-        activation_b(self.layout, 'Start FFT', self.start, (0, 0), 
-                     'rgba(0, 0, 80, 0.4)', toggle=True)
+        activation_b(self.layout, 'Start FFT', self.start, (0, 0),
+                     dark_blue, toggle=True)
 
     @QtCore.pyqtSlot(bool)
     def start(self, checked):

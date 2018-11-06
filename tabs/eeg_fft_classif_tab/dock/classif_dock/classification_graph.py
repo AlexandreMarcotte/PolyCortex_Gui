@@ -15,7 +15,6 @@ from app.activation_b import activation_b
 
 class ClassifPlotCreator: 
     def __init__(self, gv, layout):
-        print('cool')
         self.gv = gv
         self.layout = layout
         self.timer = QtCore.QTimer()
@@ -56,7 +55,7 @@ class ClassifPlotCreator:
     def on_off_button(self):
         """Assign pushbutton for starting and stoping the stream"""
         activation_b(self.layout, 'Start classification', self.start,
-                     (0, 0), 'rgba(0, 0, 80, 0.4)', toggle=True)
+                     (0, 0), dark_blue, toggle=True)
 
     @QtCore.pyqtSlot(bool)
     def start(self, checked):
@@ -145,7 +144,6 @@ class ClassifGraph:
 
     def update_bar_chart_plotting(self):
         # Remove All item from the graph
-        print('ouin ouin')
         self.show_classif_plot.clear()
         self.bg1 = pg.BarGraphItem(x=self.x, height=self.y, width=1, brush='b')
         self.show_classif_plot.addItem(self.bg1)
