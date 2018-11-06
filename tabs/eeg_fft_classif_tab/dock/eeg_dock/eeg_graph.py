@@ -1,24 +1,22 @@
 class EegGraph:
-    def __init__(self, ch, q, ts, curve, regions):
+    def __init__(self, ch, q, gv, ts, curve, regions):
         self.ch = ch
         self.q = q
+        self.gv = gv
         self.ts = ts
         self.curve = curve
         self.regions = regions
 
     def update_graph(self):
         self.update_eeg()
-        self.update_regions()
+        # self.regions.update_regions()
 
     def update_eeg(self):
         # Time channel where we don't have to display any q
         if self.ch == 8:
             self.curve.setData(self.ts, self.q)
+
         else:
             self.curve.setData(self.q)
-
-    def update_regions(self):
-        """Add vertical lines where experiment events happen (then add box
-         with text) Do all these action in one line so that its not split
-          with an other thread  """
-        pass
+            # Detect the occurence of events by placing a region around them
+            self.regions.detect_exp_event()

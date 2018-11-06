@@ -13,5 +13,7 @@ button_colors = ['red', 'yellow', 'green', 'cyan',
                 'blue', 'magenta', 'grey', 'white']
 
 dark_blue = 'rgba(0, 0, 80, 0.4)'
+grey = 'rgba(100, 100, 100, 0.5)'
+light_grey = 'rgba(150, 150, 150, 1)'
 green_b = 'rgba(0, 100, 0, 0.5)'
 red_b =  'rgba(100, 0, 0, 0.5)'

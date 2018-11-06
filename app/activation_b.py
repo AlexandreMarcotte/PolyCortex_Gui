@@ -1,13 +1,16 @@
 from PyQt5.QtWidgets import *
 from functools import partial
 
-def activation_b(layout, name, func_conn, pos, color, toggle=False):
+def btn(name, layout, pos, func_conn=None, color=None, toggle=False, tip=None,
+        max_width=1200, min_width=16):
     b = QPushButton(name)
-    b.setStyleSheet('background-color: {}'.format(color))
+    b.setStyleSheet('background-color: {}; min-width: {}px;'
+                    'max-width: {}px'.format(color, min_width, max_width))
+    if tip: 
+        b.setToolTip(tip)
     if toggle:
         b.setCheckable(True)
-        b.toggled.connect(partial(func_conn))
-    else:
+    if func_conn:
         b.clicked.connect(partial(func_conn))
     layout.addWidget(b, *pos)
     

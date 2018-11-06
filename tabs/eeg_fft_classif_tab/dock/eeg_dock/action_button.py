@@ -10,7 +10,7 @@ class ActionButton:
         self.layout = layout
         self.pos = pos
         self.style = ("""QLabel {background-color: rgba(0, 0, 0, 0); 
-                         color: rgba(150, 150, 150, 220)}""")
+                         color: rgba(180, 180, 180, 1)}""")
         # Create timer
         self.timer_avg = QtCore.QTimer()
         self.timer_max = QtCore.QTimer()
@@ -36,8 +36,7 @@ class ActionButton:
         # Create the average label                                             # TODO: ALEXM Enlever la répétition
         self.max_label.setStyleSheet(self.style)
         # Set position of the label
-        row=self.pos; col=2; rowspan=1; colspan=1
-        self.layout.addWidget(self.max_label, row, col, rowspan, colspan)
+        self.layout.addWidget(self.max_label, self.pos, 2)
 
     def update_max(self):
         max_val = ' ' *70 + f'{np.round(np.max(self.gv.data_queue[self.ch]), 2)} Vrms'

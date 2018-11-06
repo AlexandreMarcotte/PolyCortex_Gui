@@ -1,3 +1,4 @@
+# -- General packages --
 from collections import deque
 import numpy as np
 import pyqtgraph as pg
@@ -5,7 +6,7 @@ from functools import partial
 from PyQt5 import QtGui, QtCore
 from PyQt5.QtCore import pyqtSlot
 
-# My packages
+# -- My packages --
 ## generate signal
 from generate_signal.from_openbci import stream_data_from_OpenBCI
 from generate_signal.from_fake_data import CreateFakeData
@@ -15,7 +16,7 @@ from .ch_number_action import ChNumberAction
 from .action_button import ActionButton
 
 from app.colors import *
-from app.activation_b import activation_b
+from app.activation_b import btn
 from tabs.region import Regions
 from .eeg_graph import EegGraph
 
@@ -26,11 +27,6 @@ class EegPlotsCreator:
         self.ts = self.gv.t_queue
         self.layout = layout
         self.timers = []
-        ## Action
-        # Start the position at two because the buttons start on the second row
-        self.tot_b_num = 0
-        self.pos = 4
-        self.N_BUTTONS_PER_CH = 4
         # Contain all the button for all the ch w the specif actn they trigger
         self.actn_btns_func = []
         self.actn_btns = []
@@ -40,8 +36,6 @@ class EegPlotsCreator:
         self.eeg_graphes = []
         self.zero_q = deque(
             np.zeros(self.gv.DEQUE_LEN), maxlen=self.gv.DEQUE_LEN)
-        # Regions
-        self.n_classif_regions_per_plot = 2
 
         self.create_all_eeg_plot()
         self.create_buttons()
@@ -57,21 +51,21 @@ class EegPlotsCreator:
             plot, q, rowspan = self.create_plot(ch)
             self.layout.addWidget(plot, ch * 4 + 3, 1, rowspan, 2)
             curve = self.create_curve(plot, ch, q)
-            eeg_graph = EegGraph(ch, q, self.ts, curve, self.regions)
+            eeg_graph = EegGraph(ch, q, self.gv, self.ts, curve, self.regions)
             self.eeg_graphes.append(eeg_graph)
             self.timers.append(QtCore.QTimer())
             self.timers[ch].timeout.connect(self.eeg_graphes[ch].update_graph)
             self.assign_n_to_ch(ch)
-            self.assign_action_to_ch(ch)
+        self.assign_action_to_ch()
 
     def create_buttons(self):
         """Assign pushbutton for starting and stoping the stream"""
-        activation_b(self.layout, 'Start streaming', self.start_streaming,
-                     (2, 1), green_b)
-        activation_b(self.layout, 'Stop streaming', self.stop_streaming,
-                     (2, 2), red_b)
+        btn('Start streaming', self.layout, (2, 1),
+            func_conn=self.start_streaming, color=green_b)
+        btn('Stop streaming', self.layout, (2, 2),
+            func_conn=self.stop_streaming, color=red_b)
 
-    def create_plot(self, ch):
+    def create_plot(self, ch:int):
         """Create a plot for all eeg signals and the last to keep track of time"""
         plot = pg.PlotWidget(background=dark_grey)
         plot.plotItem.showGrid(x=True, y=True, alpha=0.2)
@@ -95,6 +89,7 @@ class EegPlotsCreator:
         """Create colored region (10) and placed them all at the beginning
            of each plot (will be used to indicated classification of a
            region of the signal or event occured in experiments"""
+        self.n_classif_regions_per_plot = 2
         self.regions = Regions(self.gv, self.n_classif_regions_per_plot)
         for i in range(self.n_classif_regions_per_plot):
             self.regions.list.append(pg.LinearRegionItem([0, 0]))
@@ -109,18 +104,11 @@ class EegPlotsCreator:
 
     def assign_n_to_ch(self, ch):
         if ch != self.gv.N_CH:
-            # +1 so the number str start at 1
-            b_on_off_ch = QtGui.QPushButton(str(ch + 1))
-            b_on_off_ch.setCheckable(True)
-            b_on_off_ch.setToolTip('Stop current channel')
-            style = ('QPushButton {background-color'
-                     + ': {color}; '.format(color=button_colors[ch])
-                     + 'min-width: 14px}')
-            b_on_off_ch.setStyleSheet(style)
             ch_number_action = ChNumberAction(self.timers, ch)
-            b_on_off_ch.toggled.connect(partial(ch_number_action.stop_ch))
-            # Set position and size of the button values
-            self.layout.addWidget(b_on_off_ch, ch * 4 + 4, 0)
+            # +1 so the number str start at 1
+            btn(name=str(ch + 1), layout=self.layout, pos=(ch * 4 + 4, 0),
+                func_conn=ch_number_action.stop_ch,
+                color=button_colors[ch], toggle=True, max_width=18)
 
     @pyqtSlot()
     def start_streaming(self):
@@ -150,63 +138,54 @@ class EegPlotsCreator:
         # self.write_data_to_file.join()
 
     def start_timers(self):
-        for tm in self.timers:
-            tm.start()
+        for i, tm in enumerate(self.timers):
+            self.timers[i].start()
 
     def stop_timers(self):
-        for tm in self.timers:
-            tm.stop()
+        for i, tm in enumerate(self.timers):
+            self.timers[i].stop()
 
-    def assign_action_to_ch(self, ch):
-        if ch != self.gv.N_CH:
-            for b_n in range(self.N_BUTTONS_PER_CH):
+    def assign_action_to_ch(self):
+        pos = 4
+        m_w = 17
+        tot_b = 0
+        N_BTN_PER_CH = 4
+        for ch in range(self.gv.N_CH):
+            for b_n in range(N_BTN_PER_CH):
                 # Create an action object and add it to the list of all actions
                 # in the tab
-                action_button = ActionButton(self.gv, self.layout,
-                                             b_n, ch, self.pos)
-                self.actn_btns.append(action_button)
+                actn_btn = ActionButton(self.gv, self.layout, b_n, ch, pos)
+                self.actn_btns.append(actn_btn)
                 # Average
-                if b_n % self.N_BUTTONS_PER_CH == 0:
-                    col = 3
-                    b = self.create_actn_btn(
-                        self.tot_b_num, 'A', tip='Show average value of queue',
-                        func_conn=self.actn_btns[self.tot_b_num].show_avg)
+                if b_n % N_BTN_PER_CH == 0:                               # TODO: ALEXM replace this if else by something similar to a switch case
+                    btn('A', self.layout, (pos, 3),
+                        func_conn=self.actn_btns[tot_b].show_avg,
+                        toggle=True, tip='Show average value of queue',
+                        max_width=m_w, color=grey)
                 # Max
-                elif b_n % self.N_BUTTONS_PER_CH == 1:
-                    col = 3
+                elif b_n % N_BTN_PER_CH == 1:
                     # Create a max action
-                    b = self.create_actn_btn(
-                        self.tot_b_num, 'M', tip='Show max value of queue',
-                        func_conn=self.actn_btns[self.tot_b_num].show_max)
-
+                    btn('M', self.layout, (pos, 3),
+                        func_conn=self.actn_btns[tot_b].show_max,
+                        toggle=True, tip='Show max value of queue',
+                        max_width=m_w, color=grey)
                 # Detection
-                elif b_n % self.N_BUTTONS_PER_CH == 2:
-                    self.pos -= 2;
-                    col = 4
-                    b = self.create_actn_btn(
-                        self.tot_b_num, 'D', tip='Show detected class patern')
+                elif b_n % N_BTN_PER_CH == 2:
+                    pos-=2 #  Return at the upper position
+                    btn('D', self.layout, (pos, 4),
+                        toggle=True, tip='Show detected class patern',
+                        max_width=m_w, color=grey)
                 # Other function
-                elif b_n % self.N_BUTTONS_PER_CH == 3:
-                    col = 4
-                    b = self.create_actn_btn(self.tot_b_num, 'O', 'Show other action')
-                # Set self.position and size of the button values
-                self.layout.addWidget(b, self.pos, col, 1, 1)
-                self.pos += 1
+                elif b_n % N_BTN_PER_CH == 3:
+                    btn('O', self.layout, (pos, 4), toggle=True,
+                        tip='Show other action', max_width=m_w, color=grey)
+                pos += 1
                 # Change the total number of buttons
-                self.tot_b_num += 1
+                tot_b += 1
             # Add a vertical line to delineate the action for each channel
             # line = QFrame(self.main_window)
             # line.setGeometry(QtCore.QRect())
             # line.setFrameShape(QFrame.HLine)
             # line.setFrameShadow(QFrame.Sunken)
-            # self.layout.addWidget(line, self.pos, 3, 1, 2)
-            self.pos += 2
-
-    def create_actn_btn(self, tot_b_num, actn_letter, actn_func=None,
-                        tip='', checkable=True, func_conn=None):
-        b = QtGui.QPushButton(actn_letter)
-        b.setToolTip(tip)
-        b.setCheckable(checkable)
-        if func_conn:
-            b.toggled.connect(partial(func_conn))
-        return b
+            # self.layout.addWidget(line, pos, 3, 1, 2)
+            pos += 2

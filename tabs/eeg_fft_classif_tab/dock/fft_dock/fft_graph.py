@@ -14,7 +14,7 @@ from functools import partial
 
 # -- My packages --
 from app.colors import *
-from app.activation_b import activation_b
+from app.activation_b import btn
 
 
 class FftGraph:
@@ -36,7 +36,7 @@ class FftGraph:
         # Create the plot widget and its characteristics
         plot = pg.PlotWidget(background=dark_grey)
         plot.plotItem.showGrid(x=True, y=True, alpha=0.3)
-        plot.plotItem.setLabel(axis='bottom', text='Frequency', units='Hz')                                 # Todo : ALEXM : verifier l'uniter
+        plot.plotItem.setLabel(axis='bottom', text='Frequency', units='Hz')     # Todo : ALEXM : verifier l'uniter
         plot.plotItem.setLabel(axis='left', text='Amplitude', units='None')
         plot.setXRange(0, 180)
         plot.setYRange(0, 1500000)
@@ -67,8 +67,8 @@ class FftGraph:
             self.curve_freq[ch].setPen(pen_colors[ch])
 
     def on_off_button(self):
-        activation_b(self.layout, 'Start FFT', self.start, (0, 0),
-                     dark_blue, toggle=True)
+        btn('Start FFT', self.layout, (0, 0), func_conn=self.start,
+            color=dark_blue, toggle=True)
 
     @QtCore.pyqtSlot(bool)
     def start(self, checked):

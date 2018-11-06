@@ -10,11 +10,12 @@ from pyqtgraph.dockarea import *
 from .dock.eeg_dock.eeg_plots_creator import EegPlotsCreator
 from .dock.wave_dock.wave_graph import WaveGraph
 from .dock.fft_dock.fft_graph import FftGraph
-from .dock.classif_dock.classification_graph import ClassifPlotCreator
+from .dock.classif_dock.classification_plot_creator import ClassifPlotCreator
 from .dock.banner_dock.banner import add_banner
 
 from save.save_to_file import DataSaver
 from app.colors import *
+from tabs.region import Regions
 
 
 class EegFftClassifTab:
@@ -47,12 +48,12 @@ class EegFftClassifTab:
         # - Acceleration Dock
         self.classif_layout, classif_dock = self.create_layout(
             'Classification', 'below', wave_dock, size=(5, 10))
-        # - Saving dock
-        self.saving_layout, saving_dock = self.create_layout(
-            'Saving', 'bottom', eeg_dock, hide_title=True)
         # - Banner dock
         self.banner_layout, banner_dock = self.create_layout(
-            'Banner', 'bottom', wave_dock, hide_title=True)
+            'Banner', 'bottom', eeg_dock)
+        # - Saving dock
+        self.saving_layout, saving_dock = self.create_layout(
+            'Saving', 'below', banner_dock)
 
     def create_layout(self, dock_name, pos, related_dock=None, size=(1, 1),
                       hide_title=False, scroll=False):
@@ -71,9 +72,11 @@ class EegFftClassifTab:
         return layout, dock
 
     def create_tab(self):
+        # Regions
         data_saver = DataSaver(self.main_window, self.saving_layout)
         # Create the graphes inside the each dock layout
-        EegPlotsCreator(self.gv, self.eeg_layout, data_saver)
+        eeg_plot_creator = EegPlotsCreator(self.gv, self.eeg_layout, data_saver)
+        x = eeg_plot_creator.regions
         FftGraph(self.gv, self.fft_layout)
         WaveGraph(self.gv, self.wave_layout)
         ClassifPlotCreator(self.gv, self.classif_layout)

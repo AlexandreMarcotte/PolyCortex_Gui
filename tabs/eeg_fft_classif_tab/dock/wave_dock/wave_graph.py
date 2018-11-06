@@ -5,7 +5,7 @@ import numpy as np
 import pyqtgraph as pg
 # -- My packages --
 from app.colors import *
-from app.activation_b import activation_b
+from app.activation_b import btn
 
 
 class WaveGraph:
@@ -38,8 +38,8 @@ class WaveGraph:
         return plot
 
     def init_on_off_button(self):
-        activation_b(self.layout, 'Show wave signal', self.start, (0, 0),
-                     'rgba(0, 0, 80, 0.4)', toggle=True)
+        btn('Show wave signal', self.layout, (0, 0), func_conn=self.start,
+            color=dark_blue, toggle=True)
 
     def start(self):
         pass
