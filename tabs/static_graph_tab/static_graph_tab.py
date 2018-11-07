@@ -1,23 +1,22 @@
 # Graph the data
 from PyQt5.QtWidgets import *
-from PyQt5 import QtGui, QtCore
+from PyQt5 import QtGui
 from PyQt5.QtCore import Qt, pyqtSlot
 import pyqtgraph as pg
 
 from functools import partial
-import random
 import numpy as np
 from sklearn.externals import joblib
-import matplotlib.pyplot as plt
 import os
 # My packages
 from generate_signal.from_file import read_data_from_file
 from data_processing_pipeline.uniformize_data import uniformize_data
 from app.colors import *
 
+
 class StaticGraphTab:
+
     def __init__(self, main_window, tab_w, gv):
-        super().__init__()
         self.main_window = main_window
         self.tab_w = tab_w
         self.gv = gv
@@ -33,7 +32,7 @@ class StaticGraphTab:
         avg_emg_path = 'tabs/static_graph_tab/avg_emg_class_type.npy'
         self.avg_emg_class_type = np.load(os.path.join(os.getcwd(), avg_emg_path))
         self.classified_data = [[] for _ in range(self.gv.N_CH)]
-        self.classified_once_every = 6
+        self.classified_once_every = 1000
         self.classified_pos = 250
         self.emg_signal_len = 170
         # Create the tab itself
@@ -41,57 +40,63 @@ class StaticGraphTab:
 
     def create_tab(self):
         self.tab_w.layout = QGridLayout(self.main_window)
-        # Create two different layout split by a QSplitter
-        self.create_layouts()
-        # Place things on the two layouts
-        self.open_data_from_file()
+        open_file_layout, open_file_group = self.create_open_file()
+        self.create_portion_graph()
+        self.create_full_graph()
+        layout_splitter = self.create_layout_splitter()
+        self.create_scroll(layout_splitter)
+        self.add_group_to_main_widget(open_file_group)
+        self.open_data_from_file(open_file_layout)
+
         # Set the layout
         self.tab_w.setLayout(self.tab_w.layout)
 
-    def create_layouts(self):
-        # Create open file layout:
-        self.open_file_layout = QGridLayout()
-        self.open_file_group = QGroupBox('Open file')
-        self.open_file_group.setLayout(self.open_file_layout)
-        # Create portion graph layout:
-        self.portion_graph_layout = QGridLayout()
-        self.portion_graph_group = QGroupBox('Portion graph')
-        self.portion_graph_group.setLayout(self.portion_graph_layout)
+    def create_open_file(self):
+        open_file_layout = QGridLayout()
+        open_file_group = QGroupBox('Open file')
+        open_file_group.setLayout(open_file_layout)
+        return open_file_layout, open_file_group
+
+    def create_full_graph(self):
         # Create full graph layout:
         self.full_graph_layout = QGridLayout()
         self.full_graph_group = QGroupBox('Full graph')
         self.full_graph_group.setLayout(self.full_graph_layout)
-        # Create scrolling region for portion graph
-        self.scroll = QScrollArea()
-        self.scroll.setWidgetResizable(True)
-        # Add the electrodes layout split by the Qsplitter
-        self.add_splitter_between_layouts()
 
-    def add_splitter_between_layouts(self):
-        # Create a splitter for the electrodes
+    def create_portion_graph(self):
+        # Create portion graph layout:
+        self.portion_graph_layout = QGridLayout()
+        self.portion_graph_group = QGroupBox('Portion graph')
+        self.portion_graph_group.setLayout(self.portion_graph_layout)
+
+    def create_layout_splitter(self):
         layout_splitter = QSplitter(Qt.Horizontal)
         layout_splitter.addWidget(self.portion_graph_group)
         layout_splitter.addWidget(self.full_graph_group)
-        # Add the spliter to the entire tab
+        return layout_splitter
+
+    def create_scroll(self, layout_splitter):
+        self.scroll = QScrollArea()
+        self.scroll.setWidgetResizable(True)
         self.scroll.setWidget(layout_splitter)
-        # Add widget to the main layout
-        self.tab_w.layout.addWidget(self.open_file_group)
+
+    def add_group_to_main_widget(self, open_file_group):
+        self.tab_w.layout.addWidget(open_file_group)
         self.tab_w.layout.addWidget(self.scroll)
 
-    def open_data_from_file(self):
+    def open_data_from_file(self, open_file_layout):
         # Create button to open date file
         chose_file = QtGui.QPushButton('Choose file containing data')
         chose_file.setStyleSheet("background-color: rgba(0, 0, 150, 0.5)")
         chose_file.clicked.connect(partial(self.open_static_data_file))
-        self.open_file_layout.addWidget(chose_file, 0, 0, 1, 1)
+        open_file_layout.addWidget(chose_file, 0, 0)
         # Create text box to show or enter path to data file
         self.data_path = QtGui.QLineEdit(self.static_graph_file_name)
-        self.open_file_layout.addWidget(self.data_path, 0, 1, 1, 1)
+        open_file_layout.addWidget(self.data_path, 0, 1)
         # Read the data from the file
         self.open_file_b = QtGui.QPushButton('Open File')
         self.open_file_b.clicked.connect(partial(self.create_stationnary_plot))
-        row=0; col=2; rowspan=1; colspan=1
-        self.open_file_layout.addWidget(self.open_file_b, 0, 2, 1, 1)
+        open_file_layout.addWidget(self.open_file_b, 0, 2)
         self.add_static_plots()
 
     @pyqtSlot()
@@ -110,7 +115,7 @@ class StaticGraphTab:
     def create_stationnary_plot(self):
         # Read data from file
         data, t, exp = read_data_from_file(self.data_path.text(),
-                                                n_ch=self.gv.N_CH)
+                                           n_ch=self.gv.N_CH)
         N_DATA = len(data[0])
 
         self.static_portion_graph_update = []
@@ -137,8 +142,8 @@ class StaticGraphTab:
     def classify_ch_data(self, ch, ch_data):
         print('len', len(ch_data))
         ch_data = np.array(ch_data)
-        while self.pos+self.emg_signal_len < len(ch_data):
-            emg_signal = ch_data[0+self.pos:170+self.pos]
+        while self.pos + self.emg_signal_len < len(ch_data):
+            emg_signal = ch_data[0 + self.pos:170 + self.pos]
             # If the array is not filled with 0 values
             if emg_signal.any():
                 emg_signal = uniformize_data(emg_signal, len(emg_signal))
@@ -148,7 +153,7 @@ class StaticGraphTab:
             for _ in range(self.classified_once_every):
                 self.classified_data[ch].append(class_type)
             self.pos += self.classified_once_every
-        
+
     def add_sliding_region(self, no):
         """
         Add Sliding region on the graph that will be add where experiment
@@ -165,15 +170,15 @@ class StaticGraphTab:
         # - Portion graph
         # Create 8 update function object, one for every portion plot
         self.static_portion_graph_update.append(
-                StaticGraphUpdate(self.regions[no], self.portion_plots[no]))
+            StaticGraphUpdate(self.regions[no], self.portion_plots[no]))
         # Connect all the update functions
         self.regions[no].sigRegionChanged.connect(
-                self.static_portion_graph_update[no].update_plot_range)
+            self.static_portion_graph_update[no].update_plot_range)
         # - Classification graph
         self.static_classif_graph_update.append(
-                StaticGraphUpdate(self.regions[no], self.classif_plots[no]))
+            StaticGraphUpdate(self.regions[no], self.classif_plots[no]))
         self.regions[no].sigRegionChanged.connect(
-                self.static_classif_graph_update[no].update_plot_range)
+            self.static_classif_graph_update[no].update_plot_range)
 
         # self.portion_plots[no].sigRangeChanged.connect(
         #     self.static_graph_update[no].update_region)
@@ -184,15 +189,15 @@ class StaticGraphTab:
         # # Slider to scoll through all data
         self.slider = QSlider(Qt.Horizontal)
         self.slider.setRange(0, N_DATA)
-        self.full_ch_layouts[ch].addWidget(self.slider, ch*2+2, 0, 1, 1)
+        self.full_ch_layouts[ch].addWidget(self.slider, ch * 2 + 2, 0, 1, 1)
         self.update_slider_graph = UpdateSliderGraph(
-                self.slider, self.all_data_plots[ch],
-                self.regions[ch], self.slider_last,
-                self.classif_regions[ch], self.portion_regions[ch],
-                self.classified_pos)
+            self.slider, self.all_data_plots[ch],
+            self.regions[ch], self.slider_last,
+            self.classif_regions[ch], self.portion_regions[ch],
+            self.classified_pos)
         self.sliders.append(self.update_slider_graph)
         self.slider.valueChanged.connect(self.sliders[ch].update_graph_range)
-        
+
     def add_all_exp_region_for_this_ch(self, ch, exp):
         """
         Add a sliding region over the place on the graph where an
@@ -213,7 +218,7 @@ class StaticGraphTab:
         """ Add a pyqtgraph region on one single event occurence """
         region = pg.LinearRegionItem()
         self.portion_plots[ch].addItem(region, ignoreBounds=True)
-        region.setRegion([no-60, no+110])
+        region.setRegion([no - 60, no + 110])
         region.setBrush(self.region_brush[int(val)])
 
     def add_classif_region(self, ch):
@@ -226,27 +231,27 @@ class StaticGraphTab:
         self.portion_regions.append(pg.LinearRegionItem())
         self.portion_plots[ch].addItem(self.portion_regions[ch])
         self.portion_regions[ch].setRegion(
-                [self.classified_pos, self.classified_pos+self.emg_signal_len])
+            [self.classified_pos, self.classified_pos + self.emg_signal_len])
         self.portion_regions[ch].setBrush(pale_red)
         # Classification graph (line down)
         self.classif_regions.append(pg.LinearRegionItem())
         self.classif_plots[ch].addItem(self.classif_regions[ch])
         self.classif_regions[ch].setRegion(
-                [self.classified_pos, self.classified_pos])
+            [self.classified_pos, self.classified_pos])
         self.classif_regions[ch].setBrush(pale_red)
         # Connect the rectangular region in the emg graph to the line shaped
         # one in the classification data graph
         self.classif_region_updates.append(
-                ClassifRegionUpdate(self.portion_regions[ch],
-                                    self.classif_regions[ch],
-                                    self.portion_plots[ch],
-                                    self.classified_data[ch],
-                                    self.all_char_class_type[ch],
-                                    self.avg_classif_curves[ch],
-                                    self.avg_emg_class_type))
+            ClassifRegionUpdate(self.portion_regions[ch],
+                                self.classif_regions[ch],
+                                self.portion_plots[ch],
+                                self.classified_data[ch],
+                                self.all_char_class_type[ch],
+                                self.avg_classif_curves[ch],
+                                self.avg_emg_class_type))
         # Connect all the update functions
         self.portion_regions[ch].sigRegionChanged.connect(
-                self.classif_region_updates[ch].update_pos_and_avg_graph)
+            self.classif_region_updates[ch].update_pos_and_avg_graph)
 
     def add_static_plots(self):
         # Regions
@@ -280,10 +285,10 @@ class StaticGraphTab:
         # Instantiate the average classification
         self.avg_classif_plots.append(pg.PlotWidget())
         # Portion of the graph
-        self.portion_ch_layouts[ch].addWidget(self.portion_plots[ch],ch*2,3,1,1)
+        self.portion_ch_layouts[ch].addWidget(self.portion_plots[ch], ch * 2, 3, 1, 1)
         # Classification plot
-        self.portion_ch_layouts[ch].addWidget(self.classif_plots[ch],ch*2+1,3,1,1)
-        self.portion_ch_layouts[ch].addWidget(self.avg_classif_plots[ch],ch*2,0,2,3)
+        self.portion_ch_layouts[ch].addWidget(self.classif_plots[ch], ch * 2 + 1, 3, 1, 1)
+        self.portion_ch_layouts[ch].addWidget(self.avg_classif_plots[ch], ch * 2, 0, 2, 3)
         # Add number of the current classification in the plot's right corner
         self.all_char_class_type.append(pg.TextItem(fill=(0, 0, 0), anchor=(0.5, 0)))
         html = f'0'
@@ -293,7 +298,7 @@ class StaticGraphTab:
         self.avg_classif_plots[ch].setXRange(0, self.emg_signal_len)
         self.avg_classif_plots[ch].setYRange(-1, 1)
         self.avg_classif_curves.append(
-                    self.avg_classif_plots[ch].plot(np.zeros(self.emg_signal_len)))
+            self.avg_classif_plots[ch].plot(np.zeros(self.emg_signal_len)))
 
         # Add the group to the left side of the separation
         self.portion_graph_layout.addWidget(self.portion_ch_group)
@@ -312,7 +317,7 @@ class StaticGraphTab:
         self.all_data_plots[ch].setXRange(0, self.full_graph_x_range)
 
         # All the values open from the saved file
-        self.full_ch_layouts[ch].addWidget(self.all_data_plots[ch],ch*2+1,0,1,1)
+        self.full_ch_layouts[ch].addWidget(self.all_data_plots[ch], ch * 2 + 1, 0, 1, 1)
         # Add these group by channel to the right side of the separation
         self.full_graph_layout.addWidget(self.full_graph_ch_group)
 
@@ -362,6 +367,7 @@ class UpdateSliderGraph:
     on the position of the slider. The portion rectangle that is contained in
     this graph is updated at the same time
     """
+
     def __init__(self, slider, all_data_plot, region, slider_last,
                  classif_region, portion_region, classified_pos):
         self.slider = slider
@@ -378,7 +384,7 @@ class UpdateSliderGraph:
         delta_slider = v - self.slider_last
         self.slider_last = v
         # Update the graph range based on the slider position
-        self.all_data_plot.setXRange(v, v+10000)
+        self.all_data_plot.setXRange(v, v + 10000)
         r_right = self.region.boundingRect().right()
         r_left = self.region.boundingRect().left()
         # Update the region position based on the delta position of the slider
