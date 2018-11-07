@@ -38,8 +38,8 @@ class FftGraph:
         plot.plotItem.showGrid(x=True, y=True, alpha=0.3)
         plot.plotItem.setLabel(axis='bottom', text='Frequency', units='Hz')     # Todo : ALEXM : verifier l'uniter
         plot.plotItem.setLabel(axis='left', text='Amplitude', units='None')
-        plot.setXRange(0, 180)
-        plot.setYRange(0, 1500000)
+        plot.setXRange(0, 140)
+        plot.setYRange(0, 3000000)
         # self.plot.setLogMode(y=True)
         # self.plot.setYRange(0, np.log(1500000))
         # Add to tab layout

@@ -24,7 +24,7 @@ class CreateDataFromFile(threading.Thread):
                     self.gv.data_queue[ch_no].append(float(ch))
 
                 self.gv.t_queue.append(time() - self.gv.t_init)
-                sleep(0.002) # TODO: ALEXM this delta t could be calculated from the saved time in the file
+                sleep(0.0029) # TODO: ALEXM this delta t could be calculated from the saved time in the file
 
 # Used in the tab 3 where we create static graphes
 def read_data_from_file(file_name, n_ch=8):

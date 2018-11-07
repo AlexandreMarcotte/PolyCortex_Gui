@@ -5,6 +5,7 @@ import pyqtgraph as pg
 from functools import partial
 from PyQt5 import QtGui, QtCore
 from PyQt5.QtCore import pyqtSlot
+from collections import namedtuple
 
 # -- My packages --
 ## generate signal
@@ -89,11 +90,14 @@ class EegPlotsCreator:
         """Create colored region (10) and placed them all at the beginning
            of each plot (will be used to indicated classification of a
            region of the signal or event occured in experiments"""
-        self.n_classif_regions_per_plot = 2
+        self.n_classif_regions_per_plot = 10
         self.regions = Regions(self.gv, self.n_classif_regions_per_plot)
         for i in range(self.n_classif_regions_per_plot):
-            self.regions.list.append(pg.LinearRegionItem([0, 0]))
-            plot.addItem(self.regions.list[i], ignoreBounds=True)
+            # The first value in the .list correspond to the position of the
+            # region on the graph
+            self.regions.list.append([self.gv.DEQUE_LEN,
+                                      pg.LinearRegionItem([0, 0])])
+            plot.addItem(self.regions.list[i][1], ignoreBounds=True)
         return plot
 
     def create_curve(self, plot, ch, q):

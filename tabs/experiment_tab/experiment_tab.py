@@ -14,6 +14,7 @@ from random import randint
 # -- My packages --
 from .action import Action
 from .p300 import P300Dock
+from app.colors import *
 
 
 class ExperimentTab:
@@ -126,7 +127,7 @@ class EmgDock:
             action.y_pos -= 0.04
             # If the action text event is bellow the horiz. activation line
             if 0 <= action.y_pos <= 1.5 and action.wait:
-                # self.gv.experiment_type[0] = action.type_num
+                self.gv.experiment_type[0] = 1
                 action.activate_html()
                 action.wait = False
             # update the position of the action
@@ -153,10 +154,9 @@ class EmgDock:
 
     def start_emg_button(self):
         b_start = QtGui.QPushButton('START EMG')
-        b_start.setStyleSheet("background-color: rgba(255, 255, 255, 0.5)")
+        b_start.setStyleSheet(f"background-color: {white}")
         b_start.clicked.connect(partial(self.start_emg))
-        row=0; col=0; rowspan=1; colspan=1
-        self.emg_layout.addWidget(b_start, row, col, rowspan, colspan)
+        self.emg_layout.addWidget(b_start, 0, 0)
 
     @pyqtSlot()
     def start_emg(self):
@@ -165,10 +165,9 @@ class EmgDock:
 
     def stop_emg_button(self):
         b_stop = QtGui.QPushButton('STOP EMG')
-        b_stop.setStyleSheet("background-color: rgba(0, 0, 0, 0.5)")
+        b_stop.setStyleSheet(f"background-color: {black}")
         b_stop.clicked.connect(partial(self.stop_emg))
-        row = 0; col = 1; rowspan = 1; colspan = 1
-        self.emg_layout.addWidget(b_stop, row, col, rowspan, colspan)
+        self.emg_layout.addWidget(b_stop, 0, 1)
 
     @pyqtSlot()
     def stop_emg(self):
