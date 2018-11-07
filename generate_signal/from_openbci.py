@@ -3,6 +3,9 @@ import logging
 # OpenBCI hardware module
 import openbci_interface.open_bci_v3 as bci
 
+from time import sleep
+from time import time
+
 
 def stream_data_from_OpenBCI(gv):
     port = '/dev/ttyUSB0'  # if using Linux

@@ -18,15 +18,15 @@ class Regions:
         """Add vertical lines where experiment events happen (then add box
          with text) Do all these action in one line so that its not split
           with an other thread  
-          * Curently only done for the ch 0 """
+          * Currently only done for the ch 0 """
         non_zero_type = np.array(self.exp_q)[np.nonzero(np.array(self.exp_q))[0]]
         non_zero_pos = np.nonzero(np.array(self.exp_q))[0]
 
         # Set the position of the regions delimiting events (when an
         # an experiment is playing
         if non_zero_type != []:
-            for no, (pos, n_z_type) in enumerate(zip(non_zero_pos, non_zero_type)):
-                brush = self.brushes[int(n_z_type)]
+            for no, (pos, n_z) in enumerate(zip(non_zero_pos, non_zero_type)):
+                brush = self.brushes[int(n_z)]
                 self.list[no][1].setBrush(brush)
                 self.list[no][1].setRegion([pos, pos+150])
 

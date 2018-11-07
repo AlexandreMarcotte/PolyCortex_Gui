@@ -13,5 +13,3 @@ def btn(name, layout, pos, func_conn=None, color=None, toggle=False, tip=None,
     if func_conn:
         b.clicked.connect(partial(func_conn))
     layout.addWidget(b, *pos)
-    
-    

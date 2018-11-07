@@ -24,12 +24,12 @@ class ActionButton:
     def create_avg_button(self):
         self.avg_label.setStyleSheet(self.style)
         # Set position of the label
-        row=self.pos; col=2; rowspan=1; colspan=1
-        self.layout.addWidget(self.avg_label, row, col, rowspan, colspan)
+        self.layout.addWidget(self.avg_label, self.pos, 2)
 
     def update_avg(self):
         # Create the average label
-        avg_val = ' '*70 + f'{np.round(np.average(self.gv.data_queue[self.ch]), 2)} Vrms'
+        avg_val = ' '*70 + \
+                  f'{np.round(np.average(self.gv.data_queue[self.ch]), 2)} Vrms'
         self.avg_label.setText(avg_val)
 
     def create_max_button(self):
@@ -39,7 +39,8 @@ class ActionButton:
         self.layout.addWidget(self.max_label, self.pos, 2)
 
     def update_max(self):
-        max_val = ' ' *70 + f'{np.round(np.max(self.gv.data_queue[self.ch]), 2)} Vrms'
+        max_val = ' ' *70 + \
+                  f'{np.round(np.max(self.gv.data_queue[self.ch]), 2)} Vrms'
         self.max_label.setText(max_val)
 
     @QtCore.pyqtSlot(bool)                                                            # TODO: ALEXM remove this duplicate

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# -- General packages --
 from PyQt5 import QtGui, QtCore
 from PyQt5.QtCore import Qt, pyqtSlot
 from PyQt5.QtWidgets import *
@@ -9,6 +10,10 @@ import pyqtgraph as pg
 from functools import partial
 
 from random import randint
+
+# -- My packages --
+from .action import Action
+from .p300 import P300Dock
 
 
 class ExperimentTab:
@@ -38,40 +43,6 @@ class ExperimentTab:
         p300_dock.create_p300_dock()
 
         self.tab_w.setLayout(self.tab_w.layout)
-
-
-class Action:
-    def __init__(self, action_txt, wait_txt, y_pos, x_pos, color='#FF0'):
-        self.x_pos = x_pos
-        self.y_pos = y_pos
-        self.action_txt = action_txt
-        self.wait_txt = wait_txt
-        self.color = color
-        self.plot_obj = None
-        self.is_waiting = True
-
-        self.init_action()
-
-    def init_action(self):
-        self.plot_obj = pg.TextItem(anchor=(0.5, 1), angle=0,
-                                    border='w', fill=(0, 0, 255, 100))
-        self.action_html = f"""<div style="text-align: center">
-                               <span style="color: #FFF;">{self.action_txt}
-                               </span><br><span style="color: {self.color};
-                               font-size: 14pt;">{self.wait_txt}</span></div>"""
-        self.plot_obj.setHtml(self.action_html)
-        self.plot_obj.setPos(self.x_pos, self.y_pos)
-
-    def activate_html(self):
-        """Change the color  and text of the action text to indicate it's
-           activation"""
-        self.color = '#0FF'
-        self.wait_txt = 'NOW!'
-        self.html = f"""<div style="text-align: center">
-                        <span style="color: #FFF;">{self.action_txt}
-                        </span><br><span style="color: {self.color};
-                        font-size: 16pt;">{self.wait_txt}</span></div>"""
-        self.plot_obj.setHtml(self.html)
 
 
 class N100Dock:
@@ -139,10 +110,10 @@ class EmgDock:
         # Stop spawning value when we reach the number of experiment events
         if self.action_itt < self.num_of_action:
             # Create a new action:
-            action = Action(action_txt=self.action_name, wait_txt='WAIT...',
+            action = Action(actn_txt=self.action_name, wait_txt='WAIT...',
                             y_pos=6.5, x_pos=10)
             # Plot this new action
-            self.emg_plot.addItem(action.plot_obj)
+            self.emg_plot.addItem(action.plot)
             # Add it to the list of actions
             self.actions.append(action)
             self.action_itt += 1
@@ -154,15 +125,15 @@ class EmgDock:
             # update the listed position of the action
             action.y_pos -= 0.04
             # If the action text event is bellow the horiz. activation line
-            if 0 <= action.y_pos <= 1.5 and action.is_waiting:
+            if 0 <= action.y_pos <= 1.5 and action.wait:
                 # self.gv.experiment_type[0] = action.type_num
                 action.activate_html()
-                action.is_waiting = False
+                action.wait = False
             # update the position of the action
-            action.plot_obj.setPos(action.x_pos, action.y_pos)
+            action.plot.setPos(action.x_pos, action.y_pos)
             # If the action leave the screen remove it
             if action.y_pos < 0:
-                self.emg_plot.removeItem(self.actions[0].plot_obj)
+                self.emg_plot.removeItem(self.actions[0].plot)
                 self.actions.pop(0)
         # Stop spawning value when we reach the number of experiment events
         if self.actions == [] and self.end_experiment:
@@ -203,98 +174,3 @@ class EmgDock:
     def stop_emg(self):
         self.spawn_timer.stop()
         self.plot_timer.stop()
-
-
-class P300Dock:
-    def __init__(self, area, emg_dock):
-        self.p300_char = ['A', 'B', 'C', 'D', 'E', 'F',
-                          'G', 'H', 'I', 'J', 'K', 'L',
-                          'M', 'N', 'O', 'P', 'Q', 'R',
-                          'S', 'T', 'U', 'V', 'W', 'X',
-                          'Y', 'Z', '1', '2', '3', '4',
-                          '5', '6', '7', '8', '9', '0']
-        self.show_p300 = True
-        self.area = area
-        self.timer_p300 = QtCore.QTimer()
-
-        self.emg_dock = emg_dock
-
-    def create_p300_dock(self):
-        self.P300_dock = Dock('P300 experiment')
-        self.area.addDock(self.P300_dock, 'above', self.emg_dock)
-        # Add the layout to the dock
-        self.P300_layout = pg.LayoutWidget()
-        self.P300_dock.addWidget(self.P300_layout)
-
-        self.p300_plot = self.instantiate_p300_plot()
-        row=1; col=0; rowspan=1; colspan=2
-        self.P300_layout.addWidget(self.p300_plot, row, col, rowspan, colspan)
-
-        # # Start and stop button
-        self.start_p300_button()
-        self.stop_p300_button()
-        # # Result label
-        self.show_p300_result()
-
-        self.timer_p300.timeout.connect(self.update_p300)
-
-    def instantiate_p300_plot(self):
-        p300_plot = pg.PlotWidget()
-        p300_plot.setXRange(-2, 7)
-        p300_plot.setYRange(-1, 5)
-        p300_plot.hideAxis('bottom')
-        p300_plot.hideAxis('left')
-        return p300_plot
-
-    def show_p300_result(self):
-        result = QtGui.QLabel(f'Letter to look at: {"-G-"}')
-        result.setFont(QtGui.QFont('SansSerif', pointSize=12))
-        row=2; col=0; rowspan=1; colspan=1
-        self.P300_layout.addWidget(result, row, col, rowspan, colspan)
-
-    def update_p300(self):
-        rand_row = randint(0, 5)
-        rand_col = randint(0, 5)
-        # clear the widget on the screen at every display to add a new batch
-        self.p300_plot.clear()
-        # Add all number to the plot
-        for no, one_char in enumerate(self.p300_char):                         # TODO: Improve ALEXM instead of adding label and removing them all after each itteration just change the style of the label in black (see label for average and max)
-            col = no % 6
-            row = no // 6
-            # Change the color on the row and column selected from the random
-            # # Selected row
-            if rand_col == col or rand_row == row:
-                char_color = '#111'
-            else:
-                char_color = '#888'
-
-            char = pg.TextItem(fill=(0, 0, 0), anchor=(0.5,0))
-            html = f"""<span style="color: {char_color};
-                       font-size: 56pt; ">
-                       {one_char}"""
-            char.setHtml(html)
-
-            char.setPos(col, row)
-            self.p300_plot.addItem(char)
-
-    def start_p300_button(self):
-        b_start = QtGui.QPushButton('START P300')
-        b_start.setStyleSheet("background-color: rgba(255, 255, 255, 0.5)")
-        b_start.clicked.connect(partial(self.start_p300))
-        row=0; col=0; rowspan=1; colspan=1
-        self.P300_layout.addWidget(b_start, row, col, rowspan, colspan)
-
-    @pyqtSlot()
-    def start_p300(self):
-        self.timer_p300.start(200)
-
-    def stop_p300_button(self):
-        b_stop = QtGui.QPushButton('STOP P300')
-        b_stop.setStyleSheet("background-color: rgba(0, 0, 0, 0.5)")
-        b_stop.clicked.connect(partial(self.stop_p300))
-        row = 0; col = 1; rowspan = 1; colspan = 1
-        self.P300_layout.addWidget(b_stop, row, col, rowspan, colspan)
-
-    @pyqtSlot()
-    def stop_p300(self):
-        self.timer_p300.stop()
