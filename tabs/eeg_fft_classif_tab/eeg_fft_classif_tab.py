@@ -76,10 +76,10 @@ class EegFftClassifTab:
         data_saver = DataSaver(self.main_window, self.saving_layout)
         # Create the graphes inside the each dock layout
         eeg_plot_creator = EegPlotsCreator(self.gv, self.eeg_layout, data_saver)
-        regions = eeg_plot_creator.regions
+        x = eeg_plot_creator.regions
         FftGraph(self.gv, self.fft_layout)
         WaveGraph(self.gv, self.wave_layout)
-        ClassifPlotCreator(self.gv, self.classif_layout, regions)
+        ClassifPlotCreator(self.gv, self.classif_layout)
         add_banner(self.banner_layout)
 
         self.tab_w.setLayout(self.tab_w.layout)

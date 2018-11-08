@@ -22,7 +22,7 @@ class StaticGraphTab:
         self.tab_w.setLayout(self.tab_w.layout)
 
     def create_grps(self):
-        full_graph = FullGraph()
+        full_graph = FullGraph(1)
         portion_graph = PortionGraph()
         file_selection = FileSelection(self.main_window, self.gv)
         return file_selection, portion_graph, full_graph
@@ -126,9 +126,30 @@ class PortionGraph(Group):
         self.grp, self.layout = self.create_grp()
 
 
-class FullGraph(Group):
+import pyqtgraph as pg
+
+class AllFullGraph:
     def __init__(self):
+        pass
+
+class FullGraph(Group):
+    def __init__(self, ch):
         super().__init__()
+        self.ch = ch
+
         self.name = 'Full graph'
+        self.x_range = 8000
 
         self.grp, self.layout = self.create_grp()
+        self.add_graph()
+
+    def add_graph(self):
+        layout = QGridLayout()
+        box = QGroupBox(f'{self.ch}')
+        box.setLayout(layout)
+        region = pg.LinearRegionItem()
+        plot = pg.PlotWidget()
+        plot.setXRange(0, self.x_range)
+        self.layout.addWidget(plot, self.ch, 0)
+
+

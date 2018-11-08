@@ -12,10 +12,9 @@ from .classification_graph import ClassifGraph
 
 
 class ClassifPlotCreator:
-    def __init__(self, gv, layout, regions):
+    def __init__(self, gv, layout):
         self.gv = gv
         self.layout = layout
-        self.regions = regions
         self.timer = QtCore.QTimer()
 
         self.init_show_classif_plot()

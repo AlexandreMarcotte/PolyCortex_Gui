@@ -24,8 +24,7 @@ def main():
 
     @atexit.register   # work only if click on x on the window
     def save_data_at_exit():
-        pass
-        # open_bci_gui.main_window.tab_1.write_to_file()                         # TODO: ALEXM: kill all the thread here
+        open_bci_gui.main_window.tab_1.write_to_file()                         # TODO: ALEXM: kill all the thread here
 
     # start the main tread that contains all the timers
     sys.exit(app.exec_())

@@ -57,15 +57,10 @@ class CreateFakeData(threading.Thread):
             self.gv.t_queue.append(current_t)
             self.gv.all_t.append(current_t)
 
-            # Add experiment type values so that the region of the color
-            # corresponding to the expermentation type is spawn and follow the
-            # signal
+            # Add experiment type values 
             if self.gv.experiment_type[0] != 0:
                 self.gv.experiment_queue.append(self.gv.experiment_type[0])
                 self.gv.all_experiment_val.append(self.gv.experiment_type[0])
-                # once the experiment type was added to the experiment_type
-                # queue once bring it back to 0 so that it doesn't occure on
-                # th next itteration
                 self.gv.experiment_type[0] = 0
             else:
                 self.gv.experiment_queue.append(0)

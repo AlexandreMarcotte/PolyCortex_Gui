@@ -361,7 +361,7 @@ class FullGraph:
         self.layouts = []
         self.plots = []
         self.sliders = []
-        self.x_range = 8000
+        # self.x_range = 8000
 
         self.group_box, self.layout = self.create_group_and_layout()
 
