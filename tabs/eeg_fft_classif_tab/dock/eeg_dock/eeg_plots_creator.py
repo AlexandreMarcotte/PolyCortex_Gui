@@ -5,6 +5,7 @@ import pyqtgraph as pg
 from functools import partial
 from PyQt5 import QtGui, QtCore
 from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtWidgets import *
 from collections import namedtuple
 
 # -- My packages --
@@ -58,6 +59,14 @@ class EegPlotsCreator:
             self.timers[ch].timeout.connect(self.eeg_graphes[ch].update_graph)
             self.assign_n_to_ch(ch)
         self.assign_action_to_ch()
+
+    def init_layouts(self):
+        self.ch_layouts = []
+        self.ch_group = []
+        for ch in range(self.gv.N_CH):
+            self.ch_layouts.append(QGridLayout())
+            self.ch_group.append(QGroupBox(f'ch'))
+            self.ch_group[ch].setLayout(self.ch_layouts[ch])
 
     def create_buttons(self):
         """Assign pushbutton for starting and stoping the stream"""
