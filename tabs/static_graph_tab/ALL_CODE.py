@@ -54,36 +54,30 @@ class StaticGraphTab:
         full_graph_group = self.full_graph.group_box
         layout_splitter = self.create_layout_splitter(full_graph_group,
                                                       portion_graph_group)
-        scroll = self.create_scroll(layout_splitter)
-        self.add_group_to_main_widget(open_file.group, scroll)
-        self.add_static_plots()
+        # scroll = self.create_scroll(layout_splitter)
+        # self.add_group_to_main_widget(open_file.group, scroll)
+        # self.add_static_plots()
 
         # Set the layout
-        self.tab_w.setLayout(self.tab_w.layout)
+        # self.tab_w.setLayout(self.tab_w.layout)
 
-    def create_portion_graph(self):
-        self.portion_graph_layout = QGridLayout()
-        portion_graph_group = QGroupBox('Portion graph')
-        portion_graph_group.setLayout(self.portion_graph_layout)
-        return portion_graph_group
+    # def create_portion_graph(self):
+    #     self.portion_graph_layout = QGridLayout()
+    #     portion_graph_group = QGroupBox('Portion graph')
+    #     portion_graph_group.setLayout(self.portion_graph_layout)
+    #     return portion_graph_group
 
-    def create_layout_splitter(self, full_graph_group, portion_graph_group):
-        layout_splitter = QSplitter(Qt.Horizontal)
-        layout_splitter.addWidget(portion_graph_group)
-        layout_splitter.addWidget(full_graph_group)
-        return layout_splitter
+    # def create_scroll(self, layout_splitter):
+    #     scroll = QScrollArea()
+    #     scroll.setWidgetResizable(True)
+    #     scroll.setWidget(layout_splitter)
+    #     return scroll
 
-    def create_scroll(self, layout_splitter):
-        scroll = QScrollArea()
-        scroll.setWidgetResizable(True)
-        scroll.setWidget(layout_splitter)
-        return scroll
+    # def add_group_to_main_widget(self, open_file_group, scroll):
+    #     self.tab_w.layout.addWidget(open_file_group)
+    #     self.tab_w.layout.addWidget(scroll)
 
-    def add_group_to_main_widget(self, open_file_group, scroll):
-        self.tab_w.layout.addWidget(open_file_group)
-        self.tab_w.layout.addWidget(scroll)
-
-    def add_static_plots(self):
+    # def add_static_plots(self):
         # # Text list
         # self.all_char_class_type = []
         # # Plot lists
@@ -321,11 +315,11 @@ class FileGroup:
         self.layout, self.group = self.create_open_file()
         self.create_open_data_from_file_layout(self.layout)
 
-    def create_open_file(self):
-        layout = QGridLayout()
-        group = QGroupBox('Open file')
-        group.setLayout(layout)
-        return layout, group
+    # def create_open_file(self):
+    #     layout = QGridLayout()
+    #     group = QGroupBox('Open file')
+    #     group.setLayout(layout)
+    #     return layout, group
 
     def create_open_data_from_file_layout(self, layout):
         self.add_choose_file_btn(layout)
@@ -377,11 +371,11 @@ class FullGraph:
 
         self.group_box, self.layout = self.create_group_and_layout()
 
-    def create_group_and_layout(self):
-        layout = QGridLayout()
-        group_box = QGroupBox('Full graph')
-        group_box.setLayout(layout)
-        return group_box, layout
+    # def create_group_and_layout(self):
+    #     layout = QGridLayout()
+    #     group_box = QGroupBox('Full graph')
+    #     group_box.setLayout(layout)
+    #     return group_box, layout
 
     def add_full_static_graph(self, ch):
         # Full graph
