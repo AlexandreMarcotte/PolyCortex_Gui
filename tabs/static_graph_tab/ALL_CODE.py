@@ -19,12 +19,11 @@ from .portion_graph import PortionGraph
 
 class StaticGraphTab:
     def __init__(self, main_window, tab_w, gv):
-        self.main_window = main_window
-        self.tab_w = tab_w
-        self.gv = gv
+        # self.main_window = main_window
+        # self.tab_w = tab_w
+        # self.gv = gv
         # Stationnary graph
         self.slider_last = 0
-        self.static_graph_file_name = './experiment_csv/2exp_pinch_close_2018-08-29 19:44:54.567417.csv'
 
         # Classification model
         clf_path = 'machine_learning/linear_svm_fitted_model.pkl'
@@ -95,11 +94,11 @@ class StaticGraphTab:
             self.regions = self.full_graph.regions
             # self.add_full_static_graph(ch)
 
-    @pyqtSlot()
-    def create_stationnary_plot(self):
-        # Read data from file
-        data, t, exp = read_data_from_file(self.path_line_edit.text(),
-                                           n_ch=self.gv.N_CH)
+    # @pyqtSlot()
+    # def create_stationnary_plot(self):
+    #     # Read data from file
+    #     data, t, exp = read_data_from_file(self.path_line_edit.text(),
+    #                                        n_ch=self.gv.N_CH)
         N_DATA = len(data[0])
 
         # self.static_portion_graph_update = []
@@ -293,27 +292,24 @@ class ClassifRegionUpdate:
         except IndexError as e:
             print(e)
 
+# # -- General packages
+# from PyQt5.QtCore import pyqtSlot
+# from PyQt5.QtWidgets import *
+# from PyQt5 import QtGui
+# from functools import partial
+# # -- My packages --
+# from app.colors import *
+#
 
-
-
-# -- General packages
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtWidgets import *
-from PyQt5 import QtGui
-from functools import partial
-# -- My packages --
-from app.colors import *
-
-
-class FileGroup:
-    def __init__(self, main_win, file_name, create_stationnary_plot):
-        self.main_win = main_win
-        self.file_name = file_name
-        self.create_stationnary_plot = create_stationnary_plot
-
-        self.path_line_edit = None
-        self.layout, self.group = self.create_open_file()
-        self.create_open_data_from_file_layout(self.layout)
+# class FileGroup:
+#     def __init__(self, main_win, file_name, create_stationnary_plot):
+#         # self.main_win = main_win
+#         # self.file_name = file_name
+#         self.create_stationnary_plot = create_stationnary_plot
+#
+#         self.path_line_edit = None
+#         self.layout, self.group = self.create_open_file()
+#         self.create_open_data_from_file_layout(self.layout)
 
     # def create_open_file(self):
     #     layout = QGridLayout()
@@ -321,40 +317,38 @@ class FileGroup:
     #     group.setLayout(layout)
     #     return layout, group
 
-    def create_open_data_from_file_layout(self, layout):
-        self.add_choose_file_btn(layout)
-        self.add_data_path_line_edit(layout)
-        self.add_open_file_b(layout)
-
-    def add_choose_file_btn(self, layout):
-        chose_file_b = QtGui.QPushButton('Choose file containing data')
-        chose_file_b.setStyleSheet(f'background-color: {blue_b}')
-        chose_file_b.clicked.connect(partial(self.open_static_data_file))
-        layout.addWidget(chose_file_b, 0, 0)
-
-    def add_data_path_line_edit(self, layout):
-        """Create text box to show or enter path to data file"""
-        self.path_line_edit = QtGui.QLineEdit(self.file_name)
-        layout.addWidget(self.path_line_edit, 0, 1)
-
-    def add_open_file_b(self, layout):
-        open_file_b = QtGui.QPushButton('Open File')
-        open_file_b.clicked.connect(partial(self.create_stationnary_plot))
-        layout.addWidget(open_file_b, 0, 2)
-
-    @pyqtSlot()
-    def open_static_data_file(self):
-        # From: https://pythonspot.com/pyqt5-file-dialog/
-        options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
-        file_name, _ = QFileDialog.getOpenFileName(
-            self.main_win, "QFileDialog.getOpenFileName()", "",
-            "All Files (*);;Python Files (*.py)", options=options)
-        if file_name:
-            self.path_line_edit.setText(file_name)
-            self.file_name = file_name
-
-
+    # def create_open_data_from_file_layout(self, layout):
+    #     self.add_choose_file_btn(layout)
+    #     self.add_data_path_line_edit(layout)
+    #     self.add_open_file_b(layout)
+    #
+    # def add_choose_file_btn(self, layout):
+    #     chose_file_b = QtGui.QPushButton('Choose file containing data')
+    #     chose_file_b.setStyleSheet(f'background-color: {blue_b}')
+    #     chose_file_b.clicked.connect(partial(self.open_static_data_file))
+    #     layout.addWidget(chose_file_b, 0, 0)
+    #
+    # def add_data_path_line_edit(self, layout):
+    #     """Create text box to show or enter path to data file"""
+    #     self.path_line_edit = QtGui.QLineEdit(self.file_name)
+    #     layout.addWidget(self.path_line_edit, 0, 1)
+    #
+    # def add_open_file_b(self, layout):
+    #     open_file_b = QtGui.QPushButton('Open File')
+    #     open_file_b.clicked.connect(partial(self.create_stationnary_plot))
+    #     layout.addWidget(open_file_b, 0, 2)
+    #
+    # @pyqtSlot()
+    # def open_static_data_file(self):
+    #     # From: https://pythonspot.com/pyqt5-file-dialog/
+    #     options = QFileDialog.Options()
+    #     options |= QFileDialog.DontUseNativeDialog
+    #     file_name, _ = QFileDialog.getOpenFileName(
+    #         self.main_win, "QFileDialog.getOpenFileName()", "",
+    #         "All Files (*);;Python Files (*.py)", options=options)
+    #     if file_name:
+    #         self.path_line_edit.setText(file_name)
+    #         self.file_name = file_name
 
 from PyQt5.QtWidgets import *
 import pyqtgraph as pg
