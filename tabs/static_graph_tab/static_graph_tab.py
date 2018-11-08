@@ -14,6 +14,7 @@ from .static_graph_update import StaticGraphUpdate
 from .file_group import FileGroup
 from .classif_region_update import ClassifRegionUpdate
 from .update_slider_graph import UpdateSliderGraph
+from .full_graph import FullGraph
 
 
 class StaticGraphTab:
@@ -22,7 +23,6 @@ class StaticGraphTab:
         self.tab_w = tab_w
         self.gv = gv
         # Stationnary graph
-        self.full_graph_x_range = 8000
         self.slider_last = 0
         self.static_graph_file_name = './experiment_csv/2exp_pinch_close_2018-08-29 19:44:54.567417.csv'
         # Brush color for region delimiting experimentation events
@@ -47,7 +47,9 @@ class StaticGraphTab:
         self.data_path = open_file.data_path
 
         portion_graph_group = self.create_portion_graph()
-        full_graph_group = self.create_full_graph()
+        # full_graph_group = self.create_full_graph()                          # improve the code damnn
+        self.full_graph = FullGraph()                  # Improve this portion of the code
+        full_graph_group = self.full_graph.full_graph_group
         layout_splitter = self.create_layout_splitter(full_graph_group,
                                                       portion_graph_group)
         scroll = self.create_scroll(layout_splitter)
@@ -56,12 +58,6 @@ class StaticGraphTab:
 
         # Set the layout
         self.tab_w.setLayout(self.tab_w.layout)
-
-    def create_full_graph(self):
-        self.full_graph_layout = QGridLayout()
-        full_graph_group = QGroupBox('Full graph')
-        full_graph_group.setLayout(self.full_graph_layout)
-        return full_graph_group
 
     def create_portion_graph(self):
         self.portion_graph_layout = QGridLayout()
@@ -86,24 +82,23 @@ class StaticGraphTab:
         self.tab_w.layout.addWidget(scroll)
 
     def add_static_plots(self):
-        # Regions
-        self.regions = []
         # Text list
         self.all_char_class_type = []
         # Plot lists
         self.portion_plots = []
         self.portion_ch_layouts = []
         self.classif_plots = []
-        self.all_data_plots = []
         self.avg_classif_plots = []
         self.avg_classif_curves = []
-        # Layout
-        self.full_ch_layouts = []
+
         for ch in range(self.gv.N_CH):
             # Portion graph
             self.add_portion_static_plot(ch)
             # Full graph
-            self.add_full_static_graph(ch)
+            self.full_graph.add_full_static_graph(ch)                          # improve the code damnn
+            self.all_data_plots = self.full_graph.all_data_plots
+            self.regions = self.full_graph.regions
+            # self.add_full_static_graph(ch)
 
     @pyqtSlot()
     def create_stationnary_plot(self):
@@ -115,7 +110,6 @@ class StaticGraphTab:
         self.static_portion_graph_update = []
         self.static_classif_graph_update = []
         self.classif_region_updates = []
-        self.sliders = []
         self.classif_regions = []
         self.portion_regions = []
 
@@ -126,8 +120,17 @@ class StaticGraphTab:
             self.add_all_exp_region_for_this_ch(ch, exp)
             self.add_classif_region(ch)
             # Full plot
+            self.full_graph.add_sliders(ch, N_DATA)  # improve
+            self.slider = self.full_graph.slider
+
+            self.update_slider_graph = UpdateSliderGraph(
+                self.slider, self.all_data_plots[ch], self.regions[ch],
+                self.slider_last, self.classif_regions[ch],
+                self.portion_regions[ch], self.classified_pos)
+
             self.all_data_plots[ch].plot(ch_data, pen='w')
-            self.add_sliders(ch, N_DATA)
+            self.full_graph.connect_slider(ch, self.update_slider_graph)
+            # self.add_sliders(ch, N_DATA)                                       # improve the code
             self.add_sliding_region(ch)
             # Create classification graph and plot
             self.classify_ch_data(ch, ch_data)
@@ -153,13 +156,10 @@ class StaticGraphTab:
         Add Sliding region on the graph that will be add where experiment
         events occured during the training
         """
-        # Tell the ViewBox to exclude this item when doing auto-range
-        # calculations.
-        self.all_data_plots[no].addItem(self.regions[no], ignoreBounds=True)
-        # Activate ability for the graph to scale the y axis
-        self.all_data_plots[no].setAutoVisible(y=True)
-        self.portion_plots[no].setAutoVisible(y=True)
 
+        self.full_graph.add_sliding_region(no)                                 # improve
+
+        self.portion_plots[no].setAutoVisible(y=True)
         # - - Update the left side based on the right side region and slider pos
         # - Portion graph
         # Create 8 update function object, one for every portion plot
@@ -178,19 +178,6 @@ class StaticGraphTab:
         #     self.static_graph_update[no].update_region)
 
         self.regions[no].setRegion([0, 800])
-
-    def add_sliders(self, ch, N_DATA):
-        # # Slider to scoll through all data
-        self.slider = QSlider(Qt.Horizontal)
-        self.slider.setRange(0, N_DATA)
-        self.full_ch_layouts[ch].addWidget(self.slider, ch * 2 + 2, 0, 1, 1)
-        self.update_slider_graph = UpdateSliderGraph(
-            self.slider, self.all_data_plots[ch],
-            self.regions[ch], self.slider_last,
-            self.classif_regions[ch], self.portion_regions[ch],
-            self.classified_pos)
-        self.sliders.append(self.update_slider_graph)
-        self.slider.valueChanged.connect(self.sliders[ch].update_graph_range)
 
     def add_all_exp_region_for_this_ch(self, ch, exp):
         """
@@ -277,23 +264,6 @@ class StaticGraphTab:
         # Add the group to the left side of the separation
         self.portion_graph_layout.addWidget(self.portion_ch_group)
 
-    def add_full_static_graph(self, ch):
-        # Full graph
-        self.full_ch_layouts.append(QGridLayout())
-        self.full_graph_ch_group = QGroupBox(f'ch {ch+1}')
-        self.full_graph_ch_group.setLayout(self.full_ch_layouts[ch])
-
-        # Region of selection in the 'all_data_plot'
-        self.regions.append(pg.LinearRegionItem())
-
-        # Instanciate the plot containing all the data
-        self.all_data_plots.append(pg.PlotWidget())
-        self.all_data_plots[ch].setXRange(0, self.full_graph_x_range)
-
-        # All the values open from the saved file
-        self.full_ch_layouts[ch].addWidget(self.all_data_plots[ch], ch*2+1, 0)
-        # Add these group by channel to the right side of the separation
-        self.full_graph_layout.addWidget(self.full_graph_ch_group)
 
 
 
