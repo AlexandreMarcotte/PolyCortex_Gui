@@ -44,37 +44,33 @@ class StaticGraphTab:
         self.tab_w.layout.addWidget(scroller)
 
 
-class PortionGraph:
+class Group:
     def __init__(self):
+        self.name = 'Group'
+
+    def create_grp(self):
+        layout = QGridLayout()
+        grp = QGroupBox(self.name)
+        grp.setLayout(layout)
+        return grp
+
+
+class PortionGraph(Group):
+    def __init__(self):
+        super().__init__()
         self.name = 'Portion graph'
         self.grp = self.create_grp()
 
-    def create_grp(self):
-        layout = QGridLayout()
-        grp = QGroupBox(self.name)
-        grp.setLayout(layout)
-        return grp
 
-
-class FileSelection:
+class FileSelection(Group):
     def __init__(self):
+        super().__init__()
         self.name = 'Open file'
         self.grp = self.create_grp()
 
-    def create_grp(self):
-        layout = QGridLayout()
-        grp = QGroupBox(self.name)
-        grp.setLayout(layout)
-        return grp
-    
 
-class FullGraph: 
+class FullGraph(Group):
     def __init__(self):
+        super().__init__()
         self.name = 'Full graph'
         self.grp = self.create_grp()
-    
-    def create_grp(self):
-        layout = QGridLayout()
-        grp = QGroupBox(self.name)
-        grp.setLayout(layout)
-        return grp
