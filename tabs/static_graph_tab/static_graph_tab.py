@@ -49,7 +49,7 @@ class StaticGraphTab:
         portion_graph_group = self.create_portion_graph()
         # full_graph_group = self.create_full_graph()                          # improve the code damnn
         self.full_graph = FullGraph()                  # Improve this portion of the code
-        full_graph_group = self.full_graph.full_graph_group
+        full_graph_group = self.full_graph.group_box
         layout_splitter = self.create_layout_splitter(full_graph_group,
                                                       portion_graph_group)
         scroll = self.create_scroll(layout_splitter)
@@ -96,7 +96,7 @@ class StaticGraphTab:
             self.add_portion_static_plot(ch)
             # Full graph
             self.full_graph.add_full_static_graph(ch)                          # improve the code damnn
-            self.all_data_plots = self.full_graph.all_data_plots
+            self.all_data_plots = self.full_graph.plots
             self.regions = self.full_graph.regions
             # self.add_full_static_graph(ch)
 
