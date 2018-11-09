@@ -35,7 +35,8 @@ class StaticGraphTab:
 
     def create_portion_graph_gr(self):
         portion_graph_gr = Group('Portion graph')
-        PortionGraph(portion_graph_gr.layout)
+        for i in range(self.gv.N_CH):
+            PortionGraph(self.gv, i, portion_graph_gr.layout)
         return portion_graph_gr.gr
 
     def create_full_graph_gr(self):
@@ -139,11 +140,31 @@ class FileSelection:
                                            n_ch=self.gv.N_CH)
 
 
-class PortionGraph:
-    def __init__(self, layout):
-        self.layout = layout
 
-        self.name = 'Portion graph'
+class PortionGraph:
+    def __init__(self, gv, ch, gr_layout):
+        self.ch = ch
+        self.gr_layout = gr_layout
+
+        self.layout, self.gr = self.create_gr()
+
+        avg_classif_plot = self.add_plot(0, 0, 2, 2)
+        portion_plot = self.add_plot(0, 2, x_range=True)
+        classif_plot = self.add_plot(1, 2)
+
+    def create_gr(self):
+        layout = QGridLayout()
+        gr = QGroupBox(f'ch {self.ch}')
+        gr.setLayout(layout)
+        self.gr_layout.addWidget(gr, self.ch, 0)
+        return layout, gr
+
+    def add_plot(self, y, x, h=1, w=1, x_range=False):
+        plot = pg.PlotWidget()
+        if x_range:
+            plot.setXRange(0, x_range)
+        self.layout.addWidget(plot, y, x, h, w)
+        return plot
 
 
 import pyqtgraph as pg
@@ -153,28 +174,27 @@ class FullGraph:
         self.ch = ch
         self.gr_layout = gr_layout
 
-        self.name = 'Full graph'
-
-        self.x_range = 8000
-        self.N_DATA = len(gv.data_queue[0])
-
         self.layout, self.gr = self.add_graph()
-        self.add_slider()
+        full_plot = self.add_plot(x_range=8000)
+        self.add_slider(len(gv.data_queue[0]))
 
     def add_graph(self):
         layout = QGridLayout()
         gr = QGroupBox(f'ch {self.ch}')
         gr.setLayout(layout)
-        # region = pg.LinearRegionItem()
-        plot = pg.PlotWidget()
-        plot.setXRange(0, self.x_range)
-        layout.addWidget(plot)
         self.gr_layout.addWidget(gr, self.ch, 0)
         return layout, gr
 
-    def add_slider(self):
+    def add_plot(self, y=0, x=0, h=1, w=1, x_range=None):
+        plot = pg.PlotWidget()
+        if x_range:
+            plot.setXRange(0, x_range)
+        self.layout.addWidget(plot, y, x, h, w)
+        return plot
+
+    def add_slider(self, N_DATA):
         self.slider = QSlider(Qt.Horizontal)
-        self.slider.setRange(0, self.N_DATA)
+        self.slider.setRange(0, N_DATA)
         self.layout.addWidget(self.slider)
 
 
