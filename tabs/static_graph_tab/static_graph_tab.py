@@ -40,7 +40,8 @@ class StaticGraphTab:
 
     def create_full_graph_gr(self):
         full_graph_gr = Group('Full graph')
-        FullGraph(ch=1, layout=full_graph_gr.layout)
+        for i in range(self.gv.N_CH):
+            FullGraph(self.gv, i, full_graph_gr.layout)
         return full_graph_gr.gr
 
     def create_splitter(self, portion_graph_gr, full_graph_gr):
@@ -147,42 +148,33 @@ class PortionGraph:
 
 import pyqtgraph as pg
 
-class AllFullGraph:
-    def __init__(self):
-        list = []
-
-    def create_grp(self):
-        # Full graph
-        self.layouts.append(QGridLayout())
-        self.graph_group = QGroupBox(f'ch {ch+1}')
-        self.graph_group.setLayout(self.layouts[ch])
-        # Region of selection in the 'all_data_plot'
-        self.regions.append(pg.LinearRegionItem())
-
-        self.layout.addWidget(self.graph_group)
-
-
 class FullGraph:
-    def __init__(self, ch, layout):
+    def __init__(self, gv, ch, gr_layout):
         self.ch = ch
-        self.layout = layout
+        self.gr_layout = gr_layout
 
         self.name = 'Full graph'
 
         self.x_range = 8000
+        self.N_DATA = len(gv.data_queue[0])
 
-        self.gr = self.add_graph()
+        self.layout, self.gr = self.add_graph()
+        self.add_slider()
 
     def add_graph(self):
         layout = QGridLayout()
-        gr = QGroupBox(f'{self.ch}')
+        gr = QGroupBox(f'ch {self.ch}')
         gr.setLayout(layout)
         # region = pg.LinearRegionItem()
         plot = pg.PlotWidget()
         plot.setXRange(0, self.x_range)
         layout.addWidget(plot)
-        self.layout.addWidget(gr)
-        return gr
+        self.gr_layout.addWidget(gr, self.ch, 0)
+        return layout, gr
 
+    def add_slider(self):
+        self.slider = QSlider(Qt.Horizontal)
+        self.slider.setRange(0, self.N_DATA)
+        self.layout.addWidget(self.slider)
 
 
