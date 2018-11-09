@@ -10,7 +10,7 @@ class AvgClassifGraph:
         self.create_avg_classif_plot(ch)
 
 
-    def create_avg_classif_plot(self, ch):
+    def create_av5g_classif_plot(self, ch):
         """Instantiate the plot containing the average classification
            on all data"""
         self.avg_classif_plots.append(pg.PlotWidget())

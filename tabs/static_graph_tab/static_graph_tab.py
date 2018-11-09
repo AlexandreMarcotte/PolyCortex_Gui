@@ -3,6 +3,7 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt
 
+
 class StaticGraphTab:
     def __init__(self, main_window, tab_w, gv):
         self.main_window = main_window
@@ -14,23 +15,38 @@ class StaticGraphTab:
     def init_tab(self):
         self.tab_w.layout = QGridLayout(self.main_window)
 
-        file_selection, portion_graph, full_graph = self.create_grps()
-        splitter = self.create_splitter(portion_graph, full_graph)
+        file_selection_gr, portion_graph_gr, full_graph_gr = self.create_grps()
+        splitter = self.create_splitter(portion_graph_gr, full_graph_gr)
         scroller = self.create_scroll(splitter)
-        self.add_grp_to_main_widget(file_selection, scroller)
+        self.add_gr_to_main_widget(file_selection_gr, scroller)
 
         self.tab_w.setLayout(self.tab_w.layout)
 
     def create_grps(self):
-        full_graph = FullGraph(1)
-        portion_graph = PortionGraph()
-        file_selection = FileSelection(self.main_window, self.gv)
-        return file_selection, portion_graph, full_graph
+        file_selection_gr = self.create_file_selection_gr()
+        portion_graph_gr = self.create_portion_graph_gr()
+        full_graph_gr = self.create_full_graph_gr()
+        return file_selection_gr, portion_graph_gr, full_graph_gr
 
-    def create_splitter(self, portion_graph, full_graph):
+    def create_file_selection_gr(self):
+        file_selection_gr = Group('File selection')
+        FileSelection(self.main_window, self.gv, file_selection_gr.layout)
+        return file_selection_gr.gr
+
+    def create_portion_graph_gr(self):
+        portion_graph_gr = Group('Portion graph')
+        PortionGraph(portion_graph_gr.layout)
+        return portion_graph_gr.gr
+
+    def create_full_graph_gr(self):
+        full_graph_gr = Group('Full graph')
+        FullGraph(ch=1, layout=full_graph_gr.layout)
+        return full_graph_gr.gr
+
+    def create_splitter(self, portion_graph_gr, full_graph_gr):
         splitter = QSplitter(Qt.Horizontal)
-        splitter.addWidget(portion_graph.grp)
-        splitter.addWidget(full_graph.grp)
+        splitter.addWidget(portion_graph_gr)
+        splitter.addWidget(full_graph_gr)
         return splitter
 
     def create_scroll(self, splitter):
@@ -39,20 +55,23 @@ class StaticGraphTab:
         scroller.setWidget(splitter)
         return scroller
 
-    def add_grp_to_main_widget(self, file_selection, scroller):
-        self.tab_w.layout.addWidget(file_selection.grp)
+    def add_gr_to_main_widget(self, file_selection_gr, scroller):
+        self.tab_w.layout.addWidget(file_selection_gr)
         self.tab_w.layout.addWidget(scroller)
 
 
-class Group:
-    def __init__(self):
-        self.name = 'Group'
 
-    def create_grp(self):
+
+class Group:
+    def __init__(self, name):
+        self.name = name
+        self.layout, self.gr = self.create_gr()
+
+    def create_gr(self):
         layout = QGridLayout()
-        grp = QGroupBox(self.name)
-        grp.setLayout(layout)
-        return grp, layout
+        gr = QGroupBox(self.name)
+        gr.setLayout(layout)
+        return layout, gr
 
 
 # -- General packages--
@@ -64,16 +83,17 @@ from functools import partial
 from app.colors import *
 from generate_signal.from_file import read_data_from_file
 
-class FileSelection(Group):
-    def __init__(self, win, gv):
-        super().__init__()
+class FileSelection:
+    def __init__(self, win, gv, layout):
         self.win = win
         self.gv = gv
+        self.layout = layout
+
+        self.name = 'File selection'
 
         self.file_name = './experiment_csv/2exp_pinch_close_2018-08-29 19:44:54.567417.csv'
         self.name = 'Open file'
 
-        self.grp, self.layout = self.create_grp()
         self.path_line_edit = self.init_layout()
 
     def init_layout(self):
@@ -118,38 +138,51 @@ class FileSelection(Group):
                                            n_ch=self.gv.N_CH)
 
 
-class PortionGraph(Group):
-    def __init__(self):
-        super().__init__()
-        self.name = 'Portion graph'
+class PortionGraph:
+    def __init__(self, layout):
+        self.layout = layout
 
-        self.grp, self.layout = self.create_grp()
+        self.name = 'Portion graph'
 
 
 import pyqtgraph as pg
 
 class AllFullGraph:
     def __init__(self):
-        pass
+        list = []
 
-class FullGraph(Group):
-    def __init__(self, ch):
-        super().__init__()
+    def create_grp(self):
+        # Full graph
+        self.layouts.append(QGridLayout())
+        self.graph_group = QGroupBox(f'ch {ch+1}')
+        self.graph_group.setLayout(self.layouts[ch])
+        # Region of selection in the 'all_data_plot'
+        self.regions.append(pg.LinearRegionItem())
+
+        self.layout.addWidget(self.graph_group)
+
+
+class FullGraph:
+    def __init__(self, ch, layout):
         self.ch = ch
+        self.layout = layout
 
         self.name = 'Full graph'
+
         self.x_range = 8000
 
-        self.grp, self.layout = self.create_grp()
-        self.add_graph()
+        self.gr = self.add_graph()
 
     def add_graph(self):
         layout = QGridLayout()
-        box = QGroupBox(f'{self.ch}')
-        box.setLayout(layout)
-        region = pg.LinearRegionItem()
+        gr = QGroupBox(f'{self.ch}')
+        gr.setLayout(layout)
+        # region = pg.LinearRegionItem()
         plot = pg.PlotWidget()
         plot.setXRange(0, self.x_range)
-        self.layout.addWidget(plot, self.ch, 0)
+        layout.addWidget(plot)
+        self.layout.addWidget(gr)
+        return gr
+
 
 
