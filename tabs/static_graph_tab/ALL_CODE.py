@@ -149,10 +149,10 @@ class PortionPlotsLayout:
         # Brush color for region delimiting experimentation events
         self.region_brush = [red, green, blue, yellow, purple]
 
-    def create_all_ch_layout(self):
-        self.portion_ch_layouts.append(QGridLayout())
-        portion_ch_group = QGroupBox(f'ch {ch+1}')
-        portion_ch_group.setLayout(self.portion_ch_layouts[ch])
+    # def create_all_ch_layout(self):
+    #     self.portion_ch_layouts.append(QGridLayout())
+    #     portion_ch_group = QGroupBox(f'ch {ch+1}')
+    #     portion_ch_group.setLayout(self.portion_ch_layouts[ch])
 
     def complete_layout(self):
         """Once the group is completed add it to the left side of
@@ -371,26 +371,26 @@ class FullGraph:
     #     group_box.setLayout(layout)
     #     return group_box, layout
 
-    def add_full_static_graph(self, ch):
-        # Full graph
-        self.layouts.append(QGridLayout())
-        self.graph_group = QGroupBox(f'ch {ch+1}')
-        self.graph_group.setLayout(self.layouts[ch])
-        # Region of selection in the 'all_data_plot'
-        self.regions.append(pg.LinearRegionItem())
-        # Instanciate the plot containing all the data
-        self.plots.append(pg.PlotWidget())
-        self.plots[ch].setXRange(0, self.x_range)
-        # All the values open from the saved file
-        self.layouts[ch].addWidget(self.plots[ch], ch*2+1, 0)
-        # Add these group by channel to the right side of the separation
-        self.layout.addWidget(self.graph_group)
-
-    def add_sliders(self, ch, N_DATA):
-        # # Slider to scoll through all data
-        self.slider = QSlider(Qt.Horizontal)
-        self.slider.setRange(0, N_DATA)
-        self.layouts[ch].addWidget(self.slider, ch*2+2, 0)
+    # def add_full_static_graph(self, ch):
+    #     # Full graph
+    #     self.layouts.append(QGridLayout())
+    #     self.graph_group = QGroupBox(f'ch {ch+1}')
+    #     self.graph_group.setLayout(self.layouts[ch])
+    #     # Region of selection in the 'all_data_plot'
+    #     self.regions.append(pg.LinearRegionItem())
+    #     # Instanciate the plot containing all the data
+    #     self.plots.append(pg.PlotWidget())
+    #     self.plots[ch].setXRange(0, self.x_range)
+    #     # All the values open from the saved file
+    #     self.layouts[ch].addWidget(self.plots[ch], ch*2+1, 0)
+    #     # Add these group by channel to the right side of the separation
+    #     self.layout.addWidget(self.graph_group)
+    #
+    # def add_sliders(self, ch, N_DATA):
+    #     # # Slider to scoll through all data
+    #     self.slider = QSlider(Qt.Horizontal)
+    #     self.slider.setRange(0, N_DATA)
+    #     self.layouts[ch].addWidget(self.slider, ch*2+2, 0)
 
     def connect_slider(self, ch, update_slider_graph):
         self.sliders.append(update_slider_graph)
