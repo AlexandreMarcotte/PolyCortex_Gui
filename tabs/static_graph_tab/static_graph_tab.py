@@ -139,44 +139,15 @@ class FileSelection:
         data, t, exp = read_data_from_file(self.path_line_edit.text(),
                                            n_ch=self.gv.N_CH)
 
-
-
-class PortionGraph:
-    def __init__(self, gv, ch, gr_layout):
-        self.ch = ch
-        self.gr_layout = gr_layout
-
-        self.layout, self.gr = self.create_gr()
-
-        avg_classif_plot = self.add_plot(0, 0, 2, 2)
-        portion_plot = self.add_plot(0, 2, x_range=True)
-        classif_plot = self.add_plot(1, 2)
-
-    def create_gr(self):
-        layout = QGridLayout()
-        gr = QGroupBox(f'ch {self.ch}')
-        gr.setLayout(layout)
-        self.gr_layout.addWidget(gr, self.ch, 0)
-        return layout, gr
-
-    def add_plot(self, y, x, h=1, w=1, x_range=False):
-        plot = pg.PlotWidget()
-        if x_range:
-            plot.setXRange(0, x_range)
-        self.layout.addWidget(plot, y, x, h, w)
-        return plot
-
-
 import pyqtgraph as pg
 
-class FullGraph:
+
+class GraphLayout:
     def __init__(self, gv, ch, gr_layout):
         self.ch = ch
         self.gr_layout = gr_layout
 
         self.layout, self.gr = self.add_graph()
-        full_plot = self.add_plot(x_range=8000)
-        self.add_slider(len(gv.data_queue[0]))
 
     def add_graph(self):
         layout = QGridLayout()
@@ -196,5 +167,22 @@ class FullGraph:
         self.slider = QSlider(Qt.Horizontal)
         self.slider.setRange(0, N_DATA)
         self.layout.addWidget(self.slider)
+
+
+class PortionGraph(GraphLayout):
+    def __init__(self, gv, ch, gr_layout):
+        super().__init__(gv, ch, gr_layout)
+
+        avg_classif_plot = self.add_plot(h=2, w=2)
+        portion_plot = self.add_plot(y=0, x=2, x_range=True)
+        classif_plot = self.add_plot(y=1, x=2)
+
+
+class FullGraph(GraphLayout):
+    def __init__(self, gv, ch, gr_layout):
+        super().__init__(gv, ch, gr_layout)
+
+        full_plot = self.add_plot(x_range=8000)
+        self.add_slider(len(gv.data_queue[0]))
 
 
