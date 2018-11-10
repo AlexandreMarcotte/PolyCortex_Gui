@@ -99,7 +99,7 @@ class StaticGraphTab:
     #     # Read data from file
     #     data, t, exp = read_data_from_file(self.path_line_edit.text(),
     #                                        n_ch=self.gv.N_CH)
-        N_DATA = len(data[0])
+    #     N_DATA = len(data[0])
 
         # self.static_portion_graph_update = []
         # self.static_classif_graph_update = []
@@ -111,11 +111,9 @@ class StaticGraphTab:
             self.pos = 0
             # Portion plot
 
-
-
             # Full plot
-            self.full_graph.add_sliders(ch, N_DATA)                            # improve
-            self.slider = self.full_graph.slider
+            # self.full_graph.add_sliders(ch, N_DATA)                            # improve
+            # self.slider = self.full_graph.slider
 
             self.update_slider_graph = UpdateSliderGraph(
                 self.slider, self.all_data_plots[ch], self.regions[ch],
@@ -154,10 +152,10 @@ class PortionPlotsLayout:
     #     portion_ch_group = QGroupBox(f'ch {ch+1}')
     #     portion_ch_group.setLayout(self.portion_ch_layouts[ch])
 
-    def complete_layout(self):
-        """Once the group is completed add it to the left side of
-           the separation"""
-        self.portion_graph_layout.addWidget(portion_ch_group)
+    # def complete_layout(self):
+    #     """Once the group is completed add it to the left side of
+    #        the separation"""
+    #     self.portion_graph_layout.addWidget(portion_ch_group)
 
 
 class PortionGraph:
@@ -180,11 +178,11 @@ class PortionGraph:
 
         self.portion_graph_group = self.create_portion_plot()
 
-    def create_portion_plot(self, ch):
-        """Instantiating the plot containing the portion of the full plot
-           that is located on the righ side"""
-        self.portion_plots.append(pg.PlotWidget())
-        self.portion_ch_layouts[ch].addWidget(self.portion_plots[ch], ch * 2, 3)
+    # def create_portion_plot(self, ch):
+    #     """Instantiating the plot containing the portion of the full plot
+    #        that is located on the righ side"""
+    #     self.portion_plots.append(pg.PlotWidget())
+    #     self.portion_ch_layouts[ch].addWidget(self.portion_plots[ch], ch * 2, 3)
 
     def add_one_exp_region(self, ch, no, val):
         """ Add a pyqtgraph region on a single event """
@@ -247,7 +245,7 @@ class PortionGraph:
             self.pos += self.classified_once_every
 
 
-import pyqtgraph as pg
+# import pyqtgraph as pg
 
 
 class ClassifGraph:
@@ -362,7 +360,6 @@ class FullGraph:
         self.plots = []
         self.sliders = []
         # self.x_range = 8000
-
         self.group_box, self.layout = self.create_group_and_layout()
 
     # def create_group_and_layout(self):

@@ -1,5 +1,4 @@
 # -- General packages --
-# Graph
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt
 
@@ -15,35 +14,19 @@ class StaticGraphTab:
     def init_tab(self):
         self.tab_w.layout = QGridLayout(self.main_window)
 
-        file_selection_gr, portion_graph_gr, full_graph_gr = self.create_grps()
+        file_selector_gr, portion_graph_gr, full_graph_gr = self.create_grps()
         splitter = self.create_splitter(portion_graph_gr, full_graph_gr)
         scroller = self.create_scroll(splitter)
-        self.add_gr_to_main_widget(file_selection_gr, scroller)
+        self.add_gr_to_main_widget(file_selector_gr, scroller)
 
         self.tab_w.setLayout(self.tab_w.layout)
 
     def create_grps(self):
-        file_selection_gr = self.create_file_selection_gr()
-        portion_graph_gr = self.create_portion_graph_gr()
-        full_graph_gr = self.create_full_graph_gr()
-        return file_selection_gr, portion_graph_gr, full_graph_gr
-
-    def create_file_selection_gr(self):
-        file_selection_gr = Group('File selection')
-        FileSelection(self.main_window, self.gv, file_selection_gr.layout)
-        return file_selection_gr.gr
-
-    def create_portion_graph_gr(self):
-        portion_graph_gr = Group('Portion graph')
-        for i in range(self.gv.N_CH):
-            PortionGraph(self.gv, i, portion_graph_gr.layout)
-        return portion_graph_gr.gr
-
-    def create_full_graph_gr(self):
-        full_graph_gr = Group('Full graph')
-        for i in range(self.gv.N_CH):
-            FullGraph(self.gv, i, full_graph_gr.layout)
-        return full_graph_gr.gr
+        file_selector = FileSelector('File selector', self.main_window, self.gv)
+        left_gr = LeftGraphLayout(
+            'Avg classif graph - Portion graph - Classif graph', self.gv)
+        right_gr = RightGraphLayout('Full graph', self.gv)
+        return file_selector.gr, left_gr.gr, right_gr.gr
 
     def create_splitter(self, portion_graph_gr, full_graph_gr):
         splitter = QSplitter(Qt.Horizontal)
@@ -57,23 +40,9 @@ class StaticGraphTab:
         scroller.setWidget(splitter)
         return scroller
 
-    def add_gr_to_main_widget(self, file_selection_gr, scroller):
-        self.tab_w.layout.addWidget(file_selection_gr)
+    def add_gr_to_main_widget(self, file_selector_gr, scroller):
+        self.tab_w.layout.addWidget(file_selector_gr)
         self.tab_w.layout.addWidget(scroller)
-
-
-
-
-class Group:
-    def __init__(self, name):
-        self.name = name
-        self.layout, self.gr = self.create_gr()
-
-    def create_gr(self):
-        layout = QGridLayout()
-        gr = QGroupBox(self.name)
-        gr.setLayout(layout)
-        return layout, gr
 
 
 # -- General packages--
@@ -85,104 +54,143 @@ from functools import partial
 from app.colors import *
 from generate_signal.from_file import read_data_from_file
 
-class FileSelection:
-    def __init__(self, win, gv, layout):
-        self.win = win
-        self.gv = gv
-        self.layout = layout
 
-        self.name = 'File selection'
 
-        self.file_name = './experiment_csv/2exp_pinch_close_2018-08-29 19:44:54.567417.csv'
-        self.name = 'Open file'
-
-        self.path_line_edit = self.init_layout()
-
-    def init_layout(self):
-        self.add_choose_file_b()
-        self.add_open_file_b()
-        path_line_edit = self.add_data_path_line_edit()
-        return path_line_edit
-
-    def add_choose_file_b(self):
-        b = QtGui.QPushButton('Choose file containing data')
-        b.setStyleSheet(f'background-color: {blue_b}')
-        b.clicked.connect(partial(self.open_static_data_file))
-        self.layout.addWidget(b, 0, 0)
-
-    def add_open_file_b(self):
-        open_file_b = QtGui.QPushButton('Open File')
-        open_file_b.clicked.connect(partial(self.create_stationnary_plot))
-        self.layout.addWidget(open_file_b, 0, 2)
-
-    def add_data_path_line_edit(self):
-        """Create text box to show or enter path to data file"""
-        path_line_edit = QtGui.QLineEdit(self.file_name)
-        self.layout.addWidget(path_line_edit, 0, 1)
-        return path_line_edit
-
-    @pyqtSlot()
-    def open_static_data_file(self):
-        # From: https://pythonspot.com/pyqt5-file-dialog/
-        options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
-        file_name, _ = QFileDialog.getOpenFileName(
-            self.win, "QFileDialog.getOpenFileName()", "",
-            "All Files (*);;Python Files (*.py)", options=options)
-        if file_name:
-            self.path_line_edit.setText(file_name)
-            self.file_name = file_name
-
-    @pyqtSlot()
-    def create_stationnary_plot(self):
-        # Read data from file
-        data, t, exp = read_data_from_file(self.path_line_edit.text(),
-                                           n_ch=self.gv.N_CH)
 
 import pyqtgraph as pg
 
 
-class GraphLayout:
-    def __init__(self, gv, ch, gr_layout):
-        self.ch = ch
-        self.gr_layout = gr_layout
-
-        self.layout, self.gr = self.add_graph()
-
-    def add_graph(self):
+class Group:
+    def create_gr_and_layout(self, name, parent_layout=None, ch=None):
         layout = QGridLayout()
-        gr = QGroupBox(f'ch {self.ch}')
+        gr = QGroupBox(name)
         gr.setLayout(layout)
-        self.gr_layout.addWidget(gr, self.ch, 0)
+        if parent_layout is not None:
+            parent_layout.addWidget(gr, ch, 0)
         return layout, gr
 
-    def add_plot(self, y=0, x=0, h=1, w=1, x_range=None):
+
+class FileSelector(Group):
+    def __init__(self, name, win, gv):
+        super().__init__()
+        self.name = name
+        self.win = win
+        self.gv = gv
+        # Initialize data lists before reading
+        self.data = []
+        self.t = []
+        self.exp = []
+        self.file_name = './experiment_csv/2exp_pinch_close_2018-08-29 19:44:54.567417.csv'
+
+        self.gr, self.path_line_edit = self.init_layout()
+
+    def init_layout(self):
+        layout, gr = self.create_gr_and_layout(self.name)
+        self.add_choose_file_b(layout)
+        path_line_edit = self.add_data_path_line_edit(layout)
+        self.add_open_file_b(layout)
+        return gr, path_line_edit
+
+    def add_choose_file_b(self, layout):
+        b = QtGui.QPushButton('Choose file containing data')
+        b.setStyleSheet(f'background-color: {blue_b}')
+        b.clicked.connect(partial(self.choose_file))
+        layout.addWidget(b, 0, 0)
+
+    def add_data_path_line_edit(self, layout):
+        """Create text box to show or enter path to data file"""
+        path_line_edit = QtGui.QLineEdit(self.file_name)
+        layout.addWidget(path_line_edit, 0, 1)
+        return path_line_edit
+
+    def add_open_file_b(self, layout):
+        open_file_b = QtGui.QPushButton('Open File')
+        open_file_b.clicked.connect(partial(self.read_data))
+        layout.addWidget(open_file_b, 0, 2)
+
+    @pyqtSlot()
+    def choose_file(self):
+        # From: https://pythonspot.com/pyqt5-file-dialog/
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        f_name, _ = QFileDialog.getOpenFileName(
+            self.win, "QFileDialog.getOpenFileName()", "",
+            "All Files (*);;Python Files (*.py)", options=options)
+        if f_name:
+            self.path_line_edit.setText(f_name)
+            self.f_name = f_name
+
+    @pyqtSlot()
+    def read_data(self):
+        self.data, self.t, self.exp = \
+            read_data_from_file(self.path_line_edit.text(), n_ch=self.gv.N_CH)
+
+
+class GraphLayout(Group):
+    def __init__(self):
+        super().__init__()
+
+    def add_all_graph(self, parent_layout, gv):                                # TODO: ALEXM: find how redefinintion of functions are done
+        for ch in range(gv.N_CH):
+            layout, gr = self.create_gr_and_layout(
+                name=f'ch {ch}', parent_layout=parent_layout, ch=ch)
+            self.create_graphs(layout)
+
+
+class LeftGraphLayout(GraphLayout):
+    def __init__(self, name, gv):
+        super().__init__()
+
+        parent_layout, self.gr = self.create_gr_and_layout(name)
+        self.add_all_graph(parent_layout, gv)
+
+    def create_graphs(self, layout):
+        PortionGraph().add_plot(layout, y=0, x=2, x_range=True)
+        AvgClassifGraph().add_plot(layout, h=2, w=2)
+        ClassifGraph().add_plot(layout, y=1, x=2)
+
+
+class RightGraphLayout(GraphLayout):
+    def __init__(self, name, gv):
+        super().__init__()
+        self.gv = gv
+
+        parent_layout, self.gr = self.create_gr_and_layout(name)
+        self.add_all_graph(parent_layout, gv)
+        self.slider = None
+
+    def create_graphs(self, layout):
+        full_graph = FullGraph()
+        full_graph.add_plot(layout, x_range=8000)
+        self.slider = full_graph.add_slider(layout, len(self.gv.data_queue[0]))
+
+
+class Graph:
+    def add_plot(self, layout, y=0, x=0, h=1, w=1, x_range=None):
         plot = pg.PlotWidget()
         if x_range:
             plot.setXRange(0, x_range)
-        self.layout.addWidget(plot, y, x, h, w)
+        layout.addWidget(plot, y, x, h, w)
         return plot
 
-    def add_slider(self, N_DATA):
-        self.slider = QSlider(Qt.Horizontal)
-        self.slider.setRange(0, N_DATA)
-        self.layout.addWidget(self.slider)
+    def add_slider(self, layout, N_DATA):
+        slider = QSlider(Qt.Horizontal)
+        slider.setRange(0, N_DATA)
+        layout.addWidget(slider)
+        return slider
 
 
-class PortionGraph(GraphLayout):
-    def __init__(self, gv, ch, gr_layout):
-        super().__init__(gv, ch, gr_layout)
-
-        avg_classif_plot = self.add_plot(h=2, w=2)
-        portion_plot = self.add_plot(y=0, x=2, x_range=True)
-        classif_plot = self.add_plot(y=1, x=2)
-
-
-class FullGraph(GraphLayout):
-    def __init__(self, gv, ch, gr_layout):
-        super().__init__(gv, ch, gr_layout)
-
-        full_plot = self.add_plot(x_range=8000)
-        self.add_slider(len(gv.data_queue[0]))
+class PortionGraph(Graph):
+    def __init__(self):
+        super().__init__()
+class AvgClassifGraph(Graph):
+    def __init__(self):
+        super().__init__()
+class ClassifGraph(Graph):
+    def __init__(self):
+        super().__init__()
+class FullGraph(Graph):
+    def __init__(self):
+        super().__init__()
 
 
