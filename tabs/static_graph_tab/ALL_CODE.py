@@ -38,21 +38,21 @@ class StaticGraphTab:
         self.create_tab()
 
     def create_tab(self):
-        self.tab_w.layout = QGridLayout(self.main_window)
-        # Open file group
-        open_file = FileGroup(self.main_window, self.static_graph_file_name,
-                              self.create_stationnary_plot)
-        self.path_line_edit = open_file.path_line_edit
+        # self.tab_w.layout = QGridLayout(self.main_window)
+        # # Open file group
+        # open_file = FileGroup(self.main_window, self.static_graph_file_name,
+        #                       self.create_stationnary_plot)
+        # self.path_line_edit = open_file.path_line_edit
 
         # Portion graph group
-        portion_graph_group = self.create_portion_graph()
+        # portion_graph_group = self.create_portion_graph()
 
 
-        # full_graph_group = self.create_full_graph()                          # improve the code damnn
-        self.full_graph = FullGraph()                  # Improve this portion of the code
-        full_graph_group = self.full_graph.group_box
-        layout_splitter = self.create_layout_splitter(full_graph_group,
-                                                      portion_graph_group)
+        # # full_graph_group = self.create_full_graph()                          # improve the code damnn
+        # self.full_graph = FullGraph()                  # Improve this portion of the code
+        # full_graph_group = self.full_graph.group_box
+        # layout_splitter = self.create_layout_splitter(full_graph_group,
+        #                                               portion_graph_group)
         # scroll = self.create_scroll(layout_splitter)
         # self.add_group_to_main_widget(open_file.group, scroll)
         # self.add_static_plots()
@@ -348,19 +348,19 @@ class ClassifRegionUpdate:
     #         self.path_line_edit.setText(file_name)
     #         self.file_name = file_name
 
-from PyQt5.QtWidgets import *
-import pyqtgraph as pg
-from PyQt5.QtCore import Qt
+# from PyQt5.QtWidgets import *
+# import pyqtgraph as pg
+# from PyQt5.QtCore import Qt
 
 
 class FullGraph:
     def __init__(self):
         self.regions = []
         self.layouts = []
-        self.plots = []
-        self.sliders = []
+        # self.plots = []
+        # self.sliders = []
         # self.x_range = 8000
-        self.group_box, self.layout = self.create_group_and_layout()
+        # self.group_box, self.layout = self.create_group_and_layout()
 
     # def create_group_and_layout(self):
     #     layout = QGridLayout()

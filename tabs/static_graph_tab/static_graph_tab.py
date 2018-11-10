@@ -14,19 +14,21 @@ class StaticGraphTab:
     def init_tab(self):
         self.tab_w.layout = QGridLayout(self.main_window)
 
-        file_selector_gr, portion_graph_gr, full_graph_gr = self.create_grps()
-        splitter = self.create_splitter(portion_graph_gr, full_graph_gr)
+        file_selector, left_panel, right_panel = self.create_grps()
+        splitter = self.create_splitter(left_panel.gr, right_panel.gr)
         scroller = self.create_scroll(splitter)
-        self.add_gr_to_main_widget(file_selector_gr, scroller)
+        self.add_gr_to_main_widget(file_selector.gr, scroller)
 
         self.tab_w.setLayout(self.tab_w.layout)
 
+        self.connect_updates(right_panel)
+
     def create_grps(self):
-        file_selector = FileSelector('File selector', self.main_window, self.gv)
-        left_gr = LeftGraphLayout(
-            'Avg classif graph - Portion graph - Classif graph', self.gv)
-        right_gr = RightGraphLayout('Full graph', self.gv)
-        return file_selector.gr, left_gr.gr, right_gr.gr
+        left_panel = LeftGraphLayout(self.gv)
+        right_panel = RightGraphLayout(self.gv)
+        file_selector = FileSelector('File selector', self.main_window, self.gv,
+                                     right_panel, left_panel)
+        return file_selector, left_panel, right_panel
 
     def create_splitter(self, portion_graph_gr, full_graph_gr):
         splitter = QSplitter(Qt.Horizontal)
@@ -43,6 +45,11 @@ class StaticGraphTab:
     def add_gr_to_main_widget(self, file_selector_gr, scroller):
         self.tab_w.layout.addWidget(file_selector_gr)
         self.tab_w.layout.addWidget(scroller)
+
+    def connect_updates(self, right_panel):
+        updater = Updater()
+        updater.connect_sliders(right_panel.sliders,
+                                right_panel.full_graphs)
 
 
 # -- General packages--
@@ -71,12 +78,14 @@ class Group:
 
 
 class FileSelector(Group):
-    def __init__(self, name, win, gv):
+    def __init__(self, name, win, gv, right_gr, left_gr):
         super().__init__()
         self.name = name
         self.win = win
         self.gv = gv
-        # Initialize data lists before reading
+        self.right_gr = right_gr
+        self.left_gr = left_gr
+        # Initialize data lists before reading                                 TODO: ALEXM: create a panda dataframe instead
         self.data = []
         self.t = []
         self.exp = []
@@ -122,56 +131,76 @@ class FileSelector(Group):
 
     @pyqtSlot()
     def read_data(self):
-        self.data, self.t, self.exp = \
+        data, t, exp = \
             read_data_from_file(self.path_line_edit.text(), n_ch=self.gv.N_CH)
+        for ch in range(self.gv.N_CH):
+            self.right_gr.full_graphs[ch].plot_data(data[ch])
+            self.left_gr.portion_graphs[ch].plot_data(data[ch])
+            self.right_gr.sliders[ch].setMaximum(len(data[0]))
 
 
-class GraphLayout(Group):
-    def __init__(self):
+class LeftGraphLayout(Group):
+    def __init__(self, gv):
         super().__init__()
+
+        self.portion_graphs = []
+        self.classif_graphs = []
+        self.avg_classif_graphs = []
+
+        name = 'Avg classif graph - Portion graph - Classif graph'
+        parent_layout, self.gr = self.create_gr_and_layout(name)
+        self.add_all_graph(parent_layout, gv)
 
     def add_all_graph(self, parent_layout, gv):                                # TODO: ALEXM: find how redefinintion of functions are done
         for ch in range(gv.N_CH):
             layout, gr = self.create_gr_and_layout(
-                name=f'ch {ch}', parent_layout=parent_layout, ch=ch)
+                name=f'ch {ch + 1}', parent_layout=parent_layout, ch=ch)
             self.create_graphs(layout)
 
-
-class LeftGraphLayout(GraphLayout):
-    def __init__(self, name, gv):
-        super().__init__()
-
-        parent_layout, self.gr = self.create_gr_and_layout(name)
-        self.add_all_graph(parent_layout, gv)
-
     def create_graphs(self, layout):
-        PortionGraph().add_plot(layout, y=0, x=2, x_range=True)
+        self.create_portion_graph(layout)
         AvgClassifGraph().add_plot(layout, h=2, w=2)
         ClassifGraph().add_plot(layout, y=1, x=2)
 
+    def create_portion_graph(self, layout):
+        portion_graph = PortionGraph()
+        portion_graph.add_plot(layout, y=0, x=2, x_range=True)
+        self.portion_graphs.append(portion_graph)
 
-class RightGraphLayout(GraphLayout):
-    def __init__(self, name, gv):
+
+class RightGraphLayout(Group):
+    def __init__(self, gv):
         super().__init__()
-        self.gv = gv
 
-        parent_layout, self.gr = self.create_gr_and_layout(name)
+        self.full_graphs = []
+        self.sliders = []
+
+        parent_layout, self.gr = self.create_gr_and_layout('Portion graph')
         self.add_all_graph(parent_layout, gv)
-        self.slider = None
 
-    def create_graphs(self, layout):
+
+    def add_all_graph(self, parent_layout, gv):                                # TODO: ALEXM: find how redefinintion of functions are done
+        for ch in range(gv.N_CH):
+            layout, gr = self.create_gr_and_layout(
+                name=f'ch {ch + 1}', parent_layout=parent_layout, ch=ch)
+            self.create_graphs(layout, gv)
+
+    def create_graphs(self, layout, gv):
         full_graph = FullGraph()
         full_graph.add_plot(layout, x_range=8000)
-        self.slider = full_graph.add_slider(layout, len(self.gv.data_queue[0]))
+        slider = full_graph.add_slider(layout, 10)
+        self.sliders.append(slider)
+        self.full_graphs.append(full_graph)
 
 
 class Graph:
+    def __init__(self):
+        self.plot = pg.PlotWidget()
+
     def add_plot(self, layout, y=0, x=0, h=1, w=1, x_range=None):
-        plot = pg.PlotWidget()
         if x_range:
-            plot.setXRange(0, x_range)
-        layout.addWidget(plot, y, x, h, w)
-        return plot
+            self.plot.setXRange(0, x_range)
+        layout.addWidget(self.plot, y, x, h, w)
 
     def add_slider(self, layout, N_DATA):
         slider = QSlider(Qt.Horizontal)
@@ -183,14 +212,45 @@ class Graph:
 class PortionGraph(Graph):
     def __init__(self):
         super().__init__()
+    def plot_data(self, data):
+        self.plot.plot(data, pen='g')
+
 class AvgClassifGraph(Graph):
     def __init__(self):
         super().__init__()
+
 class ClassifGraph(Graph):
     def __init__(self):
         super().__init__()
+
 class FullGraph(Graph):
     def __init__(self):
         super().__init__()
+
+    def plot_data(self, data):
+        self.plot.plot(data, pen='w')
+
+
+class Updater:
+    def __init__(self):
+
+        self.slider_last = 0
+
+    def connect_sliders(self, sliders, full_graphs):
+        for slider, full_graph in zip(sliders, full_graphs):
+            slider.valueChanged.connect(partial(self.update_graph_range,
+                                                slider, full_graph.plot))
+
+    def update_graph_range(self, slider, plot):
+        v = slider.value()
+        # Keep track of the movement of the slider between two updates
+        delta_slider = v - self.slider_last
+        self.slider_last = v
+        # Update the graph range based on the slider position
+        plot.setXRange(v, v + 10000)
+
+
+
+
 
 

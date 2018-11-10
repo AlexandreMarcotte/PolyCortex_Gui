@@ -43,7 +43,7 @@ def read_data_from_file(file_name, n_ch=8):
     # Read all the lines in the file and add them to the data deque
     with open(file_name, 'r') as f:
         for all_ch_line in f:
-            all_ch_line = all_ch_line.strip().split(',')
+            all_ch_line = all_ch_line.strip().split(',')                       # TODO: ALEXM read the file as a csv instead
             eeg_ch = all_ch_line[0:8]
             t.append(float(all_ch_line[8:9][0]))
             exp.append(float(all_ch_line[9:10][0]))
