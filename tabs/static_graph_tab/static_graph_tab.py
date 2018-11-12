@@ -48,11 +48,7 @@ class StaticGraphTab:
 
     def connect_updates(self, right_panel, left_panel):
         updater = Updater()
-        updater.connect_slider(right_panel, left_panel)
-        updater.connect_full_graph_region(right_panel.full_graphs,
-                                          left_panel.portion_graphs,
-                                          left_panel.classif_graphs)
-        updater.connect_classif_region(left_panel, right_panel)
+        updater.connect_all(right_panel, left_panel, self.gv)
 
 
 # -- General packages--
@@ -282,7 +278,7 @@ class AvgClassifGraph(Graph):
         self.classif_type = 0
         avg_emg_path = 'tabs/static_graph_tab/avg_emg_class_type.npy'
         self.avg_emg_class_type = np.load(os.path.join(os.getcwd(), avg_emg_path))
-        self.classifed_data = None
+        self.classified_data = None
 
     def update_pos_and_avg_graph(self, classif_region_pos):
         try:
@@ -342,53 +338,47 @@ class FullGraph(Graph):
 
 
 class Updater:
-
-    def connect_slider(self, right_panel, left_panel):
+    def connect_all(self, right_panel, left_panel, gv):
         sliders = right_panel.sliders
         full_graphs = right_panel.full_graphs
         portion_graphs = left_panel.portion_graphs
         classif_graphs = left_panel.classif_graphs
         avg_classif_graphs = left_panel.avg_classif_graphs
 
-        for slider, full_graph, portion_graph, classif_graph, avg_classif_graph in \
-                zip(sliders, full_graphs, portion_graphs, classif_graphs, avg_classif_graphs):
-            # initialize at 0, will be use in the connection and mvt of the graphs
-            slider.last_pos = 0
-            slider.valueChanged.connect(
-                partial(self.slider_update,
-                        slider, full_graph, portion_graph, classif_graph, avg_classif_graph))
+        for ch in range(gv.N_CH):
+            self.connect_slider(sliders[ch], full_graphs[ch])
+            self.connect_full_graph_region(
+                full_graphs[ch], portion_graphs[ch], classif_graphs[ch])
+            self.connect_classif_region(
+                portion_graphs[ch], classif_graphs[ch], avg_classif_graphs[ch])
 
-    def connect_full_graph_region(self, full_graphs, portion_graphs, classif_graphs):
-        for full_graph, portion_graph, classif_graph in \
-                zip(full_graphs, portion_graphs, classif_graphs):
-            full_graph.region.sigRegionChanged.connect(
-                partial(self.full_graph_region_update,
-                        full_graph, portion_graph, classif_graph))
+    def connect_slider(self, slider, full_graph):
+        slider.last_pos = 0
+        slider.valueChanged.connect(
+            partial(self.slider_update, slider, full_graph))
 
-    def connect_classif_region(self, left_panel, right_panel):
-        portion_graphs = left_panel.portion_graphs
-        classif_graphs = left_panel.classif_graphs
-        full_graphs = right_panel.full_graphs
-        avg_classif_graphs = left_panel.avg_classif_graphs
+    def connect_full_graph_region(self, full_graph, portion_graph, classif_graph):
+        full_graph.region.sigRegionChanged.connect(
+            partial(self.full_graph_region_update,
+                    full_graph, portion_graph, classif_graph))
 
-        for portion_graph, classif_graph, full_graph, avg_classif_graph in \
-                zip(portion_graphs, classif_graphs, full_graphs, avg_classif_graphs):
+    def connect_classif_region(
+            self, portion_graph, classif_graph, avg_classif_graph):
+        portion_graph.region.sigRegionChanged.connect(
+            partial(self.update_region_w_region,
+                portion_graph.region, classif_graph.region, avg_classif_graph,
+                    classif_graph))
 
-            portion_graph.region.sigRegionChanged.connect(
-                partial(self.update_region_w_region,
-                    portion_graph.region, classif_graph.region, avg_classif_graph, classif_graph))
+    def slider_update(self, slider, full_graph):
+        self.find_slider_pos(slider)
+        self.update_region_w_slider(full_graph.region)
+        self.update_plot_range_w_slider(full_graph.plot, full_graph.x_range)
 
     def full_graph_region_update(self, full_graph, portion_graph, classif_graph):
         self.find_region_pos(full_graph.region)
         self.update_region_w_delta_region(portion_graph.classif_region)
         self.update_plot_range_w_region(full_graph.region, classif_graph.plot)
         self.update_plot_range_w_region(full_graph.region, portion_graph.plot)
-
-
-    def slider_update(self, slider, full_graph, portion_graph, classif_graph, avg_classif_graph):
-        self.find_slider_pos(slider)
-        self.update_region_w_slider(full_graph.region)
-        self.update_plot_range_w_slider(full_graph.plot, full_graph.x_range)
 
     def find_slider_pos(self, slider):
         self.slider_pos = slider.value()
@@ -410,7 +400,8 @@ class Updater:
         region_follow.setRegion(
             [r_right + self.delta_region, r_left + self.delta_region])
 
-    def update_region_w_region(self, region_dictate, region_follow, avg_classif_graph, classif_graph):
+    def update_region_w_region(
+            self, region_dictate, region_follow, avg_classif_graph, classif_graph):
         r_right, _ = region_dictate.getRegion()
         region_follow.setRegion([r_right, r_right])
         if avg_classif_graph.classified_data:
