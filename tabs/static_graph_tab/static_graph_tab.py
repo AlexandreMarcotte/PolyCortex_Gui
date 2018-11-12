@@ -143,6 +143,10 @@ class FileSelector(Group):
             classified_data = self.left_gr.classif_graphs[ch].classify_data(data[ch])
             self.left_gr.classif_graphs[ch].plot_data(classified_data, color='b')
 
+            self.left_gr.avg_classif_graphs[ch].plot_data(np.zeros(170), color='w')
+            self.left_gr.avg_classif_graphs[ch].classified_data = classified_data
+            self.left_gr.avg_classif_graphs[ch].update_pos_and_avg_graph(0)
+
 
 class LeftGraphLayout(Group):
     def __init__(self, gv, right_panel):
@@ -171,9 +175,11 @@ class LeftGraphLayout(Group):
         self.create_classif_graph(layout)
 
     def create_classif_graph(self, layout):
-        AvgClassifGraph().add_plot(layout, h=2, w=2)
+        avg_classif_graph = AvgClassifGraph()
+        avg_classif_graph.add_plot(layout, h=2, w=2, x_range=170)
+        self.avg_classif_graphs.append(avg_classif_graph)
         classif_graph = ClassifGraph(self.gv)
-        classif_graph.add_plot(layout, y=1, x=2)
+        classif_graph.add_plot(layout, y=1, x=2, x_range=self.x_range)
         classif_graph.add_region([self.r_left, self.r_left], yellow)
         self.classif_graphs.append(classif_graph)
 
@@ -201,7 +207,7 @@ class RightGraphLayout(Group):
     def add_all_graph(self, parent_layout, gv):                                # TODO: ALEXM: find how redefinintion of functions are done
         for ch in range(gv.N_CH):
             layout, gr = self.create_gr_and_layout(
-                name=f'ch {ch + 1}', parent_layout=parent_layout, ch=ch)
+                name=f'', parent_layout=parent_layout, ch=ch)
             self.create_graphs(layout)
 
     def create_graphs(self, layout):
@@ -216,14 +222,19 @@ class RightGraphLayout(Group):
 class Graph:
     def __init__(self):
         self.plot = pg.PlotWidget()
+        self.curve = None
 
-    def add_plot(self, layout, y=0, x=0, h=1, w=1, x_range=10000):
+    def add_plot(self, layout, y=0, x=0, h=1, w=1, x_range=10000,
+                 hide_axis=False):
         if x_range:
             self.plot.setXRange(0, x_range)
+        if hide_axis:
+            self.plot.plotItem.hideAxis('bottom')
+
         layout.addWidget(self.plot, y, x, h, w)
 
     def plot_data(self, data, color):
-        self.plot.plot(data, pen=color)
+        self.curve = self.plot.plot(data, pen=color)
         self.plot.setAutoVisible(y=True)
 
     def add_region(self, bounds, brush_color=blue):
@@ -267,8 +278,20 @@ from sklearn.externals import joblib
 class AvgClassifGraph(Graph):
     def __init__(self):
         super().__init__()
+
+        self.classif_type = 0
         avg_emg_path = 'tabs/static_graph_tab/avg_emg_class_type.npy'
         self.avg_emg_class_type = np.load(os.path.join(os.getcwd(), avg_emg_path))
+        self.classifed_data = None
+
+    def update_pos_and_avg_graph(self, classif_region_pos):
+        try:
+            classified_type = self.classified_data[int(classif_region_pos)]
+            # html = f'{classified_type}'
+            # self.classif_type.setHtml(html)
+            self.curve.setData(self.avg_emg_class_type[classified_type])
+        except IndexError as e:
+            print(e)
 
 
 from data_processing_pipeline.uniformize_data import uniformize_data
@@ -281,7 +304,7 @@ class ClassifGraph(Graph):
 
         clf_path = 'machine_learning/linear_svm_fitted_model.pkl'
         self.clf = joblib.load(os.path.join(os.getcwd(), clf_path))
-        self.classif_interval = 1000
+        self.classif_interval = 20
 
     def classify_data(self, data):
         classified_data = []
@@ -325,14 +348,15 @@ class Updater:
         full_graphs = right_panel.full_graphs
         portion_graphs = left_panel.portion_graphs
         classif_graphs = left_panel.classif_graphs
+        avg_classif_graphs = left_panel.avg_classif_graphs
 
-        for slider, full_graph, portion_graph, classif_graph in \
-                zip(sliders, full_graphs, portion_graphs, classif_graphs):
+        for slider, full_graph, portion_graph, classif_graph, avg_classif_graph in \
+                zip(sliders, full_graphs, portion_graphs, classif_graphs, avg_classif_graphs):
             # initialize at 0, will be use in the connection and mvt of the graphs
             slider.last_pos = 0
             slider.valueChanged.connect(
                 partial(self.slider_update,
-                        slider, full_graph, portion_graph, classif_graph))
+                        slider, full_graph, portion_graph, classif_graph, avg_classif_graph))
 
     def connect_full_graph_region(self, full_graphs, portion_graphs, classif_graphs):
         for full_graph, portion_graph, classif_graph in \
@@ -345,12 +369,14 @@ class Updater:
         portion_graphs = left_panel.portion_graphs
         classif_graphs = left_panel.classif_graphs
         full_graphs = right_panel.full_graphs
-        for portion_graph, classif_graph, full_graph in \
-                zip(portion_graphs, classif_graphs, full_graphs):
+        avg_classif_graphs = left_panel.avg_classif_graphs
+
+        for portion_graph, classif_graph, full_graph, avg_classif_graph in \
+                zip(portion_graphs, classif_graphs, full_graphs, avg_classif_graphs):
 
             portion_graph.region.sigRegionChanged.connect(
                 partial(self.update_region_w_region,
-                    portion_graph.region, classif_graph.region))
+                    portion_graph.region, classif_graph.region, avg_classif_graph, classif_graph))
 
     def full_graph_region_update(self, full_graph, portion_graph, classif_graph):
         self.find_region_pos(full_graph.region)
@@ -359,7 +385,7 @@ class Updater:
         self.update_plot_range_w_region(full_graph.region, portion_graph.plot)
 
 
-    def slider_update(self, slider, full_graph, portion_graph, classif_graph):
+    def slider_update(self, slider, full_graph, portion_graph, classif_graph, avg_classif_graph):
         self.find_slider_pos(slider)
         self.update_region_w_slider(full_graph.region)
         self.update_plot_range_w_slider(full_graph.plot, full_graph.x_range)
@@ -384,9 +410,12 @@ class Updater:
         region_follow.setRegion(
             [r_right + self.delta_region, r_left + self.delta_region])
 
-    def update_region_w_region(self, region_dictate, region_follow):
+    def update_region_w_region(self, region_dictate, region_follow, avg_classif_graph, classif_graph):
         r_right, _ = region_dictate.getRegion()
         region_follow.setRegion([r_right, r_right])
+        if avg_classif_graph.classified_data:
+            avg_classif_graph.update_pos_and_avg_graph(
+                classif_graph.region.getRegion()[0])
 
     def update_region_w_slider(self, region):
         r_right = region.boundingRect().right()
@@ -404,5 +433,4 @@ class Updater:
         """
         min_x, max_x = region.getRegion()
         plot.setXRange(min_x, max_x, padding=0)
-
 

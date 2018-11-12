@@ -212,22 +212,22 @@ class PortionGraph:
            was used to calculate the corresponding value on the avg classification
            graph"""
 
-        self.portion_regions.append(pg.LinearRegionItem())
-        self.portion_plots[ch].addItem(self.portion_regions[ch])
-        self.portion_regions[ch].setRegion(
-            [self.classified_pos, self.classified_pos + self.emg_signal_len])
-        self.portion_regions[ch].setBrush(pale_red)
-        # Connect the rectangular region in the emg graph to the line shaped
-        # one in the classification data graph
-        self.classif_region_updates.append(
-            ClassifRegionUpdate(
-                self.portion_regions[ch], self.classif_regions[ch],
-                self.portion_plots[ch], self.classified_data[ch],
-                self.all_char_class_type[ch], self.avg_classif_curves[ch],
-                self.avg_emg_class_type))
-        # Connect all the update functions
-        self.portion_regions[ch].sigRegionChanged.connect(
-            self.classif_region_updates[ch].update_pos_and_avg_graph)
+        # self.portion_regions.append(pg.LinearRegionItem())
+        # self.portion_plots[ch].addItem(self.portion_regions[ch])
+        # self.portion_regions[ch].setRegion(
+        #     [self.classified_pos, self.classified_pos + self.emg_signal_len])
+        # self.portion_regions[ch].setBrush(pale_red)
+        # # Connect the rectangular region in the emg graph to the line shaped
+        # # one in the classification data graph
+        # self.classif_region_updates.append(
+        #     ClassifRegionUpdate(
+        #         self.portion_regions[ch], self.classif_regions[ch],
+        #         self.portion_plots[ch], self.classified_data[ch],
+        #         self.all_char_class_type[ch], self.avg_classif_curves[ch],
+        #         self.avg_emg_class_type))
+        # # Connect all the update functions
+        # self.portion_regions[ch].sigRegionChanged.connect(
+        #     self.classif_region_updates[ch].update_pos_and_avg_graph)
 
     # def classify_ch_data(self, ch, ch_data):
     #     print('len', len(ch_data))
@@ -278,18 +278,18 @@ class ClassifRegionUpdate:
         self.avg_classif_curve = avg_classif_curve
         self.avg_emg_class_type = avg_emg_class_type
 
-    def update_pos_and_avg_graph(self):
-        # Update the average classification grap (complete left)
-        r_left = self.portion_region.boundingRect().left()
-        # r_right = self.portion_region.boundingRect().right()
-        try:
-            classified_type = self.classified_data[int(r_left)]
-            html = f'{classified_type}'
-            self.char_class_type.setHtml(html)
-            self.avg_classif_curve.setData(self.avg_emg_class_type[classified_type])
-            self.classif_region.setRegion([r_left, r_left])
-        except IndexError as e:
-            print(e)
+    # def update_pos_and_avg_graph(self):
+    #     # Update the average classification grap (complete left)
+    #     r_left = self.portion_region.boundingRect().left()
+    #     # r_right = self.portion_region.boundingRect().right()
+    #     try:
+    #         classified_type = self.classified_data[int(r_left)]
+    #         html = f'{classified_type}'
+    #         self.char_class_type.setHtml(html)
+    #         self.avg_classif_curve.setData(self.avg_emg_class_type[classified_type])
+    #         self.classif_region.setRegion([r_left, r_left])
+    #     except IndexError as e:
+    #         print(e)
 
 # # -- General packages
 # from PyQt5.QtCore import pyqtSlot
