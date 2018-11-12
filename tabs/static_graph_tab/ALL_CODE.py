@@ -137,11 +137,11 @@ import pyqtgraph as pg
 import numpy as np
 # -- My packages --
 from app.colors import *
-from data_processing_pipeline.uniformize_data import uniformize_data
 from .classif_region_update import ClassifRegionUpdate
 
 
-class PortionPlotsLayout:
+class PortionPlotsLayoufrom data_processing_pipeline.uniformize_data import uniformize_data
+t:
     def __init__(self):
         self.portion_ch_layouts = []
         # Brush color for region delimiting experimentation events
@@ -252,18 +252,18 @@ class ClassifGraph:
     def __init__(self):
         pass
 
-    def create_classif_plot(self, ch):
-        """Instantiate the plot containing the values of classification"""
-        self.classif_plots.append(pg.PlotWidget())
-        self.portion_ch_layouts[ch].addWidget(self.avg_classif_plots[ch],
-                                              ch * 2, 0, 2, 3)
+    # def create_classif_plot(self, ch):
+    #     """Instantiate the plot containing the values of classification"""
+    #     self.classif_plots.append(pg.PlotWidget())
+    #     self.portion_ch_layouts[ch].addWidget(self.avg_classif_plots[ch],
+    #                                           ch * 2, 0, 2, 3)
 
-    def add_classif_regions(self):
-        self.classif_regions.append(pg.LinearRegionItem())
-        self.classif_plots[ch].addItem(self.classif_regions[ch])
-        self.classif_regions[ch].setRegion(
-            [self.classified_pos, self.classified_pos])
-        self.classif_regions[ch].setBrush(pale_red)
+    # def add_classif_regions(self):
+    #     self.classif_regions.append(pg.LinearRegionItem())
+    #     self.classif_plots[ch].addItem(self.classif_regions[ch])
+    #     self.classif_regions[ch].setRegion(
+    #         [self.classified_pos, self.classified_pos])
+    #     self.classif_regions[ch].setBrush(pale_red)
 
 
 
@@ -403,27 +403,27 @@ class FullGraph:
     #     self.plots[no].setAutoVisible(y=True)
 
 
-    def add_sliding_region(self, ch):
-        """
-        Add Sliding region on the graph that will be add where experiment
-        events occured during the training
-        """
-        self.portion_plots[ch].setAutoVisible(y=True)
-        # - - Update the left side based on the right side region and slider pos
-        # - Portion graph
-        # Create 8 update function object, one for every portion plot
-        self.static_portion_graph_update.append(
-            StaticGraphUpdate(self.regions[ch], self.portion_plots[ch]))
-        # Connect all the update functions
-        self.regions[ch].sigRegionChanged.connect(
-            self.static_portion_graph_update[ch].update_plot_range)
-        # - Classification graph
-        self.static_classif_graph_update.append(
-            StaticGraphUpdate(self.regions[ch], self.classif_plots[ch]))
-        self.regions[ch].sigRegionChanged.connect(
-            self.static_classif_graph_update[ch].update_plot_range)
-
-        self.regions[ch].setRegion([0, 800])
+    # def add_sliding_region(self, ch):
+    #     """
+    #     Add Sliding region on the graph that will be add where experiment
+    #     events occured during the training
+    #     """
+    #     self.portion_plots[ch].setAutoVisible(y=True)
+    #     # - - Update the left side based on the right side region and slider pos
+    #     # - Portion graph
+    #     # Create 8 update function object, one for every portion plot
+    #     self.static_portion_graph_update.append(
+    #         StaticGraphUpdate(self.regions[ch], self.portion_plots[ch]))
+    #     # Connect all the update functions
+    #     self.regions[ch].sigRegionChanged.connect(
+    #         self.static_portion_graph_update[ch].update_plot_range)
+    #     # - Classification graph
+    #     self.static_classif_graph_update.append(
+    #         StaticGraphUpdate(self.regions[ch], self.classif_plots[ch]))
+    #     self.regions[ch].sigRegionChanged.connect(
+    #         self.static_classif_graph_update[ch].update_plot_range)
+    #
+    #     self.regions[ch].setRegion([0, 800])
 
 
 
@@ -473,14 +473,14 @@ class UpdateSliderGraph:
         #                        r_left + delta_slider])
 
         # Classif region
-        r_right = self.classif_region.boundingRect().right()
-        r_left = self.classif_region.boundingRect().left()
-        # Update the region position based on the delta position of the slider
-        self.classif_region.setRegion([r_right + delta_slider,
-                                       r_left + delta_slider])
-        # Portion region
-        r_right = self.portion_region.boundingRect().right()
-        r_left = self.portion_region.boundingRect().left()
-        # Update the region position based on the delta position of the slider
-        self.portion_region.setRegion([r_right + delta_slider,
-                                       r_left + delta_slider])
+        # r_right = self.classif_region.boundingRect().right()
+        # r_left = self.classif_region.boundingRect().left()
+        # # Update the region position based on the delta position of the slider
+        # self.classif_region.setRegion([r_right + delta_slider,
+        #                                r_left + delta_slider])
+        # # Portion region
+        # r_right = self.portion_region.boundingRect().right()
+        # r_left = self.portion_region.boundingRect().left()
+        # # Update the region position based on the delta position of the slider
+        # self.portion_region.setRegion([r_right + delta_slider,
+        #                                r_left + delta_slider])
