@@ -5,7 +5,7 @@ from PyQt5.QtCore import Qt, pyqtSlot
 import pyqtgraph as pg
 
 import numpy as np
-from sklearn.externals import joblib
+# from sklearn.externals import joblib
 import os
 # -- My packages --
 from generate_signal.from_file import read_data_from_file
@@ -23,17 +23,17 @@ class StaticGraphTab:
         # self.tab_w = tab_w
         # self.gv = gv
         # Stationnary graph
-        self.slider_last = 0
+        # self.slider_last = 0
 
         # Classification model
-        clf_path = 'machine_learning/linear_svm_fitted_model.pkl'
-        self.clf = joblib.load(os.path.join(os.getcwd(), clf_path))
-        avg_emg_path = 'tabs/static_graph_tab/avg_emg_class_type.npy'
-        self.avg_emg_class_type = np.load(os.path.join(os.getcwd(), avg_emg_path))
-        self.classified_data = [[] for _ in range(self.gv.N_CH)]
-        self.classified_once_every = 1000
-        self.classified_pos = 250
-        self.emg_signal_len = 170
+        # clf_path = 'machine_learning/linear_svm_fitted_model.pkl'
+        # self.clf = joblib.load(os.path.join(os.getcwd(), clf_path))
+        # avg_emg_path = 'tabs/static_graph_tab/avg_emg_class_type.npy'
+        # self.avg_emg_class_type = np.load(os.path.join(os.getcwd(), avg_emg_path))
+        # self.classified_data = [[] for _ in range(self.gv.N_CH)]
+        # self.classified_once_every = 1000
+        # self.classified_pos = 250
+        # self.emg_signal_len = 170
         # Create the tab itself
         self.create_tab()
 
@@ -183,33 +183,33 @@ class PortionGraph:
     #        that is located on the righ side"""
     #     self.portion_plots.append(pg.PlotWidget())
     #     self.portion_ch_layouts[ch].addWidget(self.portion_plots[ch], ch * 2, 3)
-
-    def add_one_exp_region(self, ch, no, val):
-        """ Add a pyqtgraph region on a single event """
-        region = pg.LinearRegionItem()
-        self.portion_plots[ch].addItem(region, ignoreBounds=True)
-        region.setRegion([no - 60, no + 110])
-        region.setBrush(self.region_brush[int(val)])
-
-    def add_all_exp_region_for_this_ch(self, ch, exp):
-        """
-        Add a sliding region over the place on the graph where an
-        experiment value as occure (ie there is a value for experiment type
-        different than 0
-        """
-        # Add a colored region on the plot where an event as occured
-        for no, val in enumerate(exp):
-            val = int(val)
-            if val:
-                if (val == 1 or val == 2) and (ch == 0 or ch == 1):
-                    print('val', val, ch)
-                    self.add_one_exp_region(ch, no, val)
-                elif (val == 3 or val == 4) and (ch == 2 or ch == 3):
-                    self.add_one_exp_region(ch, no, val)
+    #
+    # def add_one_exp_region(self, ch, no, val):
+    #     """ Add a pyqtgraph region on a single event """
+    #     region = pg.LinearRegionItem()
+    #     self.portion_plots[ch].addItem(region, ignoreBounds=True)
+    #     region.setRegion([no - 60, no + 110])
+    #     region.setBrush(self.region_brush[int(val)])
+    #
+    # def add_all_exp_region_for_this_ch(self, ch, exp):
+    #     """
+    #     Add a sliding region over the place on the graph where an
+    #     experiment value as occure (ie there is a value for experiment type
+    #     different than 0
+    #     """
+    #     # Add a colored region on the plot where an event as occured
+    #     for no, val in enumerate(exp):
+    #         val = int(val)
+    #         if val:
+    #             if (val == 1 or val == 2) and (ch == 0 or ch == 1):
+    #                 print('val', val, ch)
+    #                 self.add_one_exp_region(ch, no, val)
+    #             elif (val == 3 or val == 4) and (ch == 2 or ch == 3):
+    #                 self.add_one_exp_region(ch, no, val)
 
     def add_classif_region(self, ch):
         """Add a region on the portion graph that indicate the region that
-           was used to calculate the corresponding value on the classification
+           was used to calculate the corresponding value on the avg classification
            graph"""
 
         self.portion_regions.append(pg.LinearRegionItem())
@@ -229,20 +229,20 @@ class PortionGraph:
         self.portion_regions[ch].sigRegionChanged.connect(
             self.classif_region_updates[ch].update_pos_and_avg_graph)
 
-    def classify_ch_data(self, ch, ch_data):
-        print('len', len(ch_data))
-        ch_data = np.array(ch_data)
-        while self.pos + self.emg_signal_len < len(ch_data):
-            emg_signal = ch_data[0 + self.pos:170 + self.pos]
-            # If the array is not filled with 0 values
-            if emg_signal.any():
-                emg_signal = uniformize_data(emg_signal, len(emg_signal))
-                class_type = self.clf.predict([emg_signal])[0]
-            else:
-                class_type = 0
-            for _ in range(self.classified_once_every):
-                self.classified_data[ch].append(class_type)
-            self.pos += self.classified_once_every
+    # def classify_ch_data(self, ch, ch_data):
+    #     print('len', len(ch_data))
+    #     ch_data = np.array(ch_data)
+    #     while self.pos + self.emg_signal_len < len(ch_data):
+    #         emg_signal = ch_data[0 + self.pos:170 + self.pos]
+    #         # If the array is not filled with 0 values
+    #         if emg_signal.any():
+    #             emg_signal = uniformize_data(emg_signal, len(emg_signal))
+    #             class_type = self.clf.predict([emg_signal])[0]
+    #         else:
+    #             class_type = 0
+    #         for _ in range(self.classified_once_every):
+    #             self.classified_data[ch].append(class_type)
+    #         self.pos += self.classified_once_every
 
 
 # import pyqtgraph as pg
@@ -255,7 +255,8 @@ class ClassifGraph:
     def create_classif_plot(self, ch):
         """Instantiate the plot containing the values of classification"""
         self.classif_plots.append(pg.PlotWidget())
-        self.portion_ch_layouts[ch].addWidget(self.avg_classif_plots[ch], ch * 2, 0, 2, 3)
+        self.portion_ch_layouts[ch].addWidget(self.avg_classif_plots[ch],
+                                              ch * 2, 0, 2, 3)
 
     def add_classif_regions(self):
         self.classif_regions.append(pg.LinearRegionItem())
@@ -354,9 +355,9 @@ class ClassifRegionUpdate:
 
 
 class FullGraph:
-    def __init__(self):
-        self.regions = []
-        self.layouts = []
+    # def __init__(self):
+    #     self.regions = []
+    #     self.layouts = []
         # self.plots = []
         # self.sliders = []
         # self.x_range = 8000
@@ -389,17 +390,17 @@ class FullGraph:
     #     self.slider.setRange(0, N_DATA)
     #     self.layouts[ch].addWidget(self.slider, ch*2+2, 0)
 
-    def connect_slider(self, ch, update_slider_graph):
-        self.sliders.append(update_slider_graph)
-        self.slider.valueChanged.connect(self.sliders[ch].update_graph_range)
+    # def connect_slider(self, ch, update_slider_graph):
+    #     self.sliders.append(update_slider_graph)
+    #     self.slider.valueChanged.connect(self.sliders[ch].update_graph_range)
 
-    def add_sliding_region(self, no):
-        """ Add Sliding region on the graph that will be add where
-            experiment events occured during the training
-        """
-        self.plots[no].addItem(self.regions[no], ignoreBounds=True)
-        # Activate ability for the graph to scale the y axis
-        self.plots[no].setAutoVisible(y=True)
+    # def add_sliding_region(self, no):
+    #     """ Add Sliding region on the graph that will be add where
+    #         experiment events occured during the training
+    #     """
+    #     self.plots[no].addItem(self.regions[no], ignoreBounds=True)
+    #     # Activate ability for the graph to scale the y axis
+    #     self.plots[no].setAutoVisible(y=True)
 
 
     def add_sliding_region(self, ch):
@@ -426,18 +427,18 @@ class FullGraph:
 
 
 
-class StaticGraphUpdate:
-    def __init__(self, region, plot):
-        self.region = region
-        self.plot = plot
-
-    def update_plot_range(self):
-        """
-        Update the portion plot (top left) range based on the region position
-        on the full graph (right)
-        """
-        minX, maxX = self.region.getRegion()
-        self.plot.setXRange(minX, maxX, padding=0)
+# class StaticGraphUpdate:
+#     def __init__(self, region, plot):
+#         self.region = region
+#         self.plot = plot
+#
+#     def update_plot_range(self):
+#         """
+#         Update the portion plot (top left) range based on the region position
+#         on the full graph (right)
+#         """
+#         minX, maxX = self.region.getRegion()
+#         self.plot.setXRange(minX, maxX, padding=0)
 
 
 
@@ -459,17 +460,17 @@ class UpdateSliderGraph:
         self.classified_pos = classified_pos
 
     def update_graph_range(self):
-        v = self.slider.value()
-        # Keep track of the movement of the slider between two updates
-        delta_slider = v - self.slider_last
-        self.slider_last = v
-        # Update the graph range based on the slider position
-        self.all_data_plot.setXRange(v, v + 10000)
-        r_right = self.region.boundingRect().right()
-        r_left = self.region.boundingRect().left()
-        # Update the region position based on the delta position of the slider
-        self.region.setRegion([r_right + delta_slider,
-                               r_left + delta_slider])
+        # v = self.slider.value()
+        # # Keep track of the movement of the slider between two updates
+        # delta_slider = v - self.slider_last
+        # self.slider_last = v
+        # # Update the graph range based on the slider position
+        # self.all_data_plot.setXRange(v, v + 10000)
+        # r_right = self.region.boundingRect().right()
+        # r_left = self.region.boundingRect().left()
+        # # Update the region position based on the delta position of the slider
+        # self.region.setRegion([r_right + delta_slider,
+        #                        r_left + delta_slider])
 
         # Classif region
         r_right = self.classif_region.boundingRect().right()

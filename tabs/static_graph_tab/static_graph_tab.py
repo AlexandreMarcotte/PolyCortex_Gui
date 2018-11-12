@@ -21,7 +21,7 @@ class StaticGraphTab:
 
         self.tab_w.setLayout(self.tab_w.layout)
 
-        self.connect_updates(right_panel)
+        self.connect_updates(right_panel, left_panel)
 
     def create_grps(self):
         left_panel = LeftGraphLayout(self.gv)
@@ -46,10 +46,13 @@ class StaticGraphTab:
         self.tab_w.layout.addWidget(file_selector_gr)
         self.tab_w.layout.addWidget(scroller)
 
-    def connect_updates(self, right_panel):
+    def connect_updates(self, right_panel, left_panel):
         updater = Updater()
-        updater.connect_sliders(right_panel.sliders,
-                                right_panel.full_graphs)
+        updater.connect_slider(right_panel.sliders,
+                                right_panel.full_graphs,
+                               left_panel.portion_graphs)
+        updater.connect_full_graph_regions(right_panel.full_graphs,
+                                           left_panel.portion_graphs)
 
 
 # -- General packages--
@@ -60,9 +63,6 @@ from functools import partial
 # -- My packages --
 from app.colors import *
 from generate_signal.from_file import read_data_from_file
-
-
-
 
 import pyqtgraph as pg
 
@@ -134,8 +134,15 @@ class FileSelector(Group):
         data, t, exp = \
             read_data_from_file(self.path_line_edit.text(), n_ch=self.gv.N_CH)
         for ch in range(self.gv.N_CH):
-            self.right_gr.full_graphs[ch].plot_data(data[ch])
-            self.left_gr.portion_graphs[ch].plot_data(data[ch])
+            self.right_gr.full_graphs[ch].plot_data(
+                data[ch], color='w')
+            self.left_gr.portion_graphs[ch].plot_data(data[ch], color='g')
+            self.left_gr.portion_graphs[ch].add_all_experimentation_regions(ch, exp)
+            # Put the classification region inside the full graph region
+            r_left = self.right_gr.full_graphs[0].region.boundingRect().left()
+            self.left_gr.portion_graphs[ch].add_region(
+                [r_left+200, r_left+200+self.gv.emg_signal_len], pale_red)
+
             self.right_gr.sliders[ch].setMaximum(len(data[0]))
 
 
@@ -162,6 +169,7 @@ class LeftGraphLayout(Group):
         AvgClassifGraph().add_plot(layout, h=2, w=2)
         ClassifGraph().add_plot(layout, y=1, x=2)
 
+
     def create_portion_graph(self, layout):
         portion_graph = PortionGraph()
         portion_graph.add_plot(layout, y=0, x=2, x_range=True)
@@ -183,11 +191,12 @@ class RightGraphLayout(Group):
         for ch in range(gv.N_CH):
             layout, gr = self.create_gr_and_layout(
                 name=f'ch {ch + 1}', parent_layout=parent_layout, ch=ch)
-            self.create_graphs(layout, gv)
+            self.create_graphs(layout)
 
-    def create_graphs(self, layout, gv):
+    def create_graphs(self, layout):
         full_graph = FullGraph()
-        full_graph.add_plot(layout, x_range=8000)
+        full_graph.add_plot(layout)
+        full_graph.add_region(bounds=[0, 1500])
         slider = full_graph.add_slider(layout, 10)
         self.sliders.append(slider)
         self.full_graphs.append(full_graph)
@@ -197,10 +206,92 @@ class Graph:
     def __init__(self):
         self.plot = pg.PlotWidget()
 
-    def add_plot(self, layout, y=0, x=0, h=1, w=1, x_range=None):
+    def add_plot(self, layout, y=0, x=0, h=1, w=1, x_range=10000):
         if x_range:
             self.plot.setXRange(0, x_range)
         layout.addWidget(self.plot, y, x, h, w)
+
+    def plot_data(self, data, color):
+        self.plot.plot(data, pen=color)
+        self.plot.setAutoVisible(y=True)
+
+    def add_region(self, bounds, brush_color=blue):
+        """ Add a pyqtgraph region on a single event """
+        self.region = pg.LinearRegionItem()
+        self.region.setRegion(bounds)
+        self.plot.addItem(self.region, ignoreBounds=True)
+        self.region.setBrush(brush_color)
+
+
+class PortionGraph(Graph):
+    def __init__(self):
+        super().__init__()
+
+        self.brushes = [red, green, blue, yellow, purple]
+
+    def add_all_experimentation_regions(self, ch, exp):
+        """
+        Add a sliding region over the place on the graph where an
+        experiment value as occure (ie there is a value for experiment type
+        different than 0
+        """
+        # Add a colored region on the plot where an event as occured
+        for no, val in enumerate(exp):
+            val = int(val)
+            if val:
+                if (val == 1 or val == 2) and (ch == 0 or ch == 1):
+                    self.add_region([no - 60, no + 110],
+                                    brush_color=self.brushes[int(val)])
+                elif (val == 3 or val == 4) and (ch == 2 or ch == 3):
+                    self.add_region([no - 60, no + 110],
+                                    brush_color=self.brushes[int(val)])
+
+import numpy as np
+import os
+from sklearn.externals import joblib
+
+
+class AvgClassifGraph(Graph):
+    def __init__(self):
+        super().__init__()
+        avg_emg_path = 'tabs/static_graph_tab/avg_emg_class_type.npy'
+        self.avg_emg_class_type = np.load(os.path.join(os.getcwd(), avg_emg_path))
+
+
+class ClassifGraph(Graph):
+    def __init__(self):
+        super().__init__()
+        clf_path = 'machine_learning/linear_svm_fitted_model.pkl'
+        self.clf = joblib.load(os.path.join(os.getcwd(), clf_path))
+        self.classified_data = []
+        self.classif_intervall = 1000
+        self.classified_pos = 250
+
+    def classify_ch_data(self, data):
+        data = np.array(data)
+        # While we haven't reach the end of the data
+        while self.pos + self.emg_signal_len < len(data):
+            d = data[0 + self.pos:170 + self.pos]
+            # If the array is not filled with only 0 values
+            if d.any():
+                d = uniformize_data(d, len(d))
+                classif_value = self.clf.predict([d])[0]
+            else:
+                classif_value= 0
+            # set all the same type for all the interval of classification
+            for _ in range(self.classif_intervall):
+                self.classified_data[ch].append(classif_value)
+            # Update pos for next classification of the type of the signal
+            self.pos += self.classif_intervall
+
+
+
+class FullGraph(Graph):
+    def __init__(self):
+        super().__init__()
+
+        self.region = None
+        self.x_range = 10000
 
     def add_slider(self, layout, N_DATA):
         slider = QSlider(Qt.Horizontal)
@@ -209,45 +300,54 @@ class Graph:
         return slider
 
 
-class PortionGraph(Graph):
-    def __init__(self):
-        super().__init__()
-    def plot_data(self, data):
-        self.plot.plot(data, pen='g')
-
-class AvgClassifGraph(Graph):
-    def __init__(self):
-        super().__init__()
-
-class ClassifGraph(Graph):
-    def __init__(self):
-        super().__init__()
-
-class FullGraph(Graph):
-    def __init__(self):
-        super().__init__()
-
-    def plot_data(self, data):
-        self.plot.plot(data, pen='w')
-
-
 class Updater:
-    def __init__(self):
 
-        self.slider_last = 0
+    def connect_slider(self, sliders, full_graphs, portion_graphs):
+        for slider, full_graph, portion_graph in zip(sliders, full_graphs,
+                                                     portion_graphs):
+            # initialize at 0, will be use in the connection and mvt of the graphs
+            slider.last_pos = 0
+            slider.valueChanged.connect(
+                partial(self.slider_update, slider, full_graph, portion_graph))
 
-    def connect_sliders(self, sliders, full_graphs):
-        for slider, full_graph in zip(sliders, full_graphs):
-            slider.valueChanged.connect(partial(self.update_graph_range,
-                                                slider, full_graph.plot))
+    def connect_full_graph_regions(self, full_graphs, portion_graphs):
+        for full_graph, portion_graph in zip(full_graphs, portion_graphs):
+            full_graph.region.sigRegionChanged.connect(
+                partial(self.update_plot_range_w_region,
+                        full_graph.region, portion_graph.plot))
 
-    def update_graph_range(self, slider, plot):
-        v = slider.value()
+    def slider_update(self, slider, full_graph, portion_graph):
+        self.find_slider_pos(slider)
+        self.update_region_w_slider(full_graph.region)
+        self.update_plot_range_w_slider(full_graph.plot, full_graph.x_range)
+        self.update_region_w_slider(portion_graph.region)
+
+    def find_slider_pos(self, slider):
+        self.slider_pos = slider.value()
         # Keep track of the movement of the slider between two updates
-        delta_slider = v - self.slider_last
-        self.slider_last = v
+        self.delta_slider = self.slider_pos - slider.last_pos
+        slider.last_pos = self.slider_pos
+
+    def update_region_w_slider(self, region):
+        r_right = region.boundingRect().right()
+        r_left = region.boundingRect().left()
+        # Update the region position based on the delta position of the slider
+        region.setRegion([r_right + self.delta_slider, r_left + self.delta_slider])
+
+    def update_plot_range_w_slider(self, plot, x_range):
         # Update the graph range based on the slider position
-        plot.setXRange(v, v + 10000)
+        plot.setXRange(self.slider_pos, self.slider_pos + x_range)
+
+    def update_plot_range_w_region(self, region, plot):
+        """ Update the portion plot (top left) range based on the region position
+           on the full graph (right)
+        """
+        min_x, max_x = region.getRegion()
+        plot.setXRange(min_x, max_x, padding=0)
+
+
+
+
 
 
 

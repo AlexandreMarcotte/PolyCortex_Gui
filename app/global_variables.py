@@ -22,4 +22,6 @@ class GlobVar:
         self.stream_origin = ['Stream from fake data']
         # Classification
         self.last_classified_type = [0]
+        self.emg_signal_len = 170
+
 
