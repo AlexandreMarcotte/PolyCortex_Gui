@@ -19,14 +19,17 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.gv = GlobVar()  # Create the global variable that will be
                              # in many of this project classes
+        self.init_mainwindow()
     
-    def create_mainwindow(self):
+    def init_mainwindow(self):
         self.setWindowTitle('Openbci Gui')
         self.setWindowIcon(QtGui.QIcon('./img/polycortex_logo.png'))
         x=0; y=0; w=1350; h=950
         self.setGeometry(x,y,w,h)
         # Add a menu bar
         self.create_menu_bar()
+        # Add a toolbar
+        self.create_toolbar()
         # message at the bottom
         self.statusBar().showMessage('Running the experiment ...')
 
@@ -110,3 +113,16 @@ class MainWindow(QMainWindow):
         """Start the miniGame"""
         run_game = RunGame()
         run_game.start()
+
+    def create_toolbar(self):
+        base_path = os.getcwd()
+        path = os.path.join(base_path, 'app/exit.png')
+        exitAct = QAction(QIcon(path), 'Exit', self)
+        exitAct.setShortcut('Ctrl+Q')
+        exitAct.setStatusTip('Exit application')
+        exitAct.triggered.connect(self.close)
+
+        self.statusBar()
+
+        toolbar = self.addToolBar('Exit')
+        toolbar.addAction(exitAct)

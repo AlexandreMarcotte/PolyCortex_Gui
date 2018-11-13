@@ -20,7 +20,6 @@ def main():
     app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
     # Create the Gui
     openbci_gui = MainWindow()
-    openbci_gui.create_mainwindow()
 
     @atexit.register   # work only if click on x on the window
     def save_data_at_exit():

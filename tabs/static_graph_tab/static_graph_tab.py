@@ -94,6 +94,7 @@ class FileSelector(Group):
         self.add_choose_file_b(layout)
         path_line_edit = self.add_data_path_line_edit(layout)
         self.add_open_file_b(layout)
+        self.pbar = self.add_progress_bar(layout)
         return gr, path_line_edit
 
     def add_choose_file_b(self, layout):
@@ -110,8 +111,14 @@ class FileSelector(Group):
 
     def add_open_file_b(self, layout):
         open_file_b = QtGui.QPushButton('Open File')
-        open_file_b.clicked.connect(partial(self.read_data))
+        open_file_b.clicked.connect(partial(self.read_data, layout))
         layout.addWidget(open_file_b, 0, 2)
+
+    def add_progress_bar(self, layout):
+        pbar = QProgressBar()
+        layout.addWidget(pbar, 0, 3)
+        pbar.setValue(0)
+        return pbar
 
     @pyqtSlot()
     def choose_file(self):
@@ -126,10 +133,11 @@ class FileSelector(Group):
             self.f_name = f_name
 
     @pyqtSlot()
-    def read_data(self):
+    def read_data(self, layout):
         data, t, exp = \
             read_data_from_file(self.path_line_edit.text(), n_ch=self.gv.N_CH)   # clean this part
         for ch in range(self.gv.N_CH):
+            self.pbar.setValue(int(100 * (ch+1)/self.gv.N_CH))
             # Right panel
             self.right_gr.full_graphs[ch].plot_data(data[ch], color='w')
             self.right_gr.sliders[ch].setMaximum(len(data[0]))
@@ -309,7 +317,7 @@ class ClassifGraph(Graph):
 
         clf_path = 'machine_learning/linear_svm_fitted_model.pkl'
         self.clf = joblib.load(os.path.join(os.getcwd(), clf_path))
-        self.classif_interval = 200
+        self.classif_interval = 20
 
     def classify_data(self, data):
         classified_data = []
