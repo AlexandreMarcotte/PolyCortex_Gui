@@ -233,9 +233,9 @@ class Graph:
         self.curve = self.plot.plot(data, pen=color)
         self.plot.setAutoVisible(y=True)
 
-    def add_region(self, bounds, brush_color=blue):
+    def add_region(self, bounds, brush_color=blue, movable=True):
         """ Add a pyqtgraph region on a single event """
-        self.region = pg.LinearRegionItem()
+        self.region = pg.LinearRegionItem(movable=movable)
         self.region.setRegion(bounds)
         self.region.start_pos = bounds[0]
         self.region.last_pos = bounds[0]
@@ -260,11 +260,13 @@ class PortionGraph(Graph):
             val = int(val)
             if val:
                 if (val == 1 or val == 2) and (ch == 0 or ch == 1):
-                    self.add_region([no - 60, no + 110],
-                                    brush_color=self.brushes[int(val)])
+                    self.add_region(
+                        [no - 60, no + 110], brush_color=self.brushes[int(val)],
+                        movable=False)
                 elif (val == 3 or val == 4) and (ch == 2 or ch == 3):
-                    self.add_region([no - 60, no + 110],
-                                    brush_color=self.brushes[int(val)])
+                    self.add_region(
+                        [no - 60, no + 110], brush_color=self.brushes[int(val)],
+                        movable=False)
 
 import numpy as np
 import os
@@ -275,19 +277,26 @@ class AvgClassifGraph(Graph):
     def __init__(self):
         super().__init__()
 
+        self.num = pg.TextItem(anchor=(0, 0), fill=(0, 0, 0, 0))
         self.classif_type = 0
         avg_emg_path = 'tabs/static_graph_tab/avg_emg_class_type.npy'
         self.avg_emg_class_type = np.load(os.path.join(os.getcwd(), avg_emg_path))
         self.classified_data = None
 
     def update_pos_and_avg_graph(self, classif_region_pos):
+        self.add_classif_class_number()
         try:
             classified_type = self.classified_data[int(classif_region_pos)]
-            # html = f'{classified_type}'
-            # self.classif_type.setHtml(html)
+            self.num.setHtml(str(classified_type))
             self.curve.setData(self.avg_emg_class_type[classified_type])
         except IndexError as e:
             print(e)
+
+    def add_classif_class_number(self):
+        html = f'{self.classif_type}'
+        self.num.setHtml(html)
+        self.num.setPos(0, 0.5)
+        self.plot.addItem(self.num)
 
 
 from data_processing_pipeline.uniformize_data import uniformize_data
@@ -300,7 +309,7 @@ class ClassifGraph(Graph):
 
         clf_path = 'machine_learning/linear_svm_fitted_model.pkl'
         self.clf = joblib.load(os.path.join(os.getcwd(), clf_path))
-        self.classif_interval = 20
+        self.classif_interval = 200
 
     def classify_data(self, data):
         classified_data = []
