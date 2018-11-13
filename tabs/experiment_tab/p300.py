@@ -22,6 +22,8 @@ class P300Dock:
         self.timer_p300 = QtCore.QTimer()
 
         self.emg_dock = emg_dock
+        
+        self.create_p300_dock()
 
     def create_p300_dock(self):
         self.P300_dock = Dock('P300 experiment')

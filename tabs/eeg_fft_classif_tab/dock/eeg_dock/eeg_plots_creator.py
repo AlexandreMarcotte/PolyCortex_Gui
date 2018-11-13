@@ -13,6 +13,7 @@ from collections import namedtuple
 from generate_signal.from_openbci import stream_data_from_OpenBCI
 from generate_signal.from_fake_data import CreateFakeData
 from generate_signal.from_file import CreateDataFromFile
+from generate_signal.from_muse import StreamFromMuse
 
 from .ch_number_action import ChNumberAction
 from .action_button import ActionButton
@@ -132,6 +133,10 @@ class EegPlotsCreator:
 
         elif self.gv.stream_origin[0] == 'Stream from file':
             create_data = CreateDataFromFile(self.gv, self.stream_path)
+            create_data.start()
+
+        elif self.gv.stream_origin[0] == 'Stream from Muse':
+            create_data = StreamFromMuse(self.gv)
             create_data.start()
 
         self.start_timers()

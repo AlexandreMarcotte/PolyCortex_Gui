@@ -44,12 +44,14 @@ class MainWindow(QMainWindow):
         ## Create menu action
         # OpenBCI
         self.create_openbci_menu()
+        # Muse
+        self.create_muse_menu()
         # Fake data
         self.create_stream_fake_data_menu()
         # From File
         self.create_stream_from_file_menu()
         # Connect the btn in the menubar to the choose stream function
-        for btn in [self.openbci, self.fake_data, self.choose_file]:
+        for btn in [self.openbci, self.fake_data, self.choose_file, self.muse]:
             btn.triggered.connect(partial(self.choose_stream, btn))
 
         main_menu.addMenu(self.controlPanel)
@@ -58,7 +60,7 @@ class MainWindow(QMainWindow):
 
     def create_openbci_menu(self):
         self.openbci = QtGui.QAction(QIcon('./img/openbci_logo.png'),
-                                     'OpenBci')  # TODO: ALEXM Utiliser une liste déroulante plutot
+                                     'OpenBci')                                # TODO: ALEXM Utiliser une liste déroulante plutot
         self.openbci.setShortcut('Ctrl+O')
         self.openbci.setStatusTip('Stream data from Openbci...')
         self.openbci.name = 'Stream from OpenBCI'
@@ -83,10 +85,18 @@ class MainWindow(QMainWindow):
         self.from_file.addAction(self.choose_file)
         self.choose_file.name = 'Stream from file'
 
+    def create_muse_menu(self):
+        self.muse = QtGui.QAction(QIcon('./img/muse.png'),
+                                     'Muse')                                   # TODO: ALEXM Utiliser une liste déroulante plutot
+        self.muse.setStatusTip('Stream data from Muse headband...')
+        self.muse.name = 'Stream from Muse'
+        self.controlPanel.addAction(self.muse)
+
     def choose_stream(self, btn):
         """Create a function that will print the name of the menubar
         btn that was selected"""
         self.gv.stream_origin[0] = btn.name
+        print(btn.name)
 
         if btn.name == 'Stream from file':
             self.choose_streaming_file()
