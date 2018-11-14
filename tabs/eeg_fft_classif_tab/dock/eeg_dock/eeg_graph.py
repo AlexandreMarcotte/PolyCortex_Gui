@@ -11,7 +11,7 @@ class EegGraph:
         self.update_eeg()
         # self.regions.update_regions()
 
-    def update_eeg(self):
+    def  update_eeg(self):
         # Time channel where we don't have to display any q
         if self.ch == 8:
             self.curve.setData(self.ts, self.q)

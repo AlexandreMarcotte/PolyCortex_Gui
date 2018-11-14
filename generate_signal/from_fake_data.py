@@ -18,7 +18,12 @@ class CreateFakeData(threading.Thread):
         self.s1 = self.m * sin(self.t)
         self.s2 = self.m * sin(20 * self.t)
         self.s3 = self.m * sin(40 * self.t)
-        self.s4 = self.m * 2 * sin(60 * self.t)
+        self.s4 = self.m * 5 * sin(60 * self.t)
+
+        # 100 harmonic signal to test filtering
+        self.s = []
+        for freq in range(70, 150, 2):
+            self.s.append(self.m * sin(freq * self.t))
 
     def add_signal_to_queue(self, signal, ch):
         self.gv.data_queue[ch].append(signal)
@@ -47,6 +52,10 @@ class CreateFakeData(threading.Thread):
                     signal = self.s3[i]
                 elif ch == 4:
                     signal = self.s4[i]
+                elif ch == 5:
+                    signal = 0
+                    for s in self.s:
+                        signal += s[i]
                 else:
                     signal = random() * self.m
 
