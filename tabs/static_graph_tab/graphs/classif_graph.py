@@ -13,7 +13,7 @@ class ClassifGraph(Graph):
 
         clf_path = 'machine_learning/linear_svm_fitted_model.pkl'
         self.clf = joblib.load(os.path.join(os.getcwd(), clf_path))
-        self.classif_interval = 2
+        self.classif_interval = 250
 
     def classify_data(self, data):
         classified_data = []

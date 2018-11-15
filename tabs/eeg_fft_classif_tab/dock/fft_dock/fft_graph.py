@@ -9,12 +9,12 @@ from pyqtgraph.dockarea import *
 
 from collections import deque
 import numpy as np
-from numpy.fft import fft, fftfreq
 from functools import partial
 
 # -- My packages --
 from app.colors import *
 from app.activation_b import btn
+from data_processing_pipeline.calcul_fft import FreqCalculator
 
 
 class FftGraph:
@@ -36,7 +36,7 @@ class FftGraph:
         # Create the plot widget and its characteristics
         plot = pg.PlotWidget(background=dark_grey)
         plot.plotItem.showGrid(x=True, y=True, alpha=0.3)
-        plot.plotItem.setLabel(axis='bottom', text='Frequency', units='Hz')     # Todo : ALEXM : verifier l'uniter
+        plot.plotItem.setLabel(axis='bottom', text='Frequency', units='Hz')    # TODO: ALEXM : verifier l'uniter
         plot.plotItem.setLabel(axis='left', text='Amplitude', units='None')
         plot.setXRange(0, 180)
         plot.setYRange(0, 1500000)
@@ -47,28 +47,31 @@ class FftGraph:
         for ch in range(self.gv.N_CH):
             self.curve_freq.append(
                 plot.plot(deque(np.ones(self.N_DATA), maxlen=self.N_DATA)))
+        self.layout.addWidget(self.graph_freq_type_combo(), 2, 0)
         # Associate the plot to an FftGraph object
         self.timer.timeout.connect(self.update_plotting)
         # Create the on button
         self.on_off_button()
 
     def update_plotting(self):
-        remove_first_data = 2                                                  # TODO: ALEXM: Filter instead of removing them direcly like that
-        # interval of time from the first to the last value that was add to the queue
-        delta_t = (self.gv.t_queue[-1] - self.gv.t_queue[0])
-        # Calculate FFT (Remove freq 0 because it gives a really high value on the graph
-        freq_range = np.linspace(remove_first_data, self.N_DATA//2/delta_t,
-                                 self.N_DATA//2 - remove_first_data)
         for ch in range(self.gv.N_CH):
-            ch_fft = fft(self.gv.data_queue[ch])
-            # Keep all frequency possibles                                                  # TODO: Change frequency in function of time
-            self.curve_freq[ch].setData(freq_range,
-                                        abs(ch_fft[remove_first_data:self.N_DATA//2]))         # TODO: ALEXM prendre abs ou real? avec real il y a des valeurs negatives est-ce que c'est normal?
+            freq_calculator = FreqCalculator(
+                remove_first_data=2, data_q=self.gv.data_queue[ch],
+                t_q=self.gv.t_queue)
+            freq_range = freq_calculator.get_freq_range()
+            # Keep all frequency possibles                                     # TODO: ALEXM: Change frequency in function of time
+            self.curve_freq[ch].setData(freq_range, freq_calculator.fft())                       # TODO: ALEXM prendre abs ou real? avec real il y a des valeurs negatives est-ce que c'est normal?
             self.curve_freq[ch].setPen(pen_colors[ch])
 
     def on_off_button(self):
         btn('Start FFT', self.layout, (0, 0), func_conn=self.start,
             color=dark_blue, toggle=True)
+
+    def graph_freq_type_combo(self):
+        graph_type = QComboBox()
+        graph_type.addItem('All frequency')
+        graph_type.addItem('Band frequency')
+        return graph_type
 
     @QtCore.pyqtSlot(bool)
     def start(self, checked):

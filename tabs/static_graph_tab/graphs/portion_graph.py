@@ -1,12 +1,18 @@
+# -- Genral packages --
 from ... static_graph_tab.graphs.graph import Graph
 from app.colors import *
+# -- My Packages --
+import numpy as np
+
 
 class PortionGraph(Graph):
     def __init__(self):
         super().__init__()
 
         self.brushes = [red, green, blue, yellow, purple]
-        self.data = []
+        self.data = np.zeros(200)
+        self.t = []
+        self.classif_region = None
 
     def add_all_experimentation_regions(self, ch, exp):
         """

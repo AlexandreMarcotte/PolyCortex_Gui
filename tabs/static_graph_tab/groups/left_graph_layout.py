@@ -1,9 +1,11 @@
+# -- My packages -- 
 from ... static_graph_tab.groups.group import Group
 from ... static_graph_tab.graphs.portion_graph import PortionGraph
 from ... static_graph_tab.graphs.avg_classif_graph import AvgClassifGraph
 from ... static_graph_tab.graphs.classif_graph import ClassifGraph
-
 from app.colors import *
+# -- General packages -- 
+from PyQt5.QtGui import *
 
 class LeftGraphLayout(Group):
     def __init__(self, gv, right_panel):
@@ -19,36 +21,47 @@ class LeftGraphLayout(Group):
         self.x_range = 2000
         name = 'Avg classif graph - Portion graph - Classif graph'
         parent_layout, self.gr = self.create_gr_and_layout(name)
-        self.add_all_graph(parent_layout, gv)
 
-    def add_all_graph(self, parent_layout, gv):                                # TODO: ALEXM: find how redefinintion of functions are done
+        self.init_graphs(parent_layout, gv)
+
+    def init_graphs(self, parent_layout, gv):                                # TODO: ALEXM: find how redefinintion of functions are done
         for ch in range(gv.N_CH):
-            layout, gr = self.create_gr_and_layout(
+            self.layout, gr = self.create_gr_and_layout(
                 name=f'ch {ch + 1}', parent_layout=parent_layout, ch=ch)
-            self.create_graphs(layout)
+            self.create_graphs()
 
-    def create_graphs(self, layout):
-        self.create_portion_graph(layout)
-        self.create_classif_graph(layout)
+    def create_graphs(self):
+        self.create_portion_graph()
+        self.create_classif_graph()
+        self.create_avg_classif_graph()
 
-    def create_classif_graph(self, layout):
-        avg_classif_graph = AvgClassifGraph()
-        avg_classif_graph.add_plot(layout, h=2, w=4, x_range=170)
-        self.avg_classif_graphs.append(avg_classif_graph)
+    def create_classif_graph(self):
         classif_graph = ClassifGraph(self.gv)
         classif_graph.add_plot(
-            layout, y=1, x=4, x_range=self.x_range, show_grid=True)
+            self.layout, y=2, x=4, x_range=self.x_range, show_grid=True)
         classif_graph.add_region([self.r_left, self.r_left], yellow)
         self.classif_graphs.append(classif_graph)
 
-    def create_portion_graph(self, layout):
+    def create_portion_graph(self):
         portion_graph = PortionGraph()
-        portion_graph.add_plot(layout, y=0, x=4, x_range=self.x_range)
+        portion_graph.add_plot(self.layout, y=1, x=4, x_range=self.x_range)
         self.add_red_classif_region(portion_graph)
-        
+
     def add_red_classif_region(self, portion_graph):
         # Put the classification region inside the full graph region
         portion_graph.add_region(
             [self.r_left, self.r_left + self.gv.emg_signal_len], pale_red)
         portion_graph.classif_region = portion_graph.region
         self.portion_graphs.append(portion_graph)
+
+    def create_avg_classif_graph(self):
+        avg_classif_graph = AvgClassifGraph()
+        avg_classif_graph.add_plot(self.layout, x=0, y=1, h=2, w=4, x_range=170)
+        avg_classif_graph.add_classif_num_combobox()
+        self.add_combo_classif(avg_classif_graph)
+        self.avg_classif_graphs.append(avg_classif_graph)
+
+    def add_combo_classif(self, avg_classif_graph):
+        self.layout.addWidget(avg_classif_graph.combo_classif, 0, 0, 1, 4)
+
+

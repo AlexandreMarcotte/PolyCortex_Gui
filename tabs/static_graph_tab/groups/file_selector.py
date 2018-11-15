@@ -78,7 +78,7 @@ class FileSelector(Group):
             fg = self.right_gr.full_graphs[ch]
             slider = self.right_gr.sliders[ch]
             acg = self.left_gr.avg_classif_graphs[ch]
-            pg = self.left_gr.portion_graphs[ch]
+            pgs = self.left_gr.portion_graphs[ch]
             cg = self.left_gr.classif_graphs[ch]
 
             self.pbar.setValue(int(100 * (ch+1)/self.gv.N_CH))
@@ -86,9 +86,10 @@ class FileSelector(Group):
             fg.plot_data(data[ch], color='w')
             slider.setMaximum(len(data[0]))
             # Left panel
-            pg.data = np.array(data[ch])
-            pg.plot_data(data[ch], color='g')
-            pg.add_all_experimentation_regions(ch, exp)
+            pgs.data = np.array(data[ch])
+            pgs.t = np.array(t)
+            pgs.plot_data(data[ch], color='g')
+            pgs.add_all_experimentation_regions(ch, exp)
             classified_data = self.left_gr.classif_graphs[ch].classify_data(data[ch])
             cg.plot_data(classified_data, color='b')
 
@@ -96,5 +97,7 @@ class FileSelector(Group):
                 np.zeros(self.gv.emg_signal_len), color='w')
             acg.classif_region_curve = acg.plot_data(
                 np.zeros(self.gv.emg_signal_len), color='r')
+            acg.combo_box_curve = acg.plot_data(
+                np.zeros(self.gv.emg_signal_len), color='y')
             acg.classified_data = classified_data
-            acg.update_pos_and_avg_graph(0)
+            acg.update_pos_and_avg_graph(classif_region_pos=0)
