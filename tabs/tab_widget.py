@@ -37,7 +37,8 @@ class TabWidget(QWidget):                                                     # 
                 tabs_class[i](self, tabs_w[i], self.gv)
             else:
                 tabs_class[i](self, tabs_w[i])
+            # layout.addWidget()
 
         # Add tabs to the window layout
         layout.addWidget(tabs_w_list)
-        self.setLayout(layout)
+        # self.setLayout(layout)

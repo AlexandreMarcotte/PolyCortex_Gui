@@ -30,6 +30,7 @@ class EegFftClassifTab:
         self.create_tab()
 
     def init_tab_w(self):
+        print('layout', self.tab_w.layout)
         self.tab_w.layout = QHBoxLayout(self.main_window)
         # Add docs to the tab
         self.area = DockArea()
