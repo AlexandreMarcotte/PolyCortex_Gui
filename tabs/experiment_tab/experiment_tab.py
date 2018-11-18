@@ -48,4 +48,4 @@ class ExperimentTab:
         # P300
         p300_dock = P300Dock(self.area, emg_dock.emg_dock)
         # Basic P300
-        BasicP300(self.area, p300_dock.emg_dock)
+        BasicP300(self.area, emg_dock.emg_dock)

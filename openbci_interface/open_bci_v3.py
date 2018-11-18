@@ -330,10 +330,8 @@ class OpenBCIBoard(object):
 
   def print_incoming_text(self):
     """
-
     When starting the connection, print all the debug data until
     we get to a line with the end sequence '$$$'.
-
     """
     line = ''
     #Wait for device to send data

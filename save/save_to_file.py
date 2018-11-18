@@ -24,10 +24,10 @@ class DataSaver:
         # Create button to open date file
         open_file = QtGui.QPushButton('Choose saving directory')
         open_file.clicked.connect(partial(self.save_file_dialog))
-        self.layout.addWidget(open_file, 1, 0, 1, 1)
+        self.layout.addWidget(open_file, 1, 0)
         # Button to save all the current data that was generated
         self.save_cur_data_b = QtGui.QPushButton('Save data Now')
-        self.layout.addWidget(self.save_cur_data_b, 1, 1, 1, 1)
+        self.layout.addWidget(self.save_cur_data_b, 1, 1)
 
 
     def save_file_dialog(self):

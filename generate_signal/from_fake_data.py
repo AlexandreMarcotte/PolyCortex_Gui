@@ -22,7 +22,7 @@ class CreateFakeData(threading.Thread):
 
         # 100 harmonic signal to test filtering
         self.s = []
-        for freq in range(70, 150, 2):
+        for freq in range(70, 350, 2):
             self.s.append(self.m * sin(freq * self.t))
 
     def add_signal_to_queue(self, signal, ch):

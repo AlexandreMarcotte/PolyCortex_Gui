@@ -87,8 +87,7 @@ class P300Dock:
         b_start = QtGui.QPushButton('START P300')
         b_start.setStyleSheet("background-color: rgba(255, 255, 255, 0.5)")
         b_start.clicked.connect(partial(self.start_p300))
-        row=0; col=0; rowspan=1; colspan=1
-        self.P300_layout.addWidget(b_start, row, col, rowspan, colspan)
+        self.P300_layout.addWidget(b_start, 0, 0)
 
     @pyqtSlot()
     def start_p300(self):
@@ -98,8 +97,7 @@ class P300Dock:
         b_stop = QtGui.QPushButton('STOP P300')
         b_stop.setStyleSheet("background-color: rgba(0, 0, 0, 0.5)")
         b_stop.clicked.connect(partial(self.stop_p300))
-        row = 0; col = 1; rowspan = 1; colspan = 1
-        self.P300_layout.addWidget(b_stop, row, col, rowspan, colspan)
+        self.P300_layout.addWidget(b_stop, 0, 1)
 
     @pyqtSlot()
     def stop_p300(self):

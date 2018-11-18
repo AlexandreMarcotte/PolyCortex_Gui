@@ -30,6 +30,7 @@ class Brain3DTab:
         data = nii.get_data()
         # To complete for the lack of sampling in the third dimension
         data = np.repeat(data, repeats=4, axis=2)
+
         # Create viewer
         w = gl.GLViewWidget()
         w.setCameraPosition(0, 0, 90)
