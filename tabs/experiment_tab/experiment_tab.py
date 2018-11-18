@@ -20,25 +20,24 @@ from .basic_p300 import BasicP300
 from app.colors import *
 
 
-class ExperimentTab:
-    def __init__(self, main_window, tab_w, gv):
-        self.main_window = main_window
+class ExperimentTab(QWidget):
+    def __init__(self, gv):
+        super().__init__()
         # The second tab that was created inside the main window object
-        self.tab_w = tab_w
         self.gv = gv
         # Create the tab itself
         self.create_tab()
 
     def create_tab(self):
         # Insert the tab layout inside the main window frame
-        self.tab_w.layout = QHBoxLayout(self.main_window)
+        self.layout = QHBoxLayout(self)
         # Add docs to the tab
         self.area = DockArea()
-        self.tab_w.layout.addWidget(self.area)
+        self.layout.addWidget(self.area)
 
         self.create_docks()
 
-        self.tab_w.setLayout(self.tab_w.layout)
+        self.setLayout(self.layout)
 
     def create_docks(self):
         # EMG

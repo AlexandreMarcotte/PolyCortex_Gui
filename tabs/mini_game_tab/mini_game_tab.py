@@ -12,22 +12,21 @@ from pynput import keyboard
 import threading
 from random import randint
 
-class MiniGameTab:
-    def __init__(self, main_window, tab_w):
-        self.main_window = main_window
-        self.tab_w = tab_w
+class MiniGameTab(QWidget):
+    def __init__(self):
+        super().__init__()
         # Create the tab itself
         self.create_tab()
 
     def create_tab(self):
-        self.tab_w.layout = QHBoxLayout(self.main_window)
+        self.layout = QHBoxLayout(self)
         # Collect events until released
-        game_3d = Game3D(self.tab_w)
+        game_3d = Game3D(self)
         listen_keybr = keyboard.Listener(on_press=game_3d.on_press,
                                          on_release=game_3d.on_release)
         listen_keybr.start()
 
-        self.tab_w.setLayout(self.tab_w.layout)
+        self.setLayout(self.layout)
 
 
 class Game3D:
@@ -105,12 +104,16 @@ class Game3D:
     def update_character_pos(self):
         if self.key_pressed=='l':
             self.m2.translate(0.2, 0, 0)
+            self.x_pos += 0.2
         if self.key_pressed=='j':
             self.m2.translate(-0.2, 0, 0)
+            self.x_pos -= 0.2
         if self.key_pressed=='i':
             self.m2.translate(0, 0.3, 0)
+            self.y_pos += 0.3
         if self.key_pressed=='k':
             self.m2.translate(0,-0.3, 0)
+            self.y_pos -= 0.3
 
     def init_food(self):
         for food_no in range(self.N_FOOD):

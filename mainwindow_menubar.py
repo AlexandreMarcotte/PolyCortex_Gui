@@ -9,7 +9,12 @@ from functools import partial
 # My packages
 from app.global_variables import GlobVar
 
-from tabs.tab_widget import TabWidget
+# from tabs.tab_widget import TabWidget
+from tabs.eeg_fft_classif_tab.eeg_fft_classif_tab import EegFftClassifTab
+from tabs.experiment_tab.experiment_tab import ExperimentTab
+from tabs.static_graph_tab.static_graph_tab import StaticGraphTab
+from tabs.mini_game_tab.mini_game_tab import MiniGameTab
+from tabs.brain_3D_tab.brain_3D_tab import Brain3DTab
 ## Game
 from game.main import RunGame
 
@@ -19,6 +24,12 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.gv = GlobVar()  # Create the global variable that will be
                              # in many of this project classes
+        self.tabs = {EegFftClassifTab(self.gv): 'EEG & FFT live graph',
+                     ExperimentTab(self.gv): 'Experiments',
+                     StaticGraphTab(self.gv): 'EEG static graph',
+                     MiniGameTab(): 'Mini Game',
+                     Brain3DTab(): '3D brain'}
+
         self.init_mainwindow()
     
     def init_mainwindow(self):
@@ -33,8 +44,15 @@ class MainWindow(QMainWindow):
         # message at the bottom
         self.statusBar().showMessage('Running the experiment ...')
 
-        self.main_window = TabWidget(self.gv)
-        self.setCentralWidget(self.main_window)
+        self.create_tabs()
+
+    def create_tabs(self):
+        tab_w = QTabWidget()
+
+        for name, tab in self.tabs.items():
+            tab_w.addTab(name, tab)
+
+        self.setCentralWidget(tab_w)
 
         self.show()
 
@@ -106,7 +124,7 @@ class MainWindow(QMainWindow):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         file_name, _ = QFileDialog.getOpenFileName(
-            self.main_window, "QFileDialog.getOpenFileName()", "",
+            self, "QFileDialog.getOpenFileName()", "",
             "All Files (*);;Python Files (*.py)", options=options)
         if file_name:
             self.stream_path = file_name

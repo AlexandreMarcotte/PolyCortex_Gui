@@ -9,19 +9,18 @@ import pyqtgraph.opengl as gl
 import numpy as np
 import os
 
-class Brain3DTab:
-    def __init__(self, main_window, tab_w):
-        self.main_window = main_window
-        self.tab_w = tab_w
+class Brain3DTab(QWidget):
+    def __init__(self):
+        super().__init__()
         # Create the tab itself
         self.create_tab()
 
     def create_tab(self):
-        self.tab_w.layout = QHBoxLayout(self.main_window)
+        self.layout = QHBoxLayout(self)
 
         self.create_3D_brain_volume()
 
-        self.tab_w.setLayout(self.tab_w.layout)
+        self.setLayout(self.layout)
 
     def create_3D_brain_volume(self):
         # get MRI data
@@ -35,7 +34,7 @@ class Brain3DTab:
         w = gl.GLViewWidget()
         w.setCameraPosition(0, 0, 90)
         w.opts['distance'] = 500
-        self.tab_w.layout.addWidget(w)
+        self.layout.addWidget(w)
         # w.show()
         # create color image channels
         d2 = np.empty(data.shape + (4,), dtype=np.ubyte)

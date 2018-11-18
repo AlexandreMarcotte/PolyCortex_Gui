@@ -18,11 +18,9 @@ from app.colors import *
 from tabs.region import Regions
 
 
-class EegFftClassifTab:
-    def __init__(self, main_window, tab_w, gv):
+class EegFftClassifTab(QWidget):
+    def __init__(self, gv):
         super().__init__()
-        self.main_window = main_window
-        self.tab_w = tab_w
         self.gv = gv
 
         self.init_tab_w()
@@ -30,11 +28,10 @@ class EegFftClassifTab:
         self.create_tab()
 
     def init_tab_w(self):
-        print('layout', self.tab_w.layout)
-        self.tab_w.layout = QHBoxLayout(self.main_window)
+        self.layout = QHBoxLayout(self)
         # Add docs to the tab
         self.area = DockArea()
-        self.tab_w.layout.addWidget(self.area)
+        self.layout.addWidget(self.area)
 
     def init_docks(self):
         # - EEG
@@ -74,7 +71,7 @@ class EegFftClassifTab:
 
     def create_tab(self):
         # Regions
-        data_saver = DataSaver(self.main_window, self.saving_layout)
+        data_saver = DataSaver(self, self.saving_layout)
         # Create the graphes inside the each dock layout
         eeg_plot_creator = EegPlotsCreator(self.gv, self.eeg_layout, data_saver)
         x = eeg_plot_creator.regions
@@ -83,4 +80,4 @@ class EegFftClassifTab:
         ClassifPlotCreator(self.gv, self.classif_layout)
         add_banner(self.banner_layout)
 
-        self.tab_w.setLayout(self.tab_w.layout)
+        self.setLayout(self.layout)
