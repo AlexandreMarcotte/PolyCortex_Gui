@@ -30,10 +30,6 @@ class EegPlotsCreator:
         self.ts = self.gv.t_queue
         self.layout = layout
         self.timers = []
-        # Contain all the button for all the ch w the specif actn they trigger
-        self.actn_btns_func = []
-        self.actn_btns = []
-        self.N_BTN_PER_CH = 4
 
         # self.last_classified_type = last_classified_type
         self.stream_path = f'./experiment_csv/2exp_pinch_close_2018-08-29 19:44:54.567417.csv'
@@ -57,7 +53,7 @@ class EegPlotsCreator:
         for ch in range(self.gv.N_CH + 1):
             self.ch_layout = self.add_sub_layout(self.layout, ch+1)
             plot, q, rowspan = self.create_plot(ch)
-            self.ch_layout.addWidget(plot, 0, 1, 2, 1)
+            self.ch_layout.addWidget(plot, 0, 1, 6, 6)
             curve = self.create_curve(plot, ch, q)
             eeg_graph = EegGraph(ch, q, self.gv, self.ts, curve, self.regions)
             self.eeg_graphes.append(eeg_graph)
@@ -74,14 +70,6 @@ class EegPlotsCreator:
         gr.setLayout(layout)
         parent_layout.addWidget(gr, pos, 0)
         return layout
-
-    # def init_layouts(self):
-    #     self.ch_layouts = []
-    #     self.ch_group = []
-    #     for ch in range(self.gv.N_CH):
-    #         self.ch_layouts.append(QGridLayout())
-    #         self.ch_group.append(QGroupBox(f'ch'))
-    #         self.ch_group[ch].setLayout(self.ch_layouts[ch])
 
     def create_buttons(self, layout):
         """Assign pushbutton for starting and stoping the stream"""
@@ -176,20 +164,20 @@ class EegPlotsCreator:
     def assign_action_to_ch(self, ch):
         m_w = 17
         # Average
-        actn_btn = ActionButton(self.ch_layout, 0, self.gv, ch)
-        btn('A', self.ch_layout, (0, 3), action=actn_btn,
+        actn_btn = ActionButton(self.ch_layout, 1, self.gv, ch)
+        btn('A', self.ch_layout, (1, 8), action=actn_btn,
             toggle=True, tip='Show average value of queue',
             max_width=m_w, color=grey)
         # Max
-        actn_btn = ActionButton(self.ch_layout, 1, self.gv, ch)
-        btn('M', self.ch_layout, (1, 3), action=actn_btn,
+        actn_btn = ActionButton(self.ch_layout, 2, self.gv, ch)
+        btn('M', self.ch_layout, (2, 8), action=actn_btn,
             toggle=True, tip='Show max value of queue',
             max_width=m_w, color=grey)
         # Detection
-        btn('D', self.ch_layout, (0, 4),
+        btn('D', self.ch_layout, (1, 9),
             toggle=True, tip='Show detected class patern',
             max_width=m_w, color=grey)
         # Other function
-        btn('O', self.ch_layout, (1, 4), toggle=True,
+        btn('O', self.ch_layout, (2, 9), toggle=True,
             tip='Show other action', max_width=m_w, color=grey)
 

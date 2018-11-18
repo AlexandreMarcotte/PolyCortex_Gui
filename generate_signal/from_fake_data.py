@@ -75,4 +75,4 @@ class CreateFakeData(threading.Thread):
                 self.gv.experiment_queue.append(0)
                 self.gv.all_experiment_val.append(0)
 
-            sleep(0.0017)
+            sleep(0.00017)

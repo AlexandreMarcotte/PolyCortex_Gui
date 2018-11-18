@@ -7,17 +7,23 @@ class ActionButton:
         self.ch = ch
 
         self.timer = QtCore.QTimer()
-        self.label = QtGui.QLabel()
-        layout.addWidget(self.label, row, 2)
+        self.label = self.create_label()
+        layout.addWidget(self.label, row, 6)
 
         actn = {'show avg': self.update_avg,
                 'show max': self.update_max}
         self.actn_func = actn[type]
 
+    def create_label(self):
+        style = ("""QLabel {background-color: rgba(0, 0, 0, 0); 
+                         color: rgba(180, 180, 180, 1)}""")
+        label = QtGui.QLabel()
+        label.setStyleSheet(style)
+        return label
+
     @QtCore.pyqtSlot(bool)
     def show_action(self, checked):
         if checked:
-            print('here')
             self.timer.timeout.connect(self.update_avg)
             self.timer.start(400)
         else:
@@ -26,7 +32,6 @@ class ActionButton:
 
     def update_avg(self):
         # Create the average label
-        print('avg')
         avg_val =  f'{np.round(np.average(self.gv.data_queue[self.ch]), 2)} Vrms'
         self.label.setText(avg_val)
 
