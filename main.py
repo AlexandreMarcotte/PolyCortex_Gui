@@ -6,11 +6,9 @@ from PyQt5.QtWidgets import QApplication
 import sys
 # Dark theme
 import qdarkstyle
-
 import atexit
-
 # My packages
-from mainwindow_menubar import MainWindow
+from mainwindow import MainWindow
 
 
 def main():

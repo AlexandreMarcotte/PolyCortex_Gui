@@ -24,4 +24,14 @@ class GlobVar:
         self.last_classified_type = [0]
         self.emg_signal_len = 170
 
+    def collect_data(self, signal, t, n_data_created):
+        """Callback function to use in the generating functions"""
+        for ch in range(self.N_CH):
+            self.signals[ch].append(signal[ch])
+        self.t.append(t)
+        self.n_data_created = n_data_created
+
+        self.all_data.append(signal)
+        self.all_t.append(t)
+
 

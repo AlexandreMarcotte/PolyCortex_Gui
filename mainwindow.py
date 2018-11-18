@@ -24,6 +24,12 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.gv = GlobVar()  # Create the global variable that will be
                              # in many of this project classes
+        self.name = 'Openbci Gui'
+        self.icon = QtGui.QIcon('./img/polycortex_logo.png')
+        self.pos = (0, 0)
+        self.size = (1350, 950)
+        self.intro_message = 'Running the experiment ...'
+
         self.tabs = {EegFftClassifTab(self.gv): 'EEG & FFT live graph',
                      ExperimentTab(self.gv): 'Experiments',
                      StaticGraphTab(self.gv): 'EEG static graph',
@@ -33,16 +39,15 @@ class MainWindow(QMainWindow):
         self.init_mainwindow()
     
     def init_mainwindow(self):
-        self.setWindowTitle('Openbci Gui')
-        self.setWindowIcon(QtGui.QIcon('./img/polycortex_logo.png'))
-        x=0; y=0; w=1350; h=950
-        self.setGeometry(x,y,w,h)
+        self.setWindowTitle(self.name)
+        self.setWindowIcon(self.icon)
+        self.setGeometry(*self.pos, *self.size)
         # Add a menu bar
         self.create_menu_bar()
         # Add a toolbar
         self.create_toolbar()
         # message at the bottom
-        self.statusBar().showMessage('Running the experiment ...')
+        self.statusBar().showMessage(self.intro_message)
 
         self.create_tabs()
 
