@@ -95,23 +95,21 @@ class Game3D:
         self.y_pos = -20
         self.character_height = 1.3
         md = gl.MeshData.sphere(rows=10, cols=30)
-        self.m2 = gl.GLMeshItem(meshdata=md, smooth=True, shader='normalColor', glOptions='opaque')
+        self.m2 = gl.GLMeshItem(
+            meshdata=md, smooth=True, shader='normalColor', glOptions='opaque')
         self.m2.translate(self.x_pos, self.y_pos, self.character_height)
-        self.m2.scale(self.character_height, self.character_height, self.character_height)
+        self.m2.scale(
+            self.character_height, self.character_height, self.character_height)
         self.w.addItem(self.m2)
 
     def update_character_pos(self):
         if self.key_pressed=='l':
-            self.x_pos += 0.2
             self.m2.translate(0.2, 0, 0)
         if self.key_pressed=='j':
-            self.x_pos -= 0.2
             self.m2.translate(-0.2, 0, 0)
         if self.key_pressed=='i':
-            self.y_pos += 0.3
             self.m2.translate(0, 0.3, 0)
         if self.key_pressed=='k':
-            self.y_pos -= 0.3
             self.m2.translate(0,-0.3, 0)
 
     def init_food(self):
@@ -127,7 +125,7 @@ class Game3D:
         try:
             self.key_pressed = key.char
         except AttributeError:
-            print(f'special key {key} pressed')
+            # print(f'special key {key} pressed')
             self.key_pressed = key
 
     def on_release(self, key):
