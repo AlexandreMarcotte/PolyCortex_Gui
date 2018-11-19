@@ -5,26 +5,29 @@ from collections import deque
 from time import time, sleep
 
 
-class CreateDataFromFile(threading.Thread):
-    def __init__(self, gv, file_name):
-        super(CreateDataFromFile, self).__init__()
-        self.gv = gv
-        self.N_DATA = len(self.gv.data_queue)
+class FileReader(threading.Thread):
+    def __init__(self, file_name, callback, read_frequency=250):
+        super().__init__()
         self.file_name = file_name
+        self.callback = callback
+        self.read_period = 1/read_frequency
+
+        self.t_init = time()
+        self.n_data_created = 0
 
     def run(self):
-        self.write_to_file()
+        self.read()
 
-    def write_to_file(self):
-        with open(self.file_name, 'r') as f:
-            for all_ch_line in f:
-                self.gv.n_data_created[0] += 1
-                all_ch_line = all_ch_line.strip().split(',')[0:8]
-                for ch_no, ch in enumerate(all_ch_line):
-                    self.gv.data_queue[ch_no].append(float(ch))
+    def read(self):
+        with open(self.file_name) as f:
+            data = csv.reader(f)
+            for line in data:
+                signal = np.array([float(val) for val in line[:8]])
+                t = time() - self.t_init
+                self.n_data_created += 1
+                self.callback(signal, t, self.n_data_created)
+                sleep(self.read_period)
 
-                self.gv.t_queue.append(time() - self.gv.t_init)
-                sleep(0.002) # TODO: ALEXM this delta t could be calculated from the saved time in the file
 
 # Used in the tab 3 where we create static graphes
 def read_data_from_file(file_name, n_ch=8):
