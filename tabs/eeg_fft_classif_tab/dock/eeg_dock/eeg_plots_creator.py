@@ -12,7 +12,7 @@ from collections import namedtuple
 ## generate signal
 from generate_signal.from_openbci import stream_data_from_OpenBCI
 from generate_signal.from_fake_data import CreateFakeData
-from generate_signal.from_file import CreateDataFromFile
+from generate_signal.from_file import FileReader
 from generate_signal.from_muse import StreamFromMuse
 
 from .ch_number_action import ChNumberAction
@@ -30,7 +30,6 @@ class EegPlotsCreator:
         self.ts = self.gv.t_queue
         self.layout = layout
         self.timers = []
-
         # self.last_classified_type = last_classified_type
         self.stream_path = f'./experiment_csv/2exp_pinch_close_2018-08-29 19:44:54.567417.csv'
         self.plots = []
@@ -42,7 +41,6 @@ class EegPlotsCreator:
         self.create_buttons(start_stop_layout)
 
         self.create_all_eeg_plot()
-
         # Saving
         self.data_saver = data_saver
         self.data_saver.save_data_to_file()
@@ -50,22 +48,28 @@ class EegPlotsCreator:
     def create_all_eeg_plot(self):
         """
         """
-        for ch in range(self.gv.N_CH + 1):
-            self.ch_layout = self.add_sub_layout(self.layout, ch+1)
-            plot, q, rowspan = self.create_plot(ch)
-            self.ch_layout.addWidget(plot, 0, 1, 6, 6)
-            curve = self.create_curve(plot, ch, q)
-            eeg_graph = EegGraph(ch, q, self.gv, self.ts, curve, self.regions)
-            self.eeg_graphes.append(eeg_graph)
-            self.timers.append(QtCore.QTimer())
-            self.timers[ch].timeout.connect(self.eeg_graphes[ch].update_graph)
+        ch = 0
+        for ch in range(self.gv.N_CH):
+            self.ch_layout = self.add_sub_layout(self.layout, ch + 1)
+            self.add_ch_layout(ch)
             # Put only a plot on the time channel
-            if ch != self.gv.N_CH:
-                self.assign_n_to_ch(ch)
-                self.assign_action_to_ch(ch)
+        self.add_ch_layout(ch=self.gv.N_CH, time_ch=True, plot_pos=(5, 1, 1, 6))
+
+    def add_ch_layout(self, ch, time_ch=False, plot_pos=(0, 1, 5, 6)):
+        plot, q, rowspan = self.create_plot(ch)
+        self.ch_layout.addWidget(plot, *plot_pos)
+        curve = self.create_curve(plot, ch, q)
+        eeg_graph = EegGraph(ch, q, self.gv, self.ts, curve, self.regions)
+        self.eeg_graphes.append(eeg_graph)
+        self.timers.append(QtCore.QTimer())
+        self.timers[ch].timeout.connect(self.eeg_graphes[ch].update_graph)
+        if not time_ch:
+            self.assign_n_to_ch(ch)
+            self.assign_action_to_ch(ch)
 
     def add_sub_layout(self, parent_layout, pos):
         layout = QGridLayout()
+        layout.setContentsMargins(0, 0, 0, 0)
         gr = QGroupBox(f'')
         gr.setLayout(layout)
         parent_layout.addWidget(gr, pos, 0)
@@ -118,7 +122,7 @@ class EegPlotsCreator:
     def assign_n_to_ch(self, ch):
         ch_number_action = ChNumberAction(self.timers, ch)
         # +1 so the number str start at 1
-        btn(name=str(ch + 1), layout=self.ch_layout, pos=(0, 0),
+        btn(name=str(ch + 1), layout=self.ch_layout, pos=(1, 0),
             func_conn=ch_number_action.stop_ch,
             color=button_colors[ch], toggle=True, max_width=18)
 
@@ -133,8 +137,9 @@ class EegPlotsCreator:
             create_data.start()
 
         elif self.gv.stream_origin[0] == 'Stream from file':
-            create_data = CreateDataFromFile(self.gv, self.stream_path)
-            create_data.start()
+            file_reader = FileReader(self.stream_path, self.gv.collect_data,
+                                     read_frequency=250)
+            file_reader.start()
 
         elif self.gv.stream_origin[0] == 'Stream from Muse':
             create_data = StreamFromMuse(self.gv)
@@ -150,8 +155,6 @@ class EegPlotsCreator:
         if self.gv.stream_origin[0] == 'Stream from OpenBCI':
             self.board.stop()
         self.stop_timers()
-        # Stop saving process
-        # self.write_data_to_file.join()
 
     def start_timers(self):
         for i, tm in enumerate(self.timers):
@@ -164,20 +167,20 @@ class EegPlotsCreator:
     def assign_action_to_ch(self, ch):
         m_w = 17
         # Average
-        actn_btn = ActionButton(self.ch_layout, 1, self.gv, ch)
-        btn('A', self.ch_layout, (1, 8), action=actn_btn,
+        actn_btn = ActionButton(self.ch_layout, 0, self.gv, ch)
+        btn('A', self.ch_layout, (0, 8), action=actn_btn,
             toggle=True, tip='Show average value of queue',
             max_width=m_w, color=grey)
         # Max
-        actn_btn = ActionButton(self.ch_layout, 2, self.gv, ch)
-        btn('M', self.ch_layout, (2, 8), action=actn_btn,
+        actn_btn = ActionButton(self.ch_layout, 1, self.gv, ch)
+        btn('M', self.ch_layout, (1, 8), action=actn_btn,
             toggle=True, tip='Show max value of queue',
             max_width=m_w, color=grey)
         # Detection
-        btn('D', self.ch_layout, (1, 9),
+        btn('D', self.ch_layout, (2, 8),
             toggle=True, tip='Show detected class patern',
             max_width=m_w, color=grey)
         # Other function
-        btn('O', self.ch_layout, (2, 9), toggle=True,
+        btn('O', self.ch_layout, (3, 8), toggle=True,
             tip='Show other action', max_width=m_w, color=grey)
 

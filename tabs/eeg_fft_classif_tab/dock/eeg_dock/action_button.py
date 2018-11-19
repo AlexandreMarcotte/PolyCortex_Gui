@@ -25,7 +25,7 @@ class ActionButton:
     def show_action(self, checked):
         if checked:
             self.timer.timeout.connect(self.update_avg)
-            self.timer.start(400)
+            self.timer.start(300)
         else:
             self.label.setText('')
             self.timer.stop()
