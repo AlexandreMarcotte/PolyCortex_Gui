@@ -127,20 +127,20 @@ class EegPlotsCreator:
 
     @pyqtSlot()
     def start_streaming(self):
-        # -----Start streaming data from OPENBCI board ------
-        if self.gv.stream_origin[0] == 'Stream from OpenBCI':
+        """      """
+        if self.gv.stream_origin == 'Stream from OpenBCI':
             self.board = stream_data_from_OpenBCI(self.gv)
-        elif self.gv.stream_origin[0] == 'Stream from fake data':
+        elif self.gv.stream_origin == 'Stream from fake data':
             # Create fake data for test case
             create_data = CreateFakeData(self.gv)
             create_data.start()
 
-        elif self.gv.stream_origin[0] == 'Stream from file':
+        elif self.gv.stream_origin == 'Stream from file':
             file_reader = FileReader(self.stream_path, self.gv.collect_data,
                                      read_frequency=1250)
             file_reader.start()
 
-        elif self.gv.stream_origin[0] == 'Stream from Muse':
+        elif self.gv.stream_origin == 'Stream from Muse':
             create_data = StreamFromMuse(self.gv)
             create_data.start()
 
@@ -151,7 +151,7 @@ class EegPlotsCreator:
 
     @pyqtSlot()
     def stop_streaming(self):
-        if self.gv.stream_origin[0] == 'Stream from OpenBCI':
+        if self.gv.stream_origin == 'Stream from OpenBCI':
             self.board.stop()
         self.stop_timers()
 

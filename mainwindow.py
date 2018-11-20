@@ -102,8 +102,8 @@ class MainWindow(QMainWindow):
     def choose_stream(self, btn):
         """Create a function that will print the name of the menubar
         btn that was selected"""
-        self.gv.stream_origin[0] = btn.name
-        print(btn.name)
+        self.gv.stream_origin = btn.name
+        print(btn.name, 'is the stream location...')
 
         if btn.name == 'Stream from file':
             self.choose_streaming_file()

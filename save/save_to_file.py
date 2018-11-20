@@ -23,11 +23,13 @@ class DataSaver:
         self.layout.addWidget(self.save_path_line_edit, 0, 0, 1, 2)
         # Create button to open date file
         open_file = QtGui.QPushButton('Choose saving directory')
+        open_file.setStyleSheet("background-color: rgba(200, 200, 200, 0.6)")
         open_file.clicked.connect(partial(self.save_file_dialog))
         self.layout.addWidget(open_file, 1, 0)
         # Button to save all the current data that was generated
-        self.save_cur_data_b = QtGui.QPushButton('Save data Now')
-        self.layout.addWidget(self.save_cur_data_b, 1, 1)
+        save_cur_data_b = QtGui.QPushButton('Save data Now')
+        save_cur_data_b.setStyleSheet("background-color: rgba(200, 200, 200, 0.6)")
+        self.layout.addWidget(save_cur_data_b, 1, 1)
 
 
     def save_file_dialog(self):

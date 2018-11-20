@@ -57,7 +57,7 @@ class Experiment:
 
     def add_start_button(self):
         b_start = QtGui.QPushButton('START P300')
-        b_start.setStyleSheet("background-color: rgba(255, 255, 255, 0.5)")
+        b_start.setStyleSheet("background-color: rgba(200, 200, 200, 0.5)")
         b_start.clicked.connect(partial(self.start_p300))
         self.layout.addWidget(b_start, 0, 0)
 
@@ -67,7 +67,7 @@ class Experiment:
 
     def add_stop_button(self):
         b_stop = QtGui.QPushButton('STOP P300')
-        b_stop.setStyleSheet("background-color: rgba(0, 0, 0, 0.5)")
+        b_stop.setStyleSheet("background-color: rgba(200, 200, 200, 0.5)")
         b_stop.clicked.connect(partial(self.stop_p300))
         self.layout.addWidget(b_stop, 0, 1)
 

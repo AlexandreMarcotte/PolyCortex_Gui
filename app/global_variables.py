@@ -19,7 +19,7 @@ class GlobVar:
         self.all_t = deque(np.zeros(self.DEQUE_LEN))
         self.all_experiment_val = deque(np.zeros(self.DEQUE_LEN))
         # Variable change in the menubar
-        self.stream_origin = ['Stream from fake data']
+        self.stream_origin = 'Stream from fake data'
         # Classification
         self.last_classified_type = [0]
         self.emg_signal_len = 170
