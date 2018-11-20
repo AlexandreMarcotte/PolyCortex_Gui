@@ -33,8 +33,7 @@ class P300Dock:
         self.P300_dock.addWidget(self.P300_layout)
 
         self.p300_plot = self.instantiate_p300_plot()
-        row=1; col=0; rowspan=1; colspan=2
-        self.P300_layout.addWidget(self.p300_plot, row, col, rowspan, colspan)
+        self.P300_layout.addWidget(self.p300_plot, 1, 0, 1, 2)
 
         # # Start and stop button
         self.start_p300_button()

@@ -38,13 +38,13 @@ class LeftGraphLayout(Group):
     def create_classif_graph(self):
         classif_graph = ClassifGraph(self.gv)
         classif_graph.add_plot(
-            self.layout, y=2, x=4, x_range=self.x_range, show_grid=True)
+            self.layout, y=1, x=4, x_range=self.x_range, show_grid=True)
         classif_graph.add_region([self.r_left, self.r_left], yellow)
         self.classif_graphs.append(classif_graph)
 
     def create_portion_graph(self):
         portion_graph = PortionGraph()
-        portion_graph.add_plot(self.layout, y=1, x=4, x_range=self.x_range)
+        portion_graph.add_plot(self.layout, y=0, x=4, x_range=self.x_range)
         self.add_red_classif_region(portion_graph)
 
     def add_red_classif_region(self, portion_graph):
@@ -56,12 +56,12 @@ class LeftGraphLayout(Group):
 
     def create_avg_classif_graph(self):
         avg_classif_graph = AvgClassifGraph()
-        avg_classif_graph.add_plot(self.layout, x=0, y=1, h=2, w=4, x_range=170)
+        avg_classif_graph.add_plot(self.layout, x=0, y=0, h=2, w=4, x_range=170)
         avg_classif_graph.add_classif_num_combobox()
         self.add_combo_classif(avg_classif_graph)
         self.avg_classif_graphs.append(avg_classif_graph)
 
     def add_combo_classif(self, avg_classif_graph):
-        self.layout.addWidget(avg_classif_graph.combo_classif, 0, 0, 1, 4)
+        self.layout.addWidget(avg_classif_graph.combo_classif, 2, 0, 1, 4)
 
 

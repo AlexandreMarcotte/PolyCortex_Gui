@@ -3,10 +3,11 @@ from pyqtgraph.Qt import QtGui, QtCore
 import threading
 from collections import deque
 from time import time, sleep
+import csv
 
 
 class FileReader(threading.Thread):
-    def __init__(self, file_name, callback, read_frequency=250):
+    def __init__(self, file_name, callback, read_frequency=500):
         super().__init__()
         self.file_name = file_name
         self.callback = callback

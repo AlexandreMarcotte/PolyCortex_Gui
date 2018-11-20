@@ -7,7 +7,6 @@ from PyQt5 import QtGui, QtCore
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import *
 from collections import namedtuple
-
 # -- My packages --
 ## generate signal
 from generate_signal.from_openbci import stream_data_from_OpenBCI
@@ -122,7 +121,7 @@ class EegPlotsCreator:
     def assign_n_to_ch(self, ch):
         ch_number_action = ChNumberAction(self.timers, ch)
         # +1 so the number str start at 1
-        btn(name=str(ch + 1), layout=self.ch_layout, pos=(1, 0),
+        btn(name=str(ch + 1), layout=self.ch_layout, pos=(0, 0),
             func_conn=ch_number_action.stop_ch,
             color=button_colors[ch], toggle=True, max_width=18)
 
@@ -138,7 +137,7 @@ class EegPlotsCreator:
 
         elif self.gv.stream_origin[0] == 'Stream from file':
             file_reader = FileReader(self.stream_path, self.gv.collect_data,
-                                     read_frequency=250)
+                                     read_frequency=1250)
             file_reader.start()
 
         elif self.gv.stream_origin[0] == 'Stream from Muse':

@@ -27,9 +27,9 @@ class GlobVar:
     def collect_data(self, signal, t, n_data_created):
         """Callback function to use in the generating functions"""
         for ch in range(self.N_CH):
-            self.signals[ch].append(signal[ch])
-        self.t.append(t)
-        self.n_data_created = n_data_created
+            self.data_queue[ch].append(signal[ch])
+        self.t_queue.append(t)
+        self.n_data_created = [n_data_created]
 
         self.all_data.append(signal)
         self.all_t.append(t)

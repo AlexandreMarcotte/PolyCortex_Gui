@@ -3,25 +3,22 @@ from PyQt5.QtWidgets import *
 from PyQt5 import QtGui, QtCore
 from PyQt5.QtCore import Qt, pyqtSlot
 from PyQt5.QtGui import QPixmap, QIcon
+import qdarkstyle
 # from pyqtgraph.Qt import QtGui
 import os
 from functools import partial
 # My packages
 from app.global_variables import GlobVar
 
-# from tabs.tab_widget import TabWidget
-from tabs.eeg_fft_classif_tab.eeg_fft_classif_tab import EegFftClassifTab
-from tabs.experiment_tab.experiment_tab import ExperimentTab
-from tabs.static_graph_tab.static_graph_tab import StaticGraphTab
-from tabs.mini_game_tab.mini_game_tab import MiniGameTab
-from tabs.brain_3D_tab.brain_3D_tab import Brain3DTab
 ## Game
 from game.main import RunGame
+from tabs.tab_widget import TabWidget
 
 
 class MainWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self, app):
         super().__init__()
+        self.app = app
         self.gv = GlobVar()  # Create the global variable that will be
                              # in many of this project classes
         self.name = 'Openbci Gui'
@@ -29,12 +26,6 @@ class MainWindow(QMainWindow):
         self.pos = (0, 0)
         self.size = (1350, 950)
         self.intro_message = 'Running the experiment ...'
-
-        self.tabs = {EegFftClassifTab(self.gv): 'EEG & FFT live graph',
-                     ExperimentTab(self.gv): 'Experiments',
-                     StaticGraphTab(self.gv): 'EEG static graph',
-                     MiniGameTab(): 'Mini Game',
-                     Brain3DTab(): '3D brain'}
 
         self.init_mainwindow()
     
@@ -49,14 +40,7 @@ class MainWindow(QMainWindow):
         # message at the bottom
         self.statusBar().showMessage(self.intro_message)
 
-        self.create_tabs()
-
-    def create_tabs(self):
-        tab_w = QTabWidget()
-
-        for name, tab in self.tabs.items():
-            tab_w.addTab(name, tab)
-
+        tab_w = TabWidget(self, self.gv)
         self.setCentralWidget(tab_w)
 
         self.show()
@@ -148,14 +132,28 @@ class MainWindow(QMainWindow):
         run_game.start()
 
     def create_toolbar(self):
+        toolbar = self.addToolBar('toolbar')
+        toolbar.addAction(self.create_exit_action())
+        toolbar.addAction(self.create_dark_mode_activator())
+
+    def create_exit_action(self):
         base_path = os.getcwd()
         path = os.path.join(base_path, 'app/exit.png')
         exitAct = QAction(QIcon(path), 'Exit', self)
         exitAct.setShortcut('Ctrl+Q')
         exitAct.setStatusTip('Exit application')
         exitAct.triggered.connect(self.close)
+        return exitAct
 
-        self.statusBar()
+    def create_dark_mode_activator(self):
+        base_path = os.getcwd()
+        path = os.path.join(base_path, 'img/light_mode.png')
+        light_act = QAction(QIcon(path), 'change light style', self)
+        light_act.setStatusTip('Change style to qdarkstyle')
+        light_act.triggered.connect(self.change_light_style)
+        return light_act
 
-        toolbar = self.addToolBar('Exit')
-        toolbar.addAction(exitAct)
+    def change_light_style(self):
+        self.app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
+
+

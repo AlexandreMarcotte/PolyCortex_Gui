@@ -13,7 +13,8 @@ class WaveGraph:
         self.gv = gv
         self.layout = layout
 
-        self.plot = self.init_plot()
+        self.add_head_img()
+        # self.plot = self.init_plot()
         self.init_on_off_button()
         
     def init_plot(self):
@@ -32,10 +33,13 @@ class WaveGraph:
         self.layout.addWidget(plot, 1, 0)
         # Create the bar chart only for the first channel
         # self.timer.timeout.connect(self.update)
+
+        return plot
+
+    def add_head_img(self):
         mne_head = QLabel()
         mne_head.setPixmap(QtGui.QPixmap('./img/mne_head.png'))
         self.layout.addWidget(mne_head, 2, 0)
-        return plot
 
     def init_on_off_button(self):
         btn('Show wave signal', self.layout, (0, 0), func_conn=self.start,
