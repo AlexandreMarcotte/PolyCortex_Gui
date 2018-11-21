@@ -71,6 +71,7 @@ class FftGraph:
         graph_type = QComboBox()
         graph_type.addItem('All frequency')
         graph_type.addItem('Band frequency')
+        graph_type.addItem('2D time FFT')
         return graph_type
 
     @QtCore.pyqtSlot(bool)

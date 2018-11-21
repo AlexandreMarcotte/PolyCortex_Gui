@@ -8,19 +8,16 @@ import qdarkstyle
 import os
 from functools import partial
 # My packages
-from app.global_variables import GlobVar
-
 ## Game
 from game.main import RunGame
 from tabs.tab_widget import TabWidget
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, app):
+    def __init__(self, app, gv):
         super().__init__()
         self.app = app
-        self.gv = GlobVar()  # Create the global variable that will be
-                             # in many of this project classes
+        self.gv = gv
         self.name = 'Openbci Gui'
         self.icon = QtGui.QIcon('./img/polycortex_logo.png')
         self.pos = (0, 0)
@@ -40,8 +37,8 @@ class MainWindow(QMainWindow):
         # message at the bottom
         self.statusBar().showMessage(self.intro_message)
 
-        tab_w = TabWidget(self, self.gv)
-        self.setCentralWidget(tab_w)
+        self.tab_w = TabWidget(self, self.gv)
+        self.setCentralWidget(self.tab_w)
 
         self.show()
 
@@ -155,5 +152,6 @@ class MainWindow(QMainWindow):
 
     def change_light_style(self):
         self.app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
+
 
 

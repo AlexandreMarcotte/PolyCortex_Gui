@@ -11,6 +11,8 @@ from random import randint
 
 
 class Experiment:
+    def __init__(self, timer_period=200):
+        self.timer_period = timer_period
 
     def create_dock(self):
         self.dock = Dock(f'{self.exp_name}')
@@ -23,10 +25,10 @@ class Experiment:
 
         self.create_start_and_stop_b()
 
-    def create_plot(self):
+    def create_plot(self, xs=(-2,7), ys=(-1,5)):
         plot = pg.PlotWidget()
-        plot.setXRange(-2, 7)
-        plot.setYRange(-1, 5)
+        plot.setXRange(*xs)
+        plot.setYRange(*ys)
         plot.hideAxis('bottom')
         plot.hideAxis('left')
         return plot
@@ -43,7 +45,7 @@ class Experiment:
 
     @pyqtSlot()
     def start(self):
-        self.plot_timer.start(200)
+        self.plot_timer.start(self.timer_period)
 
     def create_stop_b(self):
         b_stop = QtGui.QPushButton('STOP P300')

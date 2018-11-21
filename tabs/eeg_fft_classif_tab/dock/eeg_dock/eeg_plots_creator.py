@@ -146,7 +146,7 @@ class EegPlotsCreator:
         self.start_timers()
         # SAVE the data received to file
         self.save_path = self.data_saver.save_path_line_edit.text()
-        self.data_saver.init_saving()
+        # self.data_saver.init_saving()
 
     @pyqtSlot()
     def stop_streaming(self):

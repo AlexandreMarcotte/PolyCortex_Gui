@@ -14,7 +14,7 @@ from .dock.classif_dock.classification_plot_creator import ClassifPlotCreator
 from .dock.banner_dock.banner import add_banner
 from .dock.Viz_3D_dock.viz_3D import Viz3D
 
-from save.save_to_file import DataSaver
+from save.data_saver import DataSaver
 from app.colors import *
 from tabs.region import Regions
 
@@ -75,7 +75,7 @@ class EegFftClassifTab(QWidget):
 
     def create_tab(self):
         # Regions
-        data_saver = DataSaver(self, self.saving_layout)
+        data_saver = DataSaver(self, self.saving_layout, self.gv)
         # Create the graphes inside the each dock layout
         eeg_plot_creator = EegPlotsCreator(self.gv, self.eeg_layout, data_saver)
         x = eeg_plot_creator.regions

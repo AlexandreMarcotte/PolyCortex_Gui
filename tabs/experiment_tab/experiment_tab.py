@@ -12,9 +12,9 @@ from functools import partial
 from random import randint
 
 # -- My packages --
-from .action import Action
+from tabs.experiment_tab.emg_experiment.action import Action
+from tabs.experiment_tab.emg_experiment.emg import EmgDock
 from .p300 import P300Dock
-from .emg import EmgDock
 from .N100 import N100Dock
 from .basic_p300 import BasicP300
 from app.colors import *
