@@ -10,68 +10,29 @@ from functools import partial
 import numpy as np
 # -- My packages --
 from app.colors import *
+from .experiment import Experiment
 
 
-class BasicP300:
-    def __init__(self, area, below_dock):
-        self.name = 'Basic P300'
+class BasicP300(Experiment):
+    def __init__(self, area, dock_above):
         self.area = area
-        self.below_dock = below_dock
-        self.init_dock()
+        self.dock_above = dock_above
+        self.exp_name = 'Basic P300'
+
+        self.plot_timer = QtCore.QTimer()
+
+        self.create_dock()
+
+        self.create_start_and_stop_b()
+
+        self.plot_timer.timeout.connect(self.update_display)
+
 
     def init_dock(self):
         self.dock = Dock(self.name)
         self.area.addDock(self.dock, 'above', self.below_dock)
-        Experiment(self.dock)
-
-
-class Experiment:
-    def __init__(self, dock):
-        self.dock = dock
-        self.layout = pg.LayoutWidget()
-        self.dock.addWidget(self.layout)
-
-        self.plot = self.instantiate_p300_plot()
-        self.layout.addWidget(self.plot, 1, 0, 1, 2)
-
-        self.init_timer()
-        self.add_start_button()
-        self.add_stop_button()
-
-    def instantiate_p300_plot(self):
-        p300_plot = pg.PlotWidget()
-        p300_plot.setXRange(-2, 7)
-        p300_plot.setYRange(-1, 5)
-        p300_plot.hideAxis('bottom')
-        p300_plot.hideAxis('left')
-        return p300_plot
-
-    def init_timer(self):
-        self.timer_effect = QtCore.QTimer()
-        self.timer_effect.timeout.connect(self.update_display)
-        self.timer_effect.start(1000)
 
     def update_display(self):
         # print('hooouuuinnnn ')
         pass
-
-    def add_start_button(self):
-        b_start = QtGui.QPushButton('START P300')
-        b_start.setStyleSheet("background-color: rgba(200, 200, 200, 0.5)")
-        b_start.clicked.connect(partial(self.start_p300))
-        self.layout.addWidget(b_start, 0, 0)
-
-    @pyqtSlot()
-    def start_p300(self):
-        self.timer_effect.start(200)
-
-    def add_stop_button(self):
-        b_stop = QtGui.QPushButton('STOP P300')
-        b_stop.setStyleSheet("background-color: rgba(200, 200, 200, 0.5)")
-        b_stop.clicked.connect(partial(self.stop_p300))
-        self.layout.addWidget(b_stop, 0, 1)
-
-    @pyqtSlot()
-    def stop_p300(self):
-        self.timer_effect.stop()
 
