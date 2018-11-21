@@ -67,10 +67,10 @@ class CreateFakeData(threading.Thread):
             self.gv.all_t.append(current_t)
 
             # Add experiment type values 
-            if self.gv.experiment_type[0] != 0:
+            if self.gv.experiment_type != 0:
                 self.gv.experiment_queue.append(self.gv.experiment_type[0])
                 self.gv.all_experiment_val.append(self.gv.experiment_type[0])
-                self.gv.experiment_type[0] = 0
+                self.gv.experiment_type = 0
             else:
                 self.gv.experiment_queue.append(0)
                 self.gv.all_experiment_val.append(0)

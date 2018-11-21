@@ -8,14 +8,17 @@ class FreqCalculator:
         self.t_q = t_q
 
         self.remove_first_data = remove_first_data
-                                                                        # TODO: ALEXM: Filter instead of removing them direcly like that
+                                                                               # TODO: ALEXM: Filter instead of removing them direcly like that
     def get_freq_range(self):
-        # Calculate FFT (Remove freq 0 because it gives a really high value on the graph
+        """Calculate FFT (Remove freq 0 because it gives a really high
+         value on the graph"""
         return np.linspace(self.remove_first_data,
                            self.N_DATA//2/self.get_delta_t(),
                            self.N_DATA//2 - self.remove_first_data)
+
     def get_delta_t(self):
-        # interval of time from the first to the last value that was add to the queue
+        """interval of time from the first to the last value that was
+        add to the queue"""
         return self.t_q[-1] - self.t_q[0]
 
     def fft(self):

@@ -11,11 +11,12 @@ from PyQt5.QtWidgets import *
 
 
 class DataSaver:
-    def __init__(self, main_window, layout):
+    def __init__(self, main_window, layout, gv):
         self.main_window = main_window
         self.layout = layout
-        init_time = datetimgv.e.now()
-        self.gv.save_path = f'./csv_saved_files/2exp_pinch_close_{init_time}.csv'
+        self.gv = gv
+        init_time = datetime.now()
+        self.gv.save_path = f'./experiment_csv/2exp_pinch_close_{init_time}.csv'
 
     def save_data_to_file(self):
         # Create text box to show or enter path to data file
@@ -42,42 +43,13 @@ class DataSaver:
             self.gv.save_path = f_name
             self.data_path_line_edit.setText(self.gv.save_path)
 
-    def init_saving(self):                                                   # KEEP THIS PORTION OF THE CODE (COMMENTED SO THAT IT DOESNT ALWAYS SAVE)
-        # write data to file:
-        self.write_data_to_file = WriteDataToFile(
-            self.gv.save_path, self.gv.data_queue, self.gv.t_queue,
-            self.gv.experiment_queue,self.gv.n_data_created, self.lock)
-        self.write_data_to_file.start()
-        self.write_data_to_file.at_exit_job()
-
-    def write_to_file(self):
-        print(f'Save data to file...')
-        with open(self.gv.save_path, 'w') as f:
-            # Make sure all the queue in self.gv.all_data are the same length
-            all_len = [len(d) for d in self.gv.all_data] + [len(self.gv.all_t)] \
-                      + [len(self.gv.all_experiment_val)]
-            min_len = min(all_len)
-            # Remove extra data           # TODO: ALEXM: There is certainly a better way to do that (There is usually only one value in excess
-            for i in range(len(self.gv.all_data)):
-                if len(self.gv.all_data[i]) > min_len:
-                    print('plus grand')
-                    self.gv.all_data[i].pop()
-
-            if len(self.gv.all_t) > min_len:
-                self.gv.all_t.pop()
-
-            if len(self.gv.all_experiment_val) > min_len:
-                self.all_experiment_data.pop()
-
-            # Create the proper dimension for the concatenation
-            t_queue = np.array(self.gv.all_t)[None, :]
-            experiment_queue = np.array(self.gv.all_experiment_val)[None, :]
-
-            # Concatenate
-            save_val = np.concatenate((self.gv.all_data, t_queue,
-                                       experiment_queue))
-            # Save
-            np.savetxt(f, np.transpose(save_val), delimiter=',')
+    # def init_saving(self):                                                   # KEEP THIS PORTION OF THE CODE (COMMENTED SO THAT IT DOESNT ALWAYS SAVE)
+    #     # write data to file:
+    #     self.write_data_to_file = WriteDataToFile(
+    #         self.gv.save_path, self.gv.data_queue, self.gv.t_queue,
+    #         self.gv.experiment_queue,self.gv.n_data_created, self.lock)
+    #     # self.write_data_to_file.start()
+    #     self.write_data_to_file.at_exit_job()
         
         
 # class WriteDataToFile(threading.Thread):
