@@ -1,3 +1,4 @@
+# --General packages--
 from PyQt5.QtWidgets import *
 from PyQt5 import QtGui
 
@@ -15,6 +16,8 @@ class Viz3D:
         self.gv = gv
         self.layout = layout
 
+        self.np_zero = np.zeros(self.gv.DEQUE_LEN)
+
         self.init_plot()
 
         self.traces = {}
@@ -30,45 +33,37 @@ class Viz3D:
 
         self.timer = QtCore.QTimer()
         self.on_off_button()
-
         # Create the bar chart only for the first channel
         self.timer.timeout.connect(self.update)
 
     def init_plot(self):
         """     """
         self.w = gl.GLViewWidget()
-        self.w.opts['distance'] = 40
-        # self.w.show()
-        # Add to tab layout
+        self.w.opts['distance'] = 350000
+        self.w.opts['center'] = QtGui.QVector3D(0, 230000, 0)
+        self.w.opts['azimuth'] = 40
+        self.w.opts['elevation'] = 15
         self.layout.addWidget(self.w, 1, 0)
 
     def set_plotdata(self, name, points, color, width):
         self.traces[name].setData(pos=points, color=color, width=width)
 
     def update(self):
-        for i, line in enumerate(self.y):
-            y = np.array([line] * self.points)
-
-            amp = 10 / (i + 1)
-            phase = self.phase * (i + 1) - 10
-            freq = self.x * (i + 1) / 10
-
-            sine = amp * np.sin(freq - phase)
-            pts = np.vstack([self.x, y, sine]).transpose()
+        for ch in range(self.gv.N_CH):
+            pts = np.stack((15000 * ch * np.ones(self.gv.DEQUE_LEN),
+                            np.linspace(0, 400000, self.gv.DEQUE_LEN),
+                            np.array(self.gv.data_queue[ch])), axis=1)
 
             self.set_plotdata(
-                name=i, points=pts,
-                color=pg.glColor((i, self.lines * 1.3)),
-                width=1)
-            self.phase -= .0002
+                name=ch, points=pts, color=pg.glColor((ch, 8)), width=1)
 
     def on_off_button(self):
         btn('Show viz 3D', self.layout, (0, 0), func_conn=self.start,
-            color=dark_blue, toggle=True)
+            color=blue_b, toggle=True)
 
     @QtCore.pyqtSlot(bool)
     def start(self, checked):
         if checked:
-            self.timer.start(100)
+            self.timer.start(10)
         else:
             self.timer.stop()
