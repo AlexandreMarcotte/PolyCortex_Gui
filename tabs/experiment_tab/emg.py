@@ -32,8 +32,11 @@ class EmgDock(Experiment):
         self.emg_dock = Dock('EMG experiment')
         self.area.addDock(self.emg_dock)
 
+        self.layout = pg.LayoutWidget()
+        self.emg_dock.addWidget(self.layout)
+
         self.instantiate_emg_plot()
-        self.emg_dock.addWidget(self.emg_plot, 1, 0, 1, 2)
+        self.layout.addWidget(self.emg_plot, 1, 0, 1, 2)
         # Start and stop button
         self.start_emg_button()
         self.stop_emg_button()
@@ -105,7 +108,7 @@ class EmgDock(Experiment):
         b_start = QtGui.QPushButton('START EMG')
         b_start.setStyleSheet("background-color: rgba(200, 200, 200, 0.5)")
         b_start.clicked.connect(partial(self.start_emg))
-        self.emg_dock.addWidget(b_start, 0, 0)
+        self.layout.addWidget(b_start, 0, 0)
 
     @pyqtSlot()
     def start_emg(self):
@@ -114,9 +117,9 @@ class EmgDock(Experiment):
 
     def stop_emg_button(self):
         b_stop = QtGui.QPushButton('STOP EMG')
-        b_stop.setStyleSheet("background-color: rgba(0, 0, 0, 0.5)")
+        b_stop.setStyleSheet("background-color: rgba(200, 200, 200, 0.5)")
         b_stop.clicked.connect(partial(self.stop_emg))
-        self.emg_dock.addWidget(b_stop, 0, 1)
+        self.layout.addWidget(b_stop, 0, 1)
 
     @pyqtSlot()
     def stop_emg(self):

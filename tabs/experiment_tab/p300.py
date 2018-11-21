@@ -19,7 +19,7 @@ class P300Dock(Experiment):
         self.dock_above = dock_above
         self.exp_name = 'P300 Experiment'
 
-        self.timer = QtCore.QTimer()
+        self.plot_timer = QtCore.QTimer()
 
         self.p300_char = ['A', 'B', 'C', 'D', 'E', 'F',
                           'G', 'H', 'I', 'J', 'K', 'L',
@@ -30,8 +30,7 @@ class P300Dock(Experiment):
         self.show_p300 = True
         self.create_dock()
         # Result label
-        self.show_p300_result()
-        self.timer.timeout.connect(self.update_p300)
+        self.plot_timer.timeout.connect(self.update_p300)
 
     def show_p300_result(self):
         result = QtGui.QLabel(f'Letter to look at: {"-G-"}')

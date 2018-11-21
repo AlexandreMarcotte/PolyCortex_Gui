@@ -79,7 +79,7 @@ class EegFftClassifTab(QWidget):
         # Create the graphes inside the each dock layout
         eeg_plot_creator = EegPlotsCreator(self.gv, self.eeg_layout, data_saver)
         x = eeg_plot_creator.regions
-        FftGraph(self.gv, self.fft_dock)
+        FftGraph(self.gv, self.fft_layout)
         WaveGraph(self.gv, self.wave_layout)
         ClassifPlotCreator(self.gv, self.classif_layout)
         add_banner(self.banner_layout)

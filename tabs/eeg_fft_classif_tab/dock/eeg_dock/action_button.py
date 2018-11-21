@@ -31,11 +31,12 @@ class ActionButton:
             self.timer.stop()
 
     def update_avg(self):
-        # Create the average label
+        """"Create the average label"""
         avg_val =  f'{np.round(np.average(self.gv.data_queue[self.ch]), 2)} Vrms'
         self.label.setText(avg_val)
 
 
     def update_max(self):
+        """Create the max label"""
         max_val = f'{np.round(np.max(self.gv.data_queue[self.ch]), 2)} Vrms'
         self.label.setText(max_val)

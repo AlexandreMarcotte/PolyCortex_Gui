@@ -65,7 +65,7 @@ class FftGraph:
 
     def on_off_button(self):
         btn('Start FFT', self.layout, (0, 0), func_conn=self.start,
-            color=dark_blue, toggle=True)
+            color=blue_b, toggle=True)
 
     def graph_freq_type_combo(self):
         graph_type = QComboBox()

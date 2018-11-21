@@ -7,7 +7,7 @@ import csv
 
 
 class FileReader(threading.Thread):
-    def __init__(self, file_name, callback, read_frequency=500):
+    def __init__(self, file_name, callback, read_frequency=250):
         super().__init__()
         self.file_name = file_name
         self.callback = callback

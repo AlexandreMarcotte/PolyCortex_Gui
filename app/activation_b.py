@@ -1,11 +1,11 @@
 from PyQt5.QtWidgets import *
 from functools import partial
 
-def btn(name, layout, pos, func_conn=None, action=None, color=None, toggle=False, tip=None,
-        max_width=1200, min_width=16):
+def btn(name, layout, pos, func_conn=None, action=None, color=None,
+        toggle=False, tip=None, max_width=1200, min_width=16):
     b = QPushButton(name)
-    b.setStyleSheet('background-color: {}; min-width: {}px;'
-                    'max-width: {}px'.format(color, min_width, max_width))
+    b.setStyleSheet(f'background-color: {color}; min-width: {min_width}px;'
+                    f'max-width: {max_width}px')
     if tip: 
         b.setToolTip(tip)
     if toggle:

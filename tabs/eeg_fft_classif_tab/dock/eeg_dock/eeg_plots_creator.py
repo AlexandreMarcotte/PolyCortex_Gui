@@ -29,7 +29,6 @@ class EegPlotsCreator:
         self.ts = self.gv.t_queue
         self.layout = layout
         self.timers = []
-        # self.last_classified_type = last_classified_type
         self.stream_path = f'./experiment_csv/2exp_pinch_close_2018-08-29 19:44:54.567417.csv'
         self.plots = []
         self.eeg_graphes = []
@@ -137,7 +136,7 @@ class EegPlotsCreator:
 
         elif self.gv.stream_origin == 'Stream from file':
             file_reader = FileReader(self.stream_path, self.gv.collect_data,
-                                     read_frequency=1250)
+                                     read_frequency=250)
             file_reader.start()
 
         elif self.gv.stream_origin == 'Stream from Muse':
@@ -169,17 +168,17 @@ class EegPlotsCreator:
         actn_btn = ActionButton(self.ch_layout, 0, self.gv, ch)
         btn('A', self.ch_layout, (0, 8), action=actn_btn,
             toggle=True, tip='Show average value of queue',
-            max_width=m_w, color=grey)
+            max_width=m_w, color=light_grey)
         # Max
         actn_btn = ActionButton(self.ch_layout, 1, self.gv, ch)
         btn('M', self.ch_layout, (1, 8), action=actn_btn,
             toggle=True, tip='Show max value of queue',
-            max_width=m_w, color=grey)
+            max_width=m_w, color=light_grey)
         # Detection
         btn('D', self.ch_layout, (2, 8),
             toggle=True, tip='Show detected class patern',
-            max_width=m_w, color=grey)
+            max_width=m_w, color=light_grey)
         # Other function
         btn('O', self.ch_layout, (3, 8), toggle=True,
-            tip='Show other action', max_width=m_w, color=grey)
+            tip='Show other action', max_width=m_w, color=light_grey)
 
