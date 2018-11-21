@@ -12,6 +12,7 @@ from .dock.wave_dock.wave_graph import WaveGraph
 from .dock.fft_dock.fft_graph import FftGraph
 from .dock.classif_dock.classification_plot_creator import ClassifPlotCreator
 from .dock.banner_dock.banner import add_banner
+from .dock.Viz_3D_dock.viz_3D import Viz3D
 
 from save.save_to_file import DataSaver
 from app.colors import *
@@ -38,11 +39,11 @@ class EegFftClassifTab(QWidget):
         self.eeg_layout, eeg_dock = self.create_layout(
             'EEG', 'left', size=(5, 15), scroll=True)
         # - FFT
-        self.fft_layout, fft_dock = self.create_layout(
+        self.fft_layout, self.fft_dock = self.create_layout(
             'FFT', 'right', size=(5, 10))
         # - Wave plot
         self.wave_layout, wave_dock = self.create_layout(
-            'Wave', 'bottom', fft_dock, size=(5, 10))
+            'Wave', 'bottom', self.fft_dock, size=(5, 10))
         # - Acceleration Dock
         self.classif_layout, classif_dock = self.create_layout(
             'Classification', 'below', wave_dock, size=(5, 10))
@@ -52,6 +53,9 @@ class EegFftClassifTab(QWidget):
         # - Saving dock
         self.saving_layout, saving_dock = self.create_layout(
             'Saving', 'below', banner_dock)
+        # - Viz 3D dock
+        self.viz_3D_layout, viz_3D_dock = self.create_layout(
+            'Viz 3D', 'below', classif_dock)
 
     def create_layout(self, dock_name, pos, related_dock=None, size=(1, 1),
                       hide_title=False, scroll=False):
@@ -75,9 +79,10 @@ class EegFftClassifTab(QWidget):
         # Create the graphes inside the each dock layout
         eeg_plot_creator = EegPlotsCreator(self.gv, self.eeg_layout, data_saver)
         x = eeg_plot_creator.regions
-        FftGraph(self.gv, self.fft_layout)
+        FftGraph(self.gv, self.fft_dock)
         WaveGraph(self.gv, self.wave_layout)
         ClassifPlotCreator(self.gv, self.classif_layout)
         add_banner(self.banner_layout)
+        Viz3D(self.gv, self.viz_3D_layout)
 
         self.setLayout(self.layout)

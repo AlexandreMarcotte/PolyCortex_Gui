@@ -1,13 +1,16 @@
+# -- GEneral Packages --
 from PyQt5.QtCore import Qt, pyqtSlot
 from pyqtgraph.dockarea import *
 import pyqtgraph as pg
 from PyQt5.QtWidgets import *
 from PyQt5 import QtGui, QtCore
 from functools import partial
+# -- My Packages --
 from .action import Action
+from .experiment import Experiment
 
 
-class EmgDock:
+class EmgDock(Experiment):
     def __init__(self, area, gv):
         # Plot variables
         self.area = area
@@ -28,9 +31,6 @@ class EmgDock:
     def create_emg_dock(self):
         self.emg_dock = Dock('EMG experiment')
         self.area.addDock(self.emg_dock)
-        # Add the layout to the dock
-        # self.emg_layout = pg.LayoutWidget()
-        # self.emg_dock.addWidget(self.emg_layout)
 
         self.instantiate_emg_plot()
         self.emg_dock.addWidget(self.emg_plot, 1, 0, 1, 2)
@@ -45,9 +45,7 @@ class EmgDock:
         self.emg_plot.plotItem.hideAxis('bottom')
         self.emg_plot.plotItem.hideAxis('left')
         # Vertical and horizontal delineation lines
-        # vLine = pg.InfiniteLine(angle=90, pos=10, movable=False)
         hLine = pg.InfiniteLine(angle=0, pos=1.5, movable=False)
-        # self.emg_plot.addItem(vLine, ignoreBounds=True)
         self.emg_plot.addItem(hLine, ignoreBounds=True)
 
     def init_spawn_timer(self):
@@ -105,7 +103,7 @@ class EmgDock:
 
     def start_emg_button(self):
         b_start = QtGui.QPushButton('START EMG')
-        b_start.setStyleSheet("background-color: rgba(255, 255, 255, 0.5)")
+        b_start.setStyleSheet("background-color: rgba(200, 200, 200, 0.5)")
         b_start.clicked.connect(partial(self.start_emg))
         self.emg_dock.addWidget(b_start, 0, 0)
 

@@ -36,7 +36,7 @@ class P300Dock(Experiment):
     def show_p300_result(self):
         result = QtGui.QLabel(f'Letter to look at: {"-G-"}')
         result.setFont(QtGui.QFont('SansSerif', pointSize=12))
-        self.layout.addWidget(result, 2, 0)
+        self.dock.addWidget(result, 2, 0)
 
     def update_p300(self):
         rand_row = randint(0, 5)
