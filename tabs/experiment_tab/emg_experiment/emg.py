@@ -7,15 +7,15 @@ from PyQt5 import QtGui, QtCore
 from functools import partial
 # -- My Packages --
 from .action import Action
-from .experiment import Experiment
+from tabs.experiment_tab.experiment import Experiment
 
 
 class EmgDock(Experiment):
     def __init__(self, area, gv):
-        # Plot variables
+        super().__init__()
         self.area = area
         self.gv = gv
-        # Variables
+
         self.actions = []
         self.action_name = 'ACTION'
         self.num_of_action = 20
@@ -35,21 +35,18 @@ class EmgDock(Experiment):
         self.layout = pg.LayoutWidget()
         self.emg_dock.addWidget(self.layout)
 
-        self.instantiate_emg_plot()
-        self.layout.addWidget(self.emg_plot, 1, 0, 1, 2)
+        self.plot = self.create_plot()
+        self.layout.addWidget(self.plot, 1, 0, 1, 2)
         # Start and stop button
-        self.start_emg_button()
-        self.stop_emg_button()
+        self.create_start_b()
+        self.create_stop_b()
 
-    def instantiate_emg_plot(self):
-        self.emg_plot = pg.PlotWidget()
-        self.emg_plot.setYRange(0.7, 6.5)
-        self.emg_plot.setXRange(0, 20)
-        self.emg_plot.plotItem.hideAxis('bottom')
-        self.emg_plot.plotItem.hideAxis('left')
-        # Vertical and horizontal delineation lines
+    def create_plot(self, xs=(0, 20), ys=(0.7, 6.5)):
+        plot = super().create_plot(xs, ys)
+        # Horizontal delineation lines to activate an event
         hLine = pg.InfiniteLine(angle=0, pos=1.5, movable=False)
-        self.emg_plot.addItem(hLine, ignoreBounds=True)
+        plot.addItem(hLine, ignoreBounds=True)
+        return plot
 
     def init_spawn_timer(self):
         self.spawn_timer = QtCore.QTimer()
@@ -66,7 +63,7 @@ class EmgDock(Experiment):
             action = Action(actn_txt=self.action_name, wait_txt='WAIT...',
                             y_pos=6.5, x_pos=10)
             # Plot this new action
-            self.emg_plot.addItem(action.plot)
+            self.plot.addItem(action.plot)
             # Add it to the list of actions
             self.actions.append(action)
             self.action_itt += 1
@@ -79,14 +76,15 @@ class EmgDock(Experiment):
             action.y_pos -= 0.04
             # If the action text event is bellow the horiz. activation line
             if 0 <= action.y_pos <= 1.5 and action.wait:
-                # self.gv.experiment_type[0] = action.type_num
+                self.gv.experiment_type = 1  # 1 meaning that an event happen
+                                             # (binary scenario)
                 action.activate_html()
                 action.wait = False
             # update the position of the action
             action.plot.setPos(action.x_pos, action.y_pos)
             # If the action leave the screen remove it
             if action.y_pos < 0:
-                self.emg_plot.removeItem(self.actions[0].plot)
+                self.plot.removeItem(self.actions[0].plot)
                 self.actions.pop(0)
         # Stop spawning value when we reach the number of experiment events
         if self.actions == [] and self.end_experiment:
@@ -102,26 +100,14 @@ class EmgDock(Experiment):
                                </span></div>"""
         self.end_txt.setHtml(self.end_txt_html)
         self.end_txt.setPos(7, 5)
-        self.emg_plot.addItem(self.end_txt)
-
-    def start_emg_button(self):
-        b_start = QtGui.QPushButton('START EMG')
-        b_start.setStyleSheet("background-color: rgba(200, 200, 200, 0.5)")
-        b_start.clicked.connect(partial(self.start_emg))
-        self.layout.addWidget(b_start, 0, 0)
+        self.plot.addItem(self.end_txt)
 
     @pyqtSlot()
-    def start_emg(self):
-        self.spawn_timer.start(1200)
+    def start(self):
         self.plot_timer.start(30)
-
-    def stop_emg_button(self):
-        b_stop = QtGui.QPushButton('STOP EMG')
-        b_stop.setStyleSheet("background-color: rgba(200, 200, 200, 0.5)")
-        b_stop.clicked.connect(partial(self.stop_emg))
-        self.layout.addWidget(b_stop, 0, 1)
+        self.spawn_timer.start(1200)
 
     @pyqtSlot()
-    def stop_emg(self):
-        self.spawn_timer.stop()
+    def stop(self):
         self.plot_timer.stop()
+        self.spawn_timer.stop()
