@@ -18,10 +18,10 @@ class CreateSyntheticData(threading.Thread):
         self.t = np.linspace(0, 2 * pi, self.gv.DEQUE_LEN)
         ## signal shape
         self.m = 1000
-        self.s1 = self.m * sin(self.t)
+        self.s1 = 3 * self.m * sin(3*self.t)
         self.s2 = self.m * sin(20 * self.t)
         self.s3 = self.m * sin(40 * self.t)
-        self.s4 = self.m * 5 * sin(60 * self.t)
+        self.s4 = 10 * self.m * sin(60 * self.t)
 
         # 100 harmonic signal to test filtering
         self.s = []
@@ -46,7 +46,7 @@ class CreateSyntheticData(threading.Thread):
                 else:
                     imp = 0
                 if ch == 0:
-                    signal = self.s1[i] + self.s3[i]+ self.s4[i] + random()*self.m + imp
+                    signal = self.s1[i] + self.s4[i] #+ random()*self.m + imp
                 elif ch == 1:
                     signal = 20 * self.s1[i] + 5
                 elif ch == 2:
@@ -62,6 +62,8 @@ class CreateSyntheticData(threading.Thread):
                 else:
                     signal = random() * self.m
 
+
+                # Create a list of the signal and then empty it inside the queue at the end of the for loop (so that we have a structure where we can do a use of a callback)
                 self.add_signal_to_queue(signal, ch)
 
             # Add current time

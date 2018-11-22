@@ -5,7 +5,7 @@ import sys
 # Dark theme
 import atexit
 # --My packages--
-from app.global_variables import GlobVar
+from app.dispatcher import Dispatcher, VizProcess, FilterProcess
 from mainwindow import MainWindow
 from save.write_to_file import write_to_file
 
@@ -14,8 +14,13 @@ def main():
     # Start the multigraphes
     app = QApplication(sys.argv)
 
-    gv = GlobVar()  # Create the global variable that will be
-                    # in many of this project classes
+    N_CH = 8
+    DEQUE_LEN = 1250
+    viz_process = VizProcess(N_CH=N_CH, DEQUE_LEN=DEQUE_LEN)
+    filter_process = FilterProcess(N_CH=N_CH, DEQUE_LEN=DEQUE_LEN)
+    gv = Dispatcher(N_CH=N_CH, DEQUE_LEN=DEQUE_LEN,
+                    process=[viz_process, filter_process])                     # Create the global variable that will be
+                                                                               # in many of this project classes
     # Apply dark theme
     # app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())                    # With this I cannot add lines to the windows (ex there is no lines arround group box)
     # Create the Gui
