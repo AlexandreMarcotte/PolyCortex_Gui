@@ -15,19 +15,19 @@ class FileReader(threading.Thread):
         self.gv.used_read_freq = read_freq
         self.gv.desired_read_freq = read_freq
 
-        self.t_init = time()
         self.n_data_created = 0
 
     def run(self):
         self.read()
 
     def read(self):
+        t_init = time()
         print(self.file_name)
         with open(self.file_name) as f:
             data = csv.reader(f)
             for line in data:
                 signal = np.array([float(val) for val in line[:8]])
-                t = time() - self.t_init
+                t = time() - t_init
                 self.n_data_created += 1
                 self.callback(signal, t, self.n_data_created)
                 sleep(self.gv.read_period)

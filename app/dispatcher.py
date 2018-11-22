@@ -38,12 +38,20 @@ class Dispatcher:
             self.data_queue[ch].append(signal[ch])
             for p in self.process:
                 p.data_queue[ch].append(signal[ch])
-                print('append data to process')
+                # print('append data to process')
         self.t_queue.append(t)
         self.n_data_created = n_data_created
 
         self.all_data.append(signal)
         self.all_t.append(t)
+        # Experiment
+        if self.experiment_type != 0:  # An event occured
+            self.experiment_queue.append(self.experiment_type)
+            self.all_experiment_val.append(self.experiment_type)
+            self.experiment_type = 0
+        else:
+            self.experiment_queue.append(0)
+            self.all_experiment_val.append(0)
 
 
 class FilterProcess:

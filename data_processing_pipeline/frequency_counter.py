@@ -11,12 +11,13 @@ class FrequencyCounter:
 
     def update(self):
         # Calcul frequency less often
-        # if time() - self.last_t > self.t_between_calcul_freq:
         self.calcul_last_freq()
         if self.freq < self.gv.desired_read_freq:
             self.adjust_freq_up()
+            # print('UP')
         if self.freq > self.gv.desired_read_freq:
             self.adjust_freq_down()
+            # print('     DOWN')
         # print(f'The sampling frequency in the last second is: \n {self.freq}')
         self.last_t = time()
         self.last_n_data_collected = self.gv.n_data_created

@@ -7,12 +7,15 @@ import threading
 
 
 class CreateSyntheticData(threading.Thread):
-    def __init__(self, gv, read_freq=1250):
+    def __init__(self, gv, callback, read_freq=1250):
         super().__init__()
         self.gv = gv
+        self.callback = callback
         self.gv.read_period = 1/read_freq
         self.gv.used_read_freq = read_freq
         self.gv.desired_read_freq = read_freq
+
+        self.n_data_created = 0
         # Variable necessary to generate fake signal
         ## time
         self.t = np.linspace(0, 2 * pi, self.gv.DEQUE_LEN)
@@ -28,16 +31,12 @@ class CreateSyntheticData(threading.Thread):
         for freq in range(70, 100, 2):
             self.s.append(self.m * sin(freq * self.t))
 
-    def add_signal_to_queue(self, signal, ch):
-        self.gv.data_queue[ch].append(signal)
-        self.gv.all_data[ch].append(signal)
-
     def run(self):
+        t_init = time()
         """Create random data and a time stamp for each of them"""
         while 1:
-            self.gv.n_data_created += 1
-            i = self.gv.n_data_created % len(self.t)
-
+            i = self.n_data_created % len(self.t)
+            chs_sig = []
             for ch in range(self.gv.N_CH):
                 rnd_impulse = randint(0, 100)
                 # Set impulse size to be added to the signal once every 100 data
@@ -62,22 +61,9 @@ class CreateSyntheticData(threading.Thread):
                 else:
                     signal = random() * self.m
 
+                chs_sig.append(signal)
 
-                # Create a list of the signal and then empty it inside the queue at the end of the for loop (so that we have a structure where we can do a use of a callback)
-                self.add_signal_to_queue(signal, ch)
-
-            # Add current time
-            current_t = time() - self.gv.t_init
-            self.gv.t_queue.append(current_t)
-            self.gv.all_t.append(current_t)
-
-            # Add experiment type values 
-            if self.gv.experiment_type != 0:
-                self.gv.experiment_queue.append(self.gv.experiment_type)
-                self.gv.all_experiment_val.append(self.gv.experiment_type)
-                self.gv.experiment_type = 0
-            else:
-                self.gv.experiment_queue.append(0)
-                self.gv.all_experiment_val.append(0)
+            self.callback(chs_sig, time() - t_init, self.n_data_created)
+            self.n_data_created += 1
 
             sleep(self.gv.read_period)

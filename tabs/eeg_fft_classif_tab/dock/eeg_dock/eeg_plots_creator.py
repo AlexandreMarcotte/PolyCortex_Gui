@@ -132,6 +132,7 @@ class EegPlotsCreator:
         elif self.gv.stream_origin == 'Stream from synthetic data':
             # Create fake data for test case
             create_data = CreateSyntheticData(self.gv,
+                                              callback=self.gv.collect_data,
                                               read_freq=self.gv.DEQUE_LEN)
             create_data.start()
 
