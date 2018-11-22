@@ -29,7 +29,7 @@ class EegPlotsCreator:
         self.ts = self.gv.t_queue
         self.layout = layout
         self.timers = []
-        self.stream_path = f'./experiment_csv/2exp_pinch_close_2018-08-29 19:44:54.567417.csv'
+        self.stream_path = f'experiment_csv/2exp_pinch_close_2018-11-21 18:40:57.855234.csv'
         self.plots = []
         self.eeg_graphes = []
         self.zero_q = deque(

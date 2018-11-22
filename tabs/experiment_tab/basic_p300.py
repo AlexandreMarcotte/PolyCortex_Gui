@@ -23,44 +23,53 @@ class BasicP300(Experiment):
         super().__init__(timer_period=100)
         self.area = area
         self.dock_above = dock_above
-        self.exp_name = 'Basic P300'
+        exp_name = 'Basic P300'
+
+        self.xs = (0, 10)
+        self.ys = (0, 10)
 
         self.plot_timer = QtCore.QTimer()
-        self.create_dock()
-        self.create_start_and_stop_b()
+        self.create_dock(exp_name)
+        # plot
+        self.plot = self.create_plot(xs=self.xs, ys=self.ys)
+        self.layout.addWidget(self.plot, 1, 0, 1, 2)
 
-        self.plot_timer.timeout.connect(self.update_display)
+        self.plot_timer.timeout.connect(partial(
+            self.create_rectangles_img, 10))
 
-    def update_display(self):
+    def create_rectangles_img(self, n_rect):
         rand = random.randrange(30)
         if rand == 0:
             self.clear_screen()
             p = SquareItem(
-                x=np.zeros(10),
-                y=np.linspace(0, 5, 10),
-                w=4 * np.ones(10),
-                h=0.1 * np.ones(10),
+                x=np.zeros(n_rect),
+                y=np.linspace(0, 10, n_rect),
+                w=10 * np.ones(n_rect),
+                h=0.5 * np.ones(n_rect),
                 color=p300_red)
+            self.refresh()
             self.plot.addItem(p)
-            self.plot.setXRange(-2, 7)
 
         elif rand in (1,2,3,4,5,6):
             self.clear_screen()
             p = SquareItem(
-                x=np.linspace(0, 5, 10),
-                y=np.zeros(10),
-                w=0.1 * np.ones(10),
-                h=4 * np.ones(10),
+                x=np.linspace(0, 10, n_rect),
+                y=np.zeros(n_rect),
+                w=0.5 * np.ones(n_rect),
+                h=10 * np.ones(n_rect),
                 color=p300_green)
+            self.refresh()                        # So that the graph update and the rectangle are visible
             self.plot.addItem(p)
-            self.plot.setXRange(-2, 7)      # So that the graph update and the rectangle are visible
                                             # TODO: ALEXM: Try to find a cleaner way to update the graph
         else:
             self.clear_screen()
 
     def clear_screen(self):
         self.plot.clear()
-        self.plot.setXRange(-2, 7.1)
+        self.refresh(delta_x=0.001)
+
+    def refresh(self, delta_x=0.0):
+        self.plot.setXRange(self.xs[0]+delta_x, self.xs[1])
 
 
 

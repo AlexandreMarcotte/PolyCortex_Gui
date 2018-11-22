@@ -1,5 +1,4 @@
 import numpy as np
-from pyqtgraph.Qt import QtGui, QtCore
 import threading
 from collections import deque
 from time import time, sleep
@@ -20,6 +19,7 @@ class FileReader(threading.Thread):
         self.read()
 
     def read(self):
+        print(self.file_name)
         with open(self.file_name) as f:
             data = csv.reader(f)
             for line in data:

@@ -38,8 +38,8 @@ class EmgDock(Experiment):
         self.plot = self.create_plot()
         self.layout.addWidget(self.plot, 1, 0, 1, 2)
         # Start and stop button
-        self.create_start_b()
-        self.create_stop_b()
+        self.create_start_b('EMG')
+        self.create_stop_b('EMG')
 
     def create_plot(self, xs=(0, 20), ys=(0.7, 6.5)):
         plot = super().create_plot(xs, ys)

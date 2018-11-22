@@ -17,7 +17,7 @@ class P300Dock(Experiment):
         super().__init__()
         self.area = area
         self.dock_above = dock_above
-        self.exp_name = 'P300 Experiment'
+        exp_name = 'P300'
 
         self.plot_timer = QtCore.QTimer()
 
@@ -28,7 +28,10 @@ class P300Dock(Experiment):
                           'Y', 'Z', '1', '2', '3', '4',
                           '5', '6', '7', '8', '9', '0']
         self.show_p300 = True
-        self.create_dock()
+        self.create_dock(exp_name)
+        # Plot
+        self.plot = self.create_plot()
+        self.layout.addWidget(self.plot, 1, 0, 1, 2)
         # Result label
         self.plot_timer.timeout.connect(self.update_p300)
 
