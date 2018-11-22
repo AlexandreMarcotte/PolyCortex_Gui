@@ -2,15 +2,13 @@
 from collections import deque
 import numpy as np
 import pyqtgraph as pg
-from functools import partial
-from PyQt5 import QtGui, QtCore
+from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import *
-from collections import namedtuple
 # -- My packages --
 ## generate signal
 from generate_signal.from_openbci import stream_data_from_OpenBCI
-from generate_signal.from_fake_data import CreateFakeData
+from generate_signal.from_synthetic_data import CreateSyntheticData
 from generate_signal.from_file import FileReader
 from generate_signal.from_muse import StreamFromMuse
 
@@ -22,6 +20,8 @@ from app.activation_b import btn
 from tabs.region import Regions
 from .eeg_graph import EegGraph
 
+from data_processing_pipeline.frequency_counter import FrequencyCounter
+
 
 class EegPlotsCreator:
     def __init__(self, gv, layout, data_saver):
@@ -29,7 +29,7 @@ class EegPlotsCreator:
         self.ts = self.gv.t_queue
         self.layout = layout
         self.timers = []
-        self.stream_path = f'experiment_csv/2exp_pinch_close_2018-11-21 18:40:57.855234.csv'
+        self.stream_path = f'experiment_csv/2exp_pinch_close_2018-08-29 18:55:22.627296.csv'
         self.plots = []
         self.eeg_graphes = []
         self.zero_q = deque(
@@ -129,20 +129,22 @@ class EegPlotsCreator:
         """      """
         if self.gv.stream_origin == 'Stream from OpenBCI':
             self.board = stream_data_from_OpenBCI(self.gv)
-        elif self.gv.stream_origin == 'Stream from fake data':
+        elif self.gv.stream_origin == 'Stream from synthetic data':
             # Create fake data for test case
-            create_data = CreateFakeData(self.gv)
+            create_data = CreateSyntheticData(self.gv,
+                                              read_freq=self.gv.DEQUE_LEN)
             create_data.start()
 
         elif self.gv.stream_origin == 'Stream from file':
-            file_reader = FileReader(self.stream_path, self.gv.collect_data,
-                                     read_frequency=250)
+            file_reader = FileReader(self.gv, self.stream_path, self.gv.collect_data,
+                                     read_freq=250)
             file_reader.start()
 
         elif self.gv.stream_origin == 'Stream from Muse':
             create_data = StreamFromMuse(self.gv)
             create_data.start()
 
+        self.freq_counter = FrequencyCounter(self.gv)
         self.start_timers()
         # SAVE the data received to file
         self.save_path = self.data_saver.save_path_line_edit.text()
@@ -157,6 +159,12 @@ class EegPlotsCreator:
     def start_timers(self):
         for i, tm in enumerate(self.timers):
             self.timers[i].start()
+        self.start_freq_counter_timer()
+
+    def start_freq_counter_timer(self):
+        self.freq_counter_timer = QtCore.QTimer()
+        self.freq_counter_timer.timeout.connect(self.freq_counter.update)
+        self.freq_counter_timer.start(50)
 
     def stop_timers(self):
         for i, tm in enumerate(self.timers):

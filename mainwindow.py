@@ -71,10 +71,10 @@ class MainWindow(QMainWindow):
         self.controlPanel.addAction(self.openbci)
 
     def create_stream_fake_data_menu(self):
-        self.fake_data = QtGui.QAction('Fake data')
+        self.fake_data = QtGui.QAction('Synthetic data')
         self.fake_data.setStatusTip(
             'Stream data from artificially generated data...')
-        self.fake_data.name = 'Stream from fake data'
+        self.fake_data.name = 'Stream from synthetic data'
         self.controlPanel.addAction(self.fake_data)
 
     def create_stream_from_file_menu(self):

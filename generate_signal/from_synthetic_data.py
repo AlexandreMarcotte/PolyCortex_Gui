@@ -6,10 +6,13 @@ import numpy as np
 import threading
 
 
-class CreateFakeData(threading.Thread):
-    def __init__(self, gv):
+class CreateSyntheticData(threading.Thread):
+    def __init__(self, gv, read_freq=1250):
         super().__init__()
         self.gv = gv
+        self.gv.read_period = 1/read_freq
+        self.gv.used_read_freq = read_freq
+        self.gv.desired_read_freq = read_freq
         # Variable necessary to generate fake signal
         ## time
         self.t = np.linspace(0, 2 * pi, self.gv.DEQUE_LEN)
@@ -32,8 +35,8 @@ class CreateFakeData(threading.Thread):
     def run(self):
         """Create random data and a time stamp for each of them"""
         while 1:
-            self.gv.n_data_created[0] += 1
-            i = self.gv.n_data_created[0] % len(self.t)
+            self.gv.n_data_created += 1
+            i = self.gv.n_data_created % len(self.t)
 
             for ch in range(self.gv.N_CH):
                 rnd_impulse = randint(0, 100)
@@ -68,11 +71,11 @@ class CreateFakeData(threading.Thread):
 
             # Add experiment type values 
             if self.gv.experiment_type != 0:
-                self.gv.experiment_queue.append(self.gv.experiment_type[0])
-                self.gv.all_experiment_val.append(self.gv.experiment_type[0])
+                self.gv.experiment_queue.append(self.gv.experiment_type)
+                self.gv.all_experiment_val.append(self.gv.experiment_type)
                 self.gv.experiment_type = 0
             else:
                 self.gv.experiment_queue.append(0)
                 self.gv.all_experiment_val.append(0)
 
-            sleep(0.0017)
+            sleep(self.gv.read_period)

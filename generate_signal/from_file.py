@@ -6,11 +6,14 @@ import csv
 
 
 class FileReader(threading.Thread):
-    def __init__(self, file_name, callback, read_frequency=250):
+    def __init__(self, gv, file_name, callback, read_freq=250):
         super().__init__()
+        self.gv = gv
         self.file_name = file_name
         self.callback = callback
-        self.read_period = 1/read_frequency
+        self.gv.read_period = 1/read_freq
+        self.gv.used_read_freq = read_freq
+        self.gv.desired_read_freq = read_freq
 
         self.t_init = time()
         self.n_data_created = 0
@@ -27,7 +30,7 @@ class FileReader(threading.Thread):
                 t = time() - self.t_init
                 self.n_data_created += 1
                 self.callback(signal, t, self.n_data_created)
-                sleep(self.read_period)
+                sleep(self.gv.read_period)
 
 
 # Used in the tab 3 where we create static graphes

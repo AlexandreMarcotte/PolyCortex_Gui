@@ -38,8 +38,8 @@ class FftGraph:
         plot.plotItem.showGrid(x=True, y=True, alpha=0.3)
         plot.plotItem.setLabel(axis='bottom', text='Frequency', units='Hz')    # TODO: ALEXM : verifier l'uniter
         plot.plotItem.setLabel(axis='left', text='Amplitude', units='None')
-        plot.setXRange(0, 180)
-        plot.setYRange(0, 1500000)
+        plot.setXRange(0, 130)
+        plot.setYRange(0, 3500000)
         # self.plot.setLogMode(y=True)
         # self.plot.setYRange(0, np.log(1500000))
         # Add to tab layout
@@ -56,7 +56,7 @@ class FftGraph:
     def update_plotting(self):
         for ch in range(self.gv.N_CH):
             freq_calculator = FreqCalculator(
-                remove_first_data=2, data_q=self.gv.data_queue[ch],
+                remove_first_data=0, data_q=self.gv.data_queue[ch],
                 t_q=self.gv.t_queue)
             freq_range = freq_calculator.get_freq_range()
             # Keep all frequency possibles                                     # TODO: ALEXM: Change frequency in function of time
