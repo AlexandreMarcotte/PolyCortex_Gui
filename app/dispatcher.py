@@ -3,6 +3,7 @@ import numpy as np
 from time import time
 from data_processing_pipeline.filter import butter_bandpass_filter, butter_lowpass_filter
 
+
 class Dispatcher:
     def __init__(self, N_CH=8, DEQUE_LEN=1250,
                  filter_process=None, viz_process=None):
@@ -49,7 +50,7 @@ class Dispatcher:
 
                 if self.filter_itt % self.once_every == 0:
                     y = butter_bandpass_filter(self.filter_process.data_queue[ch],  # TODO: ALEXM: There is a problem when the filtering of a bandpass filter filter all 0 it increase the signal to infinity
-                                              2, 45, self.desired_read_freq, order=6)
+                                              10, 50, self.desired_read_freq, order=6)
                     self.filter_chunk.append(list(y[-self.once_every:][::-1]))
                 # put the data once at the time at every loop so the signal is not showing
                 # all jerky
