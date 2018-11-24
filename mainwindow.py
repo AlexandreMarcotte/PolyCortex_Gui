@@ -61,6 +61,8 @@ class MainWindow(QMainWindow):
         main_menu.addMenu(self.controlPanel)
         self.create_menu_start_game()
         main_menu.addMenu(self.menuGame)
+        self.create_menu_docks()                                               # TODO: Use return instead for these functions
+        main_menu.addMenu(self.menuDocks)
 
     def create_openbci_menu(self):
         self.openbci = QtGui.QAction(QIcon('./img/openbci_logo.png'),
@@ -127,6 +129,30 @@ class MainWindow(QMainWindow):
         """Start the miniGame"""
         run_game = RunGame()
         run_game.start()
+
+    def create_menu_docks(self):
+        # ---Start game---
+        self.menuDocks = QMenu(title='Docks')
+        # eeg dock
+        self.eeg_dock = QtGui.QAction('EEG', checkable=True)
+        self.menuDocks.addAction(self.eeg_dock)
+        # fft
+        self.fft_dock = QtGui.QAction('FFT', checkable=True)
+        self.menuDocks.addAction(self.fft_dock)
+        # Show Viz 3D
+        self.show_viz_3D_dock = QtGui.QAction('Show viz 3D', checkable=True)
+        self.menuDocks.addAction(self.show_viz_3D_dock)
+        # Classification
+        self.classif_dock = QtGui.QAction('Classification', checkable=True)
+        self.menuDocks.addAction(self.classif_dock)
+        # Banner
+        self.banner_dock = QtGui.QAction('Banner', checkable=True)
+        self.menuDocks.addAction(self.banner_dock)
+        # Saving
+        self.saving_dock = QtGui.QAction('Saving', checkable=True)
+        self.menuDocks.addAction(self.saving_dock)
+
+        # self.docks.setStatusTip('List of checkable other docks availaible')
 
     def create_toolbar(self):
         toolbar = self.addToolBar('toolbar')

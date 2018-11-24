@@ -47,8 +47,8 @@ class FftGraph:
         for ch in range(self.gv.N_CH):
             self.curve_freq.append(
                 plot.plot(deque(np.ones(self.N_DATA), maxlen=self.N_DATA)))
-        self.graph_type = self.graph_freq_type_combo()
-        self.layout.addWidget(self.graph_type, 2, 0)
+        # self.graph_type = self.graph_freq_type_combo()
+        # self.layout.addWidget(self.graph_type, 2, 0)
         # Associate the plot to an FftGraph object
         self.timer.timeout.connect(self.update_plotting)
         # Create the on button
@@ -72,12 +72,12 @@ class FftGraph:
         btn('Start FFT', self.layout, (0, 0), func_conn=self.start,
             color=blue_b, toggle=True)
 
-    def graph_freq_type_combo(self):
-        graph_type = QComboBox()
-        graph_type.addItem('All frequency')
-        graph_type.addItem('Band frequency')
-        graph_type.addItem('Time FFT 3D')
-        return graph_type
+    # def graph_freq_type_combo(self):
+    #     graph_type = QComboBox()
+    #     graph_type.addItem('All frequency')
+    #     graph_type.addItem('Band frequency')
+    #     graph_type.addItem('Time FFT 3D')
+    #     return graph_type
 
     @QtCore.pyqtSlot(bool)
     def start(self, checked):

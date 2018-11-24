@@ -5,17 +5,9 @@ from data_processing_pipeline.filter import butter_bandpass_filter, butter_lowpa
 
 
 class Dispatcher:
-    def __init__(self, N_CH=8, DEQUE_LEN=1250,
-                 filter_process=None, viz_process=None):
+    def __init__(self, N_CH=8, DEQUE_LEN=1250):
         self.N_CH = N_CH
         self.DEQUE_LEN = DEQUE_LEN
-
-        self.filter_process = filter_process
-        self.filter_itt = 0
-        self.once_every = 30
-        self.filter_chunk = []
-        self.use_filter = True
-        self.viz_process = viz_process
 
         # Variable change in the menubar
         self.stream_origin = 'Stream from synthetic data'
@@ -26,7 +18,15 @@ class Dispatcher:
         self.read_period = 1 / self.desired_read_freq
 
         self.data_queue = [deque(np.zeros(DEQUE_LEN),
-                                 maxlen=DEQUE_LEN) for _ in range(N_CH)]   # One deque per channel initialize at 0
+                                 maxlen=DEQUE_LEN) for _ in range(N_CH)]      # One deque per channel initialize at 0
+
+        self.filter_process = FilterProcess(
+            N_CH=N_CH, DEQUE_LEN=DEQUE_LEN, desired_read_freq=self.desired_read_freq,
+            data_queue=self.data_queue)
+
+        self.filter_itt = 0
+        self.use_filter = True
+        self.N_DATA_BEFORE_FILTER = 500
 
         self.experiment_type = 0
         self.t_queue = deque(np.zeros(self.DEQUE_LEN), maxlen=self.DEQUE_LEN)
@@ -45,22 +45,8 @@ class Dispatcher:
         """Callback function to use in the generating functions"""
         self.filter_itt += 1
         for ch in range(self.N_CH):
-            if self.use_filter:
-                self.filter_process.data_queue[ch].append(signal[ch])
-
-                if self.filter_itt % self.once_every == 0:
-                    y = butter_bandpass_filter(self.filter_process.data_queue[ch],  # TODO: ALEXM: There is a problem when the filtering of a bandpass filter filter all 0 it increase the signal to infinity
-                                              10, 50, self.desired_read_freq, order=6)
-                    self.filter_chunk.append(list(y[-self.once_every:][::-1]))
-                # put the data once at the time at every loop so the signal is not showing
-                # all jerky
-                if any(self.filter_chunk):
-                    val = self.filter_chunk[ch].pop()
-                    self.data_queue[ch].append(val)
-                    # When you removed the last one init the list again to []
-                    # So that there is not many void list inside of the main list
-                    if not any(self.filter_chunk):
-                        self.filter_chunk = []
+            if self.use_filter and n_data_created > self.N_DATA_BEFORE_FILTER:
+                self.filter_process.filter_data(ch, signal, self.filter_itt)
             else:
                 self.data_queue[ch].append(signal[ch])
 
@@ -80,15 +66,33 @@ class Dispatcher:
 
 
 class FilterProcess:
-    def __init__(self, N_CH, DEQUE_LEN):
-        self.name = 'filter'
-        self.data_queue = [deque(np.zeros(DEQUE_LEN),
+    def __init__(self, N_CH, DEQUE_LEN, data_queue, desired_read_freq):
+        self.data_queue = data_queue
+        self.desired_read_freq = desired_read_freq
+
+        self.filter_queue = [deque(np.zeros(DEQUE_LEN),
                                  maxlen=DEQUE_LEN) for _ in range(N_CH)]
+        self.once_every = 30
+        self.filter_chunk = []
 
-class VizProcess:
-    def __init__(self, N_CH, DEQUE_LEN):
-        self.name = 'viz'
-        self.data_queue = [deque(np.zeros(DEQUE_LEN),
-                                 maxlen=DEQUE_LEN) for _ in range(N_CH)]
-
-
+    def filter_data(self, ch, signal, filter_itt):
+        self.filter_queue[ch].append(signal[ch])
+        if filter_itt % self.once_every == 0:
+            y = butter_bandpass_filter(self.filter_queue[ch],  # TODO: ALEXM: There is a problem when the filtering of a bandpass filter filter all 0 it increase the signal to infinity (it is the order that create the instability)
+                                       40, 80, self.desired_read_freq, order=4)
+            self.filter_chunk.append(list(y[-self.once_every:][::-1]))
+        # put the data once at the time at every loop so the signal is not showing
+        # all jerky
+        if any(self.filter_chunk):
+            val = self.filter_chunk[ch].pop()
+            self.data_queue[ch].append(val)
+            # When you removed the last one init the list again to []
+            # So that there is not many void list inside of the main list
+            if not any(self.filter_chunk):
+                self.filter_chunk = []
+#
+# class VizProcess:
+#     def __init__(self, N_CH, DEQUE_LEN):
+#         self.name = 'viz'
+#         self.data_queue = [deque(np.zeros(DEQUE_LEN),
+#                                  maxlen=DEQUE_LEN) for _ in range(N_CH)]

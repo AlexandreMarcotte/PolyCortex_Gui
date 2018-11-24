@@ -37,8 +37,8 @@ class DataSaver:
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         f_name, _ = QFileDialog.getSaveFileName(
-            self.main_window, "QFileDialog.getSaveFileName()", "",
-            "All Files (*);;Text Files (*.txt)", options=options)
+            self.main_window, 'QFileDialog.getSaveFileName()','',
+            'All Files (*);;Text Files (*.txt)', options=options)
         if f_name:
             self.gv.save_path = f_name
             self.data_path_line_edit.setText(self.gv.save_path)
