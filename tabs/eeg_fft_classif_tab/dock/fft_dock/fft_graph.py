@@ -47,13 +47,18 @@ class FftGraph:
         for ch in range(self.gv.N_CH):
             self.curve_freq.append(
                 plot.plot(deque(np.ones(self.N_DATA), maxlen=self.N_DATA)))
-        self.layout.addWidget(self.graph_freq_type_combo(), 2, 0)
+        self.graph_type = self.graph_freq_type_combo()
+        self.layout.addWidget(self.graph_type, 2, 0)
         # Associate the plot to an FftGraph object
         self.timer.timeout.connect(self.update_plotting)
         # Create the on button
         self.on_off_button()
 
     def update_plotting(self):
+        self.all_frequency()
+        # print(self.graph_type.)    # TODO: get the value of the item inside a combo box
+
+    def all_frequency(self):
         for ch in range(self.gv.N_CH):
             freq_calculator = FreqCalculator(
                 remove_first_data=0, data_q=self.gv.data_queue[ch],
@@ -71,7 +76,7 @@ class FftGraph:
         graph_type = QComboBox()
         graph_type.addItem('All frequency')
         graph_type.addItem('Band frequency')
-        graph_type.addItem('2D time FFT')
+        graph_type.addItem('Time FFT 3D')
         return graph_type
 
     @QtCore.pyqtSlot(bool)

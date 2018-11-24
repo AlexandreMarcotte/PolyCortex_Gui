@@ -29,12 +29,12 @@ class FrequencyCounter:
 
     def adjust_freq_up(self):
         'Increase frequency: '
-        self.gv.used_read_freq += 4
+        self.gv.used_read_freq += 10                                          # TODO: use a variable increase so that it gets faster to the right frequency when this one is real far
         self.gv.read_period = 1 / self.gv.used_read_freq
         # print('Increase used_freq: ', self.gv.used_read_freq)
 
     def adjust_freq_down(self):
-        self.gv.used_read_freq -= 3
+        self.gv.used_read_freq -= 10
         self.gv.read_period = 1 / self.gv.used_read_freq
         # print('Decrease used freq: ', self.gv.used_read_freq)
 

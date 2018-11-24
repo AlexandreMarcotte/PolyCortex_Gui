@@ -21,14 +21,14 @@ class CreateSyntheticData(threading.Thread):
         self.t = np.linspace(0, 2 * pi, self.gv.DEQUE_LEN)
         ## signal shape
         self.m = 1000
-        self.s1 = 3 * self.m * sin(3*self.t)
+        self.s1 = self.m * sin(3*self.t)
         self.s2 = self.m * sin(20 * self.t)
         self.s3 = self.m * sin(40 * self.t)
-        self.s4 = 10 * self.m * sin(60 * self.t)
+        self.s4 = self.m * sin(60 * self.t)
 
         # 100 harmonic signal to test filtering
         self.s = []
-        for freq in range(70, 100, 2):
+        for freq in range(10, 100, 1):
             self.s.append(self.m * sin(freq * self.t))
 
     def run(self):
@@ -47,9 +47,9 @@ class CreateSyntheticData(threading.Thread):
                 if ch == 0:
                     signal = self.s1[i] + self.s4[i] #+ random()*self.m + imp
                 elif ch == 1:
-                    signal = 20 * self.s1[i] + 5
+                    signal = self.s1[i] + 5
                 elif ch == 2:
-                    signal = 10 * self.s2[i]
+                    signal = self.s2[i]
                 elif ch == 3:
                     signal = self.s3[i]
                 elif ch == 4:
