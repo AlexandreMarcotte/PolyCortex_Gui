@@ -55,7 +55,7 @@ class EegFftClassifTab(QWidget):
             'Saving', 'below', banner_dock)
         # - Viz 3D dock
         self.viz_3D_layout, viz_3D_dock = self.create_layout(
-            'Viz 3D', 'below', classif_dock)
+            'Visualization 3D', 'below', classif_dock)
 
     def create_layout(self, dock_name, pos, related_dock=None, size=(1, 1),
                       hide_title=False, scroll=False):

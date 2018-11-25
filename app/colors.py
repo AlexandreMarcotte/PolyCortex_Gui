@@ -20,7 +20,7 @@ light_grey = 'rgba(130, 130, 130, 0.7)'
 green_b = 'rgba(0, 100, 0, 0.5)'
 red_b =  'rgba(100, 0, 0, 0.5)'
 blue_b = 'rgba(0, 0, 150, 0.3)'
-white = 'rgba(255, 255, 255, 0.5)'
+white = 'rgba(255, 255, 255, 0.7)'
 black = 'rgba(0, 0, 0, 0.5)'
 
 DARK_GREY = '#585858'  # hexa

@@ -58,8 +58,8 @@ class Viz3D:
                 name=ch, points=pts, color=pg.glColor((ch, 8)), width=1)
 
     def on_off_button(self):
-        btn('Show viz 3D', self.layout, (0, 0), func_conn=self.start,
-            color=blue_b, toggle=True)
+        btn('Show visualization 3D', self.layout, (0, 0), func_conn=self.start,
+            color=blue_b, toggle=True, txt_color=white)
 
     @QtCore.pyqtSlot(bool)
     def start(self, checked):

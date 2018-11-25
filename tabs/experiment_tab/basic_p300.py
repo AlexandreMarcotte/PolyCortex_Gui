@@ -40,10 +40,11 @@ class BasicP300(Experiment):
     def create_rectangles_img(self, n_rect):
         rand = random.randrange(30)
         if rand == 0:
+            # Red
             self.clear_screen()
             p = SquareItem(
                 x=np.zeros(n_rect),
-                y=np.linspace(0, 10, n_rect),
+                y=np.linspace(0, 15, n_rect),
                 w=10 * np.ones(n_rect),
                 h=0.5 * np.ones(n_rect),
                 color=p300_red)
@@ -51,9 +52,10 @@ class BasicP300(Experiment):
             self.plot.addItem(p)
 
         elif rand in (1,2,3,4,5,6):
+            # Green
             self.clear_screen()
             p = SquareItem(
-                x=np.linspace(0, 10, n_rect),
+                x=np.linspace(0, 20, n_rect),
                 y=np.zeros(n_rect),
                 w=0.5 * np.ones(n_rect),
                 h=10 * np.ones(n_rect),
