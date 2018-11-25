@@ -15,7 +15,7 @@ class CreateSyntheticData(threading.Thread):
         self.gv.used_read_freq = read_freq
         self.gv.desired_read_freq = read_freq
 
-        self.n_data_created = 0
+        # self.n_data_created = 0
         # Variable necessary to generate fake signal
         ## time
         self.t = np.linspace(0, 2 * pi, self.gv.DEQUE_LEN)
@@ -35,7 +35,7 @@ class CreateSyntheticData(threading.Thread):
         t_init = time()
         """Create random data and a time stamp for each of them"""
         while 1:
-            i = self.n_data_created % len(self.t)
+            i = self.gv.n_data_created % len(self.t)
             chs_sig = []
             for ch in range(self.gv.N_CH):
                 rnd_impulse = randint(0, 100)
@@ -63,7 +63,7 @@ class CreateSyntheticData(threading.Thread):
 
                 chs_sig.append(signal)
 
-            self.callback(chs_sig, time() - t_init, self.n_data_created)
-            self.n_data_created += 1
+            self.callback(chs_sig, time() - t_init)
+            # self.n_data_created += 1
 
             sleep(self.gv.read_period)

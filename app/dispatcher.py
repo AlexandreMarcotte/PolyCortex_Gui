@@ -31,7 +31,7 @@ class Dispatcher:
         self.t_queue = deque(np.zeros(self.DEQUE_LEN), maxlen=self.DEQUE_LEN)
         self.experiment_queue = deque(np.zeros(self.DEQUE_LEN), maxlen=self.DEQUE_LEN)
         self.t_init = time()
-        self.n_data_created = 1
+        self.n_data_created = 0
         # All data
         self.all_data = [deque(np.zeros(self.DEQUE_LEN)) for _ in range(self.N_CH)] 
         self.all_t = deque(np.zeros(self.DEQUE_LEN))
@@ -40,19 +40,24 @@ class Dispatcher:
         self.last_classified_type = [0]
         self.emg_signal_len = 170
 
-    def collect_data(self, signal, t, n_data_created):
+    def collect_data(self, signal, t):
         """Callback function to use in the generating functions"""
+        if self.stream_origin == 'Stream from OpenBCI':
+            signal = signal.channel_data
+        if not t:
+            t = time()
+            print('not t')
+
         self.filter_itt += 1
         for ch in range(self.N_CH):
-            if self.use_filter and n_data_created > self.N_DATA_BEFORE_FILTER:
+            if self.use_filter and self.n_data_created > self.N_DATA_BEFORE_FILTER:
                 self.filter_data(ch, signal)
             else:
                 self.data_queue[ch].append(signal[ch])
 
-        self.t_queue.append(t)
-        self.n_data_created = n_data_created
+            self.all_data[ch].append(signal[ch])
 
-        self.all_data.append(signal)
+        self.t_queue.append(t)
         self.all_t.append(t)
         # Experiment
         if self.experiment_type != 0:  # An event occured
@@ -62,6 +67,8 @@ class Dispatcher:
         else:
             self.experiment_queue.append(0)
             self.all_experiment_val.append(0)
+
+        self.n_data_created += 1
 
     def filter_data(self, ch, signal):                                       # TODO: ALEXM: I tried to put that into a class 2 times and it made the filtering look weird (try again)
         self.filter_process.data_queue[ch].append(signal[ch])
