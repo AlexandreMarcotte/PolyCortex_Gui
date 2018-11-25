@@ -54,7 +54,7 @@ class ClassifPlotCreator:
     def on_off_button(self):
         """Assign pushbutton for starting and stoping the stream"""
         btn('Start classification', self.layout, (0, 0),
-            func_conn=self.start, color=dark_blue, toggle=True)
+            func_conn=self.start, color=blue_b, toggle=True)
 
     @QtCore.pyqtSlot(bool)
     def start(self, checked):

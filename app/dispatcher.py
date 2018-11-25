@@ -25,7 +25,7 @@ class Dispatcher:
             data_queue=self.data_queue)
 
         self.filter_itt = 0
-        self.use_filter = True
+        self.use_filter = False
         self.N_DATA_BEFORE_FILTER = 500
 
         self.experiment_type = 0

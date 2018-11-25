@@ -43,7 +43,7 @@ class WaveGraph:
 
     def init_on_off_button(self):
         btn('Show wave signal', self.layout, (0, 0), func_conn=self.start,
-            color=dark_blue, toggle=True)
+            color=blue_b, toggle=True)
 
     def start(self):
         pass

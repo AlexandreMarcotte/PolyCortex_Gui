@@ -61,8 +61,8 @@ class MainWindow(QMainWindow):
         main_menu.addMenu(self.controlPanel)
         self.create_menu_start_game()
         main_menu.addMenu(self.menuGame)
-        self.create_menu_docks()                                               # TODO: Use return instead for these functions
-        main_menu.addMenu(self.menuDocks)
+        self.menu_dock = self.create_menu_docks(main_menu)                                               # TODO: Use return instead for these functions
+        main_menu.addMenu(self.menu_dock)
 
     def create_openbci_menu(self):
         self.openbci = QtGui.QAction(QIcon('./img/openbci_logo.png'),
@@ -130,29 +130,16 @@ class MainWindow(QMainWindow):
         run_game = RunGame()
         run_game.start()
 
-    def create_menu_docks(self):
-        # ---Start game---
-        self.menuDocks = QMenu(title='Docks')
-        # eeg dock
-        self.eeg_dock = QtGui.QAction('EEG', checkable=True)
-        self.menuDocks.addAction(self.eeg_dock)
-        # fft
-        self.fft_dock = QtGui.QAction('FFT', checkable=True)
-        self.menuDocks.addAction(self.fft_dock)
-        # Show Viz 3D
-        self.show_viz_3D_dock = QtGui.QAction('Show viz 3D', checkable=True)
-        self.menuDocks.addAction(self.show_viz_3D_dock)
-        # Classification
-        self.classif_dock = QtGui.QAction('Classification', checkable=True)
-        self.menuDocks.addAction(self.classif_dock)
-        # Banner
-        self.banner_dock = QtGui.QAction('Banner', checkable=True)
-        self.menuDocks.addAction(self.banner_dock)
-        # Saving
-        self.saving_dock = QtGui.QAction('Saving', checkable=True)
-        self.menuDocks.addAction(self.saving_dock)
+    def create_menu_docks(self, main_menu):
 
-        # self.docks.setStatusTip('List of checkable other docks availaible')
+        menu_docks = main_menu.addMenu('Docks')
+        docks = {'EEG': None, 'FFT': None, 'Show3DViz': None,
+                 'Classification': None, 'Banner': None, 'Saving': None}
+
+        for dock in docks:
+            exec(f'docks[dock] = self.{dock} = DockOption(dock, self, menu_docks)')
+
+        return menu_docks
 
     def create_toolbar(self):
         toolbar = self.addToolBar('toolbar')
@@ -178,6 +165,21 @@ class MainWindow(QMainWindow):
 
     def change_light_style(self):
         self.app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
+
+
+
+class DockOption:
+    def __init__(self, name, mainwindow, menu):
+        self.name = name
+
+        self.check_actn = QtGui.QAction(name, mainwindow, checkable=True)
+        self.check_actn.triggered.connect(self.print_func)
+        self.check_actn.setStatusTip(f'Check {name} to open this dock...')
+
+        menu.addAction(self.check_actn)
+
+    def print_func(self):
+        print('My name is: ', self.name)
 
 
 
