@@ -20,7 +20,7 @@ from app.draw_rectangle import SquareItem
 
 class BasicP300(Experiment):
     def __init__(self, area, dock_above):
-        super().__init__(timer_period=100)
+        super().__init__(timer_period=50)
         self.area = area
         self.dock_above = dock_above
         exp_name = 'Basic P300'
@@ -35,36 +35,49 @@ class BasicP300(Experiment):
         self.layout.addWidget(self.plot, 1, 0, 1, 2)
 
         self.plot_timer.timeout.connect(partial(
-            self.create_rectangles_img, 10))
+            self.create_rectangles_img, n_red_rect=30, n_green_rect=40))
 
-    def create_rectangles_img(self, n_rect):
+        self.show_warning_text()
+
+    def create_rectangles_img(self, n_red_rect, n_green_rect):
         rand = random.randrange(30)
         if rand == 0:
             # Red
             self.clear_screen()
             p = SquareItem(
-                x=np.zeros(n_rect),
-                y=np.linspace(0, 15, n_rect),
-                w=10 * np.ones(n_rect),
-                h=0.5 * np.ones(n_rect),
+                x=np.zeros(n_red_rect),
+                y=np.linspace(0, 10, n_red_rect),
+                w=10 * np.ones(n_red_rect),
+                h=0.15 * np.ones(n_red_rect),
                 color=p300_red)
             self.refresh()
             self.plot.addItem(p)
 
-        elif rand in (1,2,3,4,5,6):
+        elif rand in (1,2,3,4,5,6,7,8,9,10,11):
             # Green
             self.clear_screen()
             p = SquareItem(
-                x=np.linspace(0, 20, n_rect),
-                y=np.zeros(n_rect),
-                w=0.5 * np.ones(n_rect),
-                h=10 * np.ones(n_rect),
+                x=np.linspace(0, 10, n_green_rect),
+                y=np.zeros(n_green_rect),
+                w=0.12 * np.ones(n_green_rect),
+                h=10 * np.ones(n_green_rect),
                 color=p300_green)
             self.refresh()                        # So that the graph update and the rectangle are visible
             self.plot.addItem(p)
                                             # TODO: ALEXM: Try to find a cleaner way to update the graph
         else:
             self.clear_screen()
+
+    def show_warning_text(self):
+        self.warn_txt = pg.TextItem(anchor=(0, 0), fill=(0, 0, 0, 0))
+        self.warn_html = f"""<div style="text-align: center">
+                               <br><span style="color: {'#ff0000'};
+                               font-size: 19pt;">
+                               {'Warning this experiment has the potential to induce SEIZURE for people with Photosensitive EPILEPSY'}
+                               </span></div>"""
+        self.warn_txt.setHtml(self.warn_html)
+        self.warn_txt.setPos(0, 10)
+        self.plot.addItem(self.warn_txt)
 
     def clear_screen(self):
         self.plot.clear()

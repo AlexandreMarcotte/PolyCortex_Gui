@@ -11,7 +11,7 @@ class Dispatcher:
 
         self.filter_process = FilterProcess(N_CH=N_CH, DEQUE_LEN=DEQUE_LEN)
         self.filter_itt = 0
-        self.once_every = 30
+        self.once_every = 50
         self.filter_chunk = []
         self.use_filter = True
         self.N_DATA_BEFORE_FILTER = 1000
@@ -68,7 +68,7 @@ class Dispatcher:
 
         if self.filter_itt % self.once_every == 0:
             y = butter_bandpass_filter(self.filter_process.data_queue[ch],  # TODO: ALEXM: There is a problem when the filtering of a bandpass filter filter all 0 it increase the signal to infinity
-                                       2, 50, self.desired_read_freq, order=5)
+                                       2, 45, self.desired_read_freq, order=5)
             self.filter_chunk.append(list(y[-self.once_every:][::-1]))
         # put the data once at the time at every loop so the signal is not showing
         # all jerky

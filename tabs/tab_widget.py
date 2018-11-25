@@ -11,7 +11,7 @@ class TabWidget(QWidget):
     def __init__(self, parent, gv):
         super(QWidget, self).__init__(parent)
 
-        self.tabs_list = {EegFftClassifTab(gv): 'Live graph',
+        self.tabs_list = {EegFftClassifTab(gv, parent): 'Live graph',
                           ExperimentTab(gv): 'Experiments',
                           StaticGraphTab(gv): 'Static graph',
                           MiniGameTab(): 'Mini Game',

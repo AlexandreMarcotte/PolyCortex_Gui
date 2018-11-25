@@ -35,13 +35,35 @@ class EegPlotsCreator:
         self.zero_q = deque(
             np.zeros(self.gv.DEQUE_LEN), maxlen=self.gv.DEQUE_LEN)
 
+        # Stop/Start
         start_stop_layout = self.add_sub_layout(self.layout, 0)
         self.create_buttons(start_stop_layout)
+        # Plot parameter
+        self.create_param(start_stop_layout)
 
         self.create_all_eeg_plot()
         # Saving
         self.data_saver = data_saver
         self.data_saver.save_data_to_file()
+
+    def create_param(self, start_stop_layout):
+        vert_scale_txt = QLabel('    Vert scale: ')
+        start_stop_layout.addWidget(vert_scale_txt, 1, 0)
+        vert_scale = QComboBox()
+        vert_scale.addItem('Auto')
+        vert_scale.addItem('10 uv')
+        vert_scale.addItem('100 uv')
+        vert_scale.addItem('1000 uv')
+        start_stop_layout.addWidget(vert_scale, 1, 1)
+
+        horiz_scale = QLabel('    Horiz scale: ')
+        start_stop_layout.addWidget(horiz_scale, 1, 2)
+        horiz_scale = QComboBox()
+        horiz_scale.addItem('5s')
+        horiz_scale.addItem('7s')
+        horiz_scale.addItem('10s')
+        start_stop_layout.addWidget(horiz_scale, 1, 3)
+
 
     def create_all_eeg_plot(self):
         """
@@ -75,9 +97,9 @@ class EegPlotsCreator:
 
     def create_buttons(self, layout):
         """Assign pushbutton for starting and stoping the stream"""
-        btn('Start streaming', layout, (0, 1),
+        btn('Start streaming', layout, (0, 0), size=(1, 2),
             func_conn=self.start_streaming, color=green_b)
-        btn('Stop streaming', layout, (0, 2),
+        btn('Stop streaming', layout, (0, 2), size=(1, 2),
             func_conn=self.stop_streaming, color=red_b)
 
     def create_plot(self, ch):

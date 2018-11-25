@@ -32,7 +32,7 @@ class SampleDataFromOPENBCI(threading.Thread):
 
     def run(self):
         # Previously and Working
-        self.board.start_streaming(self.add_data_to_queue)
+        self.board.start_streaming(self.gv.collect_data)
 
     def add_data_to_queue(self, sample):
         for ch, one_sample in enumerate(sample.channel_data):

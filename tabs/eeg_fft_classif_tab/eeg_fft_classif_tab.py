@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 # -- General packages --
 from PyQt5.QtWidgets import *
+from PyQt5 import QtGui
+
 
 import pyqtgraph as pg
 from pyqtgraph.dockarea import *
@@ -20,13 +22,26 @@ from tabs.region import Regions
 
 
 class EegFftClassifTab(QWidget):
-    def __init__(self, gv):
+    def __init__(self, gv, parent):
         super().__init__()
         self.gv = gv
+        self.parent = parent
 
         self.init_tab_w()
         self.init_docks()
-        self.create_tab()
+        self.add_content_to_docks()
+
+        self.menu_dock = self.create_menu_docks(self.parent.main_menu)                     # TODO: Use return instead for these functions
+        self.parent.main_menu.addMenu(self.menu_dock)
+
+    def create_menu_docks(self, main_menu):
+        menu_docks = main_menu.addMenu('Docks')
+        docks = {'EEG': None, 'FFT': None, 'ShowVisualization3D': None,
+                 'Classification': None, 'Banner': None, 'Saving': None}
+
+        for dock in docks:
+            exec(f'docks[dock] = self.{dock} = DockOption(dock, self, menu_docks)')
+        return menu_docks
 
     def init_tab_w(self):
         self.layout = QHBoxLayout(self)
@@ -37,7 +52,7 @@ class EegFftClassifTab(QWidget):
     def init_docks(self):
         # - EEG
         self.eeg_layout, eeg_dock = self.create_layout(
-            'EEG', 'left', size=(5, 15), scroll=True)
+            'EEG', 'left', size=(6, 10), scroll=True)
         # - FFT
         self.fft_layout, self.fft_dock = self.create_layout(
             'FFT', 'right', size=(5, 10))
@@ -73,7 +88,7 @@ class EegFftClassifTab(QWidget):
             dock.hideTitleBar()
         return layout, dock
 
-    def create_tab(self):
+    def add_content_to_docks(self):
         # Regions
         data_saver = DataSaver(self, self.saving_layout, self.gv)
         # Create the graphes inside the each dock layout
@@ -86,3 +101,17 @@ class EegFftClassifTab(QWidget):
         Viz3D(self.gv, self.viz_3D_layout)
 
         self.setLayout(self.layout)
+
+
+class DockOption:
+    def __init__(self, name, mainwindow, menu):
+        self.name = name
+
+        self.check_actn = QtGui.QAction(name, mainwindow, checkable=True)
+        self.check_actn.triggered.connect(self.print_func)
+        self.check_actn.setStatusTip(f'Check {name} to open this dock...')
+
+        menu.addAction(self.check_actn)
+
+    def print_func(self):
+        print('My name is: ', self.name)

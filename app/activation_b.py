@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import *
 from functools import partial
 from app.colors import *
 
-def btn(name, layout, pos, func_conn=None, action=None, color=None,
+def btn(name, layout, pos, size=(1, 1), func_conn=None, action=None, color=None,
         toggle=False, tip=None, max_width=1200, min_width=16, txt_color=None):
     b = QPushButton(name)
     if txt_color:
@@ -19,4 +19,5 @@ def btn(name, layout, pos, func_conn=None, action=None, color=None,
         b.clicked.connect(partial(action.show_action))
     if func_conn:
         b.clicked.connect(partial(func_conn))
-    layout.addWidget(b, *pos)
+
+    layout.addWidget(b, *pos, *size)
