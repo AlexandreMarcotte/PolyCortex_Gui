@@ -5,17 +5,16 @@ from data_processing_pipeline.filter import butter_bandpass_filter, butter_lowpa
 
 
 class Dispatcher:
-    def __init__(self, N_CH=8, DEQUE_LEN=1250,
-                 filter_process=None, viz_process=None):
+    def __init__(self, N_CH=8, DEQUE_LEN=1250):
         self.N_CH = N_CH
         self.DEQUE_LEN = DEQUE_LEN
 
-        self.filter_process = filter_process
+        self.filter_process = FilterProcess(N_CH=N_CH, DEQUE_LEN=DEQUE_LEN)
         self.filter_itt = 0
         self.once_every = 30
         self.filter_chunk = []
         self.use_filter = True
-        self.viz_process = viz_process
+        self.N_DATA_BEFORE_FILTER = 1000
 
         # Variable change in the menubar
         self.stream_origin = 'Stream from synthetic data'
@@ -45,22 +44,8 @@ class Dispatcher:
         """Callback function to use in the generating functions"""
         self.filter_itt += 1
         for ch in range(self.N_CH):
-            if self.use_filter:
-                self.filter_process.data_queue[ch].append(signal[ch])
-
-                if self.filter_itt % self.once_every == 0:
-                    y = butter_bandpass_filter(self.filter_process.data_queue[ch],  # TODO: ALEXM: There is a problem when the filtering of a bandpass filter filter all 0 it increase the signal to infinity
-                                              10, 50, self.desired_read_freq, order=6)
-                    self.filter_chunk.append(list(y[-self.once_every:][::-1]))
-                # put the data once at the time at every loop so the signal is not showing
-                # all jerky
-                if any(self.filter_chunk):
-                    val = self.filter_chunk[ch].pop()
-                    self.data_queue[ch].append(val)
-                    # When you removed the last one init the list again to []
-                    # So that there is not many void list inside of the main list
-                    if not any(self.filter_chunk):
-                        self.filter_chunk = []
+            if self.use_filter and n_data_created > self.N_DATA_BEFORE_FILTER:
+                self.filter_data(ch, signal)
             else:
                 self.data_queue[ch].append(signal[ch])
 
@@ -77,6 +62,24 @@ class Dispatcher:
         else:
             self.experiment_queue.append(0)
             self.all_experiment_val.append(0)
+
+    def filter_data(self, ch, signal):                                       # TODO: ALEXM: I tried to put that into a class 2 times and it made the filtering look weird (try again)
+        self.filter_process.data_queue[ch].append(signal[ch])
+
+        if self.filter_itt % self.once_every == 0:
+            y = butter_bandpass_filter(self.filter_process.data_queue[ch],  # TODO: ALEXM: There is a problem when the filtering of a bandpass filter filter all 0 it increase the signal to infinity
+                                       2, 50, self.desired_read_freq, order=5)
+            self.filter_chunk.append(list(y[-self.once_every:][::-1]))
+        # put the data once at the time at every loop so the signal is not showing
+        # all jerky
+        if any(self.filter_chunk):
+            val = self.filter_chunk[ch].pop()
+            self.data_queue[ch].append(val)
+            # When you removed the last one init the list again to []
+            # So that there is not many void list inside of the main list
+            if not any(self.filter_chunk):
+                self.filter_chunk = []
+
 
 
 class FilterProcess:
