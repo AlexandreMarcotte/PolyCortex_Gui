@@ -61,6 +61,8 @@ class MainWindow(QMainWindow):
         main_menu.addMenu(self.controlPanel)
         self.create_menu_start_game()
         main_menu.addMenu(self.menuGame)
+        self.menu_dock = self.create_menu_docks(main_menu)                                               # TODO: Use return instead for these functions
+        main_menu.addMenu(self.menu_dock)
 
     def create_openbci_menu(self):
         self.openbci = QtGui.QAction(QIcon('./img/openbci_logo.png'),
@@ -128,6 +130,16 @@ class MainWindow(QMainWindow):
         run_game = RunGame()
         run_game.start()
 
+    def create_menu_docks(self, main_menu):
+
+        menu_docks = main_menu.addMenu('Docks')
+        docks = {'EEG': None, 'FFT': None, 'ShowVisualization3D': None,
+                 'Classification': None, 'Banner': None, 'Saving': None}
+
+        for dock in docks:
+            exec(f'docks[dock] = self.{dock} = DockOption(dock, self, menu_docks)')
+        return menu_docks
+
     def create_toolbar(self):
         toolbar = self.addToolBar('toolbar')
         toolbar.addAction(self.create_exit_action())
@@ -154,4 +166,15 @@ class MainWindow(QMainWindow):
         self.app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
 
 
+class DockOption:
+    def __init__(self, name, mainwindow, menu):
+        self.name = name
 
+        self.check_actn = QtGui.QAction(name, mainwindow, checkable=True)
+        self.check_actn.triggered.connect(self.print_func)
+        self.check_actn.setStatusTip(f'Check {name} to open this dock...')
+
+        menu.addAction(self.check_actn)
+
+    def print_func(self):
+        print('My name is: ', self.name)
