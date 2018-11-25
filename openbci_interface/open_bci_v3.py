@@ -590,7 +590,7 @@ class OpenBCIBoard(object):
         openbci_serial = self.openbci_id(s)
         s.close()
         if openbci_serial:
-          openbci_port = port;
+          openbci_port = port
       except (OSError, serial.SerialException):
         pass
     if openbci_port == '':

@@ -15,8 +15,6 @@ class FileReader(threading.Thread):
         self.gv.used_read_freq = read_freq
         self.gv.desired_read_freq = read_freq
 
-        self.n_data_created = 0
-
     def run(self):
         self.read()
 
@@ -28,8 +26,7 @@ class FileReader(threading.Thread):
             for line in data:
                 signal = np.array([float(val) for val in line[:8]])
                 t = time() - t_init
-                self.n_data_created += 1
-                self.callback(signal, t, self.n_data_created)
+                self.callback(signal, t=t)
                 sleep(self.gv.read_period)
 
 
