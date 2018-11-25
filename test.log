@@ -2318,3 +2318,33 @@
 2018-11-12 23:39:58,982 - INFO : ---------LOG START-------------
 2018-11-12 23:40:38,150 - INFO : ---------LOG START-------------
 2018-11-25 17:31:20,186 - INFO : ---------LOG START-------------
+2018-11-25 17:54:23,926 - INFO : ---------LOG START-------------
+2018-11-25 17:55:11,779 - WARNING : sent <s>: stopped streaming
+2018-11-25 17:55:11,779 - WARNING : serial closed
+2018-11-25 17:56:18,625 - INFO : ---------LOG START-------------
+2018-11-25 17:57:21,618 - WARNING : sent <s>: stopped streaming
+2018-11-25 17:57:21,618 - WARNING : serial closed
+2018-11-25 17:57:54,922 - INFO : ---------LOG START-------------
+2018-11-25 17:58:33,830 - WARNING : sent <s>: stopped streaming
+2018-11-25 17:58:33,830 - WARNING : serial closed
+2018-11-25 17:59:11,412 - INFO : ---------LOG START-------------
+2018-11-25 18:01:26,434 - WARNING : sent <s>: stopped streaming
+2018-11-25 18:01:26,435 - WARNING : serial closed
+2018-11-25 18:01:59,279 - INFO : ---------LOG START-------------
+2018-11-25 18:02:46,727 - WARNING : sent <s>: stopped streaming
+2018-11-25 18:02:46,728 - WARNING : serial closed
+2018-11-25 18:03:28,836 - INFO : ---------LOG START-------------
+2018-11-25 18:04:34,716 - INFO : ---------LOG START-------------
+2018-11-25 18:07:21,099 - INFO : ---------LOG START-------------
+2018-11-25 18:08:10,209 - INFO : ---------LOG START-------------
+2018-11-25 18:09:16,148 - WARNING : sent <s>: stopped streaming
+2018-11-25 18:09:16,149 - WARNING : serial closed
+2018-11-25 18:12:43,505 - INFO : ---------LOG START-------------
+2018-11-25 18:14:32,819 - WARNING : sent <s>: stopped streaming
+2018-11-25 18:14:32,820 - WARNING : serial closed
+2018-11-25 18:15:30,552 - INFO : ---------LOG START-------------
+2018-11-25 18:17:03,502 - WARNING : sent <s>: stopped streaming
+2018-11-25 18:17:03,503 - WARNING : serial closed
+2018-11-25 18:17:29,261 - INFO : ---------LOG START-------------
+2018-11-25 18:20:25,035 - WARNING : sent <s>: stopped streaming
+2018-11-25 18:20:25,036 - WARNING : serial closed

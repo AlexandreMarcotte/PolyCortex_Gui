@@ -29,7 +29,7 @@ class FileReader(threading.Thread):
                 signal = np.array([float(val) for val in line[:8]])
                 t = time() - t_init
                 # self.n_data_created += 1
-                self.collect_data(signal, t)
+                self.collect_data(signal, t=t)
                 sleep(self.gv.read_period)
 
 

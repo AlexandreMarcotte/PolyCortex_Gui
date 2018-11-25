@@ -63,7 +63,7 @@ class CreateSyntheticData(threading.Thread):
 
                 chs_sig.append(signal)
 
-            self.callback(chs_sig, time() - t_init)
+            self.callback(chs_sig, t = time() - t_init)
             # self.n_data_created += 1
 
             sleep(self.gv.read_period)

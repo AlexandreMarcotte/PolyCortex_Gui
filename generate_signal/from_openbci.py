@@ -34,21 +34,21 @@ class SampleDataFromOPENBCI(threading.Thread):
         # Previously and Working
         self.board.start_streaming(self.gv.collect_data)
 
-    def add_data_to_queue(self, sample):
-        for ch, one_sample in enumerate(sample.channel_data):
-            self.gv.data_queue[ch].append(one_sample)
-            self.gv.all_data[ch].append(one_sample)
-        self.gv.n_data_created[0] += 1
-        # Time
-        current_time = time() - self.gv.t_init
-        self.gv.t_queue.append(current_time)
-        self.gv.all_t.append(current_time)
-        # Add experiment type values
-        # if self.gv.experiment_type[0] != 0:
-        #     typ = self.gv.experiment_type[0]
-        #     self.gv.experiment_queue.append(typ)
-        #     self.gv.all_experiment_val.append(typ)
-        #     self.gv.experiment_type[0] = 0
-        # else:
-        #     self.gv.experiment_queue.append(0)
-        #     self.gv.all_experiment_val.append(0)
+    # def add_data_to_queue(self, sample):
+    #     for ch, one_sample in enumerate(sample.channel_data):
+    #         # self.gv.data_queue[ch].append(one_sample)
+    #         # self.gv.all_data[ch].append(one_sample)
+    #     # self.gv.n_data_created[0] += 1
+    #     # Time
+    #     # current_time = time() - self.gv.t_init
+    #     # self.gv.t_queue.append(current_time)
+    #     # self.gv.all_t.append(current_time)
+    #     # Add experiment type values
+    #     # if self.gv.experiment_type[0] != 0:
+    #     #     typ = self.gv.experiment_type[0]
+    #     #     self.gv.experiment_queue.append(typ)
+    #     #     self.gv.all_experiment_val.append(typ)
+    #     #     self.gv.experiment_type[0] = 0
+    #     # else:
+    #     #     self.gv.experiment_queue.append(0)
+    #     #     self.gv.all_experiment_val.append(0)
