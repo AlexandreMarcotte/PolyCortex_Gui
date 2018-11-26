@@ -18,6 +18,7 @@ class Dispatcher:
 
         # Variable change in the menubar
         self.stream_origin = 'Stream from synthetic data'
+        self.stream_path = f'experiment_csv/2exp_pinch_close_2018-08-29 18:55:22.627296.csv'
 
         self.save_path = '_'
         self.used_read_freq = 1000
@@ -54,7 +55,7 @@ class Dispatcher:
             else:
                 self.data_queue[ch].append(signal[ch])
 
-            self.all_data[ch].append(signal[ch])
+            self.all_data[ch].append(self.data_queue[ch][-1])
 
         self.t_queue.append(t)
         self.all_t.append(t)
@@ -73,31 +74,25 @@ class Dispatcher:
         self.filter_process.data_queue[ch].append(signal[ch])
 
         if self.filter_itt % self.once_every == 0:
-            y = butter_bandpass_filter(self.filter_process.data_queue[ch],  # TODO: ALEXM: There is a problem when the filtering of a bandpass filter filter all 0 it increase the signal to infinity
-                                       2, 125, self.desired_read_freq, order=3)
+            y = butter_bandpass_filter(self.filter_process.data_queue[ch],     # TODO: ALEXM: There is a problem when the filtering of a bandpass filter filter all 0 it increase the signal to infinity
+                                       5, 40, self.desired_read_freq, order=3)
             self.filter_chunk.append(list(y[-self.once_every:][::-1]))
         # put the data once at the time at every loop so the signal is not showing
         # all jerky
         if any(self.filter_chunk):
             val = self.filter_chunk[ch].pop()
             self.data_queue[ch].append(val)
+            # print(len(self.all_data[ch]))
             # When you removed the last one init the list again to []
             # So that there is not many void list inside of the main list
             if not any(self.filter_chunk):
                 self.filter_chunk = []
 
 
-
 class FilterProcess:
     def __init__(self, N_CH, DEQUE_LEN):
-        self.name = 'filter'
         self.data_queue = [deque(np.zeros(DEQUE_LEN),
                                  maxlen=DEQUE_LEN) for _ in range(N_CH)]
 
-class VizProcess:
-    def __init__(self, N_CH, DEQUE_LEN):
-        self.name = 'viz'
-        self.data_queue = [deque(np.zeros(DEQUE_LEN),
-                                 maxlen=DEQUE_LEN) for _ in range(N_CH)]
 
 
