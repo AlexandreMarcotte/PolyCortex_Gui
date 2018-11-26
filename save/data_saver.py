@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import *
 
 
 class DataSaver:
-    def __init__(self, main_window, layout, gv):
+    def __init__(self, main_window, gv, layout):
         self.main_window = main_window
         self.layout = layout
         self.gv = gv

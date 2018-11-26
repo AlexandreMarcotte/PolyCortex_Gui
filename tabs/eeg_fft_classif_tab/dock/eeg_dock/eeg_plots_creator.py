@@ -24,7 +24,7 @@ from data_processing_pipeline.frequency_counter import FrequencyCounter
 
 
 class EegPlotsCreator:
-    def __init__(self, gv, layout, data_saver):
+    def __init__(self, gv, layout):
         self.gv = gv
         self.ts = self.gv.t_queue
         self.layout = layout
@@ -41,7 +41,8 @@ class EegPlotsCreator:
         self.create_param(start_stop_layout)
 
         self.create_all_eeg_plot()
-        # Saving
+
+    def set_saver(self, data_saver):
         self.data_saver = data_saver
         self.data_saver.save_data_to_file()
 
