@@ -1,17 +1,11 @@
 # -- General Packages --
-from PyQt5.QtCore import Qt, pyqtSlot
-from pyqtgraph.dockarea import *
 import pyqtgraph as pg
-import pyqtgraph.opengl as gl              # => Try to use pyopengl directly
-# from OpenGL.GL import *
-from PyQt5.QtWidgets import *
-from PyQt5 import QtGui, QtCore
+from PyQt5 import QtCore
 from functools import partial
 import numpy as np
 # Paint rectangles
-from PyQt5.QtGui import QPainter, QBrush, QPen
-from PyQt5.QtCore import Qt
 import random
+from time import sleep
 # -- My packages --
 from app.colors import *
 from .experiment import Experiment
@@ -19,10 +13,12 @@ from app.draw_rectangle import SquareItem
 
 
 class BasicP300(Experiment):
-    def __init__(self, area, dock_above):
-        super().__init__(timer_period=50)
+    def __init__(self, area, dock_above, gv):
+        super().__init__(timer_period=150)
         self.area = area
         self.dock_above = dock_above
+        self.gv = gv
+
         exp_name = 'Basic P300'
 
         self.xs = (0, 10)
@@ -40,7 +36,7 @@ class BasicP300(Experiment):
         self.show_warning_text()
 
     def create_rectangles_img(self, n_red_rect, n_green_rect):
-        rand = random.randrange(30)
+        rand = random.randrange(50)
         if rand == 0:
             # Red
             self.clear_screen()
@@ -52,8 +48,10 @@ class BasicP300(Experiment):
                 color=p300_red)
             self.refresh()
             self.plot.addItem(p)
+            self.gv.experiment_type = 1
 
-        elif rand in (1,2,3,4,5,6,7,8,9,10,11):
+
+        elif rand in (1,2,3,4,5,6,7,8,9,10):
             # Green
             self.clear_screen()
             p = SquareItem(
@@ -64,9 +62,11 @@ class BasicP300(Experiment):
                 color=p300_green)
             self.refresh()                        # So that the graph update and the rectangle are visible
             self.plot.addItem(p)
-                                            # TODO: ALEXM: Try to find a cleaner way to update the graph
+            sleep(0.05)
+                                        # TODO: ALEXM: Try to find a cleaner way to update the graph
         else:
             self.clear_screen()
+            sleep(0.1)
 
     def show_warning_text(self):
         self.warn_txt = pg.TextItem(anchor=(0, 0), fill=(0, 0, 0, 0))
