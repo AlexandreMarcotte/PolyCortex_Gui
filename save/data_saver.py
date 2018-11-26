@@ -14,8 +14,9 @@ class DataSaver:
         self.gv = gv
         init_time = datetime.now()
         self.gv.save_path = f'./experiment_csv/2exp_pinch_close_{init_time}.csv'
+        self.create_layout()
 
-    def save_data_to_file(self):
+    def create_layout(self):
         # Create text box to show or enter path to data file
         self.save_path_line_edit = QtGui.QLineEdit(self.gv.save_path)
         self.layout.addWidget(self.save_path_line_edit, 0, 0, 1, 2)

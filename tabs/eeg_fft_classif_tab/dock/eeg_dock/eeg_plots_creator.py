@@ -44,7 +44,6 @@ class EegPlotsCreator:
 
     def set_saver(self, data_saver):
         self.data_saver = data_saver
-        self.data_saver.save_data_to_file()
 
     def create_param(self, start_stop_layout):
         vert_scale_txt = QLabel('    Vert scale: ')
