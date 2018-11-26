@@ -114,7 +114,8 @@ class MainWindow(QMainWindow):
             self, "QFileDialog.getOpenFileName()", "",
             "All Files (*);;Python Files (*.py)", options=options)
         if file_name:
-            self.stream_path = file_name
+            self.gv.stream_path = file_name
+            print('Streaming from: ', file_name)
 
     def create_menu_start_game(self):
         # ---Start game---

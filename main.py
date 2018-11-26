@@ -5,7 +5,7 @@ import sys
 # Dark theme
 import atexit
 # --My packages--
-from app.dispatcher import Dispatcher, VizProcess, FilterProcess
+from app.dispatcher import Dispatcher
 from mainwindow import MainWindow
 from save.write_to_file import write_to_file
 
@@ -25,8 +25,8 @@ def main():
 
     @atexit.register   # work only if click on x on the window
     def save_data_at_exit():
-        print('saving')
-        # write_to_file(gv)                                      # TODO: ALEXM: kill all the thread here (create a JOIN method in the threads)
+        # print('saving')
+        write_to_file(gv)                                      # TODO: ALEXM: kill all the thread here (create a JOIN method in the threads)
 
     # start the main tread that contains all the timers
     sys.exit(app.exec_())

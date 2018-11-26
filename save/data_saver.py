@@ -1,6 +1,3 @@
-import threading
-import numpy as np
-from time import sleep
 import atexit
 from functools import partial
 from datetime import datetime

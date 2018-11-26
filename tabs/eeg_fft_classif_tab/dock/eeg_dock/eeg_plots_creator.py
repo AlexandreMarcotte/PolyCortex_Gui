@@ -29,7 +29,6 @@ class EegPlotsCreator:
         self.ts = self.gv.t_queue
         self.layout = layout
         self.timers = []
-        self.stream_path = f'experiment_csv/2exp_pinch_close_2018-08-29 18:55:22.627296.csv'
         self.plots = []
         self.eeg_graphes = []
         self.zero_q = deque(
@@ -159,7 +158,7 @@ class EegPlotsCreator:
             create_data.start()
 
         elif self.gv.stream_origin == 'Stream from file':
-            file_reader = FileReader(self.gv, self.stream_path, self.gv.collect_data,
+            file_reader = FileReader(self.gv, self.gv.stream_path, self.gv.collect_data,
                                      read_freq=250)
             file_reader.start()
 

@@ -25,7 +25,7 @@ class ClassifGraph(Graph):
             # If the array is not filled with only 0 values
             if d.any():
                 d = uniformize_data(d, len(d))
-                classif_value = self.clf.predict([d])[0]
+                # classif_value = self.clf.predict([d])[0]
             else:
                 classif_value= 0
             # set all the same type for all the interval of classification

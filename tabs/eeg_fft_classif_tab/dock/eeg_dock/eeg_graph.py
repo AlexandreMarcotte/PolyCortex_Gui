@@ -22,4 +22,4 @@ class EegGraph:
         else:
             self.curve.setData(self.q)
             # Detect the occurence of events by placing a region around them
-            self.regions.detect_exp_event()
+            # self.regions.detect_exp_event()

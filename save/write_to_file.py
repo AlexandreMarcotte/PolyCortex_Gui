@@ -13,11 +13,13 @@ def write_to_file(gv):
                 print('plus grand')
                 gv.all_data[i].pop()
 
+        print(len(gv.all_t))
         if len(gv.all_t) > min_len:
             gv.all_t.pop()
 
+        print(len(gv.all_experiment_val) )
         if len(gv.all_experiment_val) > min_len:
-            self.all_experiment_data.pop()
+            gv.all_experiment_val.pop()
 
         # Create the proper dimension for the concatenation
         t_queue = np.array(gv.all_t)[None, :]

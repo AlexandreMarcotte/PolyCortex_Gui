@@ -472,11 +472,11 @@ class OpenBCIBoard(object):
   #Adds a filter at 60hz to cancel out ambient electrical noise
   def enable_filters(self):
     self.ser.write(b'f')
-    self.filtering_data = True;
+    self.filtering_data = True
 
   def disable_filters(self):
     self.ser.write(b'g')
-    self.filtering_data = False;
+    self.filtering_data = False
 
   def test_signal(self, signal):
     """ Enable / disable test signal """

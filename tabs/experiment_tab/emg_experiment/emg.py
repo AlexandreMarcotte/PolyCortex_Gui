@@ -18,7 +18,7 @@ class EmgDock(Experiment):
 
         self.actions = []
         self.action_name = 'ACTION'
-        self.num_of_action = 20
+        self.num_of_action = 5
         self.action_itt = 0
 
         self.end_experiment = False
@@ -90,7 +90,7 @@ class EmgDock(Experiment):
         if self.actions == [] and self.end_experiment:
             print('End of EMG Experiment reached')
             self.show_end_txt()
-            self.stop_emg()
+            self.stop()
 
     def show_end_txt(self):
         self.end_txt = pg.TextItem(anchor=(0, 0), fill=(0, 0, 0, 0))
