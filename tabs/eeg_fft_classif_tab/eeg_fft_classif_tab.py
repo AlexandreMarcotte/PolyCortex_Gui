@@ -25,8 +25,7 @@ class EegFftClassifTab(QWidget):
         self.parent = parent
 
         self.init_tab_w()
-        self.menu_docks = self.parent.main_menu.addMenu('Docks')
-        self.parent.main_menu.addMenu(self.menu_docks)
+        self.docks_menu = self.create_docks_menu()
         self.init_dock_layout()
 
     def init_tab_w(self):
@@ -34,55 +33,60 @@ class EegFftClassifTab(QWidget):
         self.area = DockArea()
         self.layout.addWidget(self.area)
 
+    def create_docks_menu(self):
+        docks_menu = self.parent.main_menu.addMenu('Docks')
+        self.parent.main_menu.addMenu(docks_menu)
+        return docks_menu
+
     def init_dock_layout(self):
-        # - EEG
-        self.create_layout('EEG', EegPlotsCreator, [self.gv], 'left',
-                           size=(6, 10), scroll=True)
-        # - FFT
-        self.create_layout('FFT', FftGraph, [self.gv], 'right',
-                           size=(5, 10))
-        # - Wave plot
-        self.create_layout('Wave', WaveGraph, [self.gv], 'bottom',
-                           self.FFT.dock, size=(5, 10))
-        # - Acceleration Dock
-        self.create_layout('Classification', ClassifPlotCreator, [self.gv],
-                           'below', self.Wave.dock, size=(5, 10))
-        # - Banner dock
-        self.create_layout('Banner', Banner, [], 'bottom', self.EEG.dock)
-        # - Saving dock
-        self.create_layout('Saving', DataSaver, [self, self.gv], 'below',
-                           self.Banner.dock)
-        self.EEG.dock_obj.set_saver(self.Saving.dock_obj)
-        # - Viz 3D dock
-        self.create_layout('Visualization3D', Viz3D, [self.gv], 'below',
-                           self.Classification.dock)
+        self.eeg = DockHandler(
+            'EEG', self, self.docks_menu, EegPlotsCreator, [self.gv], 'left',
+            size=(6, 10), scroll=True)
+
+        self.fft = DockHandler(
+            'FFT', self, self.docks_menu, FftGraph, [self.gv], 'right',
+             size=(5, 10))
+
+        self.Wave = DockHandler(
+            'Wave', self, self.docks_menu, WaveGraph, [self.gv], 'bottom',
+            self.fft.dock, size=(5, 10))
+
+        self.classification = DockHandler(
+            'Classification', self, self.docks_menu, ClassifPlotCreator,
+             [self.gv], 'below', self.Wave.dock, size=(5, 10))
+
+        self.banner = DockHandler(
+            'Banner', self, self.docks_menu, Banner, [], 'bottom',
+            self.eeg.dock)
+
+        self.saving = DockHandler(
+            'Saving', self, self.docks_menu, DataSaver, [self, self.gv],
+            'below', self.banner.dock)
+        self.eeg.dock_obj.set_saver(self.saving.dock_obj)
+
+        self.visualization3D = DockHandler(
+            'Visualization3D', self, self.docks_menu, Viz3D, [self.gv],
+            'below', self.classification.dock)
 
         self.setLayout(self.layout)
 
-    def create_layout(self, dock_name, dock_obj, param, pos, related_dock=None, size=(1, 1),
-                      hide_title=False, scroll=False):
-        dock = Dock(dock_name, size=size)
-        self.area.addDock(dock, pos, related_dock)
-        layout = pg.LayoutWidget()
-        if scroll:
-            scroll = QScrollArea()
-            scroll.setWidgetResizable(True)
-            dock.addWidget(scroll)
-            scroll.setWidget(layout)
-        else:
-            dock.addWidget(layout)
-        if hide_title:
-            dock.hideTitleBar()
-
-        param.append(layout)
-        exec(f'''self.{dock_name} = DockHandler(dock_name, self, self.menu_docks, dock, dock_obj, param)''')
-
 
 class DockHandler:
-    def __init__(self, name, mainwindow, menu, dock, DockObj, param):
+    def __init__(self, name, tab, menu, DockObj, param, pos, related_dock=None,
+                 size=(1, 1), hide_title=False, scroll=False):
         self.name = name
-        self.mainwindow = mainwindow
-        self.dock = dock
+        self.DockObj = DockObj
+        self.param = param
+        self.tab = tab
+        self.pos = pos
+        self.related_dock = related_dock
+        self.size = size
+        self.hide_title = hide_title
+        self.scroll = scroll
+
+        self.first_time = True
+
+        self.dock = self.init_dock()
 
         self.dock_obj = DockObj(*param)
         if name == 'EEG':
@@ -90,17 +94,55 @@ class DockHandler:
 
         self.state = 'checked'
 
-        self.check_actn = QtGui.QAction(name, mainwindow, checkable=True)
+        self.check_actn = QtGui.QAction(name, tab, checkable=True)
         self.check_actn.setChecked(True)
         self.check_actn.triggered.connect(self.open_close_dock)
         self.check_actn.setStatusTip(f'Check {name} to open this dock...')
 
         menu.addAction(self.check_actn)
 
+    def init_dock(self):
+        dock = Dock(self.name, size=self.size)
+        try:
+            self.tab.area.addDock(dock, self.pos, self.related_dock)
+        except AttributeError:  # The related dock as been deleted
+            print('except')
+            self.tab.area.addDock(dock, 'bottom')
+        layout = pg.LayoutWidget()
+        if self.scroll:
+            scroll = QScrollArea()
+            scroll.setWidgetResizable(True)
+            dock.addWidget(scroll)
+            scroll.setWidget(layout)
+        else:
+            dock.addWidget(layout)
+        if self.hide_title:
+            dock.hideTitleBar()
+
+        if self.first_time:
+            self.param.append(layout)
+            self.first_time = False
+        else:
+            self.param.pop()
+            self.param.append(layout)
+
+        return dock
+
     def open_close_dock(self):
         print('My name is: ', self.name)
         if self.state == 'checked':
             self.dock.close()
             self.state = 'unchecked'
+
+        elif self.state == 'unchecked':
+            # self.tab.init_tab_w()
+            self.dock = self.init_dock()
+            self.dock_obj = self.DockObj(*self.param)
+            self.tab.setLayout(self.tab.layout)
+            self.state = 'checked'
+            if self.name == 'EEG':
+                self.tab.eeg.dock_obj.set_saver(self.tab.saving.dock_obj)
+
+
 
 
