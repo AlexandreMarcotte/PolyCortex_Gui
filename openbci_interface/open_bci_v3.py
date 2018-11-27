@@ -85,7 +85,7 @@ class OpenBCIBoard(object):
 
     time.sleep(2)
     #Initialize 32-bit board, doesn't affect 8bit board
-    self.ser.write(b'v');
+    self.ser.write(b'v')
 
     #wait for device to be ready
     time.sleep(1)
@@ -127,7 +127,7 @@ class OpenBCIBoard(object):
 
   def ser_inWaiting(self):
     """Access serial port object for inWaiting""" 
-    return self.ser.inWaiting();
+    return self.ser.inWaiting()
     
   def getSampleRate(self):
     if self.daisy:
@@ -228,7 +228,7 @@ class OpenBCIBoard(object):
             self.warn('Skipped %d bytes before start found' %(rep))
             rep = 0;
           packet_id = struct.unpack('B', read(1))[0] #packet id goes from 0-255
-          log_bytes_in = str(packet_id);
+          log_bytes_in = str(packet_id)
 
           self.read_state = 1
 
@@ -241,7 +241,7 @@ class OpenBCIBoard(object):
           literal_read = read(3)
 
           unpacked = struct.unpack('3B', literal_read)
-          log_bytes_in = log_bytes_in + '|' + str(literal_read);
+          log_bytes_in = log_bytes_in + '|' + str(literal_read)
 
           #3byte int in 2s compliment
           if (unpacked[0] > 127):
@@ -260,7 +260,7 @@ class OpenBCIBoard(object):
           else:
             channel_data.append(myInt)
 
-        self.read_state = 2;
+        self.read_state = 2
 
       #---------Accelerometer Data---------
       elif self.read_state == 2:
@@ -269,18 +269,18 @@ class OpenBCIBoard(object):
 
           #short = h
           acc = struct.unpack('>h', read(2))[0]
-          log_bytes_in = log_bytes_in + '|' + str(acc);
+          log_bytes_in = log_bytes_in + '|' + str(acc)
 
           if self.scaling_output:
             aux_data.append(acc*scale_fac_accel_G_per_count)
           else:
               aux_data.append(acc)
 
-        self.read_state = 3;
+        self.read_state = 3
       #---------End Byte---------
       elif self.read_state == 3:
         val = struct.unpack('B', read(1))[0]
-        log_bytes_in = log_bytes_in + '|' + str(val);
+        log_bytes_in = log_bytes_in + '|' + str(val)
         self.read_state = 0 #read next packet
         if (val == END_BYTE):
           sample = OpenBCISample(packet_id, channel_data, aux_data)
@@ -323,7 +323,7 @@ class OpenBCIBoard(object):
       #log how many packets where sent succesfully in between warnings
       if self.log_packet_count:
         logging.info('Data packets received:'+str(self.log_packet_count))
-        self.log_packet_count = 0;
+        self.log_packet_count = 0
       logging.warning(text)
     print("Warning: %s" % text)
 
@@ -372,14 +372,14 @@ class OpenBCIBoard(object):
   def print_register_settings(self):
     self.ser.write(b'?')
     time.sleep(0.5)
-    self.print_incoming_text();
+    self.print_incoming_text()
   #DEBBUGING: Prints individual incoming bytes
   def print_bytes_in(self):
     if not self.streaming:
       self.ser.write(b'b')
       self.streaming = True
     while self.streaming:
-      print(struct.unpack('B',self.ser.read())[0]);
+      print(struct.unpack('B',self.ser.read())[0])
 
       '''Incoming Packet Structure:
     Start Byte(1)|Sample ID(1)|Channel Data(24)|Aux Data(6)|End Byte(1)
@@ -387,7 +387,7 @@ class OpenBCIBoard(object):
 
   def print_packets_in(self):
     while self.streaming:
-      b = struct.unpack('B', self.ser.read())[0];
+      b = struct.unpack('B', self.ser.read())[0]
       
       if b == START_BYTE:
         self.attempt_reconnect = False
@@ -395,38 +395,38 @@ class OpenBCIBoard(object):
           logging.debug('SKIPPED\n' + skipped_str + '\nSKIPPED')
           skipped_str = ''
 
-        packet_str = "%03d"%(b) + '|';
-        b = struct.unpack('B', self.ser.read())[0];
-        packet_str = packet_str + "%03d"%(b) + '|';
+        packet_str = "%03d"%(b) + '|'
+        b = struct.unpack('B', self.ser.read())[0]
+        packet_str = packet_str + "%03d"%(b) + '|'
         
         #data channels
         for i in range(24-1):
-          b = struct.unpack('B', self.ser.read())[0];
-          packet_str = packet_str + '.' + "%03d"%(b);
+          b = struct.unpack('B', self.ser.read())[0]
+          packet_str = packet_str + '.' + "%03d"%(b)
 
-        b = struct.unpack('B', self.ser.read())[0];
-        packet_str = packet_str + '.' + "%03d"%(b) + '|';
+        b = struct.unpack('B', self.ser.read())[0]
+        packet_str = packet_str + '.' + "%03d"%(b) + '|'
 
         #aux channels
         for i in range(6-1):
-          b = struct.unpack('B', self.ser.read())[0];
-          packet_str = packet_str + '.' + "%03d"%(b);
+          b = struct.unpack('B', self.ser.read())[0]
+          packet_str = packet_str + '.' + "%03d"%(b)
         
-        b = struct.unpack('B', self.ser.read())[0];
-        packet_str = packet_str + '.' + "%03d"%(b) + '|';
+        b = struct.unpack('B', self.ser.read())[0]
+        packet_str = packet_str + '.' + "%03d"%(b) + '|'
 
         #end byte
         b = struct.unpack('B', self.ser.read())[0];
         
         #Valid Packet
         if b == END_BYTE:
-          packet_str = packet_str + '.' + "%03d"%(b) + '|VAL';
+          packet_str = packet_str + '.' + "%03d"%(b) + '|VAL'
           print(packet_str)
           #logging.debug(packet_str)
         
         #Invalid Packet
         else:
-          packet_str = packet_str + '.' + "%03d"%(b) + '|INV';
+          packet_str = packet_str + '.' + "%03d"%(b) + '|INV'
           #Reset
           self.attempt_reconnect = True
           

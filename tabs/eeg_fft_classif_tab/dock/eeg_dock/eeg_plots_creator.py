@@ -5,6 +5,8 @@ import pyqtgraph as pg
 from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import *
+from PyQt5.QtCore import Qt
+import re
 # -- My packages --
 ## generate signal
 from generate_signal.from_openbci import stream_data_from_OpenBCI
@@ -38,31 +40,49 @@ class EegPlotsCreator:
         start_stop_layout = self.add_sub_layout(self.layout, 0)
         self.create_buttons(start_stop_layout)
         # Plot parameter
-        self.create_param(start_stop_layout)
+        self.create_param_combo_box(start_stop_layout)
 
         self.create_all_eeg_plot()
 
     def set_saver(self, data_saver):
         self.data_saver = data_saver
 
-    def create_param(self, start_stop_layout):
-        vert_scale_txt = QLabel('    Vert scale: ')
-        start_stop_layout.addWidget(vert_scale_txt, 1, 0)
+    def create_param_combo_box(self, start_stop_layout):
+        vert_scale_label = QLabel('Vert scale: ')
+        vert_scale_label.setFrameShape(QFrame.Panel)
+        vert_scale_label.setFrameShadow(QFrame.Sunken)
+        vert_scale_label.setLineWidth(1)
+        vert_scale_label.setAlignment(Qt.AlignCenter)
+        start_stop_layout.addWidget(vert_scale_label, 1, 0)
         vert_scale = QComboBox()
-        vert_scale.addItem('Auto')
-        vert_scale.addItem('10 uv')
-        vert_scale.addItem('100 uv')
-        vert_scale.addItem('1000 uv')
+        for val in ['Auto', '10 uv', '100 uv', '1000 uv', '10000 uv', '100000 uv']:
+            vert_scale.addItem(val)
+        vert_scale.setEditable(True)
+        vert_scale.activated[str].connect(self.scale_y_axis)
         start_stop_layout.addWidget(vert_scale, 1, 1)
 
-        horiz_scale = QLabel('    Horiz scale: ')
-        start_stop_layout.addWidget(horiz_scale, 1, 2)
+        horiz_scale_label = QLabel('Horiz scale: ')
+        horiz_scale_label.setFrameShape(QFrame.Panel)
+        horiz_scale_label.setFrameShadow(QFrame.Sunken)
+        horiz_scale_label.setLineWidth(1)
+        horiz_scale_label.setAlignment(Qt.AlignCenter)
+        start_stop_layout.addWidget(horiz_scale_label, 1, 2)
         horiz_scale = QComboBox()
-        horiz_scale.addItem('5s')
-        horiz_scale.addItem('7s')
-        horiz_scale.addItem('10s')
+        for val in ['5s', '7s', '10s']:
+            horiz_scale.addItem(val)
         start_stop_layout.addWidget(horiz_scale, 1, 3)
 
+    def scale_y_axis(self, txt):
+        try:
+            if txt == 'Auto':
+                for plot in self.plots:
+                    plot.enableAutoRange()
+            else:
+                r = int(re.search(r'\d+', txt).group())
+                for plot in self.plots:
+                    plot.setYRange(-r, r)
+        except AttributeError as e:
+            print("Come on bro, this  value doesn't make sens")
 
     def create_all_eeg_plot(self):
         """
@@ -76,6 +96,7 @@ class EegPlotsCreator:
 
     def add_ch_layout(self, ch, time_ch=False, plot_pos=(0, 1, 5, 6)):
         plot, q, rowspan = self.create_plot(ch)
+        self.plots.append(plot)
         self.ch_layout.addWidget(plot, *plot_pos)
         curve = self.create_curve(plot, ch, q)
         eeg_graph = EegGraph(ch, q, self.gv, self.ts, curve, self.regions)

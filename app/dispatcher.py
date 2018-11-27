@@ -13,7 +13,7 @@ class Dispatcher:
         self.filter_itt = 0
         self.once_every = 20
         self.filter_chunk = []
-        self.use_filter = True
+        self.use_filter = False
         self.N_DATA_BEFORE_FILTER = 1000
 
         # Variable change in the menubar

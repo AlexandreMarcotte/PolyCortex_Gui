@@ -45,7 +45,7 @@ class EegFftClassifTab(QWidget):
 
         self.fft = DockHandler(
             'FFT', self, self.docks_menu, FftGraph, [self.gv], 'right',
-             size=(5, 10))
+             size=(5, 10), scroll=True)
 
         self.Wave = DockHandler(
             'Wave', self, self.docks_menu, WaveGraph, [self.gv], 'bottom',
@@ -66,7 +66,7 @@ class EegFftClassifTab(QWidget):
 
         self.visualization3D = DockHandler(
             'Visualization3D', self, self.docks_menu, Viz3D, [self.gv],
-            'below', self.classification.dock)
+            'below', self.classification.dock, scroll=True)
 
         self.setLayout(self.layout)
 
