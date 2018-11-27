@@ -25,9 +25,8 @@ def main():
 
     @atexit.register   # work only if click on x on the window
     def save_data_at_exit():
-        pass
         # print('saving')
-        # write_to_file(gv)                                      # TODO: ALEXM: kill all the thread here (create a JOIN method in the threads)
+        write_to_file(gv)                                      # TODO: ALEXM: kill all the thread here (create a JOIN method in the threads)
 
     # start the main tread that contains all the timers
     sys.exit(app.exec_())

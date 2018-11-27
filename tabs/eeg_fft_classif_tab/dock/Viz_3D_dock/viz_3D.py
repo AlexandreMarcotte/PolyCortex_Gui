@@ -30,6 +30,7 @@ class Viz3D:
         for i, line in enumerate(self.y):
             self.traces[i] = gl.GLLinePlotItem()
             self.w.addItem(self.traces[i])
+            self.traces[i].rotate(20*i, 1, 0, 0)
 
         self.timer = QtCore.QTimer()
         self.on_off_button()
