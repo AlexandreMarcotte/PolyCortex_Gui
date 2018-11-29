@@ -25,8 +25,8 @@ class Viz3D:
         self.sphere = Sphere()
         # self.view.addItem(self.sphere.item)
 
-        # self.create_total_brain()
-
+        self.create_total_brain()
+        #
         self.traces = {}
         self.create_plot_lines()
 

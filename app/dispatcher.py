@@ -15,6 +15,8 @@ class Dispatcher:
         self.filter_chunk = []
         self.use_filter = True
         self.N_DATA_BEFORE_FILTER = 1000
+        self.min_filter = 2
+        self.max_filter = 45
 
         # Variable change in the menubar
         self.stream_origin = 'Stream from synthetic data'
@@ -26,7 +28,7 @@ class Dispatcher:
         self.read_period = 1 / self.desired_read_freq
 
         self.data_queue = [deque(np.zeros(DEQUE_LEN),
-                                 maxlen=DEQUE_LEN) for _ in range(N_CH)]   # One deque per channel initialize at 0
+                                 maxlen=DEQUE_LEN) for _ in range(N_CH)]      # One deque per channel initialize at 0
 
         self.experiment_type = 0
         self.t_queue = deque(np.zeros(self.DEQUE_LEN), maxlen=self.DEQUE_LEN)
@@ -75,7 +77,8 @@ class Dispatcher:
 
         if self.filter_itt % self.once_every == 0:
             y = butter_bandpass_filter(self.filter_process.data_queue[ch],     # TODO: ALEXM: There is a problem when the filtering of a bandpass filter filter all 0 it increase the signal to infinity
-                                       2, 45, self.desired_read_freq, order=3)
+                                       self.min_filter, self.max_filter,
+                                       self.desired_read_freq, order=3)
             self.filter_chunk.append(list(y[-self.once_every:][::-1]))
         # put the data once at the time at every loop so the signal is not showing
         # all jerky

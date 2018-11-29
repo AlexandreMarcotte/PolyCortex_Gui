@@ -34,16 +34,16 @@ class StaticGraphTab(QWidget):
         return file_selector, left_panel, right_panel
 
     def create_splitter(self, portion_graph_gr, full_graph_gr):
-        splitter = QSplitter(Qt.Horizontal)
-        splitter.addWidget(portion_graph_gr)
-        splitter.addWidget(full_graph_gr)
-        return splitter
+        sp = QSplitter(Qt.Horizontal)
+        sp.addWidget(portion_graph_gr)
+        sp.addWidget(full_graph_gr)
+        return sp
 
     def create_scroll(self, splitter):
-        scroller = QScrollArea()
-        scroller.setWidgetResizable(True)
-        scroller.setWidget(splitter)
-        return scroller
+        sc = QScrollArea()
+        sc.setWidgetResizable(True)
+        sc.setWidget(splitter)
+        return sc
 
     def add_gr_to_main_widget(self, file_selector_gr, scroller):
         self.layout.addWidget(file_selector_gr)

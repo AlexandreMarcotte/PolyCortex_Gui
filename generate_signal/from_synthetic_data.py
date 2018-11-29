@@ -45,7 +45,7 @@ class CreateSyntheticData(threading.Thread):
                 else:
                     imp = 0
                 if ch == 0:
-                    signal = self.s1[i] + self.s4[i] #+ random()*self.m + imp
+                    signal = self.s1[i] + self.s2[i] + self.s3[i] + self.s4[i] + random() + imp
                 elif ch == 1:
                     signal = self.s1[i] + 5
                 elif ch == 2:

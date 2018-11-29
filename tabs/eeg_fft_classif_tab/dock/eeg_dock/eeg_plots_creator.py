@@ -201,7 +201,7 @@ class EegPlotsCreator:
 
     def start_timers(self):
         for i, tm in enumerate(self.timers):
-            self.timers[i].start()
+            self.timers[i].start(10)
         self.start_freq_counter_timer()
 
     def start_freq_counter_timer(self):

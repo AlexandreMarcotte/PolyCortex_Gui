@@ -14,6 +14,7 @@ from pyqtgraph import functions as fn
 from collections import deque
 import numpy as np
 import re
+from functools import partial
 # -- My packages --
 from app.colors import *
 from app.activation_b import btn
@@ -37,7 +38,8 @@ class FftGraph:
         self.curve_freq = []
         
         self.plot = self.init_plot()
-        self.add_regions_to_plot()
+        self.add_regions_filter_to_plot()
+        self.connect_classif_region()
         self.add_param_tree()
         self.on_off_button()
         self.create_all_combobox()
@@ -91,10 +93,25 @@ class FftGraph:
     def filterChanged(self):
         print('cool')
 
-    def add_regions_to_plot(self):
+    def add_regions_filter_to_plot(self):
         """Add a region to the plot that will be use as the bondaries for
         the filter (blue for pass and red for cut"""
-        self.plot.addItem(pg.LinearRegionItem([0, 100]), ignoreBounds=True)
+        # Band pass filter
+        self.pass_f_region = pg.LinearRegionItem([self.gv.min_filter,
+                                                  self.gv.max_filter])
+        self.pass_f_region.setBrush(blue)
+        self.plot.addItem(self.pass_f_region, ignoreBounds=True)
+        # Band cut filter
+        self.cut_f_region = pg.LinearRegionItem([50, 60])
+        self.cut_f_region.setBrush(red)
+        self.plot.addItem(self.cut_f_region, ignoreBounds=True)
+
+    def connect_classif_region(self):
+        self.pass_f_region.sigRegionChanged.connect(
+            partial(self.update_filter_region))
+
+    def update_filter_region(self):
+        self.gv.min_filter, self.gv.max_filter = self.pass_f_region.getRegion()
 
     def update_plotting(self):
         self.all_frequency()
@@ -111,7 +128,7 @@ class FftGraph:
 
     def on_off_button(self):
         btn('Start FFT', self.plot_layout, (0, 0), func_conn=self.start,
-            color=blue_b, toggle=True, txt_color=white)
+            color=blue_b, toggle=True, txt_color=white, min_width=100)
 
     def create_all_combobox(self):
         self.create_param_combobox(
