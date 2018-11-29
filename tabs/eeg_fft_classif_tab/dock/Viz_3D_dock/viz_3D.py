@@ -25,7 +25,7 @@ class Viz3D:
         self.sphere = Sphere()
         # self.view.addItem(self.sphere.item)
 
-        self.create_total_brain()
+        # self.create_total_brain()
         #
         self.traces = {}
         self.create_plot_lines()
@@ -84,7 +84,6 @@ class Viz3D:
             self.timer.stop()
             # self.brain_v.timer.stop()
             # self.sphere.timer.stop()
-
 
 
 class Sphere:

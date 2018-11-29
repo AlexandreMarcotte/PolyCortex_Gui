@@ -18,6 +18,8 @@ class Dispatcher:
         self.min_filter = 2
         self.max_filter = 45
 
+        self.fft = [None for _ in range(N_CH)]
+
         # Variable change in the menubar
         self.stream_origin = 'Stream from synthetic data'
         self.stream_path = f'experiment_csv/2exp_pinch_close_2018-08-29 18:55:22.627296.csv'

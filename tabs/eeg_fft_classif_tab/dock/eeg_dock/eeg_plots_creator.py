@@ -127,6 +127,7 @@ class EegPlotsCreator:
         plot = pg.PlotWidget(background=dark_grey)
         plot.plotItem.showGrid(x=True, y=True, alpha=0.2)
         plot.plotItem.setLabel(axis='left', units='v')
+        plot.setYRange(-3000, 3000)
         # Create the last plot only to keep track of the time (with zeros as q)
         if ch == self.gv.N_CH:
             # Add the label only for the last channel as they all have the same
@@ -201,7 +202,7 @@ class EegPlotsCreator:
 
     def start_timers(self):
         for i, tm in enumerate(self.timers):
-            self.timers[i].start(10)
+            self.timers[i].start(35)
         self.start_freq_counter_timer()
 
     def start_freq_counter_timer(self):

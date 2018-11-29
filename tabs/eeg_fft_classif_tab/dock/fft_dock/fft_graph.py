@@ -9,7 +9,6 @@ from pyqtgraph import parametertree as ptree
 from pyqtgraph.widgets.DataFilterWidget import DataFilterParameter
 from pyqtgraph.graphicsItems.TextItem import TextItem
 from pyqtgraph import getConfigOption
-from pyqtgraph import functions as fn
 
 from collections import deque
 import numpy as np
@@ -34,6 +33,8 @@ class FftGraph:
         self.layout.addWidget(splitter)
 
         self.timer = QtCore.QTimer()
+        self.timer.timeout.connect(self.update_plotting)
+
         self.N_DATA = self.gv.DEQUE_LEN
         self.curve_freq = []
         
@@ -62,14 +63,14 @@ class FftGraph:
         plot.plotItem.showGrid(x=True, y=True, alpha=0.3)
         plot.plotItem.setLabel(axis='bottom', text='Frequency', units='Hz')    # TODO: ALEXM : verifier l'uniter
         plot.plotItem.setLabel(axis='left', text='Amplitude', units='None')
-        # self.plot.setYRange(0, np.log(1500000))
+        plot.setXRange(0, 100)
+        plot.setYRange(0, 1000000)
         # Add to tab layout
         self.plot_layout.addWidget(plot, 2, 0, 1, 5)
         for ch in range(self.gv.N_CH):
             self.curve_freq.append(
                 plot.plot(deque(np.ones(self.N_DATA), maxlen=self.N_DATA)))
         # Associate the plot to an FftGraph object
-        self.timer.timeout.connect(self.update_plotting)
         return plot
 
     def add_param_tree(self):
@@ -80,8 +81,6 @@ class FftGraph:
 
         self.filter_layout.addWidget(self.ptree)
 
-        # bg = fn.mkColor(getConfigOption('background'))
-        # bg.setAlpha(150)
         self.filterText = TextItem(border=getConfigOption('foreground'))
         self.filterText.setPos(60,20)
         self.filterText.setParentItem(self.plot.plotItem)
@@ -102,7 +101,7 @@ class FftGraph:
         self.pass_f_region.setBrush(blue)
         self.plot.addItem(self.pass_f_region, ignoreBounds=True)
         # Band cut filter
-        self.cut_f_region = pg.LinearRegionItem([50, 60])
+        self.cut_f_region = pg.LinearRegionItem([80, 90])
         self.cut_f_region.setBrush(red)
         self.plot.addItem(self.cut_f_region, ignoreBounds=True)
 
@@ -122,8 +121,9 @@ class FftGraph:
                 remove_first_data=0, data_q=self.gv.data_queue[ch],
                 t_q=self.gv.t_queue)
             freq_range = freq_calculator.get_freq_range()
-            # Keep all frequency possibles                                     # TODO: ALEXM: Change frequency in function of time
-            self.curve_freq[ch].setData(freq_range, freq_calculator.fft())                       # TODO: ALEXM prendre abs ou real? avec real il y a des valeurs negatives est-ce que c'est normal?
+            # Keep all frequency possibles
+            self.gv.fft[ch] = freq_calculator.fft()                            # TODO: ALEXM: Change frequency in function of time
+            self.curve_freq[ch].setData(freq_range, self.gv.fft[ch])           # TODO: ALEXM prendre abs ou real? avec real il y a des valeurs negatives est-ce que c'est normal?
             self.curve_freq[ch].setPen(pen_colors[ch])
 
     def on_off_button(self):
@@ -143,7 +143,7 @@ class FftGraph:
         self.create_param_combobox(
             'Log', (0, 3), ['False', 'True'], self.log_axis)
         self.create_param_combobox(
-            'Ch ON', (0, 4),
+            'Ch On', (0, 4),
             ['ch 1', 'ch 2', 'ch 3', 'ch 4', 'ch 5', 'ch 6', 'ch 7', 'ch 8'],
             self.ch_on_off, editable=False)
 

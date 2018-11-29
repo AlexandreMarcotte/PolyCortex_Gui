@@ -35,7 +35,10 @@ class Brain3DTab(QWidget):
         # Create viewer
         w = gl.GLViewWidget()
         w.setCameraPosition(0, 0, 90)
-        w.opts['distance'] = 500
+        w.opts['distance'] = 600
+        # w.opts['elevation'] = 500
+        # w.opts['azimuth'] = 45
+
         self.layout.addWidget(w)
         w.addItem(v)
 
@@ -79,7 +82,7 @@ class Obj3DCreator:
                         pos.append(np.array((x,y,z)))
         print('ok')
 
-        item = gl.GLScatterPlotItem(pos=np.array(pos), color=(0,0.3,1,0.5),
+        item = gl.GLScatterPlotItem(pos=np.array(pos), color=(0,0.3,1,0.2),
                                          size=1, pxMode=True)
         item.translate(-self.brain.shape[0]/2 * scale,
                     -self.brain.shape[1]/2 * scale,

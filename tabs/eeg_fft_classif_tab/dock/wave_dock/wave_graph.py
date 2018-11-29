@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import *
-from PyQt5 import QtGui
+from PyQt5 import QtGui, QtCore
+
 
 import numpy as np
 import pyqtgraph as pg
@@ -13,7 +14,7 @@ class WaveGraph:
         self.gv = gv
         self.layout = layout
 
-        self.add_head_img()
+        # self.add_head_img()
         # self.plot = self.init_plot()
         self.init_on_off_button()
         
@@ -32,7 +33,9 @@ class WaveGraph:
         # Add to tab layout
         self.layout.addWidget(plot, 1, 0)
         # Create the bar chart only for the first channel
-        # self.timer.timeout.connect(self.update)
+        self.timer = QtCore.QTimer()
+
+        self.timer.timeout.connect(self.update)
 
         return plot
 
@@ -46,7 +49,7 @@ class WaveGraph:
             color=blue_b, toggle=True, txt_color=white)
 
     def start(self):
-        pass
+        self.timer.start()
 
     def update(self):
         # Remove All item from the graph
