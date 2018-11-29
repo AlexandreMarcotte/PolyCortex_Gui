@@ -5,6 +5,11 @@ from PyQt5 import QtGui, QtCore
 from PyQt5.QtCore import Qt
 
 import pyqtgraph as pg
+from pyqtgraph import parametertree as ptree
+from pyqtgraph.widgets.DataFilterWidget import DataFilterParameter
+from pyqtgraph.graphicsItems.TextItem import TextItem
+from pyqtgraph import getConfigOption
+from pyqtgraph import functions as fn
 
 from collections import deque
 import numpy as np
@@ -22,13 +27,32 @@ class FftGraph:
         self.gv = gv
         self.layout = layout
 
+        plot_gr, self.plot_layout = self.create_gr()
+        filter_gr, self.filter_layout = self.create_gr()
+        splitter = self.create_splitter(plot_gr, filter_gr)
+        self.layout.addWidget(splitter)
+
         self.timer = QtCore.QTimer()
         self.N_DATA = self.gv.DEQUE_LEN
         self.curve_freq = []
         
         self.plot = self.init_plot()
+        self.add_regions_to_plot()
+        self.add_param_tree()
         self.on_off_button()
         self.create_all_combobox()
+
+    def create_gr(self):
+        gr = QGroupBox()
+        l = QGridLayout()
+        gr.setLayout(l)
+        return gr, l
+
+    def create_splitter(self, first_gr, second_gr):
+        s = QSplitter(Qt.Horizontal)
+        s.addWidget(first_gr)
+        s.addWidget(second_gr)
+        return s
 
     def init_plot(self):
         """Create the plot widget and its characteristics"""
@@ -38,7 +62,7 @@ class FftGraph:
         plot.plotItem.setLabel(axis='left', text='Amplitude', units='None')
         # self.plot.setYRange(0, np.log(1500000))
         # Add to tab layout
-        self.layout.addWidget(plot, 2, 0, 1, 5)
+        self.plot_layout.addWidget(plot, 2, 0, 1, 5)
         for ch in range(self.gv.N_CH):
             self.curve_freq.append(
                 plot.plot(deque(np.ones(self.N_DATA), maxlen=self.N_DATA)))
@@ -46,6 +70,31 @@ class FftGraph:
         self.timer.timeout.connect(self.update_plotting)
         return plot
 
+    def add_param_tree(self):
+        self.ptree = ptree.ParameterTree(showHeader=False)
+        self.filter = DataFilterParameter()
+        params = ptree.Parameter.create(name='params', type='group', children=[self.filter])
+        self.ptree.setParameters(params, showTop=False)
+
+        self.filter_layout.addWidget(self.ptree)
+
+        # bg = fn.mkColor(getConfigOption('background'))
+        # bg.setAlpha(150)
+        self.filterText = TextItem(border=getConfigOption('foreground'))
+        self.filterText.setPos(60,20)
+        self.filterText.setParentItem(self.plot.plotItem)
+        self.filter.sigFilterChanged.connect(self.filterChanged)
+        self.filter.setFields([
+            ('butterFilter', {'units': 'Hz'}),
+        ])
+
+    def filterChanged(self):
+        print('cool')
+
+    def add_regions_to_plot(self):
+        """Add a region to the plot that will be use as the bondaries for
+        the filter (blue for pass and red for cut"""
+        self.plot.addItem(pg.LinearRegionItem([0, 100]), ignoreBounds=True)
 
     def update_plotting(self):
         self.all_frequency()
@@ -61,7 +110,7 @@ class FftGraph:
             self.curve_freq[ch].setPen(pen_colors[ch])
 
     def on_off_button(self):
-        btn('Start FFT', self.layout, (0, 0), func_conn=self.start,
+        btn('Start FFT', self.plot_layout, (0, 0), func_conn=self.start,
             color=blue_b, toggle=True, txt_color=white)
 
     def create_all_combobox(self):
@@ -88,13 +137,13 @@ class FftGraph:
         label.setFrameShadow(QFrame.Sunken)
         label.setLineWidth(1)
         label.setAlignment(Qt.AlignCenter)
-        self.layout.addWidget(label, *pos)
+        self.plot_layout.addWidget(label, *pos)
         vert_scale = QComboBox()
         for val in param:
             vert_scale.addItem(val)
         vert_scale.setEditable(editable)
         vert_scale.activated[str].connect(conn_func)
-        self.layout.addWidget(vert_scale, pos[0]+1, pos[1])
+        self.plot_layout.addWidget(vert_scale, pos[0]+1, pos[1])
 
     def scale_x_axis(self, txt):                                             # TODO: ALEXM: remove the redundancy
         try:
