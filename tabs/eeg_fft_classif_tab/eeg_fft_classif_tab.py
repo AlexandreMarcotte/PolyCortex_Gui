@@ -48,12 +48,12 @@ class EegFftClassifTab(QWidget):
              size=(5, 10), scroll=True)
 
         self.Wave = DockHandler(
-            'BrainWaves', self, self.docks_menu, WaveGraph, [self.gv], 'bottom',
+            'Wave', self, self.docks_menu, WaveGraph, [self.gv], 'below',
             self.fft.dock, size=(5, 10))
 
         self.classification = DockHandler(
             'Classification', self, self.docks_menu, ClassifPlotCreator,
-             [self.gv], 'below', self.Wave.dock, size=(5, 10))
+             [self.gv], 'bottom', self.fft.dock, size=(5, 10))
 
         self.banner = DockHandler(
             'Banner', self, self.docks_menu, Banner, [], 'bottom',
