@@ -195,3 +195,4 @@ class FftGraph:
         else:
             self.timer.stop()
             self.gv.freq_calculator.timer.stop()
+            self.gv.freq_calculator.activated = False

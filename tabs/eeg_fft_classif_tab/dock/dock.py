@@ -9,8 +9,10 @@ from app.activation_b import btn
 
 
 class Dock:
-    def __init__(self, layout):
+    def __init__(self, gv, layout, dock_type):
         self.layout = layout
+        self.gv = gv
+        self.type = dock_type
 
         plot_gr, self.plot_layout = self.create_gr()
 
@@ -36,3 +38,10 @@ class Dock:
             self.timer.start(200)
         else:
             self.timer.stop()
+            self.gv.freq_calculator.timer.stop()
+            self.gv.freq_calculator.activated = False
+
+        if self.type == 'fft':
+            if checked:
+                self.gv.freq_calculator.timer.start(100)
+                self.gv.freq_calculator.activated = True

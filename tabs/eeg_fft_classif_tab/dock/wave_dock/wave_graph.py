@@ -13,7 +13,7 @@ from timeit import timeit, Timer
 
 class WaveGraph(Dock):
     def __init__(self, gv, layout):
-        super().__init__(layout)
+        super().__init__(gv, layout, 'fft')
         self.gv = gv
         self.layout = layout
 
