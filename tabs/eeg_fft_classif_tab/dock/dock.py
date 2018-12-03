@@ -13,18 +13,12 @@ class Dock:
         self.layout = layout
 
         plot_gr, self.plot_layout = self.create_gr()
-        self.init_plot()
 
         self.layout.addWidget(plot_gr, 0, 0)
 
         self.init_on_off_button()
 
         self.timer = QtCore.QTimer()
-
-    def init_plot(self):
-        plot = pg.PlotWidget(background=dark_grey)
-        self.plot_layout.addWidget(plot, 1, 0)
-        return plot
 
     def create_gr(self):
         gr = QGroupBox()
@@ -39,6 +33,6 @@ class Dock:
     @pyqtSlot(bool)
     def start(self, checked):
         if checked:
-            self.timer.start(2000)
+            self.timer.start(200)
         else:
             self.timer.stop()

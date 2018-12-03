@@ -17,7 +17,6 @@ from functools import partial
 # -- My packages --
 from app.colors import *
 from app.activation_b import btn
-from data_processing_pipeline.calcul_fft import FreqCalculator
 
 
 class FftGraph:
@@ -117,13 +116,8 @@ class FftGraph:
 
     def all_frequency(self):
         for ch in range(self.gv.N_CH):
-            freq_calculator = FreqCalculator(
-                remove_first_data=0, data_q=self.gv.data_queue[ch],
-                t_q=self.gv.t_queue)
-            freq_range = freq_calculator.get_freq_range()
-            # Keep all frequency possibles
-            self.gv.fft[ch] = freq_calculator.fft()                            # TODO: ALEXM: Change frequency in function of time
-            self.curve_freq[ch].setData(freq_range, self.gv.fft[ch])           # TODO: ALEXM prendre abs ou real? avec real il y a des valeurs negatives est-ce que c'est normal?
+            self.curve_freq[ch].setData(self.gv.freq_calculator.freq_range,
+                                        self.gv.fft[ch])                       # TODO: ALEXM prendre abs ou real? avec real il y a des valeurs negatives est-ce que c'est normal?
             self.curve_freq[ch].setPen(pen_colors[ch])
 
     def on_off_button(self):
@@ -194,6 +188,10 @@ class FftGraph:
     @QtCore.pyqtSlot(bool)
     def start(self, checked):
         if checked:
+            if not self.gv.freq_calculator.activated:
+                self.gv.freq_calculator.timer.start(100)
+                self.gv.freq_calculator.activated = True
             self.timer.start(100)
         else:
             self.timer.stop()
+            self.gv.freq_calculator.timer.stop()

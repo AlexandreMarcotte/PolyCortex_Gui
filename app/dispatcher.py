@@ -2,6 +2,7 @@ from collections import deque
 import numpy as np
 from time import time
 from data_processing_pipeline.filter import butter_bandpass_filter, butter_lowpass_filter
+from data_processing_pipeline.calcul_fft import FreqCalculator
 
 
 class Dispatcher:
@@ -17,8 +18,6 @@ class Dispatcher:
         self.N_DATA_BEFORE_FILTER = 1000
         self.min_filter = 2
         self.max_filter = 45
-
-        self.fft = [None for _ in range(N_CH)]
 
         # Variable change in the menubar
         self.stream_origin = 'Stream from synthetic data'
@@ -44,6 +43,9 @@ class Dispatcher:
         # Classification
         self.last_classified_type = [0]
         self.emg_signal_len = 170
+        # FFT
+        self.fft = [None for _ in range(N_CH)]
+        self.freq_calculator = FreqCalculator(self, remove_first_data=0)
 
     def collect_data(self, signal, t=None):
         """Callback function to use in the generating functions"""
