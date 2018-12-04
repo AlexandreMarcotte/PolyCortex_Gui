@@ -12,6 +12,7 @@ from .dock.fft_dock.fft_graph import FftGraph
 from .dock.classif_dock.classification_plot_creator import ClassifPlotCreator
 from .dock.banner_dock.banner import Banner
 from .dock.Viz_3D_dock.viz_3D import Viz3D
+from .dock.fft_over_time_dock.fft_over_time_graph import FftOverTimeGraph
 
 from save.data_saver import DataSaver
 from app.colors import *
@@ -49,11 +50,15 @@ class EegFftClassifTab(QWidget):
 
         self.Wave = DockHandler(
             'Wave', self, self.docks_menu, WaveGraph, [self.gv], 'below',
-            self.fft.dock, size=(5, 10))
+            self.fft.dock, size=(5, 10), scroll=True)
+
+        self.fft_over_time = DockHandler(
+            'FFt over time', self, self.docks_menu, FftOverTimeGraph, [self.gv], 'below',
+            self.fft.dock, size=(5, 10), scroll=True)
 
         self.classification = DockHandler(
             'Classification', self, self.docks_menu, ClassifPlotCreator,
-             [self.gv], 'bottom', self.fft.dock, size=(5, 10))
+             [self.gv], 'bottom', self.fft.dock, size=(5, 10), scroll=True)
 
         self.banner = DockHandler(
             'Banner', self, self.docks_menu, Banner, [], 'bottom',

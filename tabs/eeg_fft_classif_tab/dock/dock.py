@@ -9,10 +9,11 @@ from app.activation_b import btn
 
 
 class Dock:
-    def __init__(self, gv, layout, dock_type):
+    def __init__(self, gv, layout, dock_type, dock_name):
         self.layout = layout
         self.gv = gv
         self.type = dock_type
+        self.dock_name = dock_name
 
         plot_gr, self.plot_layout = self.create_gr()
 
@@ -29,7 +30,7 @@ class Dock:
         return gr, l
 
     def init_on_off_button(self):
-        btn('Show wave signal', self.layout, (0, 0), func_conn=self.start,
+        btn(self.dock_name, self.layout, (0, 0), func_conn=self.start,
             color=blue_b, toggle=True, txt_color=white)
 
     @pyqtSlot(bool)
