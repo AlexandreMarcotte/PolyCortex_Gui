@@ -15,6 +15,10 @@ class FftOverTimeGraph(Dock):
         self.gv = gv
         self.layout = layout
 
+        plot_gr, self.plot_layout = self.create_gr()
+        self.layout.addWidget(plot_gr, 0, 0)
+        self.init_on_off_button()
+
         self.view = self.init_view()
         self.plot = self.init_plot()
         self.timer.timeout.connect(self.update)
@@ -22,7 +26,6 @@ class FftOverTimeGraph(Dock):
     def init_view(self):
         """     """
         view = gl.GLViewWidget()
-        # view.opts['center'] = QtGui.QVector3D(0, 230000, 0)
         view.opts['distance'] = 300
         view.opts['azimuth'] = 40
         view.opts['elevation'] = 15

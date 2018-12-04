@@ -17,44 +17,37 @@ from functools import partial
 # -- My packages --
 from app.colors import *
 from app.activation_b import btn
+from ... dock.dock import Dock
 
 
-class FftGraph:
+class FftGraph(Dock):
     """
     """
     def __init__(self, gv, layout):
+        super().__init__(gv, layout, 'fft', 'FftGraph')
         self.gv = gv
-        self.layout = layout
-
-        plot_gr, self.plot_layout = self.create_gr()
-        filter_gr, self.filter_layout = self.create_gr()
-        splitter = self.create_splitter(plot_gr, filter_gr)
-        self.layout.addWidget(splitter)
-
-        self.timer = QtCore.QTimer()
-        self.timer.timeout.connect(self.update_plotting)
-
-        self.N_DATA = self.gv.DEQUE_LEN
         self.curve_freq = []
-        
+
+        self.init_layout(layout)
+        self.init_on_off_button()
+        self.timer = self.init_timer()
+
         self.plot = self.init_plot()
         self.add_regions_filter_to_plot()
         self.connect_classif_region()
         self.add_param_tree()
-        self.on_off_button()
         self.create_all_combobox()
 
-    def create_gr(self):
-        gr = QGroupBox()
-        l = QGridLayout()
-        gr.setLayout(l)
-        return gr, l
+    def init_layout(self, layout):
+        plot_gr, self.plot_layout = self.create_gr()
+        filter_gr, self.filter_layout = self.create_gr()
+        splitter = self.create_splitter(plot_gr, filter_gr)
+        layout.addWidget(splitter, 1, 0)
 
-    def create_splitter(self, first_gr, second_gr):
-        s = QSplitter(Qt.Horizontal)
-        s.addWidget(first_gr)
-        s.addWidget(second_gr)
-        return s
+    def init_timer(self):
+        timer = QtCore.QTimer()
+        timer.timeout.connect(self.update_plotting)
+        return timer
 
     def init_plot(self):
         """Create the plot widget and its characteristics"""
@@ -68,7 +61,8 @@ class FftGraph:
         self.plot_layout.addWidget(plot, 2, 0, 1, 5)
         for ch in range(self.gv.N_CH):
             self.curve_freq.append(
-                plot.plot(deque(np.ones(self.N_DATA), maxlen=self.N_DATA)))
+                plot.plot(deque(np.ones(self.gv.DEQUE_LEN),
+                                maxlen=self.gv.DEQUE_LEN)))
         # Associate the plot to an FftGraph object
         return plot
 
@@ -120,7 +114,7 @@ class FftGraph:
                                         self.gv.freq_calculator.fft[ch])                       # TODO: ALEXM prendre abs ou real? avec real il y a des valeurs negatives est-ce que c'est normal?
             self.curve_freq[ch].setPen(pen_colors[ch])
 
-    def on_off_button(self):
+    def init_on_off_button(self):
         btn('Start FFT', self.plot_layout, (0, 0), func_conn=self.start,
             color=blue_b, toggle=True, txt_color=white, min_width=100)
 

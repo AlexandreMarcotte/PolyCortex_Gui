@@ -14,6 +14,10 @@ class WaveGraph(Dock):
         self.gv = gv
         self.layout = layout
 
+        plot_gr, self.plot_layout = self.create_gr()
+        self.layout.addWidget(plot_gr, 0, 0)
+        self.init_on_off_button()
+
         self.waves = {'delta': Wave((0, 4)),
                       'theta': Wave((4, 8)),
                       'alpha': Wave((8, 12)),
