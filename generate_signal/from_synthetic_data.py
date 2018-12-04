@@ -28,7 +28,7 @@ class CreateSyntheticData(threading.Thread):
 
         # 100 harmonic signal to test filtering
         self.s = []
-        for freq in range(10, 100, 1):
+        for freq in range(1, 100, 1):
             self.s.append(self.m * sin(freq * self.t))
 
     def run(self):
@@ -45,7 +45,8 @@ class CreateSyntheticData(threading.Thread):
                 else:
                     imp = 0
                 if ch == 0:
-                    signal = self.s1[i] + self.s2[i] + self.s3[i] + self.s4[i] + random() + imp
+                    signal = 0.5 * (self.s1[i] + self.s2[i] + self.s3[i]
+                                  + self.s4[i] + random() + imp)
                 elif ch == 1:
                     signal = self.s1[i] + 5
                 elif ch == 2:

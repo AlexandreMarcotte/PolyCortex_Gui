@@ -1,5 +1,6 @@
 import numpy as np
-from PyQt5 import QtGui, QtCore
+from PyQt5 import QtCore
+from collections import deque
 
 
 class FreqCalculator:
@@ -11,14 +12,40 @@ class FreqCalculator:
         self.freq_range = 100
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.calcul_frequency)
+        self.fft = [None for _ in range(gv.N_CH)]
+        self.waves = None
+        self.slices = None
+        self.N_T_MEMORY = 100
+        # I could also just have one deque containing list of all the time stamp
+        # each list would contain the 8 values, one for every ch at that time stamp
+        self.freq_band_over_time = [
+            deque(maxlen=self.N_T_MEMORY) for _ in range(self.gv.N_CH)]
+        self.fft_over_time = [deque(maxlen=self.N_T_MEMORY)
+                              for _ in range(self.gv.N_CH)]
                                                                                # TODO: ALEXM: Filter instead of removing them direcly like that
+    def set_waves(self, waves):
+        self.waves = waves
+        self.set_slice_for_all_waves()
+
+    def set_slice_for_all_waves(self):
+        self.slices = [slice(w.freq_range[0], w.freq_range[1])
+                       for w in self.waves.values()]
+
     def calcul_frequency(self):
         for ch in range(self.gv.N_CH):
             self.N_DATA = len(self.gv.data_queue[ch])
-            self.freq_range = self.get_freq_range(ch)
-            self.gv.fft[ch] = self.fft(ch)                            # TODO: ALEXM: Change frequency in function of time
+            self.freq_range = self.get_freq_range()
+            self.fft[ch] = self.calcul_fft(ch)
+            self.fft_over_time[ch].append(self.fft[ch])
+            self.get_avg_freq_per_band()
 
-    def get_freq_range(self, ch):
+    def get_avg_freq_per_band(self):
+        self.freq_per_band = [np.average(self.fft[0][s]) for s in self.slices]
+        for ch, f in enumerate(self.freq_per_band):
+            self.freq_band_over_time[ch].append(f)
+        return self.freq_per_band
+
+    def get_freq_range(self):
         """Calculate FFT (Remove freq 0 because it gives a really high
          value on the graph"""
         return np.linspace(self.remove_first_data,
@@ -30,6 +57,6 @@ class FreqCalculator:
         add to the queue"""
         return self.gv.t_queue[-1] - self.gv.t_queue[0]
 
-    def fft(self, ch):
+    def calcul_fft(self, ch):
         fft = np.fft.fft(self.gv.data_queue[ch])
         return abs(fft[self.remove_first_data:self.N_DATA // 2])

@@ -117,7 +117,7 @@ class FftGraph:
     def all_frequency(self):
         for ch in range(self.gv.N_CH):
             self.curve_freq[ch].setData(self.gv.freq_calculator.freq_range,
-                                        self.gv.fft[ch])                       # TODO: ALEXM prendre abs ou real? avec real il y a des valeurs negatives est-ce que c'est normal?
+                                        self.gv.freq_calculator.fft[ch])                       # TODO: ALEXM prendre abs ou real? avec real il y a des valeurs negatives est-ce que c'est normal?
             self.curve_freq[ch].setPen(pen_colors[ch])
 
     def on_off_button(self):

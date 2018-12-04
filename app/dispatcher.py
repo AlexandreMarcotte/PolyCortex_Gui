@@ -44,7 +44,6 @@ class Dispatcher:
         self.last_classified_type = [0]
         self.emg_signal_len = 170
         # FFT
-        self.fft = [None for _ in range(N_CH)]
         self.freq_calculator = FreqCalculator(self, remove_first_data=0)
 
     def collect_data(self, signal, t=None):

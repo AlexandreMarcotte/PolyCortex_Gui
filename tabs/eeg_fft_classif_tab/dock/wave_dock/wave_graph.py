@@ -1,19 +1,16 @@
 from PyQt5.QtWidgets import *
 from PyQt5 import QtGui, QtCore
-
-
+from timeit import timeit, Timer
 import numpy as np
 import pyqtgraph as pg
 # -- My packages --
 from app.colors import *
 from ... dock.dock import Dock
 
-from timeit import timeit, Timer
-
 
 class WaveGraph(Dock):
     def __init__(self, gv, layout):
-        super().__init__(gv, layout, 'fft')
+        super().__init__(gv, layout, 'fft', 'Wave graph')
         self.gv = gv
         self.layout = layout
 
@@ -23,8 +20,7 @@ class WaveGraph(Dock):
                       'beta': Wave((12, 40)),
                       'gamma': Wave((40, 100))
         }
-        self.slices = [slice(w.freq_range[0], w.freq_range[1])
-                       for w in self.waves.values()]
+        self.gv.freq_calculator.set_waves(self.waves)
         self.plot = self.init_plot()
         self.brushes, self.x, self.width = self.init_bar_braph_caract()
         # self.time_func()
@@ -61,11 +57,9 @@ class WaveGraph(Dock):
         self.layout.addWidget(mne_head, 2, 0)
 
     def update(self):
-        # Remove All item from the graph
         self.plot.clear()
-        # y = np.random.random(self.N_ELE)
-        y = [np.average(self.gv.fft[0][s]) for s in self.slices]
-        bg = pg.BarGraphItem(x=self.x, height=y, width=self.width, brushes=self.brushes)
+        bg = pg.BarGraphItem(height=self.gv.freq_calculator.freq_per_band,
+                             x=self.x, width=self.width, brushes=self.brushes)
         self.plot.addItem(bg)
 
 
