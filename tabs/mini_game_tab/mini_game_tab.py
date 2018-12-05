@@ -94,25 +94,25 @@ class Game3D:
         self.y_pos = -20
         self.character_height = 1.3
         md = gl.MeshData.sphere(rows=10, cols=30)
-        self.m2 = gl.GLMeshItem(
+        self.m = gl.GLMeshItem(
             meshdata=md, smooth=True, shader='normalColor', glOptions='opaque')
-        self.m2.translate(self.x_pos, self.y_pos, self.character_height)
-        self.m2.scale(
+        self.m.translate(self.x_pos, self.y_pos, self.character_height)
+        self.m.scale(
             self.character_height, self.character_height, self.character_height)
-        self.w.addItem(self.m2)
+        self.w.addItem(self.m)
 
     def update_character_pos(self):
         if self.key_pressed=='l':
-            self.m2.translate(0.2, 0, 0)
+            self.m.translate(0.2, 0, 0)
             self.x_pos += 0.2
         if self.key_pressed=='j':
-            self.m2.translate(-0.2, 0, 0)
+            self.m.translate(-0.2, 0, 0)
             self.x_pos -= 0.2
         if self.key_pressed=='i':
-            self.m2.translate(0, 0.3, 0)
+            self.m.translate(0, 0.3, 0)
             self.y_pos += 0.3
         if self.key_pressed=='k':
-            self.m2.translate(0,-0.3, 0)
+            self.m.translate(0,-0.3, 0)
             self.y_pos -= 0.3
 
     def init_food(self):
