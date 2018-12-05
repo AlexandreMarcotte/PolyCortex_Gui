@@ -80,7 +80,6 @@ class Obj3DCreator:
                         # print(self.brain[x][y][z])
                         color.append(self.brain[x][y][z])
                         pos.append(np.array((x,y,z)))
-        print('ok')
 
         item = gl.GLScatterPlotItem(pos=np.array(pos), color=(0,0.3,1,0.2),
                                          size=1, pxMode=True)
@@ -111,12 +110,10 @@ class Obj3DCreator:
                     -self.brain.shape[1]/2 * scale,
                     -self.brain.shape[2]/2 * scale)
         v.scale(scale, scale, scale)
-        # v.translate(20 * brain.shape[0], 0, 0)
 
         self.shape_x = self.brain.shape[0]
         self.shape_y = self.brain.shape[1]
         self.shape_z = self.brain.shape[2]
-        print(self.shape_x, self.shape_y, self.shape_z)
 
         return v
 
