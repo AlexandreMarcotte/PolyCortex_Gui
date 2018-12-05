@@ -1,16 +1,17 @@
 from scipy.signal import butter, lfilter
 
 
-def butter_bandpass(lowcut, highcut, fs, order=5):
+def butter_bandpass(lowcut, highcut, fs, order=5, filter_type='bandpass'):
     nyq = 0.5 * fs
     low = lowcut / nyq
     high = highcut / nyq
-    b, a = butter(order, [low, high], btype='band', analog=False)
+    b, a = butter(order, [low, high], btype=filter_type, analog=False)
     return b, a
 
 
-def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
-    b, a = butter_bandpass(lowcut, highcut, fs, order=order)
+def butter_bandpass_filter(data, lowcut, highcut, fs, order=5,
+                              filter_type='bandpass'):
+    b, a = butter_bandpass(lowcut, highcut, fs, order, filter_type)
     y = lfilter(b, a, data)
     return y
 

@@ -23,6 +23,7 @@ class EegFftClassifTab(QWidget):
     def __init__(self, gv, parent):
         super().__init__()
         self.gv = gv
+        self.gv.set_main_window(self)
         self.parent = parent
 
         self.init_tab_w()

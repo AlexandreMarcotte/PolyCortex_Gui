@@ -89,21 +89,29 @@ class FftGraph(Dock):
         """Add a region to the plot that will be use as the bondaries for
         the filter (blue for pass and red for cut"""
         # Band pass filter
-        self.pass_f_region = pg.LinearRegionItem([self.gv.min_filter,
-                                                  self.gv.max_filter])
+        self.pass_f_region = pg.LinearRegionItem([self.gv.min_pass_filter,     # TODO: ALEXM: avoid redondancy in the creation of filters
+                                                  self.gv.max_pass_filter])
         self.pass_f_region.setBrush(blue)
         self.plot.addItem(self.pass_f_region, ignoreBounds=True)
         # Band cut filter
-        self.cut_f_region = pg.LinearRegionItem([80, 90])
+        self.cut_f_region = pg.LinearRegionItem([self.gv.min_cut_filter,
+                                                 self.gv.max_cut_filter])
         self.cut_f_region.setBrush(red)
         self.plot.addItem(self.cut_f_region, ignoreBounds=True)
 
     def connect_classif_region(self):
         self.pass_f_region.sigRegionChanged.connect(
-            partial(self.update_filter_region))
+            partial(self.update_pass_filter_region))
+        self.cut_f_region.sigRegionChanged.connect(
+            partial(self.update_cut_filter_region))
 
-    def update_filter_region(self):
-        self.gv.min_filter, self.gv.max_filter = self.pass_f_region.getRegion()
+    def update_pass_filter_region(self):
+        self.gv.min_pass_filter, self.gv.max_pass_filter = \
+                self.pass_f_region.getRegion()
+
+    def update_cut_filter_region(self):
+        self.gv.min_cut_filter, self.gv.max_cut_filter = \
+                self.cut_f_region.getRegion()
 
     def update_plotting(self):
         self.all_frequency()
@@ -111,7 +119,7 @@ class FftGraph(Dock):
     def all_frequency(self):
         for ch in range(self.gv.N_CH):
             self.curve_freq[ch].setData(self.gv.freq_calculator.freq_range,
-                                        self.gv.freq_calculator.fft[ch])                       # TODO: ALEXM prendre abs ou real? avec real il y a des valeurs negatives est-ce que c'est normal?
+                                        self.gv.freq_calculator.fft[ch])       # TODO: ALEXM prendre abs ou real? avec real il y a des valeurs negatives est-ce que c'est normal?
             self.curve_freq[ch].setPen(pen_colors[ch])
 
     def init_on_off_button(self):
@@ -120,35 +128,19 @@ class FftGraph(Dock):
 
     def create_all_combobox(self):
         self.create_param_combobox(
-            'Max Freq', (0, 1),
+            self.plot_layout, 'Max Freq', (0, 1),
             ['Auto', '60 Hz', '80 Hz', '100 Hz', '120 Hz'],
             self.scale_x_axis)
         self.create_param_combobox(
-            'Max Uv', (0, 2),
+            self.plot_layout, 'Max Uv', (0, 2),
             ['Auto','1000 uv', '10000 uv', '100000 uv', '1000000 uv',
-             '10000000 uv'],
-            self.scale_y_axis)
+             '10000000 uv'], self.scale_y_axis)
         self.create_param_combobox(
-            'Log', (0, 3), ['False', 'True'], self.log_axis)
+            self.plot_layout, 'Log', (0, 3), ['False', 'True'], self.log_axis)
         self.create_param_combobox(
-            'Ch On', (0, 4),
+            self.plot_layout, 'Ch On', (0, 4),
             ['ch 1', 'ch 2', 'ch 3', 'ch 4', 'ch 5', 'ch 6', 'ch 7', 'ch 8'],
             self.ch_on_off, editable=False)
-
-    def create_param_combobox(
-            self, name, pos, param, conn_func, editable=True):
-        label = QLabel(name)
-        label.setFrameShape(QFrame.Panel)
-        label.setFrameShadow(QFrame.Sunken)
-        label.setLineWidth(1)
-        label.setAlignment(Qt.AlignCenter)
-        self.plot_layout.addWidget(label, *pos)
-        vert_scale = QComboBox()
-        for val in param:
-            vert_scale.addItem(val)
-        vert_scale.setEditable(editable)
-        vert_scale.activated[str].connect(conn_func)
-        self.plot_layout.addWidget(vert_scale, pos[0]+1, pos[1])
 
     def scale_x_axis(self, txt):                                             # TODO: ALEXM: remove the redundancy
         try:
