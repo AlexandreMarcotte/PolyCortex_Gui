@@ -1,6 +1,6 @@
 import atexit
 from functools import partial
-from datetime import datetime
+import os
 # from save_to_file import WriteDataToFile
 
 from PyQt5 import QtGui
@@ -8,27 +8,41 @@ from PyQt5.QtWidgets import *
 
 
 class DataSaver:
-    def __init__(self, main_window, gv, layout):
+    def __init__(self, main_window, gv, layout, save_path=os.getcwd(),
+                 saving_type='eeg save', pos=(0, 0), size=(1, 2),
+                 save_file_button=True, choose_b_size=(1,1)):
         self.main_window = main_window
         self.layout = layout
         self.gv = gv
-        init_time = datetime.now()
-        self.gv.save_path = f'./experiment_csv/2exp_pinch_close_{init_time}.csv'
+        self.save_path = save_path
+        self.saving_type = saving_type
+        self.pos = pos
+        self.size = size
+        self.save_file_button = save_file_button
+        self.choose_b_size = choose_b_size
+
         self.create_layout()
 
     def create_layout(self):
         # Create text box to show or enter path to data file
-        self.save_path_line_edit = QtGui.QLineEdit(self.gv.save_path)
-        self.layout.addWidget(self.save_path_line_edit, 0, 0, 1, 2)
-        # Create button to open date file
-        open_file = QtGui.QPushButton('Choose saving directory')
+        self.save_path_line_edit = QtGui.QLineEdit(self.save_path)
+        self.layout.addWidget(self.save_path_line_edit, *self.pos, *self.size)
+        self.init_choose_saving_file()
+        if self.save_file_button:
+            self.init_save_file_button()
+
+    def init_choose_saving_file(self):
+        """Create button to open date file"""
+        open_file = QtGui.QPushButton('Choose save path')
         open_file.setStyleSheet("background-color: rgba(200, 200, 200, 0.6)")
         open_file.clicked.connect(partial(self.save_file_dialog))
-        self.layout.addWidget(open_file, 1, 0)
-        # Button to save all the current data that was generated
+        self.layout.addWidget(open_file, self.pos[0]+1, 0, *self.choose_b_size)
+
+    def init_save_file_button(self):
+        """Button to save all the current data that was generated"""
         save_cur_data_b = QtGui.QPushButton('Save data Now')
         save_cur_data_b.setStyleSheet("background-color: rgba(200, 200, 200, 0.6)")
-        self.layout.addWidget(save_cur_data_b, 1, 1)
+        self.layout.addWidget(save_cur_data_b, self.pos[0]+1, 1)
 
     def save_file_dialog(self):
         # From: https://pythonspot.com/pyqt5-file-dialog/
@@ -38,8 +52,11 @@ class DataSaver:
             self.main_window, "QFileDialog.getSaveFileName()", "",
             "All Files (*);;Text Files (*.txt)", options=options)
         if f_name:
-            self.gv.save_path = f_name
-            self.data_path_line_edit.setText(self.gv.save_path)
+            if self.saving_type == 'eeg save':
+                self.gv.save_path = f_name
+            elif self.saving_type == 'curve 3D pos save':
+                self.save_path = f_name
+            self.data_path_line_edit.setText(f_name)
 
     # def init_saving(self):                                                   # KEEP THIS PORTION OF THE CODE (COMMENTED SO THAT IT DOESNT ALWAYS SAVE)
     #     # write data to file:
