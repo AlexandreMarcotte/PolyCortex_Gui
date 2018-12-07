@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt
 from PyQt5 import QtGui
+from app.colors import *
 
 
 def create_gr(margin=False):
@@ -11,8 +12,8 @@ def create_gr(margin=False):
     gr.setLayout(l)
     return gr, l
 
-def create_splitter(first_gr, second_gr):
-    s = QSplitter(Qt.Horizontal)
+def create_splitter(first_gr, second_gr, direction=Qt.Horizontal):
+    s = QSplitter(direction)
     s.addWidget(first_gr)
     s.addWidget(second_gr)
     return s
@@ -23,21 +24,21 @@ def create_txt_label(name):
     l.setFrameShadow(QFrame.Sunken)
     l.setLineWidth(1)
     l.setAlignment(Qt.AlignCenter)
-    l.setStyleSheet(f'font-weight: 440;')
+    l.setStyleSheet(f'font-weight: 420; background-color: {label_grey}; font-size: 10pt;')
     l.setMaximumHeight(26)
     return l
 
-def create_combo_box(elem_list, connect_func=None, editable=False):
-    cb = QComboBox()
-    for val in elem_list:                       # ALEXM: Create a  frequently pyqt method for these two combo box
-        cb.addItem(val)
-    cb.setEditable(editable)
-    if connect_func is not None:
-        cb.activated[str].connect(connect_func)
-    return cb
+# def create_combo_box(elem_list, connect_func=None, editable=False):
+#     cb = QComboBox()
+#     for val in elem_list:                       # ALEXM: Create a  frequently pyqt method for these two combo box
+#         cb.addItem(val)
+#     cb.setEditable(editable)
+#     if connect_func is not None:
+#         cb.activated[str].connect(connect_func)
+#     return cb
 
 def create_param_combobox(
-        layout, name, pos, param, conn_func, editable=True,
+        layout, name, pos, param, conn_func=None, editable=True,
         cols=1):
     l = create_txt_label(name)
     layout.addWidget(l, *pos)
@@ -45,11 +46,13 @@ def create_param_combobox(
     for val in param:
         combo_box.addItem(val)
     combo_box.setEditable(editable)
-    combo_box.activated[str].connect(conn_func)
+    if conn_func is not None:
+        combo_box.activated[str].connect(conn_func)
     layout.addWidget(combo_box, pos[0]+1, pos[1], 1, cols)
 
-def add_triplet_txt_box(line, layout):
+def add_triplet_txt_box(col, layout):
     for i in range(3):
         pos_t = QtGui.QLineEdit(str(0))
-        layout.addWidget(pos_t, line, i)
+        pos_t.setMaximumWidth(20)
+        layout.addWidget(pos_t, 1, col+i)
 
