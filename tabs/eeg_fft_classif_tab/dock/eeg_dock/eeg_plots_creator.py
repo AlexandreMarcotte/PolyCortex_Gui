@@ -9,7 +9,7 @@ from PyQt5.QtCore import Qt
 import re
 # -- My packages --
 ## generate signal
-from generate_signal.from_openbci import stream_data_from_OpenBCI
+from generate_signal.from_openbci import SampleDataFromOPENBCI
 from generate_signal.from_synthetic_data import CreateSyntheticData
 from generate_signal.from_file import FileReader
 from generate_signal.from_muse import StreamFromMuse
@@ -21,8 +21,12 @@ from app.colors import *
 from app.activation_b import btn
 from tabs.region import Regions
 from .eeg_graph import EegGraph
+import numpy
 
 from data_processing_pipeline.frequency_counter import FrequencyCounter
+from app.pyqt_frequently_used import (create_gr, create_txt_label,
+                                      create_splitter, create_param_combobox,
+                                      add_triplet_txt_box)
 
 
 class EegPlotsCreator:
@@ -38,37 +42,34 @@ class EegPlotsCreator:
 
         # Stop/Start
         start_stop_layout = self.add_sub_layout(self.layout, 0)
+
+        self.stream_source = self.init_streaming_source()
+
         self.create_buttons(start_stop_layout)
         # Plot parameter
         self.create_param_combo_box(start_stop_layout)
 
         self.create_all_eeg_plot()
 
+
     def set_saver(self, data_saver):
         self.data_saver = data_saver
 
     def create_param_combo_box(self, start_stop_layout):
-        vert_scale_label = QLabel('Vert scale: ')
-        vert_scale_label.setFrameShape(QFrame.Panel)
-        vert_scale_label.setFrameShadow(QFrame.Sunken)
-        vert_scale_label.setLineWidth(1)
-        vert_scale_label.setAlignment(Qt.AlignCenter)
-        start_stop_layout.addWidget(vert_scale_label, 1, 0)
+        vert_scale_l = create_txt_label('Vertical scale')
+        start_stop_layout.addWidget(vert_scale_l, 1, 0)
         vert_scale = QComboBox()
-        for val in ['Auto', '10 uv', '100 uv', '1000 uv', '10000 uv', '100000 uv']:
+        for val in ['Auto', '10 uv', '100 uv',
+                    '1000 uv', '10000 uv', '100000 uv']:                       # ALEXM: Create a  frequently pyqt method for these two combo box
             vert_scale.addItem(val)
         vert_scale.setEditable(True)
         vert_scale.activated[str].connect(self.scale_y_axis)
         start_stop_layout.addWidget(vert_scale, 1, 1)
 
-        horiz_scale_label = QLabel('Horiz scale: ')
-        horiz_scale_label.setFrameShape(QFrame.Panel)
-        horiz_scale_label.setFrameShadow(QFrame.Sunken)
-        horiz_scale_label.setLineWidth(1)
-        horiz_scale_label.setAlignment(Qt.AlignCenter)
+        horiz_scale_label = create_txt_label('Horizontal scale')
         start_stop_layout.addWidget(horiz_scale_label, 1, 2)
         horiz_scale = QComboBox()
-        for val in ['5s', '7s', '10s']:
+        for val in ['5 s', '7 s', '10 s']:
             horiz_scale.addItem(val)
         start_stop_layout.addWidget(horiz_scale, 1, 3)
 
@@ -117,10 +118,10 @@ class EegPlotsCreator:
 
     def create_buttons(self, layout):
         """Assign pushbutton for starting and stoping the stream"""
-        btn('Start streaming', layout, (0, 0), size=(1, 2),
-            func_conn=self.start_streaming, color=green_b)
-        btn('Stop streaming', layout, (0, 2), size=(1, 2),
-            func_conn=self.stop_streaming, color=red_b)
+        btn('Start streaming', layout, (0, 0), size=(1, 4), toggle=True,
+            func_conn=self.start_timers, color=blue_b, txt_color=white)
+        # btn('Stop streaming', layout, (0, 2), size=(1, 2),
+        #     func_conn=self.stop_streaming, color=red_b)
 
     def create_plot(self, ch):
         """Create a plot for all eeg signals and the last to keep track of time"""
@@ -167,52 +168,61 @@ class EegPlotsCreator:
             func_conn=ch_number_action.stop_ch,
             color=button_colors[ch], toggle=True, max_width=18)
 
-    @pyqtSlot()
-    def start_streaming(self):
+    def init_streaming_source(self):
         """      """
         if self.gv.stream_origin == 'Stream from OpenBCI':
-            self.board = stream_data_from_OpenBCI(self.gv)
+            stream_source = SampleDataFromOPENBCI(self.gv)
         elif self.gv.stream_origin == 'Stream from synthetic data':
             # Create fake data for test case
-            create_data = CreateSyntheticData(self.gv,
-                                              callback=self.gv.collect_data,
-                                              read_freq=self.gv.DEQUE_LEN)
-            create_data.start()
+            stream_source = CreateSyntheticData(
+                self.gv, callback=self.gv.collect_data,
+                read_freq=self.gv.DEQUE_LEN)
 
         elif self.gv.stream_origin == 'Stream from file':
-            file_reader = FileReader(self.gv, self.gv.stream_path, self.gv.collect_data,
-                                     read_freq=250)
-            file_reader.start()
+            stream_source = FileReader(
+                self.gv, self.gv.stream_path, self.gv.collect_data,
+                read_freq=250)
+        else:
+            raise('No streaming source selected')
 
-        elif self.gv.stream_origin == 'Stream from Muse':
-            create_data = StreamFromMuse(self.gv)
-            create_data.start()
+        return stream_source
 
-        self.freq_counter = FrequencyCounter(self.gv)
-        self.start_timers()
-        # SAVE the data received to file
-        self.save_path = self.data_saver.save_path_line_edit.text()
-        # self.data_saver.init_saving()
+        # elif self.gv.stream_origin == 'Stream from Muse':
+        #     create_data = StreamFromMuse(self.gv)
+        #     if checked:
+        #         create_data.start()
+        #     else:
+        #         create_data.stop()
 
-    @pyqtSlot()
-    def stop_streaming(self):
-        if self.gv.stream_origin == 'Stream from OpenBCI':
-            self.board.stop()
-        self.stop_timers()
 
-    def start_timers(self):
-        for i, tm in enumerate(self.timers):
-            self.timers[i].start(35)
-        self.start_freq_counter_timer()
+    # @pyqtSlot()
+    # def stop_streaming(self):
+    #     if self.gv.stream_origin == 'Stream from OpenBCI':
+    #         self.board.stop()
+    #     self.stop_timers()
+
+    @QtCore.pyqtSlot(bool)
+    def start_timers(self, checked):
+        print('checked', checked)
+        if checked:
+            self.freq_counter = FrequencyCounter(self.gv)
+            self.stream_source.start()
+            for i, tm in enumerate(self.timers):
+                self.timers[i].start(0)
+            self.start_freq_counter_timer()
+        else:
+            for i, tm in enumerate(self.timers):
+                self.timers[i].stop()
+            # self.stream_source.join()
 
     def start_freq_counter_timer(self):
         self.freq_counter_timer = QtCore.QTimer()
         self.freq_counter_timer.timeout.connect(self.freq_counter.update)
         self.freq_counter_timer.start(50)
 
-    def stop_timers(self):
-        for i, tm in enumerate(self.timers):
-            self.timers[i].stop()
+    # def stop_timers(self):
+    #     for i, tm in enumerate(self.timers):
+    #         self.timers[i].stop()
 
     def assign_action_to_ch(self, ch):
         m_w = 17
@@ -220,17 +230,27 @@ class EegPlotsCreator:
         actn_btn = ActionButton(self.ch_layout, 0, self.gv, ch)
         btn('A', self.ch_layout, (0, 8), action=actn_btn,
             toggle=True, tip='Show average value of queue',
-            max_width=m_w, color=light_grey)
+            max_width=m_w, color=dark_blue_tab)
         # Max
         actn_btn = ActionButton(self.ch_layout, 1, self.gv, ch)
         btn('M', self.ch_layout, (1, 8), action=actn_btn,
             toggle=True, tip='Show max value of queue',
-            max_width=m_w, color=light_grey)
+            max_width=m_w, color=dark_blue_tab)
         # Detection
         btn('D', self.ch_layout, (2, 8),
             toggle=True, tip='Show detected class patern',
-            max_width=m_w, color=light_grey)
-        # Other function
-        btn('O', self.ch_layout, (3, 8), toggle=True,
-            tip='Show other action', max_width=m_w, color=light_grey)
+            max_width=m_w, color=dark_blue_tab)
 
+        self.create_color_button()
+
+    def create_color_button(self):
+        """Create color button to change the color of the line"""
+        color_btn = pg.ColorButton(close_fit=True)
+        color_btn.setMaximumWidth(14)
+        color_btn.setToolTip('Click to change the color of the line')
+        color_btn.sigColorChanged.connect(self.change_line_color)
+        self.ch_layout.addWidget(color_btn, 3, 8)
+
+    def change_line_color(self, color_btn):
+        color = color_btn.color()
+        print('The new color of the line is: ', color)

@@ -1,14 +1,13 @@
 # -- My packages --
 from app.colors import *
 from app.activation_b import btn
-from app.pyqt_frequently_used import PyqtFrequentlyUsed
+from app.pyqt_frequently_used import *
 from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSlot
 
 
-class Dock(PyqtFrequentlyUsed):
+class Dock:
     def __init__(self, gv, layout, dock_type, dock_name):
-        super().__init__()
         self.layout = layout
         self.gv = gv
         self.type = dock_type

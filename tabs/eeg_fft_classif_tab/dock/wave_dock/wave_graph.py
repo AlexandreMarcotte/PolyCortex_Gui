@@ -6,6 +6,7 @@ import pyqtgraph as pg
 # -- My packages --
 from app.colors import *
 from ... dock.dock import Dock
+from app.pyqt_frequently_used import *
 
 
 class WaveGraph(Dock):
@@ -14,7 +15,7 @@ class WaveGraph(Dock):
         self.gv = gv
         self.layout = layout
 
-        plot_gr, self.plot_layout = self.create_gr()
+        plot_gr, self.plot_layout = create_gr()
         self.layout.addWidget(plot_gr, 0, 0)
         self.init_on_off_button()
 

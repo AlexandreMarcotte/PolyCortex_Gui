@@ -17,14 +17,16 @@ from functools import partial
 # -- My packages --
 from app.colors import *
 from app.activation_b import btn
+from app.pyqt_frequently_used import (create_gr, create_txt_label,
+                                      create_splitter, create_param_combobox,
+                                      add_triplet_txt_box)
 from ... dock.dock import Dock
 
 
-class FftGraph(Dock):
+class FftGraph:
     """
     """
     def __init__(self, gv, layout):
-        super().__init__(gv, layout, 'fft', 'FftGraph')
         self.gv = gv
         self.curve_freq = []
 
@@ -39,9 +41,9 @@ class FftGraph(Dock):
         self.create_all_combobox()
 
     def init_layout(self, layout):
-        plot_gr, self.plot_layout = self.create_gr()
-        filter_gr, self.filter_layout = self.create_gr()
-        splitter = self.create_splitter(plot_gr, filter_gr)
+        plot_gr, self.plot_layout = create_gr()
+        filter_gr, self.filter_layout = create_gr()
+        splitter = create_splitter(plot_gr, filter_gr)
         layout.addWidget(splitter, 1, 0)
 
     def init_timer(self):
@@ -127,17 +129,17 @@ class FftGraph(Dock):
             color=blue_b, toggle=True, txt_color=white, min_width=100)
 
     def create_all_combobox(self):
-        self.create_param_combobox(
+        create_param_combobox(
             self.plot_layout, 'Max Freq', (0, 1),
             ['Auto', '60 Hz', '80 Hz', '100 Hz', '120 Hz'],
             self.scale_x_axis)
-        self.create_param_combobox(
+        create_param_combobox(
             self.plot_layout, 'Max Uv', (0, 2),
             ['Auto','1000 uv', '10000 uv', '100000 uv', '1000000 uv',
              '10000000 uv'], self.scale_y_axis)
-        self.create_param_combobox(
+        create_param_combobox(
             self.plot_layout, 'Log', (0, 3), ['False', 'True'], self.log_axis)
-        self.create_param_combobox(
+        create_param_combobox(
             self.plot_layout, 'Ch On', (0, 4),
             ['ch 1', 'ch 2', 'ch 3', 'ch 4', 'ch 5', 'ch 6', 'ch 7', 'ch 8'],
             self.ch_on_off, editable=False)

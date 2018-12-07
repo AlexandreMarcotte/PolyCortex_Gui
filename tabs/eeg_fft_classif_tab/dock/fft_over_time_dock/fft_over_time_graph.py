@@ -7,20 +7,21 @@ import pyqtgraph as pg
 from app.colors import *
 from ... dock.dock import Dock
 import pyqtgraph.opengl as gl
+from app.pyqt_frequently_used import *
 
 
 class FftOverTimeGraph(Dock):
     def __init__(self, gv, layout):
-        super().__init__(gv, layout, 'fft', 'Fft over time graph')
+        super().__init__(gv, layout, 'fft', 'Start FFT over time graph')
         self.gv = gv
         self.layout = layout
 
-        plot_gr, self.plot_layout = self.create_gr()
+        plot_gr, self.plot_layout = create_gr()
         self.layout.addWidget(plot_gr, 0, 0)
         self.init_on_off_button()
 
         self.view = self.init_view()
-        self.plot = self.init_plot()
+        self.plot = self.init_surface()
         self.timer.timeout.connect(self.update)
 
     def init_view(self):
@@ -31,20 +32,20 @@ class FftOverTimeGraph(Dock):
         view.opts['elevation'] = 15
         return view
 
-    def init_plot(self):
+    def init_surface(self):
         """"""
         # cols = self.gv.freq_calculator.N_T_MEMORY
         # rows = self.gv.DEQUE_LEN
         # x = np.linspace(-8, 8, cols).reshape(cols, 1)
         # y = np.linspace(-8, 8, rows).reshape(1, rows)
-        plot = gl.GLSurfacePlotItem(shader='heightColor',
-                                    computeNormals=False, smooth=False)
-        plot.translate(0, -self.gv.DEQUE_LEN/15, 0)
-        plot.shader()['colorMap'] = np.array([-1, -1, -1, 0, 0, 0, 1, 1, 1])
-        self.view.addItem(plot)
+        surface = gl.GLSurfacePlotItem(shader='heightColor',
+                                       computeNormals=False, smooth=False)
+        surface.translate(0, -self.gv.DEQUE_LEN/15, 0)
+        surface.shader()['colorMap'] = np.array([-1, -1, -1, 0, 0, 0, 1, 1, 1])
+        self.view.addItem(surface)
         # Add to tab layout
         self.layout.addWidget(self.view, 1, 0)
-        return plot
+        return surface
 
     def update(self):
         fft_over_t = np.array(self.gv.freq_calculator.fft_over_time[0])
