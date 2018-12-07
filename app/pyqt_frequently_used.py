@@ -24,7 +24,17 @@ def create_txt_label(name):
     l.setLineWidth(1)
     l.setAlignment(Qt.AlignCenter)
     l.setStyleSheet(f'font-weight: 440;')
+    l.setMaximumHeight(26)
     return l
+
+def create_combo_box(elem_list, connect_func=None, editable=False):
+    cb = QComboBox()
+    for val in elem_list:                       # ALEXM: Create a  frequently pyqt method for these two combo box
+        cb.addItem(val)
+    cb.setEditable(editable)
+    if connect_func is not None:
+        cb.activated[str].connect(connect_func)
+    return cb
 
 def create_param_combobox(
         layout, name, pos, param, conn_func, editable=True,

@@ -42,7 +42,7 @@ class Viz3D(Dock):
             scaling_factor=48, rows=20, cols=20)
         # self.view.addItem(self.sphere.item)
 
-        # self.create_total_brain()
+        self.create_total_brain()
 
         self.line_item = {}
         self.create_plot_lines()

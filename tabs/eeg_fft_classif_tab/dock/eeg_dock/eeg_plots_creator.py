@@ -5,7 +5,6 @@ import pyqtgraph as pg
 from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import Qt
 import re
 # -- My packages --
 ## generate signal
@@ -21,12 +20,9 @@ from app.colors import *
 from app.activation_b import btn
 from tabs.region import Regions
 from .eeg_graph import EegGraph
-import numpy
 
 from data_processing_pipeline.frequency_counter import FrequencyCounter
-from app.pyqt_frequently_used import (create_gr, create_txt_label,
-                                      create_splitter, create_param_combobox,
-                                      add_triplet_txt_box)
+from app.pyqt_frequently_used import create_txt_label, create_combo_box
 
 
 class EegPlotsCreator:
@@ -41,9 +37,7 @@ class EegPlotsCreator:
             np.zeros(self.gv.DEQUE_LEN), maxlen=self.gv.DEQUE_LEN)
 
         # Stop/Start
-        start_stop_layout = self.add_sub_layout(self.layout, 0)
-
-        self.stream_source = self.init_streaming_source()
+        start_stop_layout = self.add_sub_layout(self.layout, pos=(0, 0))
 
         self.create_buttons(start_stop_layout)
         # Plot parameter
@@ -51,27 +45,26 @@ class EegPlotsCreator:
 
         self.create_all_eeg_plot()
 
-
     def set_saver(self, data_saver):
         self.data_saver = data_saver
 
-    def create_param_combo_box(self, start_stop_layout):
-        vert_scale_l = create_txt_label('Vertical scale')
-        start_stop_layout.addWidget(vert_scale_l, 1, 0)
-        vert_scale = QComboBox()
-        for val in ['Auto', '10 uv', '100 uv',
-                    '1000 uv', '10000 uv', '100000 uv']:                       # ALEXM: Create a  frequently pyqt method for these two combo box
-            vert_scale.addItem(val)
-        vert_scale.setEditable(True)
-        vert_scale.activated[str].connect(self.scale_y_axis)
-        start_stop_layout.addWidget(vert_scale, 1, 1)
+    def create_param_combo_box(self, start_stop_l):
+        self.create_settings_combo_box(
+            'Vertical scale', start_stop_l, (1, 0),
+            ['Auto', '10 uv', '100 uv', '1000 uv', '10000 uv', '100000 uv'],
+            editable=True, connect_func=self.scale_y_axis)
+        self.create_settings_combo_box(
+            'Horizontal scale', start_stop_l, (1, 2), ['5 s', '7 s', '10 s'])
+        self.create_settings_combo_box(
+            'Number of columns', start_stop_l, (1, 4), ['1', '2'])
 
-        horiz_scale_label = create_txt_label('Horizontal scale')
-        start_stop_layout.addWidget(horiz_scale_label, 1, 2)
-        horiz_scale = QComboBox()
-        for val in ['5 s', '7 s', '10 s']:
-            horiz_scale.addItem(val)
-        start_stop_layout.addWidget(horiz_scale, 1, 3)
+    def create_settings_combo_box(self, title, layout, pos, settings_list,
+                                      editable=False, connect_func=None):
+        l = create_txt_label(title)
+        layout.addWidget(l, *pos)
+        cb = create_combo_box(settings_list, connect_func=connect_func,
+                              editable=editable)
+        layout.addWidget(cb, pos[0], pos[1]+1)
 
     def scale_y_axis(self, txt):
         try:
@@ -88,9 +81,17 @@ class EegPlotsCreator:
     def create_all_eeg_plot(self):
         """
         """
+        num_col = 1
         ch = 0
         for ch in range(self.gv.N_CH):
-            self.ch_layout = self.add_sub_layout(self.layout, ch + 1)
+            if num_col == 1:
+               col_factor = 8
+            elif num_col == 2:
+                col_factor = 4
+            else: col_factor = 8
+
+            self.ch_layout = self.add_sub_layout(self.layout,
+                                                 (ch%col_factor+1, ch//col_factor))
             self.add_ch_layout(ch)
             # Put only a plot on the time channel
         self.add_ch_layout(ch=self.gv.N_CH, time_ch=True, plot_pos=(5, 1, 1, 6))
@@ -108,20 +109,19 @@ class EegPlotsCreator:
             self.assign_n_to_ch(ch)
             self.assign_action_to_ch(ch)
 
-    def add_sub_layout(self, parent_layout, pos):
+    def add_sub_layout(self, parent_layout, pos, shape=(1, 1)):
+        print('pos', pos, 'shape', shape)
         layout = QGridLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         gr = QGroupBox(f'')
         gr.setLayout(layout)
-        parent_layout.addWidget(gr, pos, 0)
+        parent_layout.addWidget(gr, *pos, *shape)
         return layout
 
     def create_buttons(self, layout):
-        """Assign pushbutton for starting and stoping the stream"""
-        btn('Start streaming', layout, (0, 0), size=(1, 4), toggle=True,
+        """Assign pushbutton for starting"""
+        btn('Start streaming', layout, (0, 0), size=(1, 6), toggle=True,
             func_conn=self.start_timers, color=blue_b, txt_color=white)
-        # btn('Stop streaming', layout, (0, 2), size=(1, 2),
-        #     func_conn=self.stop_streaming, color=red_b)
 
     def create_plot(self, ch):
         """Create a plot for all eeg signals and the last to keep track of time"""
@@ -187,26 +187,12 @@ class EegPlotsCreator:
 
         return stream_source
 
-        # elif self.gv.stream_origin == 'Stream from Muse':
-        #     create_data = StreamFromMuse(self.gv)
-        #     if checked:
-        #         create_data.start()
-        #     else:
-        #         create_data.stop()
-
-
-    # @pyqtSlot()
-    # def stop_streaming(self):
-    #     if self.gv.stream_origin == 'Stream from OpenBCI':
-    #         self.board.stop()
-    #     self.stop_timers()
-
     @QtCore.pyqtSlot(bool)
     def start_timers(self, checked):
-        print('checked', checked)
+        stream_source = self.init_streaming_source()
         if checked:
             self.freq_counter = FrequencyCounter(self.gv)
-            self.stream_source.start()
+            stream_source.start()
             for i, tm in enumerate(self.timers):
                 self.timers[i].start(0)
             self.start_freq_counter_timer()
@@ -219,10 +205,6 @@ class EegPlotsCreator:
         self.freq_counter_timer = QtCore.QTimer()
         self.freq_counter_timer.timeout.connect(self.freq_counter.update)
         self.freq_counter_timer.start(50)
-
-    # def stop_timers(self):
-    #     for i, tm in enumerate(self.timers):
-    #         self.timers[i].stop()
 
     def assign_action_to_ch(self, ch):
         m_w = 17
