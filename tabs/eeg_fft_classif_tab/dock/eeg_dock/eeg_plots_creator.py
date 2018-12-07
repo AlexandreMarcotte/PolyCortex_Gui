@@ -5,10 +5,11 @@ import pyqtgraph as pg
 from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import *
+from PyQt5.QtCore import Qt
 import re
 from functools import partial
 # -- My packages --
-## generate signal
+# Generate signal
 from generate_signal.from_openbci import SampleDataFromOPENBCI
 from generate_signal.from_synthetic_data import CreateSyntheticData
 from generate_signal.from_file import FileReader
@@ -23,7 +24,7 @@ from tabs.region import Regions
 from .eeg_graph import EegGraph
 
 from data_processing_pipeline.frequency_counter import FrequencyCounter
-from app.pyqt_frequently_used import create_txt_label, create_combo_box
+from app.pyqt_frequently_used import create_param_combobox, create_splitter
 
 
 class EegPlotsCreator:
@@ -38,36 +39,30 @@ class EegPlotsCreator:
         self.eeg_graphes = []
         self.zero_q = deque(
             np.zeros(self.gv.DEQUE_LEN), maxlen=self.gv.DEQUE_LEN)
-
         # Stop/Start
-        start_stop_layout = self.add_sub_layout(self.layout, pos=(0, 0))
+        self.start_stop_layout, gr = self.create_layout(self.layout, pos=(0, 0))
+        self.last_gr = gr
 
-        self.create_buttons(start_stop_layout)
+        # Splitter
+        self.splitter = None
+
+        self.create_buttons(self.start_stop_layout)
         # Plot parameter
-        self.create_param_combo_box(start_stop_layout)
+        self.create_all_combobox(self.start_stop_layout)
 
         self.create_all_eeg_plot()
 
     def set_saver(self, data_saver):
         self.data_saver = data_saver
 
-    def create_param_combo_box(self, start_stop_l):
-        self.create_settings_combo_box(
-            'Vertical scale', start_stop_l, (1, 0),
-            ['Auto', '10 uv', '100 uv', '1000 uv', '10000 uv', '100000 uv'],
-            editable=True, connect_func=self.scale_y_axis)
-        self.create_settings_combo_box(
-            'Horizontal scale', start_stop_l, (1, 2), ['5 s', '7 s', '10 s'])
-        self.create_settings_combo_box(
-            'Number of columns', start_stop_l, (1, 4), ['1', '2'])
-
-    def create_settings_combo_box(self, title, layout, pos, settings_list,
-                                      editable=False, connect_func=None):
-        l = create_txt_label(title)
-        layout.addWidget(l, *pos)
-        cb = create_combo_box(settings_list, connect_func=connect_func,
-                              editable=editable)
-        layout.addWidget(cb, pos[0], pos[1]+1)
+    def create_all_combobox(self, start_stop_l):
+        create_param_combobox(start_stop_l, 'Vertical scale', (0, 1),
+                ['Auto', '10 uv', '100 uv', '1000 uv', '10000 uv', '100000 uv'],
+                editable=True, conn_func=self.scale_y_axis)
+        create_param_combobox(start_stop_l, 'Horizontal scale', (0, 2),
+                ['5s', '7s', '10s'])
+        create_param_combobox(start_stop_l, 'Num columns', (0, 3),
+                ['1', '2'])
 
     def scale_y_axis(self, txt):
         try:
@@ -93,13 +88,15 @@ class EegPlotsCreator:
                 col_factor = 4
             else: col_factor = 8
 
-            self.ch_layout = self.add_sub_layout(self.layout,
-                                                 (ch%col_factor+1, ch//col_factor))
+            self.ch_layout, self.gr = self.create_layout(self.layout,
+                                            (ch%col_factor+1, ch//col_factor))
+            self.add_to_splitter(self.gr)
             self.add_ch_layout(ch)
             # Put only a plot on the time channel
         self.add_ch_layout(ch=self.gv.N_CH, time_ch=True, plot_pos=(5, 1, 1, 6))
+        self.layout.addWidget(self.splitter)
 
-    def add_ch_layout(self, ch, time_ch=False, plot_pos=(0, 1, 5, 6)):
+    def add_ch_layout(self, ch, time_ch=False, plot_pos=(0, 1, 5, 6)):      # TODO: ALEXM: change the name of this function
         plot, q, rowspan = self.create_plot(ch)
         self.plots.append(plot)
         self.ch_layout.addWidget(plot, *plot_pos)
@@ -112,18 +109,23 @@ class EegPlotsCreator:
             self.assign_n_to_ch(ch)
             self.assign_action_to_ch(ch)
 
-    def add_sub_layout(self, parent_layout, pos, shape=(1, 1)):
+    def create_layout(self, parent_layout, pos, shape=(1, 1)):              # TODO: ALEXM: Remove this function there is a similare one somewhere else
         layout = QGridLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         gr = QGroupBox(f'')
         gr.setLayout(layout)
-        parent_layout.addWidget(gr, *pos, *shape)
-        return layout
+        return layout, gr
+
+    def add_to_splitter(self, gr):
+        if self.splitter is None:
+            self.splitter = create_splitter(self.last_gr, gr, direction=Qt.Vertical)
+        else:
+            self.splitter = create_splitter(self.splitter, gr, direction=Qt.Vertical)
 
     def create_buttons(self, layout):
         """Assign pushbutton for starting"""
-        btn('Start streaming', layout, (0, 0), size=(1, 6), toggle=True,
-            func_conn=self.start_timers, color=blue_b, txt_color=white)
+        btn('Start', layout, (0, 0), toggle=True, max_width=100,
+            func_conn=self.start_timers, color=dark_blue_tab, txt_color=white)
 
     def create_plot(self, ch):
         """Create a plot for all eeg signals and the last to keep track of time"""
@@ -134,7 +136,7 @@ class EegPlotsCreator:
         # Create the last plot only to keep track of the time (with zeros as q)
         if ch == self.gv.N_CH:
             # Add the label only for the last channel as they all have the same
-            plot.plotItem.setLabel(axis='bottom', text='Time', units='s')  # Todo : ALEXM : verifier l'uniter
+            plot.plotItem.setLabel(axis='bottom', text='Time', units='s')      # Todo : ALEXM : verifier l'uniter
             rowspan = 1
             q = self.zero_q  # So that we don't see it
         else:
@@ -238,6 +240,7 @@ class EegPlotsCreator:
 
     def change_line_color(self, ch, color_btn):
         color = color_btn.color()
+        print('color', color)
         self.eeg_graphes[ch].curve.setPen(color)
         self.gv.curve_freq[ch].setPen(color)
         self.btns[ch].set_color(color)
