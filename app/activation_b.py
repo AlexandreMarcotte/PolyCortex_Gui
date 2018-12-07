@@ -11,9 +11,9 @@ class btn:
         self.b.setMinimumWidth(min_width)
         self.b.setMaximumWidth(max_width)
         if txt_color:
-            self.b.setStyleSheet(f'background-color: {color}; color: {white};')
+            self.b.setStyleSheet(f'background-color: {color}; color: {white}; font-size: 11pt;')
         else:
-            self.b.setStyleSheet(f'background-color: {color};')
+            self.b.setStyleSheet(f'background-color: {color}; font-size: 11')
         if tip:
             self.b.setToolTip(tip)
         if toggle:
@@ -26,5 +26,5 @@ class btn:
         layout.addWidget(self.b, *pos, *size)
 
     def set_color(self, color):
-        self.b.setStyleSheet(f'background-color: {color};')
+        self.b.setStyleSheet(f'background-color: {color}; font-size: 11pt;')
 
