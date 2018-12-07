@@ -17,13 +17,14 @@ class MovingObject:
 
         self.pos = np.array([0, 0, 0], dtype='float64')                                         #TODO: ALEXM: Changer pour un vector
 
-        self.key_actn = {'d': arr([0.2, 0, 0]),
+        self.pointer_actn = {'d': arr([0.2, 0, 0]),
                          'a': arr([-0.2, 0, 0]),
                          's': arr([0, 0.2, 0]),
                          'w': arr([0, 0.2, 0]),
                          'r': arr([0, 0, 0.3]),
                          'f': arr([0, 0, -0.3])
                          }
+        # self.plane_actn =
 
         self.create_timer()
         if listening_process:
@@ -31,14 +32,15 @@ class MovingObject:
 
     def move_pointer(self):
         try:
-            mvt = self.key_actn[self.key_pressed]
+            mvt = self.pointer_actn[self.key_pressed]
             self.obj.item.translate(mvt[0], mvt[1], mvt[2])
             self.pos += mvt
         except KeyError:
             pass
 
     def move_plane(self):
-        pass
+        if self.key_pressed == 'd':
+            self.obj.item.translate(1, 0, 0)
 
     def create_timer(self):
         self.timer = QtCore.QTimer()
