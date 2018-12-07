@@ -67,8 +67,7 @@ class Obj3DCreator:
                 self.brain[:, :, i] = [0, 255, 0, 20]
                 self.brain[:, i, :] = [0, 255, 0, 20]
                 self.brain[i, :, :] = [0, 255, 0, 20]
-
-        v = gl.GLVolumeItem(self.brain, sliceDensity=1, smooth=False)
+        v = gl.GLVolumeItem(self.brain, sliceDensity=5, smooth=True)
         v.translate(-self.brain.shape[0]/2 * scale,
                     -self.brain.shape[1]/2 * scale,
                     -self.brain.shape[2]/2 * scale)
