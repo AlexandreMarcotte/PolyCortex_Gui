@@ -51,7 +51,7 @@ class BasicP300(Experiment):
             self.gv.experiment_type = 1
 
 
-        elif rand in (1,2,3,4,5,6,7,8,9,10):
+        elif rand in (1, 2, 3, 4, 5, 6, 7, 8, 9, 10):
             # Green
             self.clear_screen()
             p = SquareItem(

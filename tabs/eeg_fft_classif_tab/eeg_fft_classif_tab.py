@@ -36,7 +36,7 @@ class EegFftClassifTab(QWidget):
         self.layout.addWidget(self.area)
 
     def create_docks_menu(self):
-        docks_menu = self.parent.main_menu.addMenu('Docks')
+        docks_menu = self.parent.main_menu.addMenu('Live graph docks')
         self.parent.main_menu.addMenu(docks_menu)
         return docks_menu
 
@@ -135,7 +135,6 @@ class DockHandler:
         return dock
 
     def open_close_dock(self):
-        print('My name is: ', self.name)
         if self.state == 'checked':
             self.dock.close()
             self.state = 'unchecked'

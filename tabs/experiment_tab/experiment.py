@@ -21,8 +21,9 @@ class Experiment:
 
         self.create_start_and_stop_b(exp_name)
 
-    def create_plot(self, xs:Tuple[int, int]=(-2,7), ys:Tuple[int, int]=(-1,5),
-                     hide_axis=True):
+    def create_plot(self, xs: Tuple[int, int]=(-2,7),
+                            ys: Tuple[int, int]=(-1,5),
+                            hide_axis=True):
         plot = pg.PlotWidget()
         plot.setXRange(*xs)
         plot.setYRange(*ys)
