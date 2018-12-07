@@ -124,8 +124,8 @@ class FftGraph:
                                         self.gv.freq_calculator.fft[ch])       # TODO: ALEXM prendre abs ou real? avec real il y a des valeurs negatives est-ce que c'est normal?
 
     def init_on_off_button(self):
-        btn('Start FFT', self.plot_layout, (0, 0), func_conn=self.start,
-            color=blue_b, toggle=True, txt_color=white, min_width=100)
+        btn('Start', self.plot_layout, (0, 0), func_conn=self.start,
+            color=dark_blue_tab, toggle=True, txt_color=white, min_width=100)
 
     def create_all_combobox(self):
         create_param_combobox(

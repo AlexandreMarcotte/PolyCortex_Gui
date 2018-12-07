@@ -17,7 +17,7 @@ class Dock:
 
     def init_on_off_button(self):
         btn(self.dock_name, self.layout, (0, 0), func_conn=self.start,
-            color=blue_b, toggle=True, txt_color=white)
+            color=dark_blue_tab, toggle=True, txt_color=white)
 
     @pyqtSlot(bool)
     def start(self, checked):

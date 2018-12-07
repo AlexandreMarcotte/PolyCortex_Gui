@@ -1,10 +1,7 @@
+# --General Packages--
 from PyQt5 import QtCore
-
-import os
-import numpy as np
 import pyqtgraph as pg
-from time import time
-
+# --My Packages--
 # Classification
 from app.colors import *
 from app.activation_b import btn
@@ -34,7 +31,6 @@ class ClassifPlotCreator:
         bar_chart = pg.PlotWidget(background=dark_grey)
         bar_chart.plotItem.setLabel(axis='left', text='Power', units='None')
         bar_chart.setYRange(0, 4)
-        # bar_chart.setXRange(1, 10)
         # Add to tab layout
         self.layout.addWidget(bar_chart, 1, 0)
         return bar_chart
@@ -54,7 +50,8 @@ class ClassifPlotCreator:
     def on_off_button(self):
         """Assign pushbutton for starting and stoping the stream"""
         btn('Start classification', self.layout, (0, 0),
-            func_conn=self.start, color=blue_b, toggle=True, txt_color=white)
+            func_conn=self.start, color=dark_blue_tab, toggle=True,
+            txt_color=white)
 
     @QtCore.pyqtSlot(bool)
     def start(self, checked):
