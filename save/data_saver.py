@@ -36,7 +36,7 @@ class DataSaver:
         open_file = QtGui.QPushButton('Choose save path')
         open_file.setStyleSheet("background-color: rgba(200, 200, 200, 0.6)")
         open_file.clicked.connect(partial(self.save_file_dialog))
-        self.layout.addWidget(open_file, self.pos[0]+1, 0, *self.choose_b_size)
+        self.layout.addWidget(open_file, self.pos[0]+1, self.pos[1], *self.choose_b_size)
 
     def init_save_file_button(self):
         """Button to save all the current data that was generated"""
