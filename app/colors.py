@@ -1,10 +1,10 @@
 # Colors used for the regions in the signal where event occur
-red = (255, 0, 0, 45)
+red = (255, 0, 0, 15)
 p300_red = (255, 0, 0, 255)
 pale_red = (255, 0, 0, 35)
 green = (0, 255, 0, 45)
 p300_green = (0, 255, 0, 255)
-blue = (0, 0, 255, 45)
+blue = (0, 0, 255, 15)
 yellow = (255, 255, 0, 45)
 purple = (146, 56, 219, 45)
 dark_grey = (3, 3, 3)
@@ -19,6 +19,7 @@ dark_blue_tab = 'rgba(62, 62, 160, 1)'
 grey = 'rgba(100, 100, 100, 0.5)'
 light_grey = 'rgba(130, 130, 130, 0.7)'
 grey2 = 'rgba(160, 160, 160, 0.5)'
+label_grey = 'rgba(215, 215, 215, 0.7)'
 green_b = 'rgba(0, 100, 0, 0.5)'
 red_b =  'rgba(100, 0, 0, 0.5)'
 blue_b = 'rgba(0, 0, 170, 0.5)'
