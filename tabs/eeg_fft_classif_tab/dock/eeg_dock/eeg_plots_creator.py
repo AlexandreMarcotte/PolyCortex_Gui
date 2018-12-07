@@ -6,6 +6,7 @@ from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import *
 import re
+from functools import partial
 # -- My packages --
 ## generate signal
 from generate_signal.from_openbci import SampleDataFromOPENBCI
@@ -28,8 +29,10 @@ from app.pyqt_frequently_used import create_txt_label, create_combo_box
 class EegPlotsCreator:
     def __init__(self, gv, layout):
         self.gv = gv
-        self.ts = self.gv.t_queue
         self.layout = layout
+
+        self.btns = []
+        self.ts = self.gv.t_queue
         self.timers = []
         self.plots = []
         self.eeg_graphes = []
@@ -110,7 +113,6 @@ class EegPlotsCreator:
             self.assign_action_to_ch(ch)
 
     def add_sub_layout(self, parent_layout, pos, shape=(1, 1)):
-        print('pos', pos, 'shape', shape)
         layout = QGridLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         gr = QGroupBox(f'')
@@ -164,9 +166,10 @@ class EegPlotsCreator:
     def assign_n_to_ch(self, ch):
         ch_number_action = ChNumberAction(self.timers, ch)
         # +1 so the number str start at 1
-        btn(name=str(ch + 1), layout=self.ch_layout, pos=(0, 0),
-            func_conn=ch_number_action.stop_ch,
-            color=button_colors[ch], toggle=True, max_width=18)
+        self.btn = btn(name=str(ch + 1), layout=self.ch_layout, pos=(0, 0),
+                       func_conn=ch_number_action.stop_ch,
+                       color=button_colors[ch], toggle=True, max_width=18)
+        self.btns.append(self.btn)
 
     def init_streaming_source(self):
         """      """
@@ -223,16 +226,18 @@ class EegPlotsCreator:
             toggle=True, tip='Show detected class patern',
             max_width=m_w, color=dark_blue_tab)
 
-        self.create_color_button()
+        self.create_color_button(ch)
 
-    def create_color_button(self):
+    def create_color_button(self, ch):
         """Create color button to change the color of the line"""
         color_btn = pg.ColorButton(close_fit=True)
         color_btn.setMaximumWidth(14)
         color_btn.setToolTip('Click to change the color of the line')
-        color_btn.sigColorChanged.connect(self.change_line_color)
+        color_btn.sigColorChanged.connect(partial(self.change_line_color, ch))
         self.ch_layout.addWidget(color_btn, 3, 8)
 
-    def change_line_color(self, color_btn):
+    def change_line_color(self, ch, color_btn):
         color = color_btn.color()
-        print('The new color of the line is: ', color)
+        self.eeg_graphes[ch].curve.setPen(color)
+        self.gv.curve_freq[ch].setPen(color)
+        self.btns[ch].set_color(color)

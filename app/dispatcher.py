@@ -35,6 +35,8 @@ class Dispatcher:
         self.desired_read_freq = 1000
         self.read_period = 1 / self.desired_read_freq
 
+        self.curve_freq = None
+
         self.data_queue = [deque(np.zeros(DEQUE_LEN),
                                  maxlen=DEQUE_LEN) for _ in range(N_CH)]      # One deque per channel initialize at 0
 

@@ -65,7 +65,9 @@ class FftGraph:
             self.curve_freq.append(
                 plot.plot(deque(np.ones(self.gv.DEQUE_LEN),
                                 maxlen=self.gv.DEQUE_LEN)))
-        # Associate the plot to an FftGraph object
+            self.curve_freq[ch].setPen(pen_colors[ch])
+
+        self.gv.curve_freq = self.curve_freq
         return plot
 
     def add_param_tree(self):
@@ -77,12 +79,10 @@ class FftGraph:
         self.filter_layout.addWidget(self.ptree)
 
         self.filterText = TextItem(border=getConfigOption('foreground'))
-        self.filterText.setPos(60,20)
+        self.filterText.setPos(60, 20)
         self.filterText.setParentItem(self.plot.plotItem)
         self.filter.sigFilterChanged.connect(self.filterChanged)
-        self.filter.setFields([
-            ('butterFilter', {'units': 'Hz'}),
-        ])
+        self.filter.setFields([('butterFilter', {'units': 'Hz'})])
 
     def filterChanged(self):
         print('cool')
@@ -122,7 +122,6 @@ class FftGraph:
         for ch in range(self.gv.N_CH):
             self.curve_freq[ch].setData(self.gv.freq_calculator.freq_range,
                                         self.gv.freq_calculator.fft[ch])       # TODO: ALEXM prendre abs ou real? avec real il y a des valeurs negatives est-ce que c'est normal?
-            self.curve_freq[ch].setPen(pen_colors[ch])
 
     def init_on_off_button(self):
         btn('Start FFT', self.plot_layout, (0, 0), func_conn=self.start,
