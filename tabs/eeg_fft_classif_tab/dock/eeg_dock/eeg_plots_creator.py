@@ -43,14 +43,14 @@ class EegPlotsCreator:
         self.start_stop_layout, gr = self.create_layout(self.layout, pos=(0, 0))
         self.last_gr = gr
 
-        # Splitter
-        self.splitter = None
-
         self.create_buttons(self.start_stop_layout)
         # Plot parameter
         self.create_all_combobox(self.start_stop_layout)
 
-        self.create_all_eeg_plot()
+        grps = self.create_all_eeg_plot()
+
+        splitter = self.create_splitter(grps)
+        self.layout.addWidget(splitter)
 
     def set_saver(self, data_saver):
         self.data_saver = data_saver
@@ -61,7 +61,7 @@ class EegPlotsCreator:
                 editable=True, conn_func=self.scale_y_axis)
         create_param_combobox(start_stop_l, 'Horizontal scale', (0, 2),
                 ['5s', '7s', '10s'])
-        create_param_combobox(start_stop_l, 'Num columns', (0, 3),
+        create_param_combobox(start_stop_l, 'plot(s) per column', (0, 3),
                 ['1', '2'])
 
     def scale_y_axis(self, txt):
@@ -79,6 +79,7 @@ class EegPlotsCreator:
     def create_all_eeg_plot(self):
         """
         """
+        grps = []
         num_col = 1
         ch = 0
         for ch in range(self.gv.N_CH):
@@ -90,11 +91,13 @@ class EegPlotsCreator:
 
             self.ch_layout, self.gr = self.create_layout(self.layout,
                                             (ch%col_factor+1, ch//col_factor))
-            self.add_to_splitter(self.gr)
+            grps.append(self.gr)
+            # self.add_to_splitter(self.gr)
             self.add_ch_layout(ch)
             # Put only a plot on the time channel
         self.add_ch_layout(ch=self.gv.N_CH, time_ch=True, plot_pos=(5, 1, 1, 6))
-        self.layout.addWidget(self.splitter)
+        # self.layout.addWidget(self.splitter)
+        return grps
 
     def add_ch_layout(self, ch, time_ch=False, plot_pos=(0, 1, 5, 6)):      # TODO: ALEXM: change the name of this function
         plot, q, rowspan = self.create_plot(ch)
@@ -116,11 +119,19 @@ class EegPlotsCreator:
         gr.setLayout(layout)
         return layout, gr
 
-    def add_to_splitter(self, gr):
-        if self.splitter is None:
-            self.splitter = create_splitter(self.last_gr, gr, direction=Qt.Vertical)
-        else:
-            self.splitter = create_splitter(self.splitter, gr, direction=Qt.Vertical)
+    def create_splitter(self, grps):
+        splitter = None
+        gr_per_col = 1
+        for i in range(0, len(grps), gr_per_col):
+            hori_s = create_splitter(
+                    grps[i], grps[i+(gr_per_col-1)], direction=Qt.Horizontal)
+            if splitter is None:
+                splitter = create_splitter(
+                        self.last_gr, hori_s, direction=Qt.Vertical)
+            else:
+                splitter = create_splitter(
+                        splitter, hori_s, direction=Qt.Vertical)
+        return splitter
 
     def create_buttons(self, layout):
         """Assign pushbutton for starting"""
@@ -170,7 +181,8 @@ class EegPlotsCreator:
         # +1 so the number str start at 1
         self.btn = btn(name=str(ch + 1), layout=self.ch_layout, pos=(0, 0),
                        func_conn=ch_number_action.stop_ch,
-                       color=button_colors[ch], toggle=True, max_width=18)
+                       color=button_colors[ch], toggle=True, max_width=18,
+                       tip=f'Start/Stop the ch{ch+1} signal')
         self.btns.append(self.btn)
 
     def init_streaming_source(self):

@@ -12,11 +12,13 @@ def create_gr(margin=False):
     gr.setLayout(l)
     return gr, l
 
+
 def create_splitter(first_gr, second_gr, direction=Qt.Horizontal):
     s = QSplitter(direction)
     s.addWidget(first_gr)
     s.addWidget(second_gr)
     return s
+
 
 def create_txt_label(name):
     l = QLabel(name)
@@ -28,14 +30,6 @@ def create_txt_label(name):
     l.setMaximumHeight(26)
     return l
 
-# def create_combo_box(elem_list, connect_func=None, editable=False):
-#     cb = QComboBox()
-#     for val in elem_list:                       # ALEXM: Create a  frequently pyqt method for these two combo box
-#         cb.addItem(val)
-#     cb.setEditable(editable)
-#     if connect_func is not None:
-#         cb.activated[str].connect(connect_func)
-#     return cb
 
 def create_param_combobox(
         layout, name, pos, param, conn_func=None, editable=True,
@@ -50,9 +44,10 @@ def create_param_combobox(
         combo_box.activated[str].connect(conn_func)
     layout.addWidget(combo_box, pos[0]+1, pos[1], 1, cols)
 
+
 def add_triplet_txt_box(col, layout):
     for i in range(3):
         pos_t = QtGui.QLineEdit(str(0))
-        pos_t.setMaximumWidth(20)
+        pos_t.setMaximumWidth(30)
         layout.addWidget(pos_t, 1, col+i)
 

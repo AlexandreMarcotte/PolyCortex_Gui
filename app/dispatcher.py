@@ -54,6 +54,8 @@ class Dispatcher:
         self.emg_signal_len = 170
         # FFT
         self.freq_calculator = FreqCalculator(self, remove_first_data=0)
+        # Viz3D
+        self.plane_to_move = 'x'
 
     def set_main_window(self, main_window):
         self.main_window = main_window

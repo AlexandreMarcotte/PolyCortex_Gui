@@ -18,6 +18,11 @@ from .plane import Plane
 from app.pyqt_frequently_used import (create_gr, create_txt_label,
                                       create_splitter, create_param_combobox,
                                       add_triplet_txt_box)
+import mne
+from mne.surface import decimate_surface  # noqa
+from pyqtgraph.Qt import QtCore, QtGui
+print(__doc__)
+
 
 class Viz3D(Dock):
     def __init__(self, gv, layout):
@@ -32,13 +37,16 @@ class Viz3D(Dock):
         self.init_layout()
         # Create pointer sphere
         self.pointer_sphere = Sphere(
-            scaling_factor=2, rows=10, cols=10, listening_process=True,
-            update_func='move pointer')
+                self.gv, scaling_factor=2, rows=10, cols=10,
+                listening_process=True, update_func='move pointer')
+        self.view.addItem(self.pointer_sphere.item)
+
+        self.create_head()
 
         self.create_planes()
 
         self.sphere = Sphere(
-            scaling_factor=48, rows=20, cols=20)
+                self.gv, scaling_factor=48, rows=20, cols=20)
         # self.view.addItem(self.sphere.item)
 
         self.create_total_brain()
@@ -50,14 +58,38 @@ class Viz3D(Dock):
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.update)
 
+    def create_head(self):
+        path = mne.datasets.sample.data_path()
+        surf = mne.read_bem_surfaces(path + '/subjects/sample/bem/sample-head.fif')[0]
+        points, triangles = surf['rr'], surf['tris']
+        # reduce to 30000 triangles:
+        points_dec, triangles_dec = decimate_surface(
+                points, triangles, n_triangles=30000)
+        p, t = points_dec, triangles_dec
+        mesh_data = gl.MeshData(p, t)
+        mesh_item = gl.GLMeshItem(
+                meshdata=mesh_data, computeNormals=True,
+                shader='viewNormalColor', glOptions='translucent')
+        mesh_item.translate(0, 0, -20)
+        mesh_item.rotate(90, 1, 0, 0)
+        mesh_item.scale(650, 650, 650)
+        mesh_item.setColor([0, 0, 1, 0.4])
+        # s.setData(=p)
+        self.view.addItem(mesh_item)
+
     def create_planes(self):
-        self.view.addItem(self.pointer_sphere.item)
-        plane_z = Plane(color=(255, 0, 0, 10))
-        plane_y = Plane(rotation=(90, 1, 0, 0), color=(0, 255, 0, 10))
-        plane_x = Plane(rotation=(90, 0, 1, 0), color=(0, 0, 255, 10))
-        self.view.addItem(plane_z.item)
-        self.view.addItem(plane_y.item)
-        self.view.addItem(plane_x.item)
+        self.plane_x = Plane(
+                self.gv, axis='x', mvt=np.array([1, 0, 0]), key=('j', 'k'),
+                rotation=(90, 0, 1, 0), color=(0, 0, 255, 10))
+        self.plane_y = Plane(
+                self.gv, axis='y', mvt=np.array([0, 1, 0]), key=('u', 'i'),
+                rotation=(90, 1, 0, 0), color=(0, 255, 0, 10))
+        self.plane_z = Plane(
+                self.gv, axis='z', mvt=np.array([0, 0, 1]), key=('n', 'm'),
+                color=(255, 0, 0, 10))
+        self.view.addItem(self.plane_z.item)
+        self.view.addItem(self.plane_y.item)
+        self.view.addItem(self.plane_x.item)
 
     def create_grid(self, rotation=(0, 1, 0, 0),  scale=2):
         grid = gl.GLGridItem(size=QtGui.QVector3D(30,30,1))
@@ -74,8 +106,9 @@ class Viz3D(Dock):
     def init_modify_curve_layout(self):
         # modify_curve_gr, modify_curve_layout = create_gr()
         create_param_combobox(
-            self.layout, 'Ch to position', (0, 1, 1, 1),                       # TODO: ALEXM: change to have a hboxlayout instead of a qboxlayout
-            [str(ch) for ch in range(self.gv.N_CH)], self.print_shit, cols=1)
+                self.layout, 'Ch to position', (0, 1, 1, 1),                       # TODO: ALEXM: change to have a hboxlayout instead of a qboxlayout
+                [str(ch) for ch in range(self.gv.N_CH)], self.print_shit,
+                cols=1)
         # Position
         pos_l = create_txt_label('Position')
         self.layout.addWidget(pos_l, 0, 2, 1, 3)
@@ -84,16 +117,11 @@ class Viz3D(Dock):
         angle_l = create_txt_label('Angle')
         self.layout.addWidget(angle_l, 0, 5, 1, 3)
         add_triplet_txt_box(col=5, layout=self.layout)
-        # Color
-        # color_l = create_txt_label('Color')
-        # self.layout.addWidget(color_l, 7, 0, 1, 1)
-        # color_b = self.init_color_button()
-        # self.layout.addWidget(color_b, 8, 0, 1, 1)
         # Save to file
         data_saver = DataSaver(
-            self.gv.main_window, self.gv, self.layout,                         # TODO: ALEXM: Add a tooltip
-            saving_type='Save', pos=(0, 8), size=(1, 1),
-            save_file_button=False, choose_b_size=(1, 1))
+                self.gv.main_window, self.gv, self.layout,                         # TODO: ALEXM: Add a tooltip
+                saving_type='Save', pos=(0, 8), size=(1, 1),
+                save_file_button=False, choose_b_size=(1, 1))
         # return modify_curve_layout, modify_curve_gr
 
     def init_color_button(self):
@@ -146,11 +174,12 @@ class Viz3D(Dock):
                             axis=1)
 
             self.set_plotdata(
-                name=ch, points=pts, color=pg.glColor((ch, 8)), width=1)
+                    name=ch, points=pts, color=pg.glColor((ch, 8)), width=1)
 
     def init_on_off_button(self):
         btn('Start', self.layout, (0, 0), func_conn=self.start,
-            max_width=100, min_width=100, color=dark_blue_tab, toggle=True, txt_color=white)
+            max_width=100, min_width=100, color=dark_blue_tab, toggle=True,
+            txt_color=white)
 
     @QtCore.pyqtSlot(bool)
     def start(self, checked):
@@ -158,8 +187,14 @@ class Viz3D(Dock):
             self.timer.start(10)
             # self.brain_v.timer.start(10)
             self.pointer_sphere.timer.start(10)
+            self.plane_x.timer.start(10)
+            self.plane_y.timer.start(10)
+            self.plane_z.timer.start(10)
         else:
             self.timer.stop()
             # self.brain_v.timer.stop()
             self.pointer_sphere.timer.stop()
+            self.plane_x.timer.stop()
+            self.plane_y.timer.start()
+            self.plane_z.timer.start()
 

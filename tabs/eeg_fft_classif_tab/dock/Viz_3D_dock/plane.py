@@ -7,9 +7,17 @@ from PyQt5.QtGui import QColor
 
 
 class Plane(MovingObject):
-    def __init__(self, rotation=(0, 1, 0, 0), scale=1, color=(255, 0, 0, 10),
-                 update_func='move plane', listening_process=False):
-        super().__init__(self, update_func, listening_process)
+    def __init__(
+                self, gv, axis='x', mvt=np.array([1, 0, 0]), key=('j', 'k'),
+                rotation=(0, 1, 0, 0), scale=1,
+                mvt_scale=0.3, color=(255, 0, 0, 10), update_func='move plane',
+                listening_process=True):
+        self.gv = gv
+        self.axis = axis
+        self.mvt = mvt
+        self.key = key
+        self.mvt_scale = mvt_scale
+        super().__init__(self, gv, update_func, listening_process)
         self.rotation = rotation
         self.scale = scale
         self.color = color
@@ -26,7 +34,7 @@ class Plane(MovingObject):
         item.rotate(*self.rotation)
         return item
 
-    # def init_plane_item(self):
+    # def init_plane_item(self):                                               # TODO: ALEXM: Try again to use a plane with the technique I used with a head
     #     cols = 150
     #     rows = 150
     #     plane = np.empty((cols, rows, 1) + (4,), dtype=float)
