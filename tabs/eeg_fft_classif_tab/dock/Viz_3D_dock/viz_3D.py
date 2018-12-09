@@ -17,7 +17,7 @@ from .brain import Brain
 from .plane import Plane
 from app.pyqt_frequently_used import (create_gr, create_txt_label,
                                       create_splitter, create_param_combobox,
-                                      add_triplet_txt_box)
+                                      TripletBox)
 import mne
 from mne.surface import decimate_surface  # noqa
 from pyqtgraph.Qt import QtCore, QtGui
@@ -80,13 +80,15 @@ class Viz3D(Dock):
     def create_planes(self):
         self.plane_x = Plane(
                 self.gv, axis='x', mvt=np.array([1, 0, 0]), key=('j', 'k'),
-                rotation=(90, 0, 1, 0), color=(0, 0, 255, 10))
+                rotation=(90, 0, 1, 0), color=(0, 0, 255, 4),
+                triplet_pos=self.triplet_pos)
         self.plane_y = Plane(
-                self.gv, axis='y', mvt=np.array([0, 1, 0]), key=('u', 'i'),
-                rotation=(90, 1, 0, 0), color=(0, 255, 0, 10))
+                self.gv, axis='y', mvt=np.array([0, 1, 0]), key=('j', 'k'),
+                rotation=(90, 1, 0, 0), color=(0, 255, 0, 4),
+                triplet_pos=self.triplet_pos)
         self.plane_z = Plane(
-                self.gv, axis='z', mvt=np.array([0, 0, 1]), key=('n', 'm'),
-                color=(255, 0, 0, 10))
+                self.gv, axis='z', mvt=np.array([0, 0, 1]), key=('j', 'k'),
+                color=(255, 0, 0, 4), triplet_pos=self.triplet_pos)
         self.view.addItem(self.plane_z.item)
         self.view.addItem(self.plane_y.item)
         self.view.addItem(self.plane_x.item)
@@ -112,11 +114,14 @@ class Viz3D(Dock):
         # Position
         pos_l = create_txt_label('Position')
         self.layout.addWidget(pos_l, 0, 2, 1, 3)
-        add_triplet_txt_box(col=2, layout=self.layout)
+        self.triplet_pos = TripletBox(
+                self.gv, name='position', col=2, layout=self.layout,
+                colors=(blue_plane, green_plane, red_plane))
         # Angle
         angle_l = create_txt_label('Angle')
         self.layout.addWidget(angle_l, 0, 5, 1, 3)
-        add_triplet_txt_box(col=5, layout=self.layout)
+        self.triplet_angle = TripletBox(
+                self.gv, name='angle', col=5, layout=self.layout)
         # Save to file
         data_saver = DataSaver(
                 self.gv.main_window, self.gv, self.layout,                         # TODO: ALEXM: Add a tooltip

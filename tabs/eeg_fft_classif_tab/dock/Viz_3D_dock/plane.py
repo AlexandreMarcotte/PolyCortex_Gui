@@ -11,17 +11,20 @@ class Plane(MovingObject):
                 self, gv, axis='x', mvt=np.array([1, 0, 0]), key=('j', 'k'),
                 rotation=(0, 1, 0, 0), scale=1,
                 mvt_scale=0.3, color=(255, 0, 0, 10), update_func='move plane',
-                listening_process=True):
+                listening_process=True, triplet_pos=None):
         self.gv = gv
         self.axis = axis
         self.mvt = mvt
         self.key = key
         self.mvt_scale = mvt_scale
-        super().__init__(self, gv, update_func, listening_process)
+        self.triplet_pos = triplet_pos
+        super().__init__(gv, listening_process)
         self.rotation = rotation
         self.scale = scale
         self.color = color
         self.item = self.init_plane_item()
+
+        self.create_timer(self.move_plane)
 
     def init_plane_item(self):
         cols = 150
@@ -33,6 +36,20 @@ class Plane(MovingObject):
         item.translate(-cols//2, -rows//2, 0)
         item.rotate(*self.rotation)
         return item
+
+    def move_plane(self):
+        try:
+            print('PLANE', self.gv.plane_to_move)
+            if self.axis == self.gv.plane_to_move:
+                if self.key_pressed == self.key[0]:
+                    mvt = self.mvt_scale * self.mvt
+                    self.item.translate(*mvt)
+                    # self.item.
+                if self.key_pressed == self.key[1]:
+                    mvt = -1 * self.mvt_scale * self.mvt
+                    self.item.translate(*mvt)
+        except KeyError:
+            pass
 
     # def init_plane_item(self):                                               # TODO: ALEXM: Try again to use a plane with the technique I used with a head
     #     cols = 150
