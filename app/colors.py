@@ -28,3 +28,7 @@ black = 'rgba(0, 0, 0, 0.5)'
 
 DARK_GREY = '#585858'  # hexa
 LIGHT_GREY = '#C8C8C8'
+
+blue_plane='rgba(0, 0, 255, 0.4)'
+green_plane='rgba(0, 255, 0, 0.7)'
+red_plane='rgba(255, 0, 0, 0.4)'

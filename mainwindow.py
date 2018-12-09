@@ -120,7 +120,7 @@ class MainWindow(QMainWindow):
     def create_menu_start_game(self):
         # ---Start game---
         self.menuGame = QMenu(title='&Start game')
-        self.start_game = QtGui.QAction('Start game...')
+        self.start_game = QtGui.QAction('Start platformer game...')
         self.start_game.setStatusTip('Press to start the mini game...')
         self.start_game.triggered.connect(self.start_the_game)
         self.menuGame.addAction(self.start_game)

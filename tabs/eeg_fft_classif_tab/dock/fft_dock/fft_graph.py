@@ -18,8 +18,7 @@ from functools import partial
 from app.colors import *
 from app.activation_b import btn
 from app.pyqt_frequently_used import (create_gr, create_txt_label,
-                                      create_splitter, create_param_combobox,
-                                      add_triplet_txt_box)
+                                       create_splitter, create_param_combobox)
 from ... dock.dock import Dock
 
 
