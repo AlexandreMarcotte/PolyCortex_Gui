@@ -37,16 +37,20 @@ class Viz3D(Dock):
         self.init_layout()
         # Create pointer sphere
         self.pointer_sphere = Sphere(
-                self.gv, scaling_factor=2, rows=10, cols=10,
-                listening_process=True, update_func='move pointer')
+                self.gv, scaling_factor=2, listening_process=True)
         self.view.addItem(self.pointer_sphere.item)
+
+        self.plane_x, self.plane_y, self.plane_z = self.create_planes()
+
+        self.electrod_sphere = Sphere(
+            self.gv, scaling_factor=8,
+            ele_to_follow=[self.plane_x.pos, self.plane_y.pos,
+            self.plane_z.pos], update_func_name='follow_plane')
+        self.view.addItem(self.electrod_sphere.item)
 
         self.create_head()
 
-        self.create_planes()
-
-        self.sphere = Sphere(
-                self.gv, scaling_factor=48, rows=20, cols=20)
+        self.sphere = Sphere(self.gv, scaling_factor=48)
         # self.view.addItem(self.sphere.item)
 
         self.create_total_brain()
@@ -78,27 +82,22 @@ class Viz3D(Dock):
         self.view.addItem(mesh_item)
 
     def create_planes(self):
-        self.plane_x = Plane(
+        plane_x = Plane(
                 self.gv, axis='x', mvt=np.array([1, 0, 0]), key=('j', 'k'),
                 rotation=(90, 0, 1, 0), color=(0, 0, 255, 4),
-                triplet_pos=self.triplet_pos)
-        self.plane_y = Plane(
+                triplet_pos=self.triplet_pos, )
+        plane_y = Plane(
                 self.gv, axis='y', mvt=np.array([0, 1, 0]), key=('j', 'k'),
                 rotation=(90, 1, 0, 0), color=(0, 255, 0, 4),
                 triplet_pos=self.triplet_pos)
-        self.plane_z = Plane(
+        plane_z = Plane(
                 self.gv, axis='z', mvt=np.array([0, 0, 1]), key=('j', 'k'),
                 color=(255, 0, 0, 4), triplet_pos=self.triplet_pos)
-        self.view.addItem(self.plane_z.item)
-        self.view.addItem(self.plane_y.item)
-        self.view.addItem(self.plane_x.item)
+        self.view.addItem(plane_z.item)
+        self.view.addItem(plane_y.item)
+        self.view.addItem(plane_x.item)
 
-    def create_grid(self, rotation=(0, 1, 0, 0),  scale=2):
-        grid = gl.GLGridItem(size=QtGui.QVector3D(30,30,1))
-        grid.scale(scale, scale, 1)
-        if rotation[0]:
-            grid.rotate(*rotation)
-        return grid
+        return plane_x, plane_y, plane_z
 
     def init_viz_layout(self):
         # viz_gr, viz_layout = create_gr()
@@ -192,6 +191,7 @@ class Viz3D(Dock):
             self.timer.start(10)
             # self.brain_v.timer.start(10)
             self.pointer_sphere.timer.start(10)
+            self.electrod_sphere.timer.start(10)
             self.plane_x.timer.start(10)
             self.plane_y.timer.start(10)
             self.plane_z.timer.start(10)
@@ -199,6 +199,7 @@ class Viz3D(Dock):
             self.timer.stop()
             # self.brain_v.timer.stop()
             self.pointer_sphere.timer.stop()
+            self.electrod_sphere.timer.stop()
             self.plane_x.timer.stop()
             self.plane_y.timer.start()
             self.plane_z.timer.start()

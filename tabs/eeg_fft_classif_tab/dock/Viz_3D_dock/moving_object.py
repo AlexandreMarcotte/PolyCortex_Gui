@@ -8,13 +8,7 @@ from numpy import array as arr
 class MovingObject:
     def __init__(self, gv, listening_process):
         self.gv = gv
-        # self.obj = obj
-        # self.update_func = update_func
         self.listening_process = listening_process
-
-        # self.update_func_types = {'update pos': self.update_pos,
-        #                           'move pointer': self.move_pointer}
-                                  # 'move plane': self.obj.move_plane}
 
         self.pos = np.array([0, 0, 0], dtype='float64')                        #TODO: ALEXM: Changer pour un vector
 
@@ -34,10 +28,6 @@ class MovingObject:
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(slot)
 
-    # def update_pos(self):
-    #     self.item.translate(1000, 0, 0)
-        # pass
-
     def start_listening_process(self):
         listen_keybr = keyboard.Listener(
                 on_press=self.on_press, on_release=self.on_release)
@@ -54,5 +44,3 @@ class MovingObject:
         pass
         if key == keyboard.Key.esc:
             self.listen_keybr.start()
-
-

@@ -1,17 +1,12 @@
-from PyQt5.QtWidgets import *
-from PyQt5 import QtGui, QtCore
-from timeit import timeit, Timer
-import numpy as np
 import pyqtgraph as pg
 # -- My packages --
-from app.colors import *
 from ... dock.dock import Dock
 from app.pyqt_frequently_used import *
 
 
 class WaveGraph(Dock):
     def __init__(self, gv, layout):
-        super().__init__(gv, layout, 'fft', 'Wave graph')
+        super().__init__(gv, layout, 'fft', 'Start')
         self.gv = gv
         self.layout = layout
 
@@ -28,7 +23,7 @@ class WaveGraph(Dock):
         self.gv.freq_calculator.set_waves(self.waves)
         self.plot = self.init_plot()
         self.brushes, self.x, self.width = self.init_bar_braph_caract()
-        # self.time_func()
+
         self.N_ELE = len(self.waves)
 
         self.timer.timeout.connect(self.update)

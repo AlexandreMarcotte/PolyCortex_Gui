@@ -87,9 +87,3 @@ class TripletBox:
             layout.addWidget(l_e, 1, col+i)
             self.all_l_e.append(l_e)
 
-    # def do_something(self, i):
-    #     print('do something', i)
-
-
-
-

@@ -12,7 +12,7 @@ from app.pyqt_frequently_used import *
 
 class FftOverTimeGraph(Dock):
     def __init__(self, gv, layout):
-        super().__init__(gv, layout, 'fft', 'Start FFT over time graph')
+        super().__init__(gv, layout, 'fft', 'Start')
         self.gv = gv
         self.layout = layout
 

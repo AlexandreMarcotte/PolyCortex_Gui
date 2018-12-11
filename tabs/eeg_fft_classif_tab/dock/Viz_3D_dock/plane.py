@@ -22,9 +22,12 @@ class Plane(MovingObject):
         self.rotation = rotation
         self.scale = scale
         self.color = color
+
+        self.pos = np.array([0, 0, 0], dtype='float64')
         self.item = self.init_plane_item()
 
         self.create_timer(self.move_plane)
+
 
     def init_plane_item(self):
         cols = 150
@@ -33,20 +36,24 @@ class Plane(MovingObject):
         plane[:, :] = self.color
         item = gl.GLVolumeItem(plane, sliceDensity=5, smooth=True)
         item.scale(self.scale, self.scale, 1)
-        item.translate(-cols//2, -rows//2, 0)
+        mvt = np.array([-cols//2, -rows//2, 0])
+        # self.pos += mvt
+        item.translate(*mvt)
         item.rotate(*self.rotation)
         return item
 
     def move_plane(self):
         try:
-            print('PLANE', self.gv.plane_to_move)
             if self.axis == self.gv.plane_to_move:
                 if self.key_pressed == self.key[0]:
                     mvt = self.mvt_scale * self.mvt
+                    self.pos += mvt
+                    print('pos', self.pos, 'mvt', mvt)
                     self.item.translate(*mvt)
                     # self.item.
                 if self.key_pressed == self.key[1]:
                     mvt = -1 * self.mvt_scale * self.mvt
+                    self.pos += mvt
                     self.item.translate(*mvt)
         except KeyError:
             pass
