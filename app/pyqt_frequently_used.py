@@ -37,8 +37,8 @@ def create_txt_label(name):
 
 
 def create_param_combobox(
-        layout, name, pos, param, conn_func=None, editable=True,
-        cols=1):
+            layout, name, pos, param, conn_func=None, editable=True,
+            cols=1):
     l = create_txt_label(name)
     layout.addWidget(l, *pos)
     combo_box = QComboBox()

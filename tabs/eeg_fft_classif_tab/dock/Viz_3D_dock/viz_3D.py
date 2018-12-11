@@ -40,20 +40,21 @@ class Viz3D(Dock):
                 self.gv, scaling_factor=2, listening_process=True)
         self.view.addItem(self.pointer_sphere.item)
 
-        self.plane_x, self.plane_y, self.plane_z = self.create_planes()
-
         self.electrod_sphere = Sphere(
-            self.gv, scaling_factor=8,
-            ele_to_follow=[self.plane_x.pos, self.plane_y.pos,
-            self.plane_z.pos], update_func_name='follow_plane')
+            self.gv, scaling_factor=3, update_func_name='follow_plane')
         self.view.addItem(self.electrod_sphere.item)
 
-        self.create_head()
+        # self.create_head()
+
+        # self.plane_x, self.plane_y, self.plane_z = self.create_planes()
+        # self.electrod_sphere.set_element_to_follow(
+        #     ele_to_follow=[self.plane_x.pos, self.plane_y.pos,
+        #                    self.plane_z.pos],)
 
         self.sphere = Sphere(self.gv, scaling_factor=48)
         # self.view.addItem(self.sphere.item)
 
-        self.create_total_brain()
+        # self.create_total_brain()
 
         self.line_item = {}
         self.create_plot_lines()
@@ -107,7 +108,7 @@ class Viz3D(Dock):
     def init_modify_curve_layout(self):
         # modify_curve_gr, modify_curve_layout = create_gr()
         create_param_combobox(
-                self.layout, 'Ch to position', (0, 1, 1, 1),                       # TODO: ALEXM: change to have a hboxlayout instead of a qboxlayout
+                self.layout, 'Ch to move', (0, 1, 1, 1),                       # TODO: ALEXM: change to have a hboxlayout instead of a qboxlayout
                 [str(ch) for ch in range(self.gv.N_CH)], self.print_shit,
                 cols=1)
         # Position

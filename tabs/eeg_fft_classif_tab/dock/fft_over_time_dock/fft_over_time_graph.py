@@ -22,6 +22,7 @@ class FftOverTimeGraph(Dock):
 
         self.view = self.init_view()
         self.plot = self.init_surface()
+        self.init_choose_ch_combobox()
         self.timer.timeout.connect(self.update)
 
     def init_view(self):
@@ -34,12 +35,8 @@ class FftOverTimeGraph(Dock):
 
     def init_surface(self):
         """"""
-        # cols = self.gv.freq_calculator.N_T_MEMORY
-        # rows = self.gv.DEQUE_LEN
-        # x = np.linspace(-8, 8, cols).reshape(cols, 1)
-        # y = np.linspace(-8, 8, rows).reshape(1, rows)
-        surface = gl.GLSurfacePlotItem(shader='heightColor',
-                                       computeNormals=False, smooth=False)
+        surface = gl.GLSurfacePlotItem(
+                shader='heightColor', computeNormals=False, smooth=False)
         surface.translate(0, -self.gv.DEQUE_LEN/15, 0)
         surface.shader()['colorMap'] = np.array([-1, -1, -1, 0, 0, 0, 1, 1, 1])
         self.view.addItem(surface)
@@ -52,3 +49,11 @@ class FftOverTimeGraph(Dock):
         fft_over_t /= max(fft_over_t[-1])
         self.plot.setData(z=(15*fft_over_t-7))
 
+    def init_choose_ch_combobox(self):
+        create_param_combobox(
+            self.plot_layout, 'Channels', (0, 1),
+            [str(ch) for ch in range(self.gv.N_CH)],
+            self.print_ch)
+
+    def print_ch(self, ch):
+        print('ch: ', ch)
