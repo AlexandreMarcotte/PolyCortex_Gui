@@ -1,4 +1,7 @@
+# --General Packages--
 import pyqtgraph as pg
+from PyQt5 import QtGui
+from functools import partial
 # -- My packages --
 from ... dock.dock import Dock
 from app.pyqt_frequently_used import *
@@ -6,12 +9,14 @@ from app.pyqt_frequently_used import *
 
 class WaveGraph(Dock):
     def __init__(self, gv, layout):
-        super().__init__(gv, layout, 'fft', 'Start')
+        super().__init__(gv, 'fft', layout)
         self.gv = gv
         self.layout = layout
+        # plot_gr, self.plot_layout = create_gr()
+        # self.layout.addWidget(plot_gr, 0, 0)
+        self.ch = 0
 
-        plot_gr, self.plot_layout = create_gr()
-        self.layout.addWidget(plot_gr, 0, 0)
+        self.init_choose_ch_combobox()
         self.init_on_off_button()
 
         self.waves = {'delta': Wave((0, 4)),
@@ -31,13 +36,10 @@ class WaveGraph(Dock):
     def init_plot(self):
         """"""
         plot = pg.PlotWidget(background=dark_grey)
-        self.plot_layout.addWidget(plot, 1, 0)
+        self.layout.addWidget(plot, 2, 0, 1, 2)
         waves_names = [wave_name for wave_name in self.waves]
         plot.plotItem.setLabel(axis='left', text='Power', units='None')
         plot.plotItem.setLabel(axis='bottom', text=waves_names)
-        # Add to tab layout
-        self.layout.addWidget(plot, 1, 0)
-
         return plot
 
     def init_bar_braph_caract(self):
@@ -58,8 +60,10 @@ class WaveGraph(Dock):
 
     def update(self):
         self.plot.clear()
-        bg = pg.BarGraphItem(height=self.gv.freq_calculator.freq_per_band,
-                             x=self.x, width=self.width, brushes=self.brushes)
+        bg = pg.BarGraphItem(
+                height=self.gv.freq_calculator.freq_per_band_all_ch[self.ch],              # put the function directly here
+                # height=partial(self.gv.freq_calculator.get_avg_freq_per_band, 0),
+                x=self.x, width=self.width, brushes=self.brushes)
         self.plot.addItem(bg)
 
 
