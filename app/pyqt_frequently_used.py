@@ -1,17 +1,15 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt
-from PyQt5 import QtGui
 from app.colors import *
-from functools import partial
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QLineEdit
 
 
 def create_gr(margin=False):
-    gr = QGroupBox()
     l = QGridLayout()
     if not margin:
         l.setContentsMargins(0, 0, 0, 0)
+    gr = QGroupBox(f'')
     gr.setLayout(l)
     return gr, l
 

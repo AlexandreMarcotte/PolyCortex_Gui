@@ -102,9 +102,9 @@ class FftGraph:
 
     def connect_classif_region(self):
         self.pass_f_region.sigRegionChanged.connect(
-            partial(self.update_pass_filter_region))
+                partial(self.update_pass_filter_region))
         self.cut_f_region.sigRegionChanged.connect(
-            partial(self.update_cut_filter_region))
+                partial(self.update_cut_filter_region))
 
     def update_pass_filter_region(self):
         self.gv.min_pass_filter, self.gv.max_pass_filter = \

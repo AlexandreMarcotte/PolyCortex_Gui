@@ -12,14 +12,14 @@ from .dock.fft_dock.fft_graph import FftGraph
 from .dock.classif_dock.classification_plot_creator import ClassifPlotCreator
 from .dock.banner_dock.banner import Banner
 from .dock.Viz_3D_dock.viz_3D import Viz3D
-from .dock.fft_over_time_dock.fft_over_time_graph import FftOverTimeGraph
+from .dock.fft_over_time_dock.fft_over_time_graph import FftOverTimeGraph3D
 
 from save.data_saver import DataSaver
 from app.colors import *
 from tabs.region import Regions
 
 
-class EegFftClassifTab(QWidget):
+class LiveGraphTab(QWidget):
     def __init__(self, gv, parent):
         super().__init__()
         self.gv = gv
@@ -54,7 +54,7 @@ class EegFftClassifTab(QWidget):
             self.fft.dock, size=(5, 10), scroll=True)
 
         self.fft_over_time = DockHandler(
-            'FFt over time', self, self.docks_menu, FftOverTimeGraph, [self.gv], 'below',
+            'FFt over time 3D', self, self.docks_menu, FftOverTimeGraph3D, [self.gv], 'below',
             self.fft.dock, size=(5, 10), scroll=True)
 
         self.classification = DockHandler(
