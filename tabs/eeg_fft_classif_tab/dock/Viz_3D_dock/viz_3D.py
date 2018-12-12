@@ -26,7 +26,8 @@ print(__doc__)
 
 class Viz3D(Dock):
     def __init__(self, gv, layout):
-        super().__init__(gv, layout, 'viz', 'Viz3D')
+        secondary_gr, secondary_layout = create_gr()
+        super().__init__(gv, 'viz', secondary_layout)
         self.gv = gv
         self.layout = layout
 
@@ -44,17 +45,16 @@ class Viz3D(Dock):
             self.gv, scaling_factor=3, update_func_name='follow_plane')
         self.view.addItem(self.electrod_sphere.item)
 
-        # self.create_head()
 
-        # self.plane_x, self.plane_y, self.plane_z = self.create_planes()
-        # self.electrod_sphere.set_element_to_follow(
-        #     ele_to_follow=[self.plane_x.pos, self.plane_y.pos,
-        #                    self.plane_z.pos],)
+        self.plane_x, self.plane_y, self.plane_z = self.create_planes()
+        self.electrod_sphere.set_element_to_follow(
+            ele_to_follow=[self.plane_x.pos, self.plane_y.pos,
+                           self.plane_z.pos],)
 
         self.sphere = Sphere(self.gv, scaling_factor=48)
         # self.view.addItem(self.sphere.item)
 
-        # self.create_total_brain()
+        self.show_3D_viz_b()
 
         self.line_item = {}
         self.create_plot_lines()
@@ -62,6 +62,14 @@ class Viz3D(Dock):
         # self.on_off_button()
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.update)
+
+    def show_3D_viz_b(self):
+        btn('Show 3D', self.layout, (1, 0),
+            func_conn=self.show_3D_viz, color=grey3, txt_color=white)
+
+    def show_3D_viz(self):
+        self.create_head()
+        self.create_total_brain()
 
     def create_head(self):
         path = mne.datasets.sample.data_path()
