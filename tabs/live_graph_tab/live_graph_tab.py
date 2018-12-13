@@ -12,7 +12,8 @@ from .dock.fft_dock.fft_graph import FftGraph
 from .dock.classif_dock.classification_plot_creator import ClassifPlotCreator
 from .dock.banner_dock.banner import Banner
 from .dock.Viz_3D_dock.viz_3D import Viz3D
-from .dock.fft_over_time_dock.fft_over_time_graph import FftOverTimeGraph3D
+from .dock.fft_over_time_3D_dock.fft_over_time_graph import FftOverTimeGraph3D
+from .dock.fft_over_time_2D_dock.fft_over_time_graph import FftOverTimeGraph2D
 
 from save.data_saver import DataSaver
 from app.colors import *
@@ -53,9 +54,13 @@ class LiveGraphTab(QWidget):
             'Wave', self, self.docks_menu, WaveGraph, [self.gv], 'below',
             self.fft.dock, size=(5, 10), scroll=True)
 
-        self.fft_over_time = DockHandler(
-            'FFt over time 3D', self, self.docks_menu, FftOverTimeGraph3D, [self.gv], 'below',
-            self.fft.dock, size=(5, 10), scroll=True)
+        self.fft_over_time_3D = DockHandler(
+            'FFt over time 3D', self, self.docks_menu, FftOverTimeGraph3D,
+            [self.gv], 'below', self.fft.dock, size=(5, 10), scroll=True)
+
+        self.fft_over_time_2D = DockHandler(
+            'FFt over time 2D', self, self.docks_menu, FftOverTimeGraph2D,
+            [self.gv], 'below', self.fft.dock, size=(5, 10), scroll=True)
 
         self.classification = DockHandler(
             'Classification', self, self.docks_menu, ClassifPlotCreator,
