@@ -117,8 +117,8 @@ class Viz3D(Dock):
         # modify_curve_gr, modify_curve_layout = create_gr()
         create_param_combobox(
                 self.layout, 'Ch to move', (0, 1, 1, 1),                       # TODO: ALEXM: change to have a hboxlayout instead of a qboxlayout
-                [str(ch) for ch in range(self.gv.N_CH)], self.print_shit,
-                cols=1)
+                [str(ch+1) for ch in range(self.gv.N_CH)], self.print_shit,
+                cols=1, editable=False)
         # Position
         pos_l = create_txt_label('Position')
         self.layout.addWidget(pos_l, 0, 2, 1, 3)
