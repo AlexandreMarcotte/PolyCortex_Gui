@@ -1,19 +1,17 @@
-# -- General packages --
+# -- General Packages --
 from collections import deque
 import numpy as np
 import pyqtgraph as pg
 from PyQt5 import QtCore
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt
 import re
 from functools import partial
-# -- My packages --
+# -- My Packages --
 # Generate signal
 from generate_signal.from_openbci import SampleDataFromOPENBCI
 from generate_signal.from_synthetic_data import CreateSyntheticData
 from generate_signal.from_file import FileReader
-from generate_signal.from_muse import StreamFromMuse
+# from generate_signal.from_muse import StreamFromMuse
 
 from .ch_number_action import ChNumberAction
 from .action_button import ActionButton
@@ -24,7 +22,8 @@ from tabs.region import Regions
 from .eeg_graph import EegGraph
 
 from data_processing_pipeline.frequency_counter import FrequencyCounter
-from app.pyqt_frequently_used import create_param_combobox, create_splitter
+from app.pyqt_frequently_used import (create_param_combobox, create_splitter,
+                                       create_gr)
 
 
 class EegPlotsCreator:
@@ -40,7 +39,7 @@ class EegPlotsCreator:
         self.zero_q = deque(
             np.zeros(self.gv.DEQUE_LEN), maxlen=self.gv.DEQUE_LEN)
         # Stop/Start
-        self.start_stop_layout, gr = self.create_layout(self.layout, pos=(0, 0))
+        gr, self.start_stop_layout = create_gr()
         self.last_gr = gr
 
         self.create_buttons(self.start_stop_layout)
@@ -80,17 +79,18 @@ class EegPlotsCreator:
         """
         """
         grps = []
-        num_col = 1
-        ch = 0
+        # num_col = 1
+        # ch = 0
         for ch in range(self.gv.N_CH):
-            if num_col == 1:
-               col_factor = 8
-            elif num_col == 2:
-                col_factor = 4
-            else: col_factor = 8
+            # if num_col == 1:
+            #    col_factor = 8
+            # elif num_col == 2:
+            #     col_factor = 4
+            # else: col_factor = 8
 
-            self.ch_layout, self.gr = self.create_layout(self.layout,
-                                            (ch%col_factor+1, ch//col_factor))
+            # self.ch_layout, self.gr = self.create_layout(self.layout,
+            #                                 (ch%col_factor+1, ch//col_factor))
+            self.gr, self.ch_layout = create_gr()
             grps.append(self.gr)
             # self.add_to_splitter(self.gr)
             self.add_ch_layout(ch)
@@ -112,12 +112,12 @@ class EegPlotsCreator:
             self.assign_n_to_ch(ch)
             self.assign_action_to_ch(ch)
 
-    def create_layout(self, parent_layout, pos, shape=(1, 1)):              # TODO: ALEXM: Remove this function there is a similare one somewhere else
-        layout = QGridLayout()
-        layout.setContentsMargins(0, 0, 0, 0)
-        gr = QGroupBox(f'')
-        gr.setLayout(layout)
-        return layout, gr
+    # def create_layout(self):                                                 # TODO: ALEXM: Remove this function there is a similare one somewhere else
+    #     layout = QGridLayout()
+    #     layout.setContentsMargins(0, 0, 0, 0)
+    #     gr = QGroupBox(f'')
+    #     gr.setLayout(layout)
+    #     return layout, gr
 
     def create_splitter(self, grps):
         splitter = None
