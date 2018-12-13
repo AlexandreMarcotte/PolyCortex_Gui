@@ -19,17 +19,11 @@ class WaveGraph(Dock):
         self.init_choose_ch_combobox()
         self.init_on_off_button()
 
-        self.waves = {'delta': Wave((0, 4)),
-                      'theta': Wave((4, 8)),
-                      'alpha': Wave((8, 12)),
-                      'beta': Wave((12, 40)),
-                      'gamma': Wave((40, 100))
-        }
-        self.gv.freq_calculator.set_waves(self.waves)
+        self.gv.freq_calculator.set_waves(self.gv.waves)
         self.plot = self.init_plot()
-        self.brushes, self.x, self.width = self.init_bar_braph_caract()
+        self.brushes, self.x, self.width = self.init_bar_graph_caract()
 
-        self.N_ELE = len(self.waves)
+        self.N_ELE = len(self.gv.waves)
 
         self.timer.timeout.connect(self.update)
 
@@ -37,15 +31,15 @@ class WaveGraph(Dock):
         """"""
         plot = pg.PlotWidget(background=dark_grey)
         self.layout.addWidget(plot, 2, 0, 1, 2)
-        waves_names = [wave_name for wave_name in self.waves]
+        waves_names = [wave_name for wave_name in self.gv.waves]
         plot.plotItem.setLabel(axis='left', text='Power', units='None')
         plot.plotItem.setLabel(axis='bottom', text=waves_names)
         return plot
 
-    def init_bar_braph_caract(self):
-        brushes = [pg.mkBrush(i) for i in range(len(self.waves))]
-        x = [w.get_half_pos() for w in self.waves.values()]
-        width = [w.get_delta_range() for w in self.waves.values()]
+    def init_bar_graph_caract(self):
+        brushes = [pg.mkBrush(i) for i in range(len(self.gv.waves))]
+        x = [w.get_half_pos() for w in self.gv.waves.values()]
+        width = [w.get_delta_range() for w in self.gv.waves.values()]
 
         return brushes, x, width
 
@@ -53,10 +47,10 @@ class WaveGraph(Dock):
         # Timer(self.init_bar_braph_caract())
         pass
 
-    def add_head_img(self):
-        mne_head = QLabel()
-        mne_head.setPixmap(QtGui.QPixmap('./img/mne_head.png'))
-        self.layout.addWidget(mne_head, 2, 0)
+    # def add_head_img(self):
+    #     mne_head = QLabel()
+    #     mne_head.setPixmap(QtGui.QPixmap('./img/mne_head.png'))
+    #     self.layout.addWidget(mne_head, 2, 0)
 
     def update(self):
         self.plot.clear()
@@ -66,13 +60,3 @@ class WaveGraph(Dock):
                 x=self.x, width=self.width, brushes=self.brushes)
         self.plot.addItem(bg)
 
-
-class Wave:
-    def __init__(self, freq_range):
-        self.freq_range = freq_range
-
-    def get_half_pos(self):
-        return self.freq_range[0] + (self.get_delta_range()) / 2
-
-    def get_delta_range(self):
-        return self.freq_range[1] - self.freq_range[0]
