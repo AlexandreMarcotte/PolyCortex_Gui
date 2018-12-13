@@ -34,7 +34,7 @@ class WaveGraphOverTime(Dock):
         # plot.setYRange(0, 1000000)
         # Add to tab layout
         self.secondary_layout.addWidget(plot, 2, 0, 1, 2)
-        for ch in range(self.gv.N_CH):
+        for ch in range(len(self.gv.waves)):
             self.wave_curves.append(
                 plot.plot(deque(np.ones(200), maxlen=200)))
             self.wave_curves[ch].setPen(pen_colors[ch])
@@ -42,7 +42,7 @@ class WaveGraphOverTime(Dock):
         return plot
 
     def update(self):
-        for ch in range(len(self.gv.waves)):
-            self.wave_curves[ch].setData(
-                    self.gv.freq_calculator.all_freq_band_over_time[
-                        self.ch].wave_type_data[ch])
+        # for i in range(len(self.gv.waves)):
+        self.wave_curves[2].setData(
+                self.gv.freq_calculator.all_freq_band_over_time[
+                    self.ch].wave_type_data[2])

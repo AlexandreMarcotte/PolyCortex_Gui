@@ -1,72 +1,18 @@
-from time import time, sleep
-from random import random, randint
-from math import pi
-from numpy import sin
-import numpy as np
+from time import sleep
 import threading
 
 
 # The following code is from the fake data streamer : TODO: ALEXM: Modification of this code to be able to stream from muse headset
-
 class StreamFromMuse(threading.Thread):
     def __init__(self, gv):
         super().__init__()
         self.gv = gv
-#         # Variable necessary to generate fake signal
-#         ## time
-#         self.t = np.linspace(0, 2 * pi, self.gv.DEQUE_LEN)
-#         ## signal shape
-#         self.m = 1000
-#         self.s1 = self.m * sin(self.t)
-#         self.s2 = self.m * sin(20 * self.t)
-#         self.s3 = self.m * sin(40 * self.t)
-#         self.s4 = self.m * 2 * sin(60 * self.t)
-#
-#     def add_signal_to_queue(self, signal, ch):
-#         self.gv.data_queue[ch].append(signal)
-#         self.gv.all_data[ch].append(signal)
-#
-#     def run(self):
-#         """Create random data and a time stamp for each of them"""
-#         while 1:
-#             self.gv.n_data_created[0] += 1
-#             i = self.gv.n_data_created[0] % len(self.t)
-#
-#             for ch in range(self.gv.N_CH):
-#                 rnd_impulse = randint(0, 100)
-#                 # Set impulse size to be added to the signal once every 100 data
-#                 if rnd_impulse == 0:
-#                     imp = 5 * self.m
-#                 else:
-#                     imp = 0
-#                 if ch == 0:
-#                     signal = self.s1[i] + self.s3[i]+ self.s4[i] + random()*self.m + imp
-#                 elif ch == 1:
-#                     signal = self.s1[i] + 5
-#                 elif ch == 2:
-#                     signal = self.s2[i]
-#                 elif ch == 3:
-#                     signal = self.s3[i]
-#                 elif ch == 4:
-#                     signal = self.s4[i]
-#                 else:
-#                     signal = random() * self.m
-#
-#                 self.add_signal_to_queue(signal, ch)
-#
-#             # Add current time
-#             current_t = time() - self.gv.t_init
-#             self.gv.t_queue.append(current_t)
-#             self.gv.all_t.append(current_t)
-#
-#             # Add experiment type values
-#             if self.gv.experiment_type[0] != 0:
-#                 self.gv.experiment_queue.append(self.gv.experiment_type[0])
-#                 self.gv.all_experiment_val.append(self.gv.experiment_type[0])
-#                 self.gv.experiment_type[0] = 0
-#             else:
-#                 self.gv.experiment_queue.append(0)
-#                 self.gv.all_experiment_val.append(0)
-#
-#             sleep(0.0017)
+        # port = '/dev/ttyUSB0'  # if using Linux
+        # self.board = bci.OpenBCIBoard(port=port, scaled_output=False, log=True)
+        # self.board.enable_filters()
+        # print("Board Instantiated")
+        # sleep(1)  # TODO: I changed it to 1 and it was 5 before see if there is a problem
+    #
+    # def run(self):
+    #     self.board.start_streaming(self.gv.collect_data)
 
