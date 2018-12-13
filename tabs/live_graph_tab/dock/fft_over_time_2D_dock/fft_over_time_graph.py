@@ -16,7 +16,7 @@ class FftOverTimeGraph2D(Dock):
 
         self.ch = 0
 
-        pg_layout = self.init_img_view_box()
+        pg_layout, self.img = self.init_img_view_box()
 
         self.secondary_layout.addWidget(pg_layout, 3, 0, 1, 2)
 
@@ -30,16 +30,13 @@ class FftOverTimeGraph2D(Dock):
         vb = pg.ViewBox()
         vb.setAspectLocked()
         img = pg.ImageItem()
-        img.setImage(np.random.random((100, 100)))
         vb.addItem(img)
         pg_layout = pg.GraphicsLayoutWidget()
         pg_layout.addItem(vb)
-        return pg_layout
-
-    def init_surface(self):
-        """"""
-        pass
+        return pg_layout, img
 
     def update(self):
-        pass
+        fft_over_t = np.array(self.gv.freq_calculator.fft_over_time[self.ch])
+        self.img.setImage(fft_over_t)
+
 

@@ -16,7 +16,7 @@ class FreqCalculator:
         self.fft = [None for _ in range(gv.N_CH)]
         self.waves = None
         self.slices = None
-        self.N_T_MEMORY = 100
+        self.N_T_MEMORY = 200
         # I could also just have one deque containing list of all the time stamp
         # each list would contain the 8 values, one for every ch at that time stamp
         self.freq_band_over_time = [
