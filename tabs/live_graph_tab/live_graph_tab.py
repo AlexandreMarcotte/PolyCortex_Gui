@@ -8,6 +8,7 @@ from pyqtgraph.dockarea import *
 ## Graphes
 from .dock.eeg_dock.eeg_plots_creator import EegPlotsCreator
 from .dock.wave_dock.wave_graph import WaveGraph
+from .dock.wave_over_time_dock.wave_over_time_graph import WaveGraphOverTime
 from .dock.fft_dock.fft_graph import FftGraph
 from .dock.classif_dock.classification_plot_creator import ClassifPlotCreator
 from .dock.banner_dock.banner import Banner
@@ -54,6 +55,10 @@ class LiveGraphTab(QWidget):
             'Wave', self, self.docks_menu, WaveGraph, [self.gv], 'below',
             self.fft.dock, size=(5, 10), scroll=True)
 
+        self.Wave_over_time = DockHandler(
+            'Wave over time', self, self.docks_menu, WaveGraphOverTime,
+            [self.gv], 'below', self.fft.dock, size=(5, 10), scroll=True)
+
         self.fft_over_time_3D = DockHandler(
             'FFt over time 3D', self, self.docks_menu, FftOverTimeGraph3D,
             [self.gv], 'below', self.fft.dock, size=(5, 10), scroll=True)
@@ -76,7 +81,7 @@ class LiveGraphTab(QWidget):
         self.eeg.dock_obj.set_saver(self.saving.dock_obj)
 
         self.visualization3D = DockHandler(
-            'Visualization3D', self, self.docks_menu, Viz3D, [self.gv],
+            'Visualization 3D', self, self.docks_menu, Viz3D, [self.gv],
             'below', self.classification.dock, scroll=True)
 
         self.setLayout(self.layout)

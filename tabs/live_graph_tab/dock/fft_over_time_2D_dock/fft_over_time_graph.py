@@ -29,7 +29,7 @@ class FftOverTimeGraph2D(Dock):
         """"""
         vb = pg.ViewBox()
         vb.setAspectLocked()
-        img = pg.ImageItem()
+        img = pg.ImageItem()                                                   # TODO: ALEXM: rotate so that it is in the right direction (longest with longest)
         vb.addItem(img)
         pg_layout = pg.GraphicsLayoutWidget()
         pg_layout.addItem(vb)
