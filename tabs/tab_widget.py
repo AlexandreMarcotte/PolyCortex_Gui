@@ -1,7 +1,7 @@
 # --General Packages--
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QTabWidget
 # --My Packages--
-from tabs.eeg_fft_classif_tab.live_graph_tab import LiveGraphTab
+from tabs.live_graph_tab.live_graph_tab import LiveGraphTab
 from tabs.experiment_tab.experiment_tab import ExperimentTab
 from tabs.static_graph_tab.static_graph_tab import StaticGraphTab
 from tabs.mini_game_tab.mini_game_tab import MiniGameTab

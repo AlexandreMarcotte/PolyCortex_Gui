@@ -14,7 +14,7 @@ class Obj3DCreator:
 
     def read_data(self):
         # get MRI data
-        nii_path = 'tabs/eeg_fft_classif_tab/dock/Viz_3D_dock/inplane001.nii'
+        nii_path = 'tabs/live_graph_tab/dock/Viz_3D_dock/inplane001.nii'
         nii = load(os.path.join(os.getcwd(), nii_path))
         data = nii.get_data()
         return data
