@@ -15,8 +15,11 @@ class FftOverTimeGraph3D(Dock):
 
         self.ch = 0
 
-        self.view = self.init_view()
-        self.plot = self.init_surface()
+        view = self.init_view()
+        self.surface = self.init_surface()
+        view.addItem(self.surface)
+        # Add to tab layout
+        self.secondary_layout.addWidget(view, 3, 0, 1, 2)
 
         self.init_choose_ch_combobox()
         self.init_on_off_button()
@@ -39,14 +42,11 @@ class FftOverTimeGraph3D(Dock):
                 shader='heightColor', computeNormals=False, smooth=False)
         surface.translate(0, -self.gv.DEQUE_LEN/15, 0)
         surface.shader()['colorMap'] = np.array([-1, -1, -1, 0, 0, 0, 1, 1, 1])
-        self.view.addItem(surface)
-        # Add to tab layout
-        self.secondary_layout.addWidget(self.view, 3, 0, 1, 2)
         return surface
 
     def update(self):
         fft_over_t = np.array(self.gv.freq_calculator.fft_over_time[self.ch])
         fft_over_t /= max(fft_over_t[-1])
-        self.plot.setData(z=(15*fft_over_t-7))
+        self.surface.setData(z=(15*fft_over_t-7))
 
 
