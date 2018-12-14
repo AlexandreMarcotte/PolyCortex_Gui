@@ -10,7 +10,6 @@ from app.activation_b import btn
 from ... dock.dock import Dock
 # To draw the brain
 from .object_3D_creator import Obj3DCreator
-from PyQt5 import QtGui
 from save.data_saver import DataSaver
 from .sphere import Sphere
 from .brain import Brain
@@ -20,8 +19,7 @@ from app.pyqt_frequently_used import (create_gr, create_txt_label,
                                       TripletBox)
 import mne
 from mne.surface import decimate_surface  # noqa
-from pyqtgraph.Qt import QtCore, QtGui
-print(__doc__)
+from pyqtgraph.Qt import QtCore
 
 
 class Viz3D(Dock):
@@ -36,13 +34,9 @@ class Viz3D(Dock):
         self.init_viz_layout()
         self.init_modify_curve_layout()
         self.init_layout()
-        # Create pointer sphere
-        self.pointer_sphere = Sphere(
-                self.gv, scaling_factor=2, listening_process=True)
-        self.view.addItem(self.pointer_sphere.item)
 
         self.electrod_sphere = Sphere(
-            self.gv, scaling_factor=3, update_func_name='follow_plane')
+                self.gv, scaling_factor=3, update_func_name='follow_plane')
         self.view.addItem(self.electrod_sphere.item)
 
 
@@ -52,7 +46,6 @@ class Viz3D(Dock):
                            self.plane_z.pos],)
 
         self.sphere = Sphere(self.gv, scaling_factor=48)
-        # self.view.addItem(self.sphere.item)
 
         self.show_3D_viz_b()
 
@@ -94,14 +87,14 @@ class Viz3D(Dock):
         plane_x = Plane(
                 self.gv, axis='x', mvt=np.array([1, 0, 0]), key=('j', 'k'),
                 rotation=(90, 0, 1, 0), color=(0, 0, 255, 4),
-                triplet_pos=self.triplet_pos, )
+                triplet_box=self.triplet_box)
         plane_y = Plane(
                 self.gv, axis='y', mvt=np.array([0, 1, 0]), key=('j', 'k'),
                 rotation=(90, 1, 0, 0), color=(0, 255, 0, 4),
-                triplet_pos=self.triplet_pos)
+                triplet_box=self.triplet_box)
         plane_z = Plane(
                 self.gv, axis='z', mvt=np.array([0, 0, 1]), key=('j', 'k'),
-                color=(255, 0, 0, 4), triplet_pos=self.triplet_pos)
+                color=(255, 0, 0, 4), triplet_box=self.triplet_box)
         self.view.addItem(plane_z.item)
         self.view.addItem(plane_y.item)
         self.view.addItem(plane_x.item)
@@ -122,7 +115,7 @@ class Viz3D(Dock):
         # Position
         pos_l = create_txt_label('Position')
         self.layout.addWidget(pos_l, 0, 2, 1, 3)
-        self.triplet_pos = TripletBox(
+        self.triplet_box = TripletBox(
                 self.gv, name='position', col=2, layout=self.layout,
                 colors=(blue_plane, green_plane, red_plane))
         # Angle
@@ -131,7 +124,7 @@ class Viz3D(Dock):
         self.triplet_angle = TripletBox(
                 self.gv, name='angle', col=5, layout=self.layout)
         # Save to file
-        data_saver = DataSaver(
+        DataSaver(
                 self.gv.main_window, self.gv, self.layout,                         # TODO: ALEXM: Add a tooltip
                 saving_type='Save', pos=(0, 8), size=(1, 1),
                 save_file_button=False, choose_b_size=(1, 1))
@@ -181,10 +174,11 @@ class Viz3D(Dock):
 
     def update(self):
         for ch in range(self.gv.N_CH):
-            pts = np.stack((np.linspace(0, self.len_sig, self.gv.DEQUE_LEN),
-                            np.zeros(self.gv.DEQUE_LEN),
-                            np.array(np.array(self.gv.data_queue[ch])/7000)),
-                            axis=1)
+            pts = np.stack((
+                    np.linspace(0, self.len_sig, self.gv.DEQUE_LEN),
+                    np.zeros(self.gv.DEQUE_LEN),
+                    np.array(np.array(self.gv.data_queue[ch])/7000)),
+                    axis=1)
 
             self.set_plotdata(
                     name=ch, points=pts, color=pg.glColor((ch, 8)), width=1)
@@ -198,16 +192,12 @@ class Viz3D(Dock):
     def start(self, checked):
         if checked:
             self.timer.start(10)
-            # self.brain_v.timer.start(10)
-            self.pointer_sphere.timer.start(10)
             self.electrod_sphere.timer.start(10)
             self.plane_x.timer.start(10)
             self.plane_y.timer.start(10)
             self.plane_z.timer.start(10)
         else:
             self.timer.stop()
-            # self.brain_v.timer.stop()
-            self.pointer_sphere.timer.stop()
             self.electrod_sphere.timer.stop()
             self.plane_x.timer.stop()
             self.plane_y.timer.start()

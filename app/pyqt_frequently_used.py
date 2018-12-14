@@ -54,6 +54,7 @@ class ClickableLineEdit(QLineEdit):
         self.gv = gv
         self.i = i
         self.name = name
+
         self.planes = ['x', 'y', 'z']
     clicked = pyqtSignal()
 
@@ -68,13 +69,14 @@ class TripletBox:
     def __init__(self, gv, name, col, layout, colors=None):
         self.gv = gv
         self.name = name
+
+        self.N_COMBO_BOX = 3
         self.all_l_e = []
         self.add_triplet_txt_box(col, layout, colors)
 
     def add_triplet_txt_box(self, col, layout, colors=None):
-        for i in range(3):
+        for i in range(self.N_COMBO_BOX):
             l_e = ClickableLineEdit(self.gv, i, self.name)
-            # l_e.textChanged[str].connect(partial(self.do_something, i))
             if colors is not None:
                 l_e.setStyleSheet(
                         f"""border-style: solid; 

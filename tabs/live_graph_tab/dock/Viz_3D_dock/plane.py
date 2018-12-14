@@ -9,19 +9,21 @@ from PyQt5.QtGui import QColor
 class Plane(MovingObject):
     def __init__(
                 self, gv, axis='x', mvt=np.array([1, 0, 0]), key=('j', 'k'),
-                rotation=(0, 1, 0, 0), scale=1,
-                mvt_scale=0.3, color=(255, 0, 0, 10), update_func='move plane',
-                listening_process=True, triplet_pos=None):
+                rotation=(0, 1, 0, 0), scale=1, mvt_scale=0.3,
+                color=(255, 0, 0, 10), listening_process=True,
+                triplet_box=None):
+
         self.gv = gv
         self.axis = axis
         self.mvt = mvt
         self.key = key
         self.mvt_scale = mvt_scale
-        self.triplet_pos = triplet_pos
+        self.triplet_box = triplet_box
         super().__init__(gv, listening_process)
         self.rotation = rotation
         self.scale = scale
         self.color = color
+        self.planes = {'x': 0, 'y': 1, 'z': 2}
 
         self.pos = np.array([0, 0, 0], dtype='float64')
         self.item = self.init_plane_item()
@@ -36,9 +38,9 @@ class Plane(MovingObject):
         plane[:, :] = self.color
         item = gl.GLVolumeItem(plane, sliceDensity=5, smooth=True)
         item.scale(self.scale, self.scale, 1)
-        mvt = np.array([-cols//2, -rows//2, 0])
+        init_pos = np.array([-cols//2, -rows//2, 0])
         # self.pos += mvt
-        item.translate(*mvt)
+        item.translate(*init_pos)
         item.rotate(*self.rotation)
         return item
 
@@ -48,13 +50,17 @@ class Plane(MovingObject):
                 if self.key_pressed == self.key[0]:
                     mvt = self.mvt_scale * self.mvt
                     self.pos += mvt
-                    print('pos', self.pos, 'mvt', mvt)
+                    # print('pos', self.pos, 'mvt', mvt)
                     self.item.translate(*mvt)
-                    # self.item.
                 if self.key_pressed == self.key[1]:
                     mvt = -1 * self.mvt_scale * self.mvt
                     self.pos += mvt
                     self.item.translate(*mvt)
+
+            triplet_box_num = self.planes[self.axis]
+            self.triplet_box.all_l_e[triplet_box_num].setText(
+                    str(int(self.pos[triplet_box_num])))
+
         except KeyError:
             pass
 
