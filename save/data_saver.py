@@ -57,7 +57,7 @@ class DataSaver:
                 self.gv.save_path = f_name
             elif self.saving_type == 'curve 3D pos save':
                 self.save_path = f_name
-            self.data_path_line_edit.setText(f_name)
+            self.save_path_line_edit.setText(f_name)
 
     # def init_saving(self):                                                   # KEEP THIS PORTION OF THE CODE (COMMENTED SO THAT IT DOESNT ALWAYS SAVE)
     #     # write data to file:

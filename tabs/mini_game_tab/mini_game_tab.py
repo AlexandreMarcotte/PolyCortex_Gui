@@ -22,8 +22,8 @@ class MiniGameTab(QWidget):
         self.layout = QHBoxLayout(self)
         # Collect events until released
         game_3d = Game3D(self)
-        listen_keybr = keyboard.Listener(on_press=game_3d.on_press,
-                                         on_release=game_3d.on_release)
+        listen_keybr = keyboard.Listener(
+                on_press=game_3d.on_press, on_release=game_3d.on_release)
         listen_keybr.start()
 
         self.setLayout(self.layout)
@@ -71,7 +71,6 @@ class Game3D:
 
             # Remove food if character is inside its boundaries
             if low_x <= self.x_pos <= high_x and low_y <= self.y_pos <= high_y:
-                # print('cool')
                 old_x = food.x
                 old_y = food.y
                 food.x = randint(-20, 20)

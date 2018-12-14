@@ -7,7 +7,7 @@ import pyqtgraph as pg
 import numpy as np
 # -- My packages --
 from app.colors import *
-from generate_signal.from_file import read_data_from_file
+from generate_signal.file_reader import read_data_from_file
 from ... static_graph_tab.groups.group import Group
 
 
@@ -37,7 +37,7 @@ class FileSelector(Group):
 
     def add_choose_file_b(self, layout):
         b = QtGui.QPushButton('Choose file containing data')
-        b.setStyleSheet(f'background-color: {blue_b}')
+        b.setStyleSheet(f'background-color: {dark_blue_tab}')
         b.clicked.connect(partial(self.choose_file))
         layout.addWidget(b, 0, 0)
 

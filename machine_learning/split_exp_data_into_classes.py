@@ -14,7 +14,7 @@ from sklearn import svm
 import time
 from sklearn.externals import joblib
 # My packages
-from signal_manipulation import uniformize_data
+from data_processing_pipeline.uniformize_data import uniformize_data
 
 
 class ProcessData:
@@ -72,7 +72,8 @@ class ProcessData:
         maximum among all intervals.
         """
         for dir in self.list_experiment_csv:
-            data, t, exp = read_data_from_file(os.path.join(self.base_path, dir), n_ch=8)
+            data, t, exp = read_data_from_file(
+                    os.path.join(self.base_path, dir), n_ch=8)
             self.l_data.append(np.array(data))
             self.l_t.append(np.array(t))
             self.l_exp.append(np.array(exp))
@@ -85,11 +86,11 @@ class ProcessData:
                 for ch, one_ch_data in enumerate(data[:4]):
                     emg_type = int(emg_type)
                     if emg_type != 0:
-                        self.save_emg_in_proper_class_list(one_ch_data, no,
-                                                           ch, emg_type)
+                        self.save_emg_in_proper_class_list(
+                            one_ch_data, no, ch, emg_type)
 
-    def save_emg_in_proper_class_list(self, one_ch_data, no, ch, emg_type,
-                                      plot_data=False):
+    def save_emg_in_proper_class_list(
+                self, one_ch_data, no, ch, emg_type, plot_data=False):
         emg_signal = np.array(one_ch_data[no-60:no+110])
         no_emg_signal = np.array(one_ch_data[no+100:no+270])
         # Uniformize data

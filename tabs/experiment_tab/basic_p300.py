@@ -50,7 +50,6 @@ class BasicP300(Experiment):
             self.plot.addItem(p)
             self.gv.experiment_type = 1
 
-
         elif rand in (1, 2, 3, 4, 5, 6, 7, 8, 9, 10):
             # Green
             self.clear_screen()
@@ -60,10 +59,10 @@ class BasicP300(Experiment):
                 w=0.12 * np.ones(n_green_rect),
                 h=10 * np.ones(n_green_rect),
                 color=p300_green)
-            self.refresh()                        # So that the graph update and the rectangle are visible
+            self.refresh()  # So that the graph update and the rectangle are visible
             self.plot.addItem(p)
             sleep(0.05)
-                                        # TODO: ALEXM: Try to find a cleaner way to update the graph
+                                                                               # TODO: ALEXM: Try to find a cleaner way to update the graph
         else:
             self.clear_screen()
             sleep(0.1)
@@ -72,8 +71,10 @@ class BasicP300(Experiment):
         self.warn_txt = pg.TextItem(anchor=(0, 0), fill=(0, 0, 0, 0))
         self.warn_html = f"""<div style="text-align: center">
                                <br><span style="color: {'#ff0000'};
-                               font-size: 19pt;">
-                               {'Warning this experiment has the potential to induce SEIZURE for people with Photosensitive EPILEPSY'}
+                               font-size: 19pt;"><p>
+                               {'''Warning this experiment has the potential 
+                                   to induce SEIZURE'''}</p>
+                                <p>{'''for people with Photosensitive EPILEPSY'''}</p>
                                </span></div>"""
         self.warn_txt.setHtml(self.warn_html)
         self.warn_txt.setPos(0, 10)
@@ -85,8 +86,3 @@ class BasicP300(Experiment):
 
     def refresh(self, delta_x=0.0):
         self.plot.setXRange(self.xs[0]+delta_x, self.xs[1])
-
-
-
-
-
