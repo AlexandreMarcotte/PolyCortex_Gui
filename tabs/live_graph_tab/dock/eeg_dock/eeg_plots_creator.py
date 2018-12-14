@@ -79,24 +79,12 @@ class EegPlotsCreator:
         """
         """
         grps = []
-        # num_col = 1
-        # ch = 0
         for ch in range(self.gv.N_CH):
-            # if num_col == 1:
-            #    col_factor = 8
-            # elif num_col == 2:
-            #     col_factor = 4
-            # else: col_factor = 8
-
-            # self.ch_layout, self.gr = self.create_layout(self.layout,
-            #                                 (ch%col_factor+1, ch//col_factor))
             self.gr, self.ch_layout = create_gr()
             grps.append(self.gr)
-            # self.add_to_splitter(self.gr)
             self.add_ch_layout(ch)
             # Put only a plot on the time channel
         self.add_ch_layout(ch=self.gv.N_CH, time_ch=True, plot_pos=(5, 1, 1, 6))
-        # self.layout.addWidget(self.splitter)
         return grps
 
     def add_ch_layout(self, ch, time_ch=False, plot_pos=(0, 1, 5, 6)):      # TODO: ALEXM: change the name of this function
@@ -166,8 +154,8 @@ class EegPlotsCreator:
         self.n_classif_regions_per_plot = 2
         self.regions = Regions(self.gv, self.n_classif_regions_per_plot)
         for i in range(self.n_classif_regions_per_plot):
-            self.regions.list.append(pg.LinearRegionItem([0, 0]))
-            plot.addItem(self.regions.list[i], ignoreBounds=True)
+            self.regions.list.append([0, pg.LinearRegionItem([0, 0])])
+            plot.addItem(self.regions.list[i][1], ignoreBounds=True)
         return plot
 
     def create_curve(self, plot, ch, q):
@@ -224,21 +212,21 @@ class EegPlotsCreator:
         self.freq_counter_timer.start(50)
 
     def assign_action_to_ch(self, ch):
-        m_w = 17
+        max_width = 17
         # Average
         actn_btn = ActionButton(self.ch_layout, 0, self.gv, ch)
         btn('A', self.ch_layout, (0, 8), action=actn_btn,
             toggle=True, tip='Show average value of queue',
-            max_width=m_w, color=dark_blue_tab)
+            max_width=max_width, color=dark_blue_tab)
         # Max
         actn_btn = ActionButton(self.ch_layout, 1, self.gv, ch)
         btn('M', self.ch_layout, (1, 8), action=actn_btn,
             toggle=True, tip='Show max value of queue',
-            max_width=m_w, color=dark_blue_tab)
+            max_width=max_width, color=dark_blue_tab)
         # Detection
         btn('D', self.ch_layout, (2, 8),
             toggle=True, tip='Show detected class patern',
-            max_width=m_w, color=dark_blue_tab)
+            max_width=max_width, color=dark_blue_tab)
 
         self.create_color_button(ch)
 

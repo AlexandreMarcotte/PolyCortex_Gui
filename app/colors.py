@@ -10,9 +10,15 @@ purple = (146, 56, 219, 45)
 dark_grey = (3, 3, 3)
 
 pen_colors = ['r', 'y', 'g', 'c', 'b', 'm',
-              (100, 100, 100), 'w', 'k']
+              (100, 100, 100), 'w', 'k', (100, 100, 100), (100, 100, 100),
+              (100, 100, 100), (100, 100, 100), (100, 100, 100), (100, 100, 100),
+              (100, 100, 100), (100, 100, 100), (100, 100, 100), (100, 100, 100)]
 button_colors = ['red', 'yellow', 'green', 'cyan',
-                'blue', 'magenta', 'grey', 'white']
+                 'blue', 'magenta', 'grey', 'white',
+                 'red', 'yellow', 'green', 'cyan',
+                 'blue', 'magenta', 'grey', 'white',
+                 'red', 'yellow', 'green', 'cyan',
+                 'blue', 'magenta', 'grey', 'white']                           # TODO: ALEXM: Generate colors from pyqt instead
 
 dark_blue = 'rgba(0, 0, 80, 0.4)'
 dark_blue_tab = 'rgba(62, 62, 160, 1)'

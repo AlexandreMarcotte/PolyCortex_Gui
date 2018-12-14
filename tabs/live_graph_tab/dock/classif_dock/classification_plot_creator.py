@@ -23,7 +23,7 @@ class ClassifPlotCreator:
 
         # Create the object to update the bar chart graph and the line graph
         self.classification_graph = ClassifGraph(
-            self.gv, bar_chart, n_classif_plot)
+                self.gv, bar_chart, n_classif_plot)
         self.timer.timeout.connect(self.classification_graph.update_all)
 
     def create_bar_chart(self):

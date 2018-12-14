@@ -17,8 +17,6 @@ from .dock.fft_over_time_3D_dock.fft_over_time_graph import FftOverTimeGraph3D
 from .dock.fft_over_time_2D_dock.fft_over_time_graph import FftOverTimeGraph2D
 
 from save.data_saver import DataSaver
-from app.colors import *
-from tabs.region import Regions
 
 
 class LiveGraphTab(QWidget):

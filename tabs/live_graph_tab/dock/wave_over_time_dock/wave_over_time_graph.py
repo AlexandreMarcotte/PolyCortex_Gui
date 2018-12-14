@@ -42,7 +42,7 @@ class WaveGraphOverTime(Dock):
         return plot
 
     def update(self):
-        # for i in range(len(self.gv.waves)):
-        self.wave_curves[2].setData(
-                self.gv.freq_calculator.all_freq_band_over_time[
-                    self.ch].wave_type_data[2])
+        for i in range(len(self.gv.waves)):
+            self.wave_curves[i].setData(
+                    self.gv.freq_calculator.all_freq_band_over_time[
+                        self.ch].wave_type_data[i])
