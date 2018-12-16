@@ -64,8 +64,8 @@ class MainWindow(QMainWindow):
 
 
     def create_openbci_menu(self):
-        self.openbci = QtGui.QAction(QIcon('./img/openbci_logo.png'),
-                                     'OpenBci')                                # TODO: ALEXM Utiliser une liste déroulante plutot
+        self.openbci = QtGui.QAction(
+                QIcon('./img/openbci_logo.png'), 'OpenBci')                    # TODO: ALEXM Utiliser une liste déroulante plutot
         self.openbci.setShortcut('Ctrl+O')
         self.openbci.setStatusTip('Stream data from Openbci...')
         self.openbci.name = 'Stream from OpenBCI'
@@ -131,14 +131,25 @@ class MainWindow(QMainWindow):
         run_game.start()
 
     def create_toolbar(self):
-        toolbar = self.addToolBar('toolbar')
-        toolbar.addAction(self.create_exit_action())
-        toolbar.addAction(self.create_dark_mode_activator())
+        main_tb = QToolBar('main actions')
+        main_tb.addAction(self.create_exit_action())
+        main_tb.addAction(self.create_dark_mode_activator())
+        self.addToolBar(main_tb)
+
+        tree_tb = QToolBar('tree toolbar')
+        tree_tb.setOrientation(Qt.Vertical)
+
+        tree_action = QAction('1:Tree', self)
+        tree_tb.addAction(tree_action)
+        a2 = QAction('2:', self)
+        tree_tb.addAction(a2)
+        self.addToolBar(Qt.LeftToolBarArea, tree_tb)
 
     def create_exit_action(self):
         base_path = os.getcwd()
         path = os.path.join(base_path, 'app/exit.png')
-        exitAct = QAction(QIcon(path), 'Exit', self)
+        exitIcon = QIcon(path)
+        exitAct = QAction(exitIcon, 'Exit', self)
         exitAct.setShortcut('Ctrl+Q')
         exitAct.setStatusTip('Exit application')
         exitAct.triggered.connect(self.close)
