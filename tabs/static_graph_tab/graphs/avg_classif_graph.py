@@ -19,7 +19,10 @@ class AvgClassifGraph(Graph):
         
         self.num = pg.TextItem(anchor=(0, 0), fill=(0, 0, 0, 0))
         self.classif_type = 0
-        avg_emg_path = 'tabs/static_graph_tab/avg_emg_class_type.npy'
+
+        # os.chdir('..')
+        # project_base_path = os.getcwd()
+        avg_emg_path = 'machine_learning/avg_emg_class_type.npy'
         self.avg_emg_class_type = np.load(os.path.join(os.getcwd(), avg_emg_path))
         self.classified_data = None
         self.combo_classif = self.add_classif_num_combobox()
@@ -68,7 +71,8 @@ class AvgClassifGraph(Graph):
         self.plot.addItem(self.num)
 
     def add_classif_num_combobox(self):
-        N_CLASSIF_TYPE = 8
+        N_CLASSIF_TYPE = len(self.avg_emg_class_type)
+        print('N_CLASSIF', N_CLASSIF_TYPE)
         combo_classif = QComboBox()
         for i in range(N_CLASSIF_TYPE): 
             combo_classif.addItem(str(i))
