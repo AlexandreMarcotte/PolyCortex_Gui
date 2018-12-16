@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import *
 from PyQt5 import QtGui
 
+
 class Banner:
     def __init__(self, layout):
         # Polycortex
