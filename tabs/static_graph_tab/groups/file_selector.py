@@ -73,7 +73,7 @@ class FileSelector(Group):
     @pyqtSlot()
     def read_data(self, layout):
         data, t, exp = \
-            read_data_from_file(self.path_line_edit.text(), n_ch=self.gv.N_CH)   # clean this part
+            read_data_from_file(self.path_line_edit.text(), N_CH=self.gv.N_CH)   # clean this part
         for ch in range(self.gv.N_CH):
             fg = self.right_gr.full_graphs[ch]
             slider = self.right_gr.sliders[ch]
@@ -94,7 +94,7 @@ class FileSelector(Group):
             cg.plot_data(classified_data, color='b')
 
             acg.curve = acg.plot_data(
-                np.zeros(self.gv.emg_signal_len), color='w')
+                np.zeros(self.gv.emg_signal_len), color='b')
             acg.classif_region_curve = acg.plot_data(
                 np.zeros(self.gv.emg_signal_len), color='r')
             acg.combo_box_curve = acg.plot_data(
