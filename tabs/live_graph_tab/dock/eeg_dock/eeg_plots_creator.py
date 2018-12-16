@@ -38,6 +38,7 @@ class EegPlotsCreator:
         self.eeg_graphes = []
         self.zero_q = deque(
             np.zeros(self.gv.DEQUE_LEN), maxlen=self.gv.DEQUE_LEN)
+        self.GR_PER_COL = 1
         # Stop/Start
         gr, self.start_stop_layout = create_gr()
         self.last_gr = gr
@@ -57,11 +58,14 @@ class EegPlotsCreator:
     def create_all_combobox(self, start_stop_l):
         create_param_combobox(start_stop_l, 'Vertical scale', (0, 1),
                 ['Auto', '10 uv', '100 uv', '1000 uv', '10000 uv', '100000 uv'],
-                editable=True, conn_func=self.scale_y_axis)
+                conn_func=self.scale_y_axis)
         create_param_combobox(start_stop_l, 'Horizontal scale', (0, 2),
                 ['5s', '7s', '10s'])
-        create_param_combobox(start_stop_l, 'plot(s) per column', (0, 3),
-                ['1', '2'])
+        create_param_combobox(start_stop_l, 'Plot(s) per column', (0, 3),
+                ['1', '2'], editable=False, conn_func=self.change_num_plot_per_row)
+
+    def change_num_plot_per_row(self, txt):
+        print(f'change number plots per rows {txt}')
 
     def scale_y_axis(self, txt):
         try:
@@ -109,10 +113,9 @@ class EegPlotsCreator:
 
     def create_splitter(self, grps):
         splitter = None
-        gr_per_col = 1
-        for i in range(0, len(grps), gr_per_col):
+        for i in range(0, len(grps), self.GR_PER_COL):
             hori_s = create_splitter(
-                    grps[i], grps[i+(gr_per_col-1)], direction=Qt.Horizontal)
+                    grps[i], grps[i+(self.GR_PER_COL-1)], direction=Qt.Horizontal)
             if splitter is None:
                 splitter = create_splitter(
                         self.last_gr, hori_s, direction=Qt.Vertical)
