@@ -8,5 +8,5 @@ def uniformize_data(s, len_signal):
     # s = shift(s, len_signal / 2 - np.argmin(s), cval=avg)
     min_sig = np.min(s)
     max_sig = np.max(s)
-    s = s / (max_sig - min_sig)
+    # s = s / (max_sig - min_sig)
     return s
