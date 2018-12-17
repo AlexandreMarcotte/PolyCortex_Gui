@@ -56,13 +56,15 @@ class EegPlotsCreator:
         self.data_saver = data_saver
 
     def create_all_combobox(self, start_stop_l):
-        create_param_combobox(start_stop_l, 'Vertical scale', (0, 1),
+        create_param_combobox(
+                start_stop_l, 'Vertical scale', (0, 1),
                 ['Auto', '10 uv', '100 uv', '1000 uv', '10000 uv', '100000 uv'],
                 conn_func=self.scale_y_axis)
-        create_param_combobox(start_stop_l, 'Horizontal scale', (0, 2),
-                ['5s', '7s', '10s'])
-        create_param_combobox(start_stop_l, 'Plot(s) per column', (0, 3),
-                ['1', '2'], editable=False, conn_func=self.change_num_plot_per_row)
+        create_param_combobox(
+                start_stop_l, 'Horizontal scale', (0, 2), ['5s', '7s', '10s'])
+        create_param_combobox(
+                start_stop_l, 'Plot(s) per column', (0, 3), ['1', '2'],
+                editable=False, conn_func=self.change_num_plot_per_row)
 
     def change_num_plot_per_row(self, txt):
         print(f'change number plots per rows {txt}')
@@ -88,7 +90,8 @@ class EegPlotsCreator:
             grps.append(self.gr)
             self.add_ch_layout(ch)
             # Put only a plot on the time channel
-        self.add_ch_layout(ch=self.gv.N_CH, time_ch=True, plot_pos=(5, 1, 1, 6))
+        self.add_ch_layout(ch=self.gv.N_CH, time_ch=True,
+                           plot_pos=(5, 1, 1, 6))
         return grps
 
     def add_ch_layout(self, ch, time_ch=False, plot_pos=(0, 1, 5, 6)):      # TODO: ALEXM: change the name of this function
@@ -104,18 +107,12 @@ class EegPlotsCreator:
             self.assign_n_to_ch(ch)
             self.assign_action_to_ch(ch)
 
-    # def create_layout(self):                                                 # TODO: ALEXM: Remove this function there is a similare one somewhere else
-    #     layout = QGridLayout()
-    #     layout.setContentsMargins(0, 0, 0, 0)
-    #     gr = QGroupBox(f'')
-    #     gr.setLayout(layout)
-    #     return layout, gr
-
     def create_splitter(self, grps):
         splitter = None
         for i in range(0, len(grps), self.GR_PER_COL):
             hori_s = create_splitter(
-                    grps[i], grps[i+(self.GR_PER_COL-1)], direction=Qt.Horizontal)
+                    grps[i], grps[i+(self.GR_PER_COL-1)],
+                    direction=Qt.Horizontal)
             if splitter is None:
                 splitter = create_splitter(
                         self.last_gr, hori_s, direction=Qt.Vertical)
@@ -127,7 +124,8 @@ class EegPlotsCreator:
     def create_buttons(self, layout):
         """Assign pushbutton for starting"""
         btn('Start', layout, (0, 0), toggle=True, max_width=100,
-            func_conn=self.start_timers, color=dark_blue_tab, txt_color=white)
+            func_conn=self.start_timers, color=dark_blue_tab,
+            txt_color=white)
 
     def create_plot(self, ch):
         """Create a plot for all eeg signals and the last to keep track of time"""
@@ -172,8 +170,8 @@ class EegPlotsCreator:
         # +1 so the number str start at 1
         self.btn = btn(name=str(ch + 1), layout=self.ch_layout, pos=(0, 0),
                        func_conn=ch_number_action.stop_ch,
-                       color=button_colors[ch], toggle=True, max_width=18,
-                       tip=f'Start/Stop the ch{ch+1} signal')
+                       color=button_colors[ch], toggle=True, max_width=19,
+                       tip=f'Start/Stop the ch{ch+1} signal', max_height=19)
         self.btns.append(self.btn)
 
     def init_streaming_source(self):
@@ -216,20 +214,21 @@ class EegPlotsCreator:
 
     def assign_action_to_ch(self, ch):
         max_width = 17
+        max_height = 18
         # Average
         actn_btn = ActionButton(self.ch_layout, 0, self.gv, ch)
         btn('A', self.ch_layout, (0, 8), action=actn_btn,
             toggle=True, tip='Show average value of queue',
-            max_width=max_width, color=dark_blue_tab)
+            max_width=max_width, max_height=max_height, color=dark_blue_tab)
         # Max
         actn_btn = ActionButton(self.ch_layout, 1, self.gv, ch)
         btn('M', self.ch_layout, (1, 8), action=actn_btn,
             toggle=True, tip='Show max value of queue',
-            max_width=max_width, color=dark_blue_tab)
+            max_width=max_width, max_height=max_height, color=dark_blue_tab)
         # Detection
         btn('D', self.ch_layout, (2, 8),
             toggle=True, tip='Show detected class patern',
-            max_width=max_width, color=dark_blue_tab)
+            max_width=max_width, max_height=max_height, color=dark_blue_tab)
 
         self.create_color_button(ch)
 

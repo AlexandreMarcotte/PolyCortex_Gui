@@ -4,8 +4,8 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QTabWidget
 from tabs.live_graph_tab.live_graph_tab import LiveGraphTab
 from tabs.experiment_tab.experiment_tab import ExperimentTab
 from tabs.static_graph_tab.static_graph_tab import StaticGraphTab
-from tabs.mini_game_tab.mini_game_tab import MiniGameTab
-# from tabs.brain_3D_tab.brain_3D_tab import Brain3DTab
+from tabs.game_3D_tab.game_3D_tab import Game3DTab
+from tabs.machine_learning_tab.machine_learning_tab import MachineLearningTab
 
 
 class TabWidget(QWidget):
@@ -15,7 +15,8 @@ class TabWidget(QWidget):
         self.tabs_list = {LiveGraphTab(gv, parent): 'Live graph',
                           ExperimentTab(gv): 'Experiments',
                           StaticGraphTab(gv): 'Static graph',
-                          MiniGameTab(): 'Mini Game'}
+                          MachineLearningTab(): 'Machine learning',
+                          Game3DTab(): '3D Game'}
 
         self.layout = QVBoxLayout(self)
         # Initialize tab screen

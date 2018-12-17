@@ -119,8 +119,8 @@ class DockHandler:
         dock = Dock(self.name, size=self.size)
         try:
             self.tab.area.addDock(dock, self.pos, self.related_dock)
-        except AttributeError:  # The related dock as been deleted
-            print('except')
+        except AttributeError as e:  # The related dock as been deleted
+            print('except', e)
             self.tab.area.addDock(dock, 'bottom')
         layout = pg.LayoutWidget()
         if self.scroll:
