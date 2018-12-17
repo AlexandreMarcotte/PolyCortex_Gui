@@ -12,7 +12,7 @@ from pynput import keyboard
 import threading
 from random import randint
 
-class Game3DTab(QWidget):
+class MiniGameTab(QWidget):
     def __init__(self):
         super().__init__()
         # Create the tab itself
