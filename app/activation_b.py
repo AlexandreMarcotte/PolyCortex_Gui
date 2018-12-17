@@ -6,10 +6,12 @@ from app.colors import *
 class btn:
     def __init__(self, name, layout, pos, size=(1, 1), func_conn=None,
                  action=None, color=None, toggle=False, tip=None,
-                 max_width=1200, min_width=15, txt_color=None):
+                 max_width=1200, min_width=15, max_height=None, txt_color=None):
         self.b = QPushButton(name)
         self.b.setMinimumWidth(min_width)
         self.b.setMaximumWidth(max_width)
+        if max_height is not None:
+            self.b.setMaximumHeight(max_height)
         if txt_color:
             self.b.setStyleSheet(f'background-color: {color}; color: {white}; font-size: 11pt;')
         else:
