@@ -4,8 +4,10 @@ import numpy as np
 import pyqtgraph as pg
 from PyQt5 import QtCore
 from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import *
 import re
 from functools import partial
+from pyqtgraph.dockarea import *
 # -- My Packages --
 # Generate signal
 from generate_signal.from_openbci import SampleDataFromOPENBCI
@@ -22,38 +24,90 @@ from tabs.region import Regions
 from .eeg_graph import EegGraph
 
 from data_processing_pipeline.frequency_counter import FrequencyCounter
-from app.pyqt_frequently_used import (create_param_combobox, create_splitter,
-                                       create_gr)
+from app.pyqt_frequently_used import (
+        create_param_combobox, create_splitter, create_gr)
+from save.data_saver import DataSaver
+from tabs.live_graph_tab.dock.banner_dock.banner import Banner
+
+from tabs.live_graph_tab.dock.Inner_dock import InnerDock
 
 
 class EegPlotsCreator:
     def __init__(self, gv, layout):
+        # General Layout
         self.gv = gv
         self.layout = layout
+        self.dock_area = DockArea()
+        self.layout.addWidget(self.dock_area, 1, 0, 1, 8)
 
+        # Variables
         self.btns = []
         self.ts = self.gv.t_queue
         self.timers = []
         self.plots = []
         self.eeg_graphes = []
         self.zero_q = deque(
-            np.zeros(self.gv.DEQUE_LEN), maxlen=self.gv.DEQUE_LEN)
+                np.zeros(self.gv.DEQUE_LEN), maxlen=self.gv.DEQUE_LEN)
         self.GR_PER_COL = 1
-        # Stop/Start
-        gr, self.start_stop_layout = create_gr()
-        self.last_gr = gr
+        # Settings
+        self.create_settings_dock()
+        # Saving
+        self.create_saving_dock()
+        # Banner
+        self.create_banner_dock()
+        # EEG
+        self.grps = self.create_all_eeg_plot()
+        self.eeg_dock = self.create_eeg_dock(self.grps)
 
-        self.create_buttons(self.start_stop_layout)
+    def create_banner_dock(self):
+        banner_d = InnerDock(
+                self.layout, 'Banner', b_pos=(0, 2), b_checked=False,
+                toggle_button=True, size=(1, 1))
+        Banner(banner_d.layout)
+        self.dock_area.addDock(banner_d.dock)
+        banner_d.dock.hide()
+
+    def create_saving_dock(self):
+        saving_d = InnerDock(
+                self.layout, 'Saving', b_pos=(0, 1), toggle_button=True,
+                size=(1, 1))
+        DataSaver(self.gv.main_window, self.gv, saving_d.layout, size=(1,1))
+        self.dock_area.addDock(saving_d.dock)
+
+    def create_settings_dock(self):
+        settings_d = InnerDock(
+                self.layout, 'Settings', toggle_button=True, size=(1, 1))
+        # Stop/Start button
+        self.create_buttons(settings_d.layout)
         # Plot parameter
-        self.create_all_combobox(self.start_stop_layout)
+        self.create_all_combobox(settings_d.layout)
+        self.dock_area.addDock(settings_d.dock)
 
-        grps = self.create_all_eeg_plot()
+    def create_eeg_dock(self, grps):
+        eeg_d = InnerDock(self.layout, 'Part EEG')
+        splitters = self.create_splitter(grps)
+        s_factor = len(splitters)//self.GR_PER_COL
+        for no, s in enumerate(splitters):
+            eeg_d.layout.addWidget(
+                    s, no%s_factor, no//s_factor)
+        self.dock_area.addDock(eeg_d.dock)
+        return eeg_d
 
-        splitter = self.create_splitter(grps)
-        self.layout.addWidget(splitter)
+    @QtCore.pyqtSlot(bool)
+    def open_dock(self, dock, checked):
+        if checked:
+            dock.show()
+        else:
+            dock.hide()
 
     def set_saver(self, data_saver):
         self.data_saver = data_saver
+
+    def create_buttons(self, layout):
+        """Assign pushbutton for starting"""
+        btn('Start', layout, (0, 0), toggle=True, max_width=100,
+            func_conn=self.start_timers, color=dark_blue_tab,
+            txt_color=white)
 
     def create_all_combobox(self, start_stop_l):
         create_param_combobox(
@@ -61,13 +115,16 @@ class EegPlotsCreator:
                 ['Auto', '10 uv', '100 uv', '1000 uv', '10000 uv', '100000 uv'],
                 conn_func=self.scale_y_axis)
         create_param_combobox(
-                start_stop_l, 'Horizontal scale', (0, 2), ['5s', '7s', '10s'])
+                start_stop_l, 'Horizontal scale', (0, 2), ['5s', '7s', '10s'],
+                editable=False)
         create_param_combobox(
                 start_stop_l, 'Plot(s) per column', (0, 3), ['1', '2'],
                 editable=False, conn_func=self.change_num_plot_per_row)
 
-    def change_num_plot_per_row(self, txt):
-        print(f'change number plots per rows {txt}')
+    def change_num_plot_per_row(self, plot_per_row):
+        self.eeg_dock.dock.close()
+        self.GR_PER_COL = int(plot_per_row)
+        self.eeg_dock = self.create_eeg_dock(self.grps)
 
     def scale_y_axis(self, txt):
         try:
@@ -108,24 +165,12 @@ class EegPlotsCreator:
             self.assign_action_to_ch(ch)
 
     def create_splitter(self, grps):
-        splitter = None
-        for i in range(0, len(grps), self.GR_PER_COL):
-            hori_s = create_splitter(
-                    grps[i], grps[i+(self.GR_PER_COL-1)],
-                    direction=Qt.Horizontal)
-            if splitter is None:
-                splitter = create_splitter(
-                        self.last_gr, hori_s, direction=Qt.Vertical)
-            else:
-                splitter = create_splitter(
-                        splitter, hori_s, direction=Qt.Vertical)
-        return splitter
-
-    def create_buttons(self, layout):
-        """Assign pushbutton for starting"""
-        btn('Start', layout, (0, 0), toggle=True, max_width=100,
-            func_conn=self.start_timers, color=dark_blue_tab,
-            txt_color=white)
+        splitters = []
+        for i in range(0, len(grps), 2):
+            splitter = create_splitter(
+                    grps[i], grps[i+1], direction=Qt.Vertical)
+            splitters.append(splitter)
+        return splitters
 
     def create_plot(self, ch):
         """Create a plot for all eeg signals and the last to keep track of time"""
@@ -246,3 +291,6 @@ class EegPlotsCreator:
         self.eeg_graphes[ch].curve.setPen(color)
         self.gv.curve_freq[ch].setPen(color)
         self.btns[ch].set_color(color)
+
+
+
