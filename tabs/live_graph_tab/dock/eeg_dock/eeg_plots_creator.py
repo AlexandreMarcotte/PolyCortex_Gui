@@ -118,7 +118,7 @@ class EegPlotsCreator:
                 start_stop_l, 'Horizontal scale', (0, 2), ['5s', '7s', '10s'],
                 editable=False)
         create_param_combobox(
-                start_stop_l, 'Plot(s) per column', (0, 3), ['1', '2'],
+                start_stop_l, 'Nb of columns', (0, 3), ['1', '2', '4'],
                 editable=False, conn_func=self.change_num_plot_per_row)
 
     def change_num_plot_per_row(self, plot_per_row):
@@ -261,12 +261,14 @@ class EegPlotsCreator:
         max_width = 17
         max_height = 18
         # Average
-        actn_btn = ActionButton(self.ch_layout, 0, self.gv, ch)
+        actn_btn = ActionButton(
+                self.ch_layout, 0, self.gv, ch, conn_func='avg')
         btn('A', self.ch_layout, (0, 8), action=actn_btn,
             toggle=True, tip='Show average value of queue',
             max_width=max_width, max_height=max_height, color=dark_blue_tab)
         # Max
-        actn_btn = ActionButton(self.ch_layout, 1, self.gv, ch)
+        actn_btn = ActionButton(
+                self.ch_layout, 1, self.gv, ch, conn_func='max')
         btn('M', self.ch_layout, (1, 8), action=actn_btn,
             toggle=True, tip='Show max value of queue',
             max_width=max_width, max_height=max_height, color=dark_blue_tab)
@@ -287,7 +289,6 @@ class EegPlotsCreator:
 
     def change_line_color(self, ch, color_btn):
         color = color_btn.color()
-        print('color', color)
         self.eeg_graphes[ch].curve.setPen(color)
         self.gv.curve_freq[ch].setPen(color)
         self.btns[ch].set_color(color)
