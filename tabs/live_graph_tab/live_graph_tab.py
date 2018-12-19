@@ -11,12 +11,10 @@ from .dock.wave_dock.wave_graph import WaveGraph
 from .dock.wave_over_time_dock.wave_over_time_graph import WaveGraphOverTime
 from .dock.fft_dock.fft_graph import FftGraph
 from .dock.classif_dock.classification_plot_creator import ClassifPlotCreator
-from .dock.banner_dock.banner import Banner
 from .dock.Viz_3D_dock.viz_3D import Viz3D
 from .dock.fft_over_time_3D_dock.fft_over_time_graph import FftOverTimeGraph3D
 from .dock.fft_over_time_2D_dock.fft_over_time_graph import FftOverTimeGraph2D
 
-from save.data_saver import DataSaver
 
 
 class LiveGraphTab(QWidget):
@@ -69,18 +67,11 @@ class LiveGraphTab(QWidget):
             'Classification', self, self.docks_menu, ClassifPlotCreator,
              [self.gv], 'bottom', self.fft.dock, size=(5, 10), scroll=True)
 
-        self.banner = DockHandler(
-            'Banner', self, self.docks_menu, Banner, [], 'bottom',
-            self.eeg.dock)
-
-        self.saving = DockHandler(
-            'Saving', self, self.docks_menu, DataSaver, [self, self.gv],
-            'below', self.banner.dock)
-        self.eeg.dock_obj.set_saver(self.saving.dock_obj)
-
         self.visualization3D = DockHandler(
             'Visualization 3D', self, self.docks_menu, Viz3D, [self.gv],
             'below', self.classification.dock, scroll=True)
+
+        self.fft.dock.raiseDock()
 
         self.setLayout(self.layout)
 

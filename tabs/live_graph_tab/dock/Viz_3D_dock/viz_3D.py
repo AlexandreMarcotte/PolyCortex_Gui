@@ -2,8 +2,10 @@
 import numpy as np
 import pyqtgraph as pg
 import pyqtgraph.opengl as gl
-from PyQt5 import QtCore
-from pynput import keyboard
+import mne
+from mne.surface import decimate_surface
+from pyqtgraph.Qt import QtCore
+from pyqtgraph.dockarea import *
 # -- My packages --
 from app.colors import *
 from app.activation_b import btn
@@ -14,12 +16,10 @@ from save.data_saver import DataSaver
 from .sphere import Sphere
 from .brain import Brain
 from .plane import Plane
-from app.pyqt_frequently_used import (create_gr, create_txt_label,
-                                      create_splitter, create_param_combobox,
-                                      TripletBox)
-import mne
-from mne.surface import decimate_surface  # noqa
-from pyqtgraph.Qt import QtCore
+from app.pyqt_frequently_used import (
+        create_gr, create_txt_label, create_splitter, create_param_combobox,
+        TripletBox)
+from tabs.live_graph_tab.dock.Inner_dock import InnerDock
 
 
 class Viz3D(Dock):
@@ -29,11 +29,14 @@ class Viz3D(Dock):
         self.gv = gv
         self.layout = layout
 
+        self.dock_area = DockArea()
+        self.layout.addWidget(self.dock_area, 1, 0, 1, 8)
+
         self.len_sig = 100
 
-        self.init_viz_layout()
         self.init_modify_curve_layout()
-        self.init_layout()
+        self.init_viz_layout()
+        # self.init_layout()
 
         self.electrod_sphere = Sphere(
                 self.gv, scaling_factor=3, update_func_name='follow_plane')
@@ -47,8 +50,6 @@ class Viz3D(Dock):
 
         self.sphere = Sphere(self.gv, scaling_factor=48)
 
-        self.show_3D_viz_b()
-
         self.line_item = {}
         self.create_plot_lines()
 
@@ -56,8 +57,8 @@ class Viz3D(Dock):
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.update)
 
-    def show_3D_viz_b(self):
-        btn('Show 3D', self.layout, (1, 0),
+    def show_3D_viz_b(self, layout):
+        btn('Show 3D', layout, (1, 0),
             func_conn=self.show_3D_viz, color=grey3, txt_color=white)
 
     def show_3D_viz(self):
@@ -103,32 +104,43 @@ class Viz3D(Dock):
 
     def init_viz_layout(self):
         # viz_gr, viz_layout = create_gr()
+        viz_d = InnerDock(self.layout, 'Visualization')
         self.view = self.init_view()
-        self.layout.addWidget(self.view, 2, 0, 1, 9)
+        viz_d.layout.addWidget(self.view)
+        # self.layout.addWidget(self.view, 2, 0, 1, 9)
+        self.dock_area.addDock(viz_d.dock)
 
     def init_modify_curve_layout(self):
+        settings_d = InnerDock(
+                self.layout, 'Settings', toggle_button=True, size=(1, 1))
+        # Stop/Start button
+        self.init_on_off_button(settings_d.layout)
+
         # modify_curve_gr, modify_curve_layout = create_gr()
         create_param_combobox(
-                self.layout, 'Ch to move', (0, 1, 1, 1),                       # TODO: ALEXM: change to have a hboxlayout instead of a qboxlayout
+                settings_d.layout, 'Ch to move', (0, 1, 1, 1),                       # TODO: ALEXM: change to have a hboxlayout instead of a qboxlayout
                 [str(ch+1) for ch in range(self.gv.N_CH)], self.print_shit,
                 cols=1, editable=False)
         # Position
         pos_l = create_txt_label('Position')
-        self.layout.addWidget(pos_l, 0, 2, 1, 3)
+        settings_d.layout.addWidget(pos_l, 0, 2, 1, 3)
         self.triplet_box = TripletBox(
-                self.gv, name='position', col=2, layout=self.layout,
+                self.gv, name='position', col=2, layout=settings_d.layout,
                 colors=(blue_plane, green_plane, red_plane))
         # Angle
         angle_l = create_txt_label('Angle')
-        self.layout.addWidget(angle_l, 0, 5, 1, 3)
+        settings_d.layout.addWidget(angle_l, 0, 5, 1, 3)
         self.triplet_angle = TripletBox(
-                self.gv, name='angle', col=5, layout=self.layout)
+                self.gv, name='angle', col=5, layout=settings_d.layout)
         # Save to file
         DataSaver(
-                self.gv.main_window, self.gv, self.layout,                         # TODO: ALEXM: Add a tooltip
+                self.gv.main_window, self.gv, settings_d.layout,                         # TODO: ALEXM: Add a tooltip
                 saving_type='Save', pos=(0, 8), size=(1, 1),
                 save_file_button=False, choose_b_size=(1, 1))
         # return modify_curve_layout, modify_curve_gr
+        self.show_3D_viz_b(settings_d.layout)
+
+        self.dock_area.addDock(settings_d.dock)
 
     def init_color_button(self):
         color_b = pg.ColorButton(close_fit=True)
@@ -140,7 +152,8 @@ class Viz3D(Dock):
         print('shizzle')
 
     def init_layout(self):
-        self.init_on_off_button()
+        pass
+        # self.init_on_off_button()
         # splitter = create_splitter(self.viz_gr, self.modify_curve_gr)
         # self.layout.addWidget(splitter, 0, 0)
 
@@ -183,8 +196,8 @@ class Viz3D(Dock):
             self.set_plotdata(
                     name=ch, points=pts, color=pg.glColor((ch, 8)), width=1)
 
-    def init_on_off_button(self):
-        btn('Start', self.layout, (0, 0), func_conn=self.start,
+    def init_on_off_button(self, layout=None):
+        btn('Start', layout, (0, 0), func_conn=self.start,
             max_width=100, min_width=100, color=dark_blue_tab, toggle=True,
             txt_color=white)
 

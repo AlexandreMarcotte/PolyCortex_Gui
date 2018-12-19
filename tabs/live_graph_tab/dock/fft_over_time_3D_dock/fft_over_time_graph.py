@@ -19,7 +19,7 @@ class FftOverTimeGraph3D(Dock):
         self.surface = self.init_surface()
         view.addItem(self.surface)
         # Add to tab layout
-        self.secondary_layout.addWidget(view, 3, 0, 1, 2)
+        self.plot_d.layout.addWidget(view, 3, 0, 1, 2)
 
         self.init_choose_ch_combobox()
         self.init_on_off_button()

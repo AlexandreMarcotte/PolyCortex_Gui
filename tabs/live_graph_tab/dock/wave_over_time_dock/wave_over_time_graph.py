@@ -33,7 +33,7 @@ class WaveGraphOverTime(Dock):
         # plot.setXRange(0, 100)
         # plot.setYRange(0, 1000000)
         # Add to tab layout
-        self.secondary_layout.addWidget(plot, 2, 0, 1, 2)
+        self.plot_d.layout.addWidget(plot, 2, 0, 1, 2)
         for ch in range(len(self.gv.waves)):
             self.wave_curves.append(
                 plot.plot(deque(np.ones(200), maxlen=200)))

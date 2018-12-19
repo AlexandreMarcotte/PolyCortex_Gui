@@ -34,13 +34,14 @@ class MachineLearningTab(QWidget):
 
     def create_tool_dock(self):
         tool_dock = Dock('tool dock')
+        tool_dock.hideTitleBar()
         self.dock_area.addDock(tool_dock, 'left')
         tool_layout = pg.LayoutWidget()
         tool_dock.addWidget(tool_layout)
 
         tb = QToolBox()
         for i in range(3):
-            tb.addItem(QPlainTextEdit(), f'Tool {i}')
+            tb.addItem(QPlainTextEdit(), f'Tool {i+1}')
         tool_layout.addWidget(tb)
 
         tool_dock.hide()

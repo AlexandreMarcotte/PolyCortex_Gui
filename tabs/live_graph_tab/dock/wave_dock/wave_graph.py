@@ -30,7 +30,7 @@ class WaveGraph(Dock):
     def init_plot(self):
         """"""
         plot = pg.PlotWidget(background=dark_grey)
-        self.layout.addWidget(plot, 2, 0, 1, 2)
+        self.plot_d.layout.addWidget(plot, 2, 0, 1, 2)
         waves_names = [wave_name for wave_name in self.gv.waves]
         plot.plotItem.setLabel(axis='left', text='Power', units='None')
         plot.plotItem.setLabel(axis='bottom', text=waves_names)
