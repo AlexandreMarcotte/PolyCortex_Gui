@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 # -- General packages --
-from PyQt5.QtWidgets import *
-from PyQt5 import QtGui, QtCore
-from PyQt5.QtCore import Qt
+from PyQt5 import QtCore
 
 import pyqtgraph as pg
 from pyqtgraph import parametertree as ptree
@@ -14,12 +12,13 @@ from collections import deque
 import numpy as np
 import re
 from functools import partial
+from pyqtgraph.dockarea import *
 # -- My packages --
 from app.colors import *
 from app.activation_b import btn
-from app.pyqt_frequently_used import (create_gr, create_txt_label,
-                                       create_splitter, create_param_combobox)
+from app.pyqt_frequently_used import create_param_combobox
 from ... dock.dock import Dock
+from tabs.live_graph_tab.dock.Inner_dock import InnerDock
 
 
 class FftGraph:
@@ -28,22 +27,27 @@ class FftGraph:
     def __init__(self, gv, layout):
         self.gv = gv
         self.curve_freq = []
+        self.layout = layout
 
-        self.init_layout(layout)
-        self.init_on_off_button()
-        self.timer = self.init_timer()
+        self.dock_area = DockArea()
+        layout.addWidget(self.dock_area, 1, 0, 1, 8)
 
+        # self.add_param_tree()
+
+        # Settings
+        self.create_all_combobox()
+        # Plot
+        self.plot_d = self.init_layout()
         self.plot = self.init_plot()
         self.add_regions_filter_to_plot()
         self.connect_classif_region()
-        self.add_param_tree()
-        self.create_all_combobox()
 
-    def init_layout(self, layout):
-        plot_gr, self.plot_layout = create_gr()
-        filter_gr, self.filter_layout = create_gr()
-        splitter = create_splitter(plot_gr, filter_gr)
-        layout.addWidget(splitter, 1, 0)
+        self.timer = self.init_timer()
+
+    def init_layout(self):
+        plot_d = InnerDock(self.layout, 'plot')
+        self.dock_area.addDock(plot_d.dock)
+        return plot_d
 
     def init_timer(self):
         timer = QtCore.QTimer()
@@ -59,7 +63,7 @@ class FftGraph:
         plot.setXRange(0, 100)
         plot.setYRange(0, 1000000)
         # Add to tab layout
-        self.plot_layout.addWidget(plot, 2, 0, 1, 5)
+        self.plot_d.layout.addWidget(plot, 2, 0, 1, 5)
         for ch in range(self.gv.N_CH):
             self.curve_freq.append(
                 plot.plot(deque(np.ones(self.gv.DEQUE_LEN),
@@ -72,7 +76,8 @@ class FftGraph:
     def add_param_tree(self):
         self.ptree = ptree.ParameterTree(showHeader=False)
         self.filter = DataFilterParameter()
-        params = ptree.Parameter.create(name='params', type='group', children=[self.filter])
+        params = ptree.Parameter.create(
+                name='params', type='group', children=[self.filter])
         self.ptree.setParameters(params, showTop=False)
 
         self.filter_layout.addWidget(self.ptree)
@@ -122,25 +127,33 @@ class FftGraph:
             self.curve_freq[ch].setData(self.gv.freq_calculator.freq_range,
                                         self.gv.freq_calculator.fft[ch])       # TODO: ALEXM prendre abs ou real? avec real il y a des valeurs negatives est-ce que c'est normal?
 
-    def init_on_off_button(self):
-        btn('Start', self.plot_layout, (0, 0), func_conn=self.start,
+    def init_on_off_button(self, layout):
+        btn('Start', layout, (0, 0), func_conn=self.start,
             color=dark_blue_tab, toggle=True, txt_color=white, min_width=100)
 
     def create_all_combobox(self):
+        settings_d = InnerDock(
+            self.layout, 'Settings', toggle_button=True, size=(1, 1))
+        self.init_on_off_button(settings_d.layout)
+
         create_param_combobox(
-            self.plot_layout, 'Max Freq', (0, 1),
-            ['Auto', '60 Hz', '80 Hz', '100 Hz', '120 Hz'],
-            self.scale_x_axis)
+                settings_d.layout, 'Max Freq', (0, 1),
+                ['Auto', '60 Hz', '80 Hz', '100 Hz', '120 Hz'],
+                self.scale_x_axis)
         create_param_combobox(
-            self.plot_layout, 'Max Uv', (0, 2),
-            ['Auto','1000 uv', '10000 uv', '100000 uv', '1000000 uv',
-             '10000000 uv'], self.scale_y_axis)
+                settings_d.layout, 'Max Uv', (0, 2),
+                ['Auto','1000 uv', '10000 uv', '100000 uv', '1000000 uv',
+                 '10000000 uv'], self.scale_y_axis)
         create_param_combobox(
-            self.plot_layout, 'Log', (0, 3), ['False', 'True'], self.log_axis)
+                settings_d.layout, 'Log', (0, 3), ['False', 'True'],
+                self.log_axis)
         create_param_combobox(
-            self.plot_layout, 'Ch On', (0, 4),
-            ['ch 1', 'ch 2', 'ch 3', 'ch 4', 'ch 5', 'ch 6', 'ch 7', 'ch 8'],
-            self.ch_on_off, editable=False)
+                settings_d.layout, 'Ch On', (0, 4),
+                ['ch 1', 'ch 2', 'ch 3', 'ch 4',
+                 'ch 5', 'ch 6', 'ch 7', 'ch 8'],
+                self.ch_on_off, editable=False)
+
+        self.dock_area.addDock(settings_d.dock)
 
     def scale_x_axis(self, txt):                                             # TODO: ALEXM: remove the redundancy
         try:
