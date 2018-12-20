@@ -42,11 +42,13 @@ class Dispatcher:
 
         self.experiment_type = 0
         self.t_queue = deque(np.zeros(self.DEQUE_LEN), maxlen=self.DEQUE_LEN)
-        self.experiment_queue = deque(np.zeros(self.DEQUE_LEN), maxlen=self.DEQUE_LEN)
+        self.experiment_queue = deque(np.zeros(self.DEQUE_LEN),
+                                      maxlen=self.DEQUE_LEN)
         self.t_init = time()
         self.n_data_created = 0
         # All data
-        self.all_data = [deque(np.zeros(self.DEQUE_LEN)) for _ in range(self.N_CH)] 
+        self.all_data = [
+                deque(np.zeros(self.DEQUE_LEN)) for _ in range(self.N_CH)]
         self.all_t = deque(np.zeros(self.DEQUE_LEN))
         self.all_experiment_val = deque(np.zeros(self.DEQUE_LEN))
         # Classification
@@ -63,6 +65,8 @@ class Dispatcher:
                       }
         # Viz3D
         self.plane_to_move = 'x'
+        self.rotation_axis = 'x'
+        self.ch_to_move = 0
 
     def set_main_window(self, main_window):
         self.main_window = main_window
@@ -76,7 +80,8 @@ class Dispatcher:
 
         self.filter_itt += 1
         for ch in range(self.N_CH):
-            if self.use_filter and self.n_data_created > self.N_DATA_BEFORE_FILTER:
+            if self.use_filter and \
+                    self.n_data_created > self.N_DATA_BEFORE_FILTER:
                 self.filter_data(ch, signal)
             else:
                 self.data_queue[ch].append(signal[ch])
@@ -102,7 +107,7 @@ class Dispatcher:
         if self.filter_itt % self.once_every == 0:
             # Bandpass
             y = butter_bandpass_filter(
-                self.filter_process.data_queue[ch],     # TODO: ALEXM: There is a problem when the filtering of a bandpass filter filter all 0 it increase the signal to infinity
+                self.filter_process.data_queue[ch],                            # TODO: ALEXM: There is a problem when the filtering of a bandpass filter filter all 0 it increase the signal to infinity
                 self.min_pass_filter, self.max_pass_filter,
                 self.desired_read_freq, order=3)
             # Bandstop
