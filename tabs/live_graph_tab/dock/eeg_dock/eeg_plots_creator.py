@@ -173,7 +173,8 @@ class EegPlotsCreator:
         return splitters
 
     def create_plot(self, ch):
-        """Create a plot for all eeg signals and the last to keep track of time"""
+        """Create a plot for all eeg signals and the last to keep
+           track of time"""
         plot = pg.PlotWidget(background=dark_grey)
         plot.plotItem.showGrid(x=True, y=True, alpha=0.2)
         plot.plotItem.setLabel(axis='left', units='v')
@@ -213,10 +214,11 @@ class EegPlotsCreator:
     def assign_n_to_ch(self, ch):
         ch_number_action = ChNumberAction(self.timers, ch)
         # +1 so the number str start at 1
-        self.btn = btn(name=str(ch + 1), layout=self.ch_layout, pos=(0, 0),
-                       func_conn=ch_number_action.stop_ch,
-                       color=button_colors[ch], toggle=True, max_width=19,
-                       tip=f'Start/Stop the ch{ch+1} signal', max_height=19)
+        self.btn = btn(
+                name=str(ch + 1), layout=self.ch_layout, pos=(0, 0),
+                func_conn=ch_number_action.stop_ch, color=button_colors[ch],
+                toggle=True, max_width=19, max_height=19,
+                tip=f'Start/Stop the ch{ch+1} signal')
         self.btns.append(self.btn)
 
     def init_streaming_source(self):
