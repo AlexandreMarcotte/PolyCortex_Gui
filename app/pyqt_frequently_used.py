@@ -62,6 +62,9 @@ class ClickableLineEdit(QLineEdit):
         self.clicked.emit()
         if self.name == 'position':
             self.gv.plane_to_move = self.planes[self.i]
+        if self.name == 'angle':
+            self.gv.rotation_axis = self.planes[self.i]
+            print('angle', self.i)
         QLineEdit.mousePressEvent(self, event)
 
 
