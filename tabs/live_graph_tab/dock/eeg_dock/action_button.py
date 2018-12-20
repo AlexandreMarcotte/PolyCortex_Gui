@@ -36,10 +36,8 @@ class ActionButton:
         """"Create the average label"""
         avg_val =  f'{np.round(np.average(self.gv.data_queue[self.ch]), 2)} Vrms'
         self.label.setText(avg_val)
-        print(self.ch, 'avg')
 
     def update_max(self):
         """Create the max label"""
         max_val = f'{np.round(np.max(self.gv.data_queue[self.ch]), 2)} Vrms'
-        print(self.ch, 'max')
         self.label.setText(max_val)

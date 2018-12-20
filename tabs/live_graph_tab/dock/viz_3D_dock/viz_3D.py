@@ -172,9 +172,9 @@ class Viz3D(Dock):
             self.signals[n] = Signal(
                     self.gv, ch=n, triplet_angle=self.triplet_angle)
             self.view.addItem(self.signals[n].line)
-            # self.signals[n].line.rotate(20*(n+1), 0, 1, 0)
-            # self.signals[n].move(
-            #         location=(-self.len_sig - self.sphere.radius, 0, 0))
+            self.signals[n].move(
+                location=(-self.len_sig - self.sphere.radius, 0, 0))
+            self.signals[n].line.rotate(20*(n+1), 0, 1, 0)
 
     def init_view(self):
         """     """
@@ -184,7 +184,7 @@ class Viz3D(Dock):
         view.opts['elevation'] = 15
         return view
 
-    def set_plotdata(self, name, points, color, width):
+    def set_plot_data(self, name, points, color, width):
         self.signals[name].line.setData(pos=points, color=color, width=width)
 
     def update(self):
@@ -195,7 +195,7 @@ class Viz3D(Dock):
                     np.array(np.array(self.gv.data_queue[ch])/7000)),
                     axis=1)
 
-            self.set_plotdata(
+            self.set_plot_data(
                     name=ch, points=pts, color=pg.glColor((ch, 8)), width=1)
 
     def init_on_off_button(self, layout=None):
