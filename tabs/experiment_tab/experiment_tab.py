@@ -48,3 +48,5 @@ class ExperimentTab(QWidget):
         p300_dock = P300Dock(self.area, emg_dock.emg_dock)
         # Basic P300
         BasicP300(self.area, emg_dock.emg_dock, self.gv)
+
+        emg_dock.emg_dock.raiseDock()
