@@ -11,7 +11,7 @@ from .dock.wave_dock.wave_graph import WaveGraph
 from .dock.wave_over_time_dock.wave_over_time_graph import WaveGraphOverTime
 from .dock.fft_dock.fft_graph import FftGraph
 from .dock.classif_dock.classification_plot_creator import ClassifPlotCreator
-from .dock.Viz_3D_dock.viz_3D import Viz3D
+from .dock.viz_3D_dock.viz_3D import Viz3D
 from .dock.fft_over_time_3D_dock.fft_over_time_graph import FftOverTimeGraph3D
 from .dock.fft_over_time_2D_dock.fft_over_time_graph import FftOverTimeGraph2D
 
