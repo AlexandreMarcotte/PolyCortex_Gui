@@ -28,8 +28,7 @@ class Plane(MovingObject):
         self.pos = np.array([0, 0, 0], dtype='float64')
         self.item = self.init_plane_item()
 
-        self.create_timer(self.move_plane)
-
+        self.timer = self.create_timer(self.move_plane)
 
     def init_plane_item(self):
         cols = 150
@@ -50,7 +49,6 @@ class Plane(MovingObject):
                 if self.key_pressed == self.key[0]:
                     mvt = self.mvt_scale * self.mvt
                     self.pos += mvt
-                    # print('pos', self.pos, 'mvt', mvt)
                     self.item.translate(*mvt)
                 if self.key_pressed == self.key[1]:
                     mvt = -1 * self.mvt_scale * self.mvt
@@ -61,8 +59,8 @@ class Plane(MovingObject):
             self.triplet_box.all_l_e[triplet_box_num].setText(
                     str(int(self.pos[triplet_box_num])))
 
-        except KeyError:
-            pass
+        except KeyError as e:
+            print(e)
 
     # def init_plane_item(self):                                               # TODO: ALEXM: Try again to use a plane with the technique I used with a head
     #     cols = 150

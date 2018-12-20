@@ -25,8 +25,9 @@ class MovingObject:
             self.listen_keybr = self.start_listening_process()
 
     def create_timer(self, slot):
-        self.timer = QtCore.QTimer()
-        self.timer.timeout.connect(slot)
+        timer = QtCore.QTimer()
+        timer.timeout.connect(slot)
+        return timer
 
     def start_listening_process(self):
         listen_keybr = keyboard.Listener(

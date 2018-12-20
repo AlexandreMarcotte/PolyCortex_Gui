@@ -15,7 +15,7 @@ class Sphere(MovingObject):
         self.radius *= scaling_factor
         update_funcs = {'move_pointer': self.move_pointer,
                         'follow_plane': self.follow_plane}
-        self.create_timer(update_funcs[update_func_name])
+        self.timer = self.create_timer(update_funcs[update_func_name])
         self.pos = np.array([0, 0, 0], dtype='float64')
 
     def set_element_to_follow(self, ele_to_follow):

@@ -8,6 +8,10 @@ class btn:
                  action=None, color=None, toggle=False, tip=None,
                  max_width=1200, min_width=15, max_height=None,
                  txt_color=None, font_size=11):
+        if name == 'Start':
+            max_width = 85
+            min_width = 85
+
         self.b = QPushButton(name)
         self.b.setMinimumWidth(min_width)
         self.b.setMaximumWidth(max_width)
