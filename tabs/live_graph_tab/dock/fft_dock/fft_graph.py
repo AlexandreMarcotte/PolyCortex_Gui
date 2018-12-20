@@ -13,12 +13,14 @@ import numpy as np
 import re
 from functools import partial
 from pyqtgraph.dockarea import *
+from pyqtgraph.flowchart import Flowchart
 # -- My packages --
 from app.colors import *
 from app.activation_b import btn
 from app.pyqt_frequently_used import create_param_combobox
 from ... dock.dock import Dock
 from tabs.live_graph_tab.dock.Inner_dock import InnerDock
+import pyqtgraph.metaarray as metaarray
 
 
 class FftGraph:
@@ -31,20 +33,20 @@ class FftGraph:
 
         self.dock_area = DockArea()
         layout.addWidget(self.dock_area, 1, 0, 1, 8)
-
-        # self.add_param_tree()
-
-        # Settings
-        self.create_all_combobox()
         # Plot
-        self.plot_d = self.init_layout()
+        self.plot_d = self.init_plot_dock()
         self.plot = self.init_plot()
         self.add_regions_filter_to_plot()
         self.connect_classif_region()
+        # Settings
+        self.create_settings_dock()
+        # Filter settings
+        self.filter_d = self.create_filter_settings_dock()
+        self.init_filters()
 
         self.timer = self.init_timer()
 
-    def init_layout(self):
+    def init_plot_dock(self):
         plot_d = InnerDock(self.layout, 'plot')
         self.dock_area.addDock(plot_d.dock)
         return plot_d
@@ -63,7 +65,7 @@ class FftGraph:
         plot.setXRange(0, 100)
         plot.setYRange(0, 1000000)
         # Add to tab layout
-        self.plot_d.layout.addWidget(plot, 2, 0, 1, 5)
+        self.plot_d.layout.addWidget(plot, 2, 0, 5, 5)
         for ch in range(self.gv.N_CH):
             self.curve_freq.append(
                 plot.plot(deque(np.ones(self.gv.DEQUE_LEN),
@@ -131,7 +133,7 @@ class FftGraph:
         btn('Start', layout, (0, 0), func_conn=self.start,
             color=dark_blue_tab, toggle=True, txt_color=white, min_width=100)
 
-    def create_all_combobox(self):
+    def create_settings_dock(self):
         settings_d = InnerDock(
             self.layout, 'Settings', toggle_button=True, size=(1, 1))
         self.init_on_off_button(settings_d.layout)
@@ -153,7 +155,61 @@ class FftGraph:
                  'ch 5', 'ch 6', 'ch 7', 'ch 8'],
                 self.ch_on_off, editable=False)
 
-        self.dock_area.addDock(settings_d.dock)
+        self.dock_area.addDock(settings_d.dock, 'top')
+
+    def create_filter_settings_dock(self):
+        filter_d = InnerDock(
+                self.layout, 'Filter', toggle_button=True,
+                size=(1, 1), b_pos=(0, 1))
+        self.dock_area.addDock(filter_d.dock, 'right')
+        return filter_d
+
+
+    def init_filters(self):
+
+        ## Create flowchart, define input/output terminals
+        fc = Flowchart(terminals={
+            'dataIn': {'io': 'in'},
+            'dataOut': {'io': 'out'}
+        })
+        w = fc.widget()
+
+        ## Add flowchart control panel to the main window
+        self.filter_d.layout.addWidget(fc.widget(), 0, 0, 2, 1)
+
+        ## Add two plot widgets
+        pw1 = pg.PlotWidget()
+        pw2 = pg.PlotWidget()
+        self.filter_d.layout.addWidget(pw1, 0, 1)
+        self.filter_d.layout.addWidget(pw2, 1, 1)
+
+        ## generate signal data to pass through the flowchart
+        data = np.random.normal(size=1000)
+        data[200:300] += 1
+        data += np.sin(np.linspace(0, 100, 1000))
+        data = metaarray.MetaArray(data, info=[{'name': 'Time', 'values': np.linspace(0, 1.0, len(data))}, {}])
+
+        ## Feed data into the input terminal of the flowchart
+        fc.setInput(dataIn=data)
+
+        ## populate the flowchart with a basic set of processing nodes.
+        ## (usually we let the user do this)
+        plotList = {'Top Plot': pw1, 'Bottom Plot': pw2}
+
+        pw1Node = fc.createNode('PlotWidget', pos=(0, -150))
+        pw1Node.setPlotList(plotList)
+        pw1Node.setPlot(pw1)
+
+        pw2Node = fc.createNode('PlotWidget', pos=(150, -150))
+        pw2Node.setPlot(pw2)
+        pw2Node.setPlotList(plotList)
+
+        fNode = fc.createNode('GaussianFilter', pos=(0, 0))
+        fNode.ctrls['sigma'].setValue(5)
+        fc.connectTerminals(fc['dataIn'], fNode['In'])
+        fc.connectTerminals(fc['dataIn'], pw1Node['In'])
+        fc.connectTerminals(fNode['Out'], pw2Node['In'])
+        fc.connectTerminals(fNode['Out'], fc['dataOut'])
 
     def scale_x_axis(self, txt):                                             # TODO: ALEXM: remove the redundancy
         try:

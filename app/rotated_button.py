@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import *
 
 class RotatedButton(QPushButton):
     def __init__(self, text, parent, orientation="west"):
-        super().__init__(text, parent)
+        super().__init__(text)
         self.orientation = orientation
 
     def paintEvent(self, event):
