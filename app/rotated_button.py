@@ -24,4 +24,4 @@ class RotatedButton(QPushButton):
         options.rect.setSize(size)
         options.text = self.text()
         return options
-
+#Commit test
