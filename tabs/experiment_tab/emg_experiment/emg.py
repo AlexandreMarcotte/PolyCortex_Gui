@@ -18,7 +18,7 @@ class EmgDock(Experiment):
 
         self.actions = []
         self.action_name = 'ACTION'
-        self.num_of_action = 50
+        self.num_of_action = 100
         self.action_itt = 0
 
         self.end_experiment = False
