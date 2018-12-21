@@ -16,9 +16,9 @@ class Dispatcher:
 
         self.filter_process = FilterProcess(N_CH=N_CH, DEQUE_LEN=DEQUE_LEN)
         self.filter_itt = 0
-        self.once_every = 20
+        self.once_every = 30
         self.filter_chunk = []
-        self.use_filter = True
+        self.use_filter = False
         self.N_DATA_BEFORE_FILTER = 100
         self.min_pass_filter = 2
         self.max_pass_filter = 100
@@ -119,6 +119,7 @@ class Dispatcher:
         # put the data once at the time at every loop so the signal is not showing
         # all jerky
         if any(self.filter_chunk):
+            # print(self.filter_chunk)
             val = self.filter_chunk[ch].pop()
             self.data_queue[ch].append(val)
             # When you removed the last one init the list again to []

@@ -150,7 +150,10 @@ class FftGraph:
                 settings_d.layout, 'Log', (0, 3), ['False', 'True'],
                 self.log_axis)
         create_param_combobox(
-                settings_d.layout, 'Ch On', (0, 4),
+                settings_d.layout, 'Filter', (0, 4), ['False', 'True'],
+                self.show_filter)
+        create_param_combobox(
+                settings_d.layout, 'Ch On', (0, 5),
                 ['ch 1', 'ch 2', 'ch 3', 'ch 4',
                  'ch 5', 'ch 6', 'ch 7', 'ch 8'],
                 self.ch_on_off, editable=False)
@@ -160,38 +163,31 @@ class FftGraph:
     def create_filter_settings_dock(self):
         filter_d = InnerDock(
                 self.layout, 'Filter', toggle_button=True,
-                size=(1, 1), b_pos=(0, 1))
+                size=(1, 1), b_pos=(0, 1), b_checked=False)
         self.dock_area.addDock(filter_d.dock, 'right')
+        filter_d.dock.hide()
         return filter_d
-
 
     def init_filters(self):
 
         ## Create flowchart, define input/output terminals
         fc = Flowchart(terminals={
-            'dataIn': {'io': 'in'},
-            'dataOut': {'io': 'out'}
-        })
-        w = fc.widget()
-
+                'dataIn': {'io': 'in'},
+                'dataOut': {'io': 'out'}})
         ## Add flowchart control panel to the main window
         self.filter_d.layout.addWidget(fc.widget(), 0, 0, 2, 1)
-
         ## Add two plot widgets
         pw1 = pg.PlotWidget()
         pw2 = pg.PlotWidget()
         self.filter_d.layout.addWidget(pw1, 0, 1)
         self.filter_d.layout.addWidget(pw2, 1, 1)
-
         ## generate signal data to pass through the flowchart
         data = np.random.normal(size=1000)
         data[200:300] += 1
         data += np.sin(np.linspace(0, 100, 1000))
         data = metaarray.MetaArray(data, info=[{'name': 'Time', 'values': np.linspace(0, 1.0, len(data))}, {}])
-
         ## Feed data into the input terminal of the flowchart
         fc.setInput(dataIn=data)
-
         ## populate the flowchart with a basic set of processing nodes.
         ## (usually we let the user do this)
         plotList = {'Top Plot': pw1, 'Bottom Plot': pw2}
@@ -222,10 +218,7 @@ class FftGraph:
             print("Come on bro, this  value doesn't make sens")
 
     def log_axis(self, txt):
-        if txt == 'True':
-            self.plot.setLogMode(y=True)
-        else:
-            self.plot.setLogMode(y=False)
+        self.plot.setLogMode(y=eval(txt))
 
     def scale_y_axis(self, txt):
         try:
@@ -239,6 +232,9 @@ class FftGraph:
 
     def ch_on_off(self):
         pass
+
+    def show_filter(self, txt):
+        self.gv.use_filter = eval(txt)
 
     @QtCore.pyqtSlot(bool)
     def start(self, checked):
