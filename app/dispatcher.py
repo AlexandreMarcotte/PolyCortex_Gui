@@ -24,6 +24,8 @@ class Dispatcher:
         self.max_pass_filter = 100
         self.min_cut_filter = 57
         self.max_cut_filter= 63
+        self.filter_min_bound = 0
+        self.filter_max_bound = self.DEQUE_LEN
 
         # Variable change in the menubar
         self.stream_origin = 'Stream from synthetic data'
@@ -37,13 +39,14 @@ class Dispatcher:
 
         self.curve_freq = None
 
-        self.data_queue = [deque(np.zeros(DEQUE_LEN),
-                                 maxlen=DEQUE_LEN) for _ in range(N_CH)]      # One deque per channel initialize at 0
+        self.data_queue = [
+                deque(np.zeros(DEQUE_LEN),
+                maxlen=DEQUE_LEN) for _ in range(N_CH)]      # One deque per channel initialize at 0
 
         self.experiment_type = 0
         self.t_queue = deque(np.zeros(self.DEQUE_LEN), maxlen=self.DEQUE_LEN)
-        self.experiment_queue = deque(np.zeros(self.DEQUE_LEN),
-                                      maxlen=self.DEQUE_LEN)
+        self.experiment_queue = deque(
+                np.zeros(self.DEQUE_LEN), maxlen=self.DEQUE_LEN)
         self.t_init = time()
         self.n_data_created = 0
         # All data
@@ -107,14 +110,14 @@ class Dispatcher:
         if self.filter_itt % self.once_every == 0:
             # Bandpass
             y = butter_bandpass_filter(
-                self.filter_process.data_queue[ch],                            # TODO: ALEXM: There is a problem when the filtering of a bandpass filter filter all 0 it increase the signal to infinity
-                self.min_pass_filter, self.max_pass_filter,
-                self.desired_read_freq, order=3)
+                    self.filter_process.data_queue[ch],                            # TODO: ALEXM: There is a problem when the filtering of a bandpass filter filter all 0 it increase the signal to infinity
+                    self.min_pass_filter, self.max_pass_filter,
+                    self.desired_read_freq, order=3)
             # Bandstop
             y = butter_bandpass_filter(
-                # y, self.min_bandstop_filter, self.max_bandstop_filter,
-                y, self.min_cut_filter, self.max_cut_filter,
-                self.desired_read_freq, order=3, filter_type='bandstop')
+                    # y, self.min_bandstop_filter, self.max_bandstop_filter,
+                    y, self.min_cut_filter, self.max_cut_filter,
+                    self.desired_read_freq, order=3, filter_type='bandstop')
             self.filter_chunk.append(list(y[-self.once_every:][::-1]))
         # put the data once at the time at every loop so the signal is not showing
         # all jerky
