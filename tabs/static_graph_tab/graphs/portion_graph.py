@@ -13,6 +13,8 @@ class PortionGraph(Graph):
         self.data = np.zeros(200)
         self.t = []
         self.classif_region = None
+        self.min_borne = -20
+        self.max_borne = 160
 
     def add_all_experimentation_regions(self, ch, exp):
         """
@@ -26,9 +28,11 @@ class PortionGraph(Graph):
             if val:
                 if (val == 1 or val == 2) and (ch == 0 or ch == 1):
                     self.add_region(
-                        [no - 60, no + 110], brush_color=self.brushes[int(val)],
-                        movable=False)
+                            [no + self.min_borne, no + self.max_borne],
+                            brush_color=self.brushes[int(val)],
+                            movable=False)
                 elif (val == 3 or val == 4) and (ch == 2 or ch == 3):
                     self.add_region(
-                        [no - 60, no + 110], brush_color=self.brushes[int(val)],
-                        movable=False)
+                            [no + self.min_borne, no + self.max_borne],
+                            brush_color=self.brushes[int(val)],
+                            movable=False)
