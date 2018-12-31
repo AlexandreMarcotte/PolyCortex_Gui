@@ -17,23 +17,27 @@ from data_processing_pipeline.uniformize_data import uniformize_data
 
 
 class ProcessData:
-    def __init__(self, exp_csv_dir, train_exp_folders, colors, N_CLASS_TYPE):#OK
+    def __init__(self, exp_csv_dir, train_exp_folders, colors,
+                 SPLIT_TRAIN_TEST):
         """ """
-        # self.base_path = base_path
         self.exp_csv_dir = exp_csv_dir
         self.train_exp_folders = train_exp_folders
         self.colors = colors
+        self.SPLIT_TRAIN_TEST = SPLIT_TRAIN_TEST
 
-        self.class_type = [[] for _ in range(N_CLASS_TYPE)]
+        self.N_CLASS = len(train_exp_folders)
+
+        self.class_type_train = [[] for _ in range(self.N_CLASS)]
+        self.class_type_test = [[] for _ in range(self.N_CLASS)]
 
         self.generate_class_type_list()
 
     def generate_class_type_list(self):
-        self.l_data, self.l_t, self.l_exp = self.create_list_from_experiment_data()
+        self.l_data, self.l_t, self.l_exp = self.create_list_from_exp_data()
         self.save_emg_signal_if_event_stamp()
-        return self.class_type
+        return self.class_type_train
 
-    def create_list_from_experiment_data(self): #OK
+    def create_list_from_exp_data(self):
         """
         Creates features for an interval and normalizes them according to
         the maximum among all intervals.
@@ -47,6 +51,7 @@ class ProcessData:
             l_data.append([])
             l_t.append([])
             l_exp.append([])
+            # Each folder contain many files contain a single type of exp (class)
             for file_name in os.listdir(folder_path):
                 data, t, exp = read_data_from_file(
                         os.path.join(folder_path, file_name), N_CH=8)
@@ -56,26 +61,31 @@ class ProcessData:
 
         return l_data, l_t, l_exp
 
-    def save_emg_signal_if_event_stamp(self):#OK
+    def save_emg_signal_if_event_stamp(self):
         # Look at all data with their corresponding experiment
-        for exp_no in range(len(self.l_exp)):
-            for exp, data in zip(self.l_exp[exp_no], self.l_data[exp_no]):
-                for no, emg_type in enumerate(exp):
-                    # Keep only the first electrodes that were used in this experiment
-                    for ch, one_ch_data in enumerate(data[:1]):
-                        emg_type = int(emg_type)
-                        if emg_type == 1:
-                            self.save_emg_in_proper_class_list(
-                                    one_ch_data, no, ch, emg_type, exp_no)
+        for class_num, class_data in enumerate(self.l_data):                   # TODO: ALEXM: Try to decrease the number of for loops if possible
+            # Go over all the experiment in the folder
+            for exp_no, exp in enumerate(class_data):
+                events_pos = np.ravel(
+                        np.where(self.l_exp[class_num][exp_no]))
+                for pos in events_pos:
+                    # Keep only the 1st electrodes that were used in this exp
+                    for ch_data in exp[:1]:
+                        self.save_emg_in_proper_class_list(
+                                ch_data[pos-20:pos+160], class_num, exp_no)
+            # plt.show()
 
     def save_emg_in_proper_class_list(#OK
-                self, one_ch_data, no, ch, emg_type, exp_no, plot_data=True):
-        emg_signal = np.array(one_ch_data[no-60:no+110])
-        emg_signal = uniformize_data(emg_signal, len(emg_signal))
-        print('exp_no', exp_no)
-        self.class_type[exp_no].append(emg_signal)                                   # TODO: ALEXM: change the indice from the number of the folder it is reading fro
+                self, one_ch_data, class_num, exp_no, plot_data=False):
+        one_ch_data = uniformize_data(one_ch_data, len(one_ch_data))
+        # Split in train and test set
+        if exp_no <= self.SPLIT_TRAIN_TEST:
+            self.class_type_train[class_num].append(one_ch_data)                                   # TODO: ALEXM: change the indice from the number of the folder it is reading fro
+        else:
+            self.class_type_test[class_num].append(one_ch_data)
+        # plot
         if plot_data:
-            plt.plot(emg_signal)
+            plt.plot(one_ch_data)
 
 
 def find_emg_avg_for_every_ch(class_type, colors, N_CLASS_TYPE): #OK
@@ -88,9 +98,9 @@ def find_emg_avg_for_every_ch(class_type, colors, N_CLASS_TYPE): #OK
         plt.show()
 
     # plt show average type
-    for ch in range(1):
-        plt.plot(avg_emg_class_type[ch])
-        plt.show()
+    # for ch in range(len(class_type)):
+    #     plt.plot(avg_emg_class_type[ch])
+    #     plt.show()
 
     return avg_emg_class_type
 
@@ -125,7 +135,6 @@ def train_test_split(linear_class_type):
 
 def train_classifier(X, y):
     clf = svm.LinearSVC()
-    print('len', len(X[0]))
     clf.fit(X, y)
     joblib.dump(clf, 'linear_svm_fitted_model.pkl')
     return clf
@@ -147,6 +156,20 @@ def find_classifier_accuracy(X_test, y_test, clf):
 
     print('accuracy: ', (len(y_test)-error) / len(y_test))
 
+def create_ys(Xs):
+    y_train = []
+    for i in range(len(Xs)):
+        for _ in range(len(Xs[i])):
+            y_train.append(i)
+    return np.array(y_train)
+
+def create_proper_dim(X):
+    X_2D = []                                                                  # Use np. functionnality instead
+    for X_class in X:
+        for event in X_class:
+            X_2D.append(event)
+    return np.array(X_2D)
+
 
 def main():
     colors = ['C0', 'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8']
@@ -158,17 +181,23 @@ def main():
     print('base_path', project_base_path)
     exp_dir = os.path.join(project_base_path, 'learning_experiments_csv')
     exp_files_list = os.listdir(exp_dir)
-    # Train:
-    train_exp_folders = exp_files_list
-    N_CLASS_TYPE = 9
-    process_data = ProcessData(exp_dir, train_exp_folders, colors, N_CLASS_TYPE)
-    class_type_train = process_data.class_type
-    avg_emg_class_type = find_emg_avg_for_every_ch(
-            class_type_train, colors, N_CLASS_TYPE)
-    print('Saving the average signal types...')
+    # Train data:
+    process_data = ProcessData(
+            exp_dir, exp_files_list, colors, SPLIT_TRAIN_TEST=3)
 
-    os.chdir(curr_base_path)
-    np.save('avg_emg_class_type', avg_emg_class_type)
+    X_train = process_data.class_type_train
+    y_train = create_ys(X_train)
+    print(y_train)
+    X_test = process_data.class_type_test
+    y_test = create_ys(X_test)
+
+    # Find average
+    # avg_emg_class_type = find_emg_avg_for_every_ch(
+    #         X_train, colors, len(exp_files_list))
+    # print('Saving the average signal types...')
+
+    # os.chdir(curr_base_path)
+    # np.save('avg_emg_class_type', avg_emg_class_type)
 
 
     # show_signal_sum_with_error(linear_class_type_train, colors)
@@ -179,10 +208,12 @@ def main():
     #
     # X, y = train_test_split(class_type_train)
     # X_test, y_test = train_test_split(class_type_test)
-    #
-    # clf = train_classifier(X, y)
-    #
-    # find_classifier_accuracy(X_test, y_test, clf)
+
+    X_train = create_proper_dim(X_train)
+    clf = train_classifier(X_train, y_train)
+
+    X_test = create_proper_dim(X_test)
+    find_classifier_accuracy(X_test, y_test, clf)
 
 
 if __name__ == '__main__':
