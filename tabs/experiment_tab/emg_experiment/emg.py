@@ -60,8 +60,9 @@ class EmgDock(Experiment):
         # Stop spawning value when we reach the number of experiment events
         if self.action_itt < self.num_of_action:
             # Create a new action:
-            action = Action(actn_txt=self.action_name, wait_txt='WAIT...',
-                            y_pos=6.5, x_pos=10)
+            action = Action(
+                    actn_txt=self.action_name, wait_txt='WAIT...', y_pos=6.5,
+                    x_pos=10)
             # Plot this new action
             self.plot.addItem(action.plot)
             # Add it to the list of actions
@@ -95,9 +96,9 @@ class EmgDock(Experiment):
     def show_end_txt(self):
         self.end_txt = pg.TextItem(anchor=(0, 0), fill=(0, 0, 0, 0))
         self.end_txt_html = f"""<div style="text-align: center">
-                               <br><span style="color: {'#EEE'};
-                               font-size: 30pt;">{'End of experiment...'}
-                               </span></div>"""
+                                <br><span style="color: {'#EEE'};
+                                font-size: 30pt;">{'End of experiment...'}
+                                </span></div>"""
         self.end_txt.setHtml(self.end_txt_html)
         self.end_txt.setPos(7, 5)
         self.plot.addItem(self.end_txt)

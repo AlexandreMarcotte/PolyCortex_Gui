@@ -20,7 +20,6 @@ class ClassifPlotCreator:
         bar_chart = self.create_bar_chart()
         n_classif_plot = self.create_n_classif_plot()
         self.on_off_button()
-
         # Create the object to update the bar chart graph and the line graph
         self.classification_graph = ClassifGraph(
                 self.gv, bar_chart, n_classif_plot)

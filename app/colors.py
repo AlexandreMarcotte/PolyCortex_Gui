@@ -1,10 +1,10 @@
 # Colors used for the regions in the signal where event occur
-red = (255, 0, 0, 15)
+red = (255, 0, 0, 10)
 p300_red = (255, 0, 0, 255)
 pale_red = (255, 0, 0, 35)
 green = (0, 255, 0, 45)
 p300_green = (0, 255, 0, 255)
-blue = (0, 0, 255, 15)
+blue = (0, 0, 255, 10)
 yellow = (255, 255, 0, 45)
 purple = (146, 56, 219, 45)
 dark_grey = (3, 3, 3)

@@ -14,8 +14,8 @@ class Action:
         self.init_action()
 
     def init_action(self):
-        self.plot = pg.TextItem(anchor=(0.5, 1), angle=0,
-                                border='w', fill=(0, 0, 255, 100))
+        self.plot = pg.TextItem(
+                anchor=(0.5, 1), angle=0, border='w', fill=(0, 0, 255, 100))
         self.html = self.set_html(14, self.actn_txt, self.color, self.wait_txt)
         self.plot.setHtml(self.html)
         self.plot.setPos(self.x_pos, self.y_pos)

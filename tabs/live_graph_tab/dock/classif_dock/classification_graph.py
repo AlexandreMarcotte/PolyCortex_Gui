@@ -30,7 +30,7 @@ class ClassifGraph:
         self.is_refract_period = False
         for ch in range(self.N_CLASSIF_TYPE):
             self.curve_n_classif.append(
-                n_classif_plot.plot(deque(np.zeros(N_DATA), maxlen=N_DATA)))
+                    n_classif_plot.plot(deque(np.zeros(N_DATA), maxlen=N_DATA)))
 
     def init_show_classif(self):
         self.x = np.arange(9)
@@ -95,9 +95,9 @@ class ClassifGraph:
             # Don't show the 0 values it's redondant                           # TODO: ALEXM Remove it in the dataqueue
             if classif_type:
                 self.curve_n_classif[classif_type].setData(
-                    self.n_classif_queue[classif_type])
+                        self.n_classif_queue[classif_type])
                 self.curve_n_classif[classif_type].setPen(
-                                                self.pen_color[classif_type])
+                        self.pen_color[classif_type])
 
 
 

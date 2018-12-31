@@ -24,7 +24,7 @@ class btn:
         else:
             self.b.setStyleSheet(f'''background-color: {color}; 
                                      font-size: {font_size}pt''')
-        if tip:
+        if tip is not None:
             self.b.setToolTip(tip)
         if toggle:
             self.b.setCheckable(True)
