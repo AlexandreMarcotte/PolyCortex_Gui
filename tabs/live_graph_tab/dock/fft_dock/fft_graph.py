@@ -95,15 +95,15 @@ class FftGraph:
 
     def add_regions_filter_to_plot(self):
         """Add a region to the plot that will be use as the bondaries for
-        the filter (blue for pass and red for cut"""
+        the filter (blue for pass and red for cut)"""
         # Band pass filter
-        self.pass_f_region = pg.LinearRegionItem([self.gv.min_pass_filter,     # TODO: ALEXM: avoid redondancy in the creation of filters
-                                                  self.gv.max_pass_filter])
+        self.pass_f_region = pg.LinearRegionItem(
+                [self.gv.min_pass_filter, self.gv.max_pass_filter])            # TODO: ALEXM: avoid redondancy in the creation of filters
         self.pass_f_region.setBrush(blue)
         self.plot.addItem(self.pass_f_region, ignoreBounds=True)
         # Band cut filter
-        self.cut_f_region = pg.LinearRegionItem([self.gv.min_cut_filter,
-                                                 self.gv.max_cut_filter])
+        self.cut_f_region = pg.LinearRegionItem(
+                [self.gv.min_cut_filter, self.gv.max_cut_filter])
         self.cut_f_region.setBrush(red)
         self.plot.addItem(self.cut_f_region, ignoreBounds=True)
 
@@ -126,8 +126,13 @@ class FftGraph:
 
     def all_frequency(self):
         for ch in range(self.gv.N_CH):
-            self.curve_freq[ch].setData(self.gv.freq_calculator.freq_range,
-                                        self.gv.freq_calculator.fft[ch])       # TODO: ALEXM prendre abs ou real? avec real il y a des valeurs negatives est-ce que c'est normal?
+            f_range, fft = self.gv.freq_calculator.get_fft_to_plot(
+                    np.array(self.gv.data_queue[ch])[
+                    self.gv.filter_min_bound:self.gv.filter_max_bound])
+            self.curve_freq[ch].setData(f_range, fft)
+            # self.curve_freq[ch].setData(
+            #         self.gv.freq_calculator.freq_range,
+            #         self.gv.freq_calculator.fft[ch])                         # TODO: ALEXM prendre abs ou real? avec real il y a des valeurs negatives est-ce que c'est normal?
 
     def init_on_off_button(self, layout):
         btn('Start', layout, (0, 0), func_conn=self.start,
@@ -141,11 +146,11 @@ class FftGraph:
         create_param_combobox(
                 settings_d.layout, 'Max Freq', (0, 1),
                 ['Auto', '60 Hz', '80 Hz', '100 Hz', '120 Hz'],
-                self.scale_x_axis)
+                partial(self.scale_axis, axis_name='x'))
         create_param_combobox(
                 settings_d.layout, 'Max Uv', (0, 2),
                 ['Auto','1000 uv', '10000 uv', '100000 uv', '1000000 uv',
-                 '10000000 uv'], self.scale_y_axis)
+                 '10000000 uv'], partial(self.scale_axis, axis_name='y'))
         create_param_combobox(
                 settings_d.layout, 'Log', (0, 3), ['False', 'True'],
                 self.log_axis)
@@ -169,7 +174,6 @@ class FftGraph:
         return filter_d
 
     def init_filters(self):
-
         ## Create flowchart, define input/output terminals
         fc = Flowchart(terminals={
                 'dataIn': {'io': 'in'},
@@ -207,28 +211,21 @@ class FftGraph:
         fc.connectTerminals(fNode['Out'], pw2Node['In'])
         fc.connectTerminals(fNode['Out'], fc['dataOut'])
 
-    def scale_x_axis(self, txt):                                             # TODO: ALEXM: remove the redundancy
+    def scale_axis(self, txt, axis_name):
         try:
             if txt == 'Auto':
                 self.plot.enableAutoRange()
             else:
                 r = int(re.search(r'\d+', txt).group())
-                self.plot.setXRange(0, r)
+                if axis_name == 'x':
+                    self.plot.setXRange(0, r)
+                elif axis_name == 'y':
+                    self.plot.setYRange(0, r)
         except AttributeError:
             print("Come on bro, this  value doesn't make sens")
 
     def log_axis(self, txt):
         self.plot.setLogMode(y=eval(txt))
-
-    def scale_y_axis(self, txt):
-        try:
-            if txt == 'Auto':
-                self.plot.enableAutoRange()
-            else:
-                r = int(re.search(r'\d+', txt).group())
-                self.plot.setYRange(0, r)
-        except AttributeError:
-            print("Come on bro, this  value doesn't make sens")
 
     def ch_on_off(self):
         pass
