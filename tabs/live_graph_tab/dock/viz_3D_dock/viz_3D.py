@@ -179,7 +179,7 @@ class Viz3D(Dock):
     def init_view(self):
         """     """
         view = gl.GLViewWidget()
-        view.opts['distance'] = 300
+        view.opts['distance'] = 370
         view.opts['azimuth'] = 40
         view.opts['elevation'] = 15
         return view
