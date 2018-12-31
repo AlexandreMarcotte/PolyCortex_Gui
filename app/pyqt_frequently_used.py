@@ -36,16 +36,24 @@ def create_txt_label(name):
 
 def create_param_combobox(
             layout, name, pos, param, conn_func=None, editable=True,
-            cols=1):
-    l = create_txt_label(name)
-    layout.addWidget(l, *pos)
-    combo_box = QComboBox()
+            cols=1, tip=None):
+    # Label
+    shift = 0
+    if name is not None:
+        l = create_txt_label(name)
+        layout.addWidget(l, *pos)
+        shift = 1
+    # Combobox
+    cb = QComboBox()
     for val in param:
-        combo_box.addItem(val)
-    combo_box.setEditable(editable)
+        cb.addItem(val)
+    cb.setEditable(editable)
     if conn_func is not None:
-        combo_box.activated[str].connect(conn_func)
-    layout.addWidget(combo_box, pos[0]+1, pos[1], 1, cols)
+        cb.activated[str].connect(conn_func)
+    if tip is not None:
+        cb.setToolTip(tip)
+    cb.setStyleSheet('font-size: 10pt;')
+    layout.addWidget(cb, pos[0] + shift, pos[1], 1, cols)
 
 
 class ClickableLineEdit(QLineEdit):
