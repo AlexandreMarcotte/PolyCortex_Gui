@@ -19,7 +19,7 @@ def read_data_from_file(file_name, N_CH=8):
     with open(file_name, 'r') as f:
         for all_ch_line in f:
             try:
-                all_ch_line = all_ch_line.strip().split(',')                       # TODO: ALEXM read the file as a csv instead
+                all_ch_line = all_ch_line.strip().split(',')                   # TODO: ALEXM read the file as a csv instead
                 eeg_ch = all_ch_line[0:N_CH]
                 t.append(float(all_ch_line[N_CH]))
                 exp.append(float(all_ch_line[N_CH+1]))
