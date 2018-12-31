@@ -2,7 +2,7 @@
 from collections import deque
 import numpy as np
 import pyqtgraph as pg
-from PyQt5 import QtCore
+from PyQt5 import QtCore, QtGui
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
 import re
@@ -25,7 +25,7 @@ from .eeg_graph import EegGraph
 
 from data_processing_pipeline.frequency_counter import FrequencyCounter
 from app.pyqt_frequently_used import (
-        create_param_combobox, create_splitter, create_gr)
+        create_param_combobox, create_splitter, create_gr, create_txt_label)
 from save.data_saver import DataSaver
 from tabs.live_graph_tab.dock.banner_dock.banner import Banner
 
@@ -38,7 +38,7 @@ class EegPlotsCreator:
         self.gv = gv
         self.layout = layout
         self.dock_area = DockArea()
-        self.layout.addWidget(self.dock_area, 1, 0, 1, 8)
+        self.layout.addWidget(self.dock_area, 1, 1, 1, 8)
 
         # Variables
         self.btns = []
@@ -58,10 +58,12 @@ class EegPlotsCreator:
         # EEG
         self.grps = self.create_all_eeg_plot()
         self.eeg_dock = self.create_eeg_dock(self.grps)
+        # Settings pins
+        self.create_pins_setting_dock()
 
     def create_banner_dock(self):
         banner_d = InnerDock(
-                self.layout, 'Banner', b_pos=(0, 2), b_checked=False,
+                self.layout, 'Banner', b_pos=(0, 3), b_checked=False,
                 toggle_button=True, size=(1, 1))
         Banner(banner_d.layout)
         self.dock_area.addDock(banner_d.dock)
@@ -69,27 +71,45 @@ class EegPlotsCreator:
 
     def create_saving_dock(self):
         saving_d = InnerDock(
-                self.layout, 'Saving', b_pos=(0, 1), toggle_button=True,
+                self.layout, 'Saving', b_pos=(0, 2), toggle_button=True,
                 size=(1, 1))
         DataSaver(self.gv.main_window, self.gv, saving_d.layout, size=(1,1))
         self.dock_area.addDock(saving_d.dock)
 
     def create_settings_dock(self):
         settings_d = InnerDock(
-                self.layout, 'Settings', toggle_button=True, size=(1, 1))
+                self.layout, 'Settings', b_pos=(0, 1),toggle_button=True,
+                size=(1, 1))
         # Stop/Start button
         self.create_buttons(settings_d.layout)
         # Plot parameter
         self.create_all_combobox(settings_d.layout)
         self.dock_area.addDock(settings_d.dock)
 
+    def create_pins_setting_dock(self):
+        self.create_pins_setting_d = self.set_settings_pins_layout()
+        self.dock_area.addDock(
+                self.settings_pins_d.dock, 'left', self.eeg_dock.dock)
+        self.settings_pins_d.dock.hide()
+
+    def set_settings_pins_layout(self):
+        self.settings_pins_d = InnerDock(
+                self.layout, 'Pins settings', b_pos=(1, 0), toggle_button=True,
+                size=(1, 1), b_checked=False, b_orientation='east',
+                background_color='k')
+        self.pins_settings = []
+        for ch in range(self.gv.N_CH):
+            self.pins_settings.append(
+                    PinSettings(self.gv, self.settings_pins_d.layout, ch))
+        return self.settings_pins_d
+
     def create_eeg_dock(self, grps):
         eeg_d = InnerDock(self.layout, 'Part EEG')
         splitters = self.create_splitter(grps)
         s_factor = len(splitters)//self.GR_PER_COL
         for no, s in enumerate(splitters):
-            eeg_d.layout.addWidget(
-                    s, no%s_factor, no//s_factor)
+            # Add 1 to the row to be in line with the hardware settings
+            eeg_d.layout.addWidget(s, no%s_factor, no//s_factor)
         self.dock_area.addDock(eeg_d.dock)
         return eeg_d
 
@@ -147,8 +167,8 @@ class EegPlotsCreator:
             grps.append(self.gr)
             self.add_ch_layout(ch)
             # Put only a plot on the time channel
-        self.add_ch_layout(ch=self.gv.N_CH, time_ch=True,
-                           plot_pos=(5, 1, 1, 6))
+        self.add_ch_layout(
+                ch=self.gv.N_CH, time_ch=True, plot_pos=(5, 1, 1, 6))
         return grps
 
     def add_ch_layout(self, ch, time_ch=False, plot_pos=(0, 1, 5, 6)):      # TODO: ALEXM: change the name of this function
@@ -228,13 +248,13 @@ class EegPlotsCreator:
         elif self.gv.stream_origin == 'Stream from synthetic data':
             # Create fake data for test case
             stream_source = CreateSyntheticData(
-                self.gv, callback=self.gv.collect_data,
-                read_freq=self.gv.DEQUE_LEN)
+                    self.gv, callback=self.gv.collect_data,
+                    read_freq=self.gv.DEQUE_LEN)
 
         elif self.gv.stream_origin == 'Stream from file':
             stream_source = FileReader(
-                self.gv, self.gv.stream_path, self.gv.collect_data,
-                read_freq=250)
+                    self.gv, self.gv.stream_path, self.gv.collect_data,
+                    read_freq=250)
         else:
             raise('No streaming source selected')
 
@@ -266,18 +286,22 @@ class EegPlotsCreator:
         actn_btn = ActionButton(
                 self.ch_layout, 0, self.gv, ch, conn_func='avg')
         btn('A', self.ch_layout, (0, 8), action=actn_btn,
-            toggle=True, tip='Show average value of queue',
-            max_width=max_width, max_height=max_height, color=dark_blue_tab)
+                toggle=True, tip='Show average value of queue',
+                max_width=max_width, max_height=max_height, color=dark_blue_tab)
         # Max
         actn_btn = ActionButton(
                 self.ch_layout, 1, self.gv, ch, conn_func='max')
         btn('M', self.ch_layout, (1, 8), action=actn_btn,
-            toggle=True, tip='Show max value of queue',
-            max_width=max_width, max_height=max_height, color=dark_blue_tab)
+                toggle=True, tip='Show max value of queue',
+                max_width=max_width, max_height=max_height, color=dark_blue_tab)
         # Detection
-        btn('D', self.ch_layout, (2, 8),
-            toggle=True, tip='Show detected class patern',
-            max_width=max_width, max_height=max_height, color=dark_blue_tab)
+        actn_btn = ActionButton(
+                self.ch_layout, 2, self.gv, ch, conn_func='filter',
+                plot_creator=self)
+        btn('F', self.ch_layout, (2, 8), action=actn_btn,
+                toggle=True, tip='''Show the size of the fft window on which
+                the fft is calculated for all ch''', max_width=max_width,
+                max_height=max_height, color=dark_blue_tab)
 
         self.create_color_button(ch)
 
@@ -296,4 +320,27 @@ class EegPlotsCreator:
         self.btns[ch].set_color(color)
 
 
+class PinSettings:
+    def __init__(self, gv, layout, ch):
+        self.gv = gv
+        self.ch = ch
 
+        self.settings_name = ['PGA Gain', 'Input Type', 'Bias', 'SRB2', 'SRB1']
+        self.settings = [
+                    ['x24', 'x8'],
+                    ['Normal', 'Abnormal'],
+                    ["Don't include", 'Include'],
+                    ['Off', 'On'],
+                    ['No', 'Yes']]
+        self.add_pin_settings_to_layout(layout)
+
+    def add_pin_settings_to_layout(self, layout):
+        for i, (s, s_name) in enumerate(zip(
+                self.settings, self.settings_name)):
+            create_param_combobox(
+                    layout, None, (self.ch, i), s,
+                    conn_func=self.change_hardware_settings,
+                    editable=False, tip=s_name)
+
+    def change_hardware_settings(self):
+        print('change the hardware settings for the pin number ', self.ch)
