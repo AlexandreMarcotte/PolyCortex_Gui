@@ -4,10 +4,10 @@ import numpy as np
 
 class Regions:
     """Regions to show classification live on one eeg graph"""
-    def __init__(self, gv, n_classif_regions_per_plot):
+    def __init__(self, gv, N_CLASSIF_R_PER_PLOT):
         self.gv = gv
         self.exp_q = self.gv.experiment_queue
-        self.waiting = list(range(n_classif_regions_per_plot))
+        self.waiting = list(range(N_CLASSIF_R_PER_PLOT))
 
         self.list = []
         self.in_use = []
@@ -16,9 +16,9 @@ class Regions:
         self.last_n_data_created = 0
 
     def detect_exp_event(self):
-        """Add vertical lines where experiment events happen you should use this
-           method at the same time of running an experiment or while reading
-           from a file (then add box with text)
+        """Add vertical lines where experiment events happen you should use
+           this method at the same time of running an experiment or while
+           reading from a file (then add box with text)
           * Currently only done for the ch 0 """
         non_zero_type = np.array(self.exp_q)[np.nonzero(np.array(self.exp_q))[0]]
         non_zero_pos = np.nonzero(np.array(self.exp_q))[0]
@@ -28,6 +28,7 @@ class Regions:
         if non_zero_type != []:
             for no, (pos, n_z) in enumerate(zip(non_zero_pos, non_zero_type)):
                 brush = self.brushes[int(n_z)]
+                print('pos', int(pos))
                 self.list[no][1].setBrush(brush)
                 self.list[no][1].setRegion([pos, pos+150])
 
