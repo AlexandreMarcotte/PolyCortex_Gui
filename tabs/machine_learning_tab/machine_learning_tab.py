@@ -4,6 +4,7 @@ from pyqtgraph.dockarea import *
 from PyQt5 import QtCore
 from app.rotated_button import RotatedButton
 
+
 class MachineLearningTab(QWidget):
     def __init__(self):
         super().__init__()
@@ -18,16 +19,16 @@ class MachineLearningTab(QWidget):
         self.setLayout(layout)
 
     def create_txt_dock(self):
+        # txt
         txt_dock = Dock('txt dock')
         self.dock_area.addDock(txt_dock, 'right')
         txt_layout = pg.LayoutWidget()
         txt_dock.addWidget(txt_layout)
         txt = QTextEdit()
         txt_layout.addWidget(txt, 0, 1)
-        # b = QPushButton('1')
-        # b.setMaximumWidth(14)
-        b = RotatedButton('ToolBox', self, orientation='west')
-        b.setMaximumWidth(20)
+        # btn
+        b = RotatedButton('ToolBox', orientation='east')
+        # b.setMaximumWidth(20)
         b.setCheckable(True)
         b.clicked.connect(self.open_tool_box)
         txt_layout.addWidget(b, 0, 0)
@@ -47,9 +48,10 @@ class MachineLearningTab(QWidget):
         tool_dock.hide()
         return tool_dock
 
-    @QtCore.pyqtSlot(bool)
+    # @QtCore.pyqtSlot(bool)
     def open_tool_box(self, checked):
         if checked:
+            print('open tool box')
             self.tool_dock.show()
         else:
             self.tool_dock.hide()
