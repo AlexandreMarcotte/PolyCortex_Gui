@@ -48,11 +48,11 @@ class LiveGraphTab(QWidget):
              size=(5, 10), scroll=True)
 
         self.Wave = DockHandler(
-            'Wave', self, self.docks_menu, WaveGraph, [self.gv], 'below',
+            'Power band', self, self.docks_menu, WaveGraph, [self.gv], 'below',
             self.fft.dock, size=(5, 10), scroll=True)
 
         self.Wave_over_time = DockHandler(
-            'Wave over time', self, self.docks_menu, WaveGraphOverTime,
+            'Power band over time', self, self.docks_menu, WaveGraphOverTime,
             [self.gv], 'below', self.fft.dock, size=(5, 10), scroll=True)
 
         self.fft_over_time_3D = DockHandler(
