@@ -3,8 +3,8 @@ from collections import deque
 import numpy as np
 import pyqtgraph as pg
 from PyQt5 import QtCore, QtGui
-from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
+from PyQt5.QtCore import Qt
 import re
 from functools import partial
 from pyqtgraph.dockarea import *
@@ -26,7 +26,7 @@ from .pin_settings import PinSettings
 
 from data_processing_pipeline.frequency_counter import FrequencyCounter
 from app.pyqt_frequently_used import (
-        create_param_combobox, create_splitter, create_gr, create_txt_label)
+        create_param_combobox, create_splitter, create_gr)
 from save.data_saver import DataSaver
 from tabs.live_graph_tab.dock.banner_dock.banner import Banner
 
@@ -54,6 +54,8 @@ class EegPlotsCreator:
         self.create_settings_dock()
         # Saving
         self.create_saving_dock()
+        # Write to hardware
+        self.create_write_hardware_dock()
         # Banner
         self.create_banner_dock()
         # EEG
@@ -86,6 +88,22 @@ class EegPlotsCreator:
         # Plot parameter
         self.create_all_combobox(settings_d.layout)
         self.dock_area.addDock(settings_d.dock)
+
+    def create_write_hardware_dock(self):
+        write_hardware_d = InnerDock(
+                self.layout, 'Write to hardware', b_pos=(0, 4), toggle_button=True,
+                size=(1, 1), b_checked=False)
+        self.write_hardware_l_e = QtGui.QLineEdit(
+                '*write a byte experession to hardware*')
+        write_hardware_d.layout.addWidget(self.write_hardware_l_e)
+        send_b = btn(
+                'Send', write_hardware_d.layout, func_conn=self.print_allo,
+                pos=(0, 1))
+        self.dock_area.addDock(write_hardware_d.dock)
+        write_hardware_d.dock.hide()
+
+    def print_allo(self):
+        print(self.write_hardware_l_e.text())
 
     def create_pins_setting_dock(self):
         self.create_pins_setting_d = self.set_settings_pins_layout()

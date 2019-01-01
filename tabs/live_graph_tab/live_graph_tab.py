@@ -7,14 +7,14 @@ from pyqtgraph.dockarea import *
 # -- My packages --
 ## Graphes
 from .dock.eeg_dock.eeg_plots_creator import EegPlotsCreator
-from .dock.wave_dock.wave_graph import WaveGraph
-from .dock.wave_over_time_dock.wave_over_time_graph import WaveGraphOverTime
+from .dock.power_band_dock.power_band_graph import PowerBandGraph
+from .dock.power_band_over_time_dock.power_band_over_time_graph import \
+        PowerBandGraphOverTime
 from .dock.fft_dock.fft_graph import FftGraph
 from .dock.classif_dock.classification_plot_creator import ClassifPlotCreator
 from .dock.viz_3D_dock.viz_3D import Viz3D
 from .dock.fft_over_time_3D_dock.fft_over_time_graph import FftOverTimeGraph3D
 from .dock.fft_over_time_2D_dock.fft_over_time_graph import FftOverTimeGraph2D
-
 
 
 class LiveGraphTab(QWidget):
@@ -40,36 +40,37 @@ class LiveGraphTab(QWidget):
 
     def init_dock_layout(self):
         self.eeg = DockHandler(
-            'EEG', self, self.docks_menu, EegPlotsCreator, [self.gv], 'left',
-            size=(6, 10), scroll=True)
+                'EEG', self, self.docks_menu, EegPlotsCreator, [self.gv],
+                'left', size=(6, 10), scroll=True)
 
         self.fft = DockHandler(
-            'FFT', self, self.docks_menu, FftGraph, [self.gv], 'right',
-             size=(5, 10), scroll=True)
+                'FFT', self, self.docks_menu, FftGraph, [self.gv], 'right',
+                size=(5, 10), scroll=True)
 
-        self.Wave = DockHandler(
-            'Power band', self, self.docks_menu, WaveGraph, [self.gv], 'below',
-            self.fft.dock, size=(5, 10), scroll=True)
+        self.power_band = DockHandler(
+                'Power band', self, self.docks_menu, PowerBandGraph, [self.gv],
+                'below', self.fft.dock, size=(5, 10), scroll=True)
 
-        self.Wave_over_time = DockHandler(
-            'Power band over time', self, self.docks_menu, WaveGraphOverTime,
-            [self.gv], 'below', self.fft.dock, size=(5, 10), scroll=True)
+        self.power_band_over_time = DockHandler(
+                'Power band over time', self, self.docks_menu,
+                PowerBandGraphOverTime, [self.gv], 'below', self.fft.dock,
+                size=(5, 10), scroll=True)
 
         self.fft_over_time_3D = DockHandler(
-            'FFt over time 3D', self, self.docks_menu, FftOverTimeGraph3D,
-            [self.gv], 'below', self.fft.dock, size=(5, 10), scroll=True)
+                'FFt over time 3D', self, self.docks_menu, FftOverTimeGraph3D,
+                [self.gv], 'below', self.fft.dock, size=(5, 10), scroll=True)
 
         self.fft_over_time_2D = DockHandler(
-            'FFt over time 2D', self, self.docks_menu, FftOverTimeGraph2D,
-            [self.gv], 'below', self.fft.dock, size=(5, 10), scroll=True)
+                'FFt over time 2D', self, self.docks_menu, FftOverTimeGraph2D,
+                [self.gv], 'below', self.fft.dock, size=(5, 10), scroll=True)
 
         self.classification = DockHandler(
-            'Classification', self, self.docks_menu, ClassifPlotCreator,
-             [self.gv], 'bottom', self.fft.dock, size=(5, 10), scroll=True)
+                'Classification', self, self.docks_menu, ClassifPlotCreator,
+                [self.gv], 'bottom', self.fft.dock, size=(5, 10), scroll=True)
 
         self.visualization3D = DockHandler(
-            'Visualization 3D', self, self.docks_menu, Viz3D, [self.gv],
-            'below', self.classification.dock, scroll=True)
+                'Visualization 3D', self, self.docks_menu, Viz3D, [self.gv],
+                'below', self.classification.dock, scroll=True)
 
         self.fft.dock.raiseDock()
 

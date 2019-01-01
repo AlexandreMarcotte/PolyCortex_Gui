@@ -7,7 +7,7 @@ from ... dock.dock import Dock
 from app.pyqt_frequently_used import *
 
 
-class WaveGraphOverTime(Dock):
+class PowerBandGraphOverTime(Dock):
     def __init__(self, gv, layout):
         super().__init__(gv, 'fft', layout)
         self.gv = gv
