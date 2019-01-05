@@ -1,4 +1,5 @@
 # -- General Packages --
+from time import sleep
 from collections import deque
 import numpy as np
 import pyqtgraph as pg
@@ -41,6 +42,7 @@ class EegPlotsCreator:
         self.dock_area = DockArea()
         self.layout.addWidget(self.dock_area, 1, 1, 1, 8)
 
+        self.stream_source = None
         # Variables
         self.btns = []
         self.ts = self.gv.t_queue
@@ -62,7 +64,9 @@ class EegPlotsCreator:
         self.grps = self.create_all_eeg_plot()
         self.eeg_dock = self.create_eeg_dock(self.grps)
         # Settings pins
-        self.create_pins_setting_dock()
+        self.setting_pins_d = self.create_pins_setting_dock()
+        # Create time dock
+        self.create_time_dock()
 
     def create_banner_dock(self):
         banner_d = InnerDock(
@@ -92,35 +96,45 @@ class EegPlotsCreator:
     def create_write_hardware_dock(self):
         write_hardware_d = InnerDock(
                 self.layout, 'Write to hardware', b_pos=(0, 4), toggle_button=True,
-                size=(1, 1), b_checked=False)
-        self.write_hardware_l_e = QtGui.QLineEdit(
-                '*write a byte experession to hardware*')
+                size=(1, 1), b_checked=True)
+        self.write_hardware_l_e = QtGui.QLineEdit('x1046110X')
         write_hardware_d.layout.addWidget(self.write_hardware_l_e)
-        send_b = btn(
-                'Send', write_hardware_d.layout, func_conn=self.print_allo,
-                pos=(0, 1))
+        btn('Write serial', write_hardware_d.layout,
+            func_conn=self.send_byte_to_hardware, pos=(0, 1))
         self.dock_area.addDock(write_hardware_d.dock)
-        write_hardware_d.dock.hide()
+        # write_hardware_d.dock.hide()
 
-    def print_allo(self):
-        print(self.write_hardware_l_e.text())
+    def send_byte_to_hardware(self):
+        print('Send: ', f'{self.write_hardware_l_e.text()}')
+        byte_settings = self.write_hardware_l_e.text()
+        # self.stream_source.board.ser_write(byte_settings)
+        try:
+            for b in byte_settings:
+                self.stream_source.board.ser_write(b.encode())
+                sleep(0.01)
+            self.write_hardware_l_e.setText('')
+        except AttributeError as e:
+        # Remove the command sent
+            print('You are not connected to the OpenBCI board')
+            self.write_hardware_l_e.setText('')
 
     def create_pins_setting_dock(self):
-        self.create_pins_setting_d = self.set_settings_pins_layout()
+        settings_pins_d = self.set_settings_pins_layout()
         self.dock_area.addDock(
-                self.settings_pins_d.dock, 'left', self.eeg_dock.dock)
-        self.settings_pins_d.dock.hide()
+                settings_pins_d.dock, 'left', self.eeg_dock.dock)
+        settings_pins_d.dock.hide()
+        return settings_pins_d
 
     def set_settings_pins_layout(self):
-        self.settings_pins_d = InnerDock(
+        settings_pins_d = InnerDock(
                 self.layout, 'Pins settings', b_pos=(1, 0), toggle_button=True,
                 size=(1, 1), b_checked=False, b_orientation='east',
                 background_color='k')
         self.pins_settings = []
         for ch in range(self.gv.N_CH):
             self.pins_settings.append(
-                    PinSettings(self.gv, self.settings_pins_d.layout, ch))
-        return self.settings_pins_d
+                    PinSettings(self, self.gv, settings_pins_d.layout, ch))
+        return settings_pins_d
 
     def create_eeg_dock(self, grps):
         eeg_d = InnerDock(self.layout, 'Part EEG')
@@ -161,9 +175,15 @@ class EegPlotsCreator:
                 editable=False, conn_func=self.change_num_plot_per_row)
 
     def change_num_plot_per_row(self, plot_per_row):
+        # Eeg dock
         self.eeg_dock.dock.close()
         self.GR_PER_COL = int(plot_per_row)
         self.eeg_dock = self.create_eeg_dock(self.grps)
+        # Time dock
+        self.dock_area.moveDock(self.time_d.dock, 'bottom', self.eeg_dock.dock)
+        # Hardware settings dock
+        self.dock_area.moveDock(
+                self.setting_pins_d.dock, 'left', self.eeg_dock.dock)
 
     def scale_y_axis(self, txt):
         try:
@@ -182,26 +202,30 @@ class EegPlotsCreator:
         """
         grps = []
         for ch in range(self.gv.N_CH):
-            self.gr, self.ch_layout = create_gr()
+            self.gr, ch_layout = create_gr()
             grps.append(self.gr)
-            self.add_ch_layout(ch)
-            # Put only a plot on the time channel
-        self.add_ch_layout(
-                ch=self.gv.N_CH, time_ch=True, plot_pos=(5, 1, 1, 6))
+            self.add_ch_layout(ch_layout, ch)
         return grps
 
-    def add_ch_layout(self, ch, time_ch=False, plot_pos=(0, 1, 5, 6)):      # TODO: ALEXM: change the name of this function
+    def create_time_dock(self):
+        self.time_d = InnerDock(self.layout, 'time dock', size=(1, 1))
+        self.add_ch_layout(
+            self.time_d.layout, ch=self.gv.N_CH, time_ch=True, plot_pos=(0, 0))
+        self.dock_area.addDock(self.time_d.dock)
+
+    def add_ch_layout(
+                self, layout, ch, time_ch=False, plot_pos=(0, 1, 5, 6)):      # TODO: ALEXM: change the name of this function
         plot, q, rowspan = self.create_plot(ch)
         self.plots.append(plot)
-        self.ch_layout.addWidget(plot, *plot_pos)
+        layout.addWidget(plot, *plot_pos)
         curve = self.create_curve(plot, ch, q)
         eeg_graph = EegGraph(ch, q, self.gv, self.ts, curve, self.regions)
         self.eeg_graphes.append(eeg_graph)
         self.timers.append(QtCore.QTimer())
         self.timers[ch].timeout.connect(self.eeg_graphes[ch].update_graph)
         if not time_ch:
-            self.assign_n_to_ch(ch)
-            self.assign_action_to_ch(ch)
+            self.assign_n_to_ch(ch, layout)
+            self.assign_action_to_ch(ch, layout)
 
     def create_splitter(self, grps):
         splitters = []
@@ -229,11 +253,11 @@ class EegPlotsCreator:
             rowspan = 4
             q = self.gv.data_queue[ch]
 
-        self.add_classif_regions_to(plot)
+        self.add_classif_regions_to_plot(plot)
 
         return plot, q, rowspan
 
-    def add_classif_regions_to(self, plot):
+    def add_classif_regions_to_plot(self, plot):
         """Create colored region (10) and placed them all at the beginning
            of each plot (will be used to indicated classification of a
            region of the signal or event occured in experiments"""
@@ -250,11 +274,11 @@ class EegPlotsCreator:
         eeg_curve.setPen(pen_colors[ch])
         return eeg_curve
 
-    def assign_n_to_ch(self, ch):
+    def assign_n_to_ch(self, ch, ch_layout):
         ch_number_action = ChNumberAction(self.timers, ch)
         # +1 so the number str start at 1
         self.btn = btn(
-                name=str(ch + 1), layout=self.ch_layout, pos=(0, 0),
+                name=str(ch + 1), layout=ch_layout, pos=(0, 0),
                 func_conn=ch_number_action.stop_ch, color=button_colors[ch],
                 toggle=True, max_width=19, max_height=19,
                 tip=f'Start/Stop the ch{ch+1} signal')
@@ -281,10 +305,11 @@ class EegPlotsCreator:
 
     @QtCore.pyqtSlot(bool)
     def start_timers(self, checked):
-        stream_source = self.init_streaming_source()
+        self.stream_source = self.init_streaming_source()
         if checked:
-            self.freq_counter = FrequencyCounter(self.gv)
-            stream_source.start()
+            self.freq_counter = FrequencyCounter(
+                    self.gv, self.gv.stream_origin)
+            self.stream_source.start()
             for i, tm in enumerate(self.timers):
                 self.timers[i].start(0)
             self.start_freq_counter_timer()
@@ -292,45 +317,57 @@ class EegPlotsCreator:
             for i, tm in enumerate(self.timers):
                 self.timers[i].stop()
             # self.stream_source.join()
+        # self.set_default_hardware_param()
+
+    def set_default_hardware_param(self):
+        byte_settings = 'x1006110X'
+        try:
+            for b in byte_settings:
+                self.stream_source.board.ser_write(b.encode())
+                sleep(0.01)
+        except AttributeError as e:
+            # Means we are not streaming from the OpenBCI
+            print('ERROR', e)
 
     def start_freq_counter_timer(self):
         self.freq_counter_timer = QtCore.QTimer()
         self.freq_counter_timer.timeout.connect(self.freq_counter.update)
         self.freq_counter_timer.start(50)
 
-    def assign_action_to_ch(self, ch):
+    def assign_action_to_ch(self, ch, ch_layout):
         max_width = 17
         max_height = 18
         # Average
         actn_btn = ActionButton(
-                self.ch_layout, 0, self.gv, ch, conn_func='avg')
-        btn('A', self.ch_layout, (0, 8), action=actn_btn,
+                ch_layout, 0, self.gv, ch, conn_func='avg')
+        btn('A', ch_layout, (0, 8), action=actn_btn,
                 toggle=True, tip='Show average value of queue',
                 max_width=max_width, max_height=max_height, color=dark_blue_tab)
         # Max
         actn_btn = ActionButton(
-                self.ch_layout, 1, self.gv, ch, conn_func='max')
-        btn('M', self.ch_layout, (1, 8), action=actn_btn,
+                ch_layout, 1, self.gv, ch, conn_func='max')
+        btn('M', ch_layout, (1, 8), action=actn_btn,
                 toggle=True, tip='Show max value of queue',
                 max_width=max_width, max_height=max_height, color=dark_blue_tab)
         # Detection
         actn_btn = ActionButton(
-                self.ch_layout, 2, self.gv, ch, conn_func='filter',
+                ch_layout, 2, self.gv, ch, conn_func='filter',
                 plot_creator=self)
-        btn('F', self.ch_layout, (2, 8), action=actn_btn,
+        btn('F',ch_layout, (2, 8), action=actn_btn,
                 toggle=True, tip='''Show the size of the fft window on which
                 the fft is calculated for all ch''', max_width=max_width,
                 max_height=max_height, color=dark_blue_tab)
 
-        self.create_color_button(ch)
+        self.create_color_button(ch, ch_layout)
 
-    def create_color_button(self, ch):
+    def create_color_button(self, ch, ch_layout):
         """Create color button to change the color of the line"""
         color_btn = pg.ColorButton(close_fit=True)
-        color_btn.setMaximumWidth(14)
+        color_btn.setMaximumWidth(17)
         color_btn.setToolTip('Click to change the color of the line')
         color_btn.sigColorChanged.connect(partial(self.change_line_color, ch))
-        self.ch_layout.addWidget(color_btn, 3, 8)
+        color_btn.setMaximumHeight(17)
+        ch_layout.addWidget(color_btn, 3, 8)
 
     def change_line_color(self, ch, color_btn):
         color = color_btn.color()
