@@ -28,9 +28,8 @@ class Regions:
         if non_zero_type != []:
             for no, (pos, n_z) in enumerate(zip(non_zero_pos, non_zero_type)):
                 brush = self.brushes[int(n_z)]
-                print('pos', int(pos))
-                self.list[no][1].setBrush(brush)
-                self.list[no][1].setRegion([pos, pos+150])
+                # self.list[no][1].setBrush(brush)
+                # self.list[no][1].setRegion([pos, pos+150])
 
     def classif_event(self, ch):
         if ch == 3:
