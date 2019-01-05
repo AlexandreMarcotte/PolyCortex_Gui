@@ -38,13 +38,13 @@ class DataSaver:
         open_file.setStyleSheet(f'background-color: {grey3})')
         open_file.clicked.connect(partial(self.save_file_dialog))
         self.layout.addWidget(
-                open_file, self.pos[0]+1, self.pos[1], *self.choose_b_size)
+                open_file, self.pos[0], self.pos[1]+1, *self.choose_b_size)
 
     def init_save_file_button(self):
         """Button to save all the current data that was generated"""
         save_cur_data_b = QtGui.QPushButton('Save data Now')
         save_cur_data_b.setStyleSheet(f'background-color: {grey3})')
-        self.layout.addWidget(save_cur_data_b, self.pos[0]+1, 1)
+        self.layout.addWidget(save_cur_data_b, 1, 0, 1, 2)
 
     def save_file_dialog(self):
         # From: https://pythonspot.com/pyqt5-file-dialog/
