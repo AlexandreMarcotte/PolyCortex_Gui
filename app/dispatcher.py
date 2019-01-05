@@ -31,10 +31,11 @@ class Dispatcher:
         self.stream_origin = 'Stream from synthetic data'
         self.stream_path = f'experiment_csv/2exp_pinch_close_2018-08-29 18:55:22.627296.csv'
 
+        self.t_init = time()
         init_time = datetime.now()
         self.save_path = f'./experiment_csv/2exp_pinch_close_{init_time}.csv'
-        self.used_read_freq = 1000
-        self.desired_read_freq = 1000
+        self.used_read_freq = 250
+        self.desired_read_freq = 250
         self.read_period = 1 / self.desired_read_freq
 
         self.curve_freq = None
@@ -78,8 +79,6 @@ class Dispatcher:
         """Callback function to use in the generating functions"""
         if self.stream_origin == 'Stream from OpenBCI':
             signal = signal.channel_data
-        if not t:
-            t = time()
 
         self.filter_itt += 1
         for ch in range(self.N_CH):
@@ -90,9 +89,12 @@ class Dispatcher:
                 self.data_queue[ch].append(signal[ch])
 
             self.all_data[ch].append(self.data_queue[ch][-1])
+        if len(self.all_data[0]) % 1000 == 0:
+            print('N_data', len(self.all_data[0]))
 
-        self.t_queue.append(t)
-        self.all_t.append(t)
+        t = time()
+        self.t_queue.append(t - self.t_init)
+        self.all_t.append(t - self.t_init)
         # Experiment
         if self.experiment_type != 0:  # An event occured
             self.experiment_queue.append(self.experiment_type)
