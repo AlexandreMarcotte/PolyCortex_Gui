@@ -73,7 +73,7 @@ class ProcessData:
                     for ch_data in exp[:1]:
                         self.save_emg_in_proper_class_list(
                                 ch_data[pos-20:pos+160], class_num, exp_no)
-            # plt.show()
+            plt.show()
 
     def save_emg_in_proper_class_list(#OK
                 self, one_ch_data, class_num, exp_no, plot_data=False):
@@ -84,8 +84,10 @@ class ProcessData:
         else:
             self.class_type_test[class_num].append(one_ch_data)
         # plot
-        if plot_data:
+        if plot_data and class_num == 0:
             plt.plot(one_ch_data)
+            plt.title(f'class_num: {class_num}')
+            plt.show()
 
 
 def find_emg_avg_for_every_ch(class_type, colors, N_CLASS_TYPE): #OK
@@ -95,12 +97,14 @@ def find_emg_avg_for_every_ch(class_type, colors, N_CLASS_TYPE): #OK
         avg_emg_class_type[ch] = np.mean(emg_ch, axis=0)
         for emg_signal in emg_ch:
             plt.plot(emg_signal, color=colors[ch], alpha=0.2)
-        plt.show()
+    plt.title('YO')
+    plt.show()
 
     # plt show average type
-    # for ch in range(len(class_type)):
-    #     plt.plot(avg_emg_class_type[ch])
-    #     plt.show()
+    for ch in range(len(class_type)):
+        plt.plot(avg_emg_class_type[ch])
+        plt.title('allow')
+    plt.show()
 
     return avg_emg_class_type
 
@@ -151,8 +155,8 @@ def find_classifier_accuracy(X_test, y_test, clf):
             error += 1
             # plt.plot(one_sig)
             # plt.show()
-            # print('Predicted type', predicted)
-            # print('Real type', one_type)
+            print('Predicted type', predicted)
+            print('Real type', one_type)
 
     print('accuracy: ', (len(y_test)-error) / len(y_test))
 
@@ -192,12 +196,12 @@ def main():
     y_test = create_ys(X_test)
 
     # Find average
-    # avg_emg_class_type = find_emg_avg_for_every_ch(
-    #         X_train, colors, len(exp_files_list))
-    # print('Saving the average signal types...')
-
-    # os.chdir(curr_base_path)
-    # np.save('avg_emg_class_type', avg_emg_class_type)
+    avg_emg_class_type = find_emg_avg_for_every_ch(
+            X_train, colors, len(exp_files_list))
+    print('Saving the average signal types...')
+    #
+    os.chdir(curr_base_path)
+    np.save('avg_emg_class_type', avg_emg_class_type)
 
 
     # show_signal_sum_with_error(linear_class_type_train, colors)
