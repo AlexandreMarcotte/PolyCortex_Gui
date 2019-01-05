@@ -18,8 +18,8 @@ class SampleDataFromOPENBCI(threading.Thread):
         # port = '/dev/tty.OpenBCI-DN008VTF'  # If using MAC?
         # logging.basicConfig(filename="test.log", format='%(asctime)s - %(levelname)s : %(message)s', level=logging.DEBUG)
         # logging.info('---------LOG START-------------')
-        self.board = bci.OpenBCIBoard(port=port, scaled_output=False, log=True)
-        self.board.enable_filters()
+        self.board = bci.OpenBCIBoard(
+                port=port, scaled_output=False, log=True, filter_data=True)
         print("Board Instantiated")
         sleep(1)  # TODO: I changed it to 1 and it was 5 before see if there is a problem
 
