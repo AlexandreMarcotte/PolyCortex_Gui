@@ -17,25 +17,21 @@ from data_processing_pipeline.uniformize_data import uniformize_data
 
 
 class ProcessData:
-    def __init__(self, exp_csv_dir, train_exp_folders, colors,
-                 SPLIT_TRAIN_TEST):
+    def __init__(self, exp_csv_dir, train_exp_folders, colors, SPLIT):
         """ """
         self.exp_csv_dir = exp_csv_dir
         self.train_exp_folders = train_exp_folders
         self.colors = colors
-        self.SPLIT_TRAIN_TEST = SPLIT_TRAIN_TEST
+        self.SPLIT = SPLIT
 
         self.N_CLASS = len(train_exp_folders)
 
-        self.class_type_train = [[] for _ in range(self.N_CLASS)]
-        self.class_type_test = [[] for _ in range(self.N_CLASS)]
+        self.X = [[] for _ in range(self.N_CLASS)]
+        self.y = []
 
-        self.generate_class_type_list()
-
-    def generate_class_type_list(self):
         self.l_data, self.l_t, self.l_exp = self.create_list_from_exp_data()
+
         self.save_emg_signal_if_event_stamp()
-        return self.class_type_train
 
     def create_list_from_exp_data(self):
         """
@@ -52,7 +48,7 @@ class ProcessData:
             l_t.append([])
             l_exp.append([])
             # Each folder contain many files contain a single type of exp (class)
-            for file_name in os.listdir(folder_path):
+            for file_name in os.listdir(folder_path)[self.SPLIT[0]:self.SPLIT[1]]:
                 data, t, exp = read_data_from_file(
                         os.path.join(folder_path, file_name), N_CH=8)
                 l_data[exp_no].append(np.array(data))
@@ -79,10 +75,9 @@ class ProcessData:
                 self, one_ch_data, class_num, exp_no, plot_data=False):
         one_ch_data = uniformize_data(one_ch_data, len(one_ch_data))
         # Split in train and test set
-        if exp_no <= self.SPLIT_TRAIN_TEST:
-            self.class_type_train[class_num].append(one_ch_data)                                   # TODO: ALEXM: change the indice from the number of the folder it is reading fro
-        else:
-            self.class_type_test[class_num].append(one_ch_data)
+        self.X[class_num].append(
+                one_ch_data.reshape((len(one_ch_data), 1)))                                   # TODO: ALEXM: change the indice from the number of the folder it is reading fro
+        self.y.append(class_num)
         # plot
         if plot_data and class_num == 0:
             plt.plot(one_ch_data)
@@ -109,6 +104,7 @@ def find_emg_avg_for_every_ch(class_type, colors, N_CLASS_TYPE): #OK
     return avg_emg_class_type
 
 
+'''
 def show_signal_sum_with_error(linear_class_type_train, colors):
     df = pd.DataFrame()
     linear_class_type_train = [np.array(l) for l in linear_class_type_train]
@@ -120,7 +116,6 @@ def show_signal_sum_with_error(linear_class_type_train, colors):
         ax.errorbar(df.index, mean, yerr=std, fmt='-', color=colors[i])
 
         plt.show()
-
 
 def train_test_split(linear_class_type):
     n_data = len(linear_class_type[0])
@@ -136,10 +131,9 @@ def train_test_split(linear_class_type):
 
     return X, y
 
-
-def train_classifier(X, y):
+def train_classifier(x_train, y_train):
     clf = svm.LinearSVC()
-    clf.fit(X, y)
+    clf.fit(x_train, y_train)
     joblib.dump(clf, 'linear_svm_fitted_model.pkl')
     return clf
 
@@ -160,6 +154,8 @@ def find_classifier_accuracy(X_test, y_test, clf):
 
     print('accuracy: ', (len(y_test)-error) / len(y_test))
 
+'''
+
 def create_ys(Xs):
     y_train = []
     for i in range(len(Xs)):
@@ -177,27 +173,37 @@ def create_proper_dim(X):
 
 def main():
     colors = ['C0', 'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8']
-    # base_path = '/home/alex/Desktop/openBCI_eeg_gui/learning_experiments_csv'
-    # project_base_path = '/home/alex/Desktop/openBCI_eeg_gui'                   # TODO: ALEXM: Change this path for a general file type (by cwd and going back one file down)
     curr_base_path = os.getcwd()
     os.chdir('..')
     project_base_path = os.getcwd()
-    print('base_path', project_base_path)
     exp_dir = os.path.join(project_base_path, 'learning_experiments_csv')
     exp_files_list = os.listdir(exp_dir)
-    # Train data:
-    process_data = ProcessData(
-            exp_dir, exp_files_list, colors, SPLIT_TRAIN_TEST=3)
 
-    X_train = process_data.class_type_train
-    y_train = create_ys(X_train)
-    print(y_train)
-    X_test = process_data.class_type_test
-    y_test = create_ys(X_test)
+    # Train data:
+    process_data = ProcessData(exp_dir, exp_files_list, colors, (0, 5))
+    x_train = process_data.X
+    y_train = process_data.y
+    print('HERE')
+    # Test data:
+    process_data = ProcessData(exp_dir, exp_files_list, colors, (4, 5))
+    x_test = process_data.X
+    y_test = process_data.y
+    # Validation data:
+    process_data = ProcessData(exp_dir, exp_files_list, colors, (5, 6))
+    x_val = process_data.X
+    y_val = process_data.y
+
+    # Save
+    np.save('x_train', x_train)
+    np.save('y_train', y_train)
+    np.save('x_test', x_test)
+    np.save('y_test', y_test)
+    np.save('x_val', x_val)
+    np.save('y_val', y_val)
 
     # Find average
     avg_emg_class_type = find_emg_avg_for_every_ch(
-            X_train, colors, len(exp_files_list))
+            x_train, colors, len(exp_files_list))
     print('Saving the average signal types...')
     #
     os.chdir(curr_base_path)
@@ -205,19 +211,15 @@ def main():
 
 
     # show_signal_sum_with_error(linear_class_type_train, colors)
-    # Test:
-    # test_exp = exp_files_list[2:]
-    # process_data = ProcessData(base_path, test_exp, colors)
-    # class_type_test = process_data.class_type
-    #
+
     # X, y = train_test_split(class_type_train)
     # X_test, y_test = train_test_split(class_type_test)
 
-    X_train = create_proper_dim(X_train)
-    clf = train_classifier(X_train, y_train)
+    x_train = create_proper_dim(x_train)
+    x_test = create_proper_dim(x_test)
 
-    X_test = create_proper_dim(X_test)
-    find_classifier_accuracy(X_test, y_test, clf)
+    # clf = train_classifier(x_train, y_train)
+    # find_classifier_accuracy(x_test, y_test, clf)
 
 
 if __name__ == '__main__':
