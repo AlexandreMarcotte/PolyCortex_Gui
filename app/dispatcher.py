@@ -56,7 +56,7 @@ class Dispatcher:
         self.all_t = deque(np.zeros(self.DEQUE_LEN))
         self.all_experiment_val = deque(np.zeros(self.DEQUE_LEN))
         # Classification
-        self.last_classified_type = [0]
+        self.last_classified_type = None
         self.emg_signal_len = 170
         # FFT
         self.freq_calculator = FreqCalculator(self, remove_first_data=0)

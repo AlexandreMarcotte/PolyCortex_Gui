@@ -193,21 +193,13 @@ def main():
     x_val = process_data.X
     y_val = process_data.y
 
-    # Save
-    np.save('x_train', x_train)
-    np.save('y_train', y_train)
-    np.save('x_test', x_test)
-    np.save('y_test', y_test)
-    np.save('x_val', x_val)
-    np.save('y_val', y_val)
-
     # Find average
-    avg_emg_class_type = find_emg_avg_for_every_ch(
-            x_train, colors, len(exp_files_list))
-    print('Saving the average signal types...')
+    # avg_emg_class_type = find_emg_avg_for_every_ch(
+    #         x_train, colors, len(exp_files_list))
+    # print('Saving the average signal types...')
     #
     os.chdir(curr_base_path)
-    np.save('avg_emg_class_type', avg_emg_class_type)
+    # np.save('avg_emg_class_type', avg_emg_class_type)
 
 
     # show_signal_sum_with_error(linear_class_type_train, colors)
@@ -215,11 +207,19 @@ def main():
     # X, y = train_test_split(class_type_train)
     # X_test, y_test = train_test_split(class_type_test)
 
-    x_train = create_proper_dim(x_train)
-    x_test = create_proper_dim(x_test)
+    # x_train = create_proper_dim(x_train)
+    # x_test = create_proper_dim(x_test)
 
     # clf = train_classifier(x_train, y_train)
     # find_classifier_accuracy(x_test, y_test, clf)
+
+    # Save
+    np.save('x_train', x_train)
+    np.save('y_train', y_train)
+    np.save('x_test', x_test)
+    np.save('y_test', y_test)
+    np.save('x_val', x_val)
+    np.save('y_val', y_val)
 
 
 if __name__ == '__main__':

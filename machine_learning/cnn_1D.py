@@ -4,8 +4,10 @@ from keras.layers.convolutional import Conv1D
 from keras.layers.pooling import MaxPooling1D
 from keras.optimizers import SGD, Adagrad, Adadelta, Adam, Adamax, Nadam
 from keras.utils.np_utils import to_categorical
+from keras.models import load_model
 import numpy as np
 import matplotlib.pyplot as plt
+from time import sleep
 
 
 def train_cnn(nb_classes, x_train, y_train, x_test, y_test):
@@ -16,7 +18,7 @@ def train_cnn(nb_classes, x_train, y_train, x_test, y_test):
 
 
     shape_ord = (x_train.shape[1], 1)
-    nb_epoch = 200
+    nb_epoch = 1200
     batch_size = 60
     # First layer
     nb_filters_1 = 90
@@ -85,16 +87,12 @@ def plot_results(hist):
 
 
 if __name__ == '__main__':
-    VALIDATION = 12
 
     x_train = np.load('x_train.npy')
     y_train = np.load('y_train.npy')
 
     x_test = np.load('x_test.npy')
     y_test =np.load('y_test.npy')
-
-    x_val = np.load('x_val.npy')
-    y_val = np.load('y_val.npy')
 
     hist, model = train_cnn(
             nb_classes=3, x_train=x_train, y_train=y_train, x_test=x_test,
@@ -105,12 +103,22 @@ if __name__ == '__main__':
     # print('Test loss: ', loss)
     # print('Test accuracy: ', accuracy)
 
-    predictions = model.predict(x_val).argmax(-1)
-    prediction_proportion = model.predict(x_val)
+    x_val = np.load('x_val.npy')
+    x_val = x_val.reshape(-1, *x_val.shape[-2:])
+    print(x_val.shape)
+    y_val = np.load('y_val.npy')
+    y_val = to_categorical(y_val, num_classes=3)
+
+    model.save('my_model.h5')
+    model_loaded = load_model('my_model.h5')
+
+    predictions = model_loaded.predict(x_val).argmax(-1)
+    prediction_proportion = model_loaded.predict(x_val)
     for pred, real, sig in zip(predictions, y_val, x_val):
         plt.plot(sig)
         plt.title(f'prediction {pred}, real {real}')
         plt.show()
+        sleep(0.4)
 
     # print('predictions', predictions)
     # print('prediction_proportion', prediction_proportion)

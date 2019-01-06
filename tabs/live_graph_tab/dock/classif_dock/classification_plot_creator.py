@@ -29,7 +29,7 @@ class ClassifPlotCreator:
         # --- Bar chart ---
         bar_chart = pg.PlotWidget(background=dark_grey)
         bar_chart.plotItem.setLabel(axis='left', text='Power', units='None')
-        bar_chart.setYRange(0, 4)
+        bar_chart.setYRange(0, 6)
         # Add to tab layout
         self.layout.addWidget(bar_chart, 1, 0)
         return bar_chart

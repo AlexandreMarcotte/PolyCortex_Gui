@@ -28,22 +28,22 @@ class Regions:
         if non_zero_type != []:
             for no, (pos, n_z) in enumerate(zip(non_zero_pos, non_zero_type)):
                 brush = self.brushes[int(n_z)]
-                # self.list[no][1].setBrush(brush)
-                # self.list[no][1].setRegion([pos, pos+150])
+                self.list[no][1].setBrush(brush)
+                self.list[no][1].setRegion([pos, pos+180])
 
     def classif_event(self, ch):
-        if ch == 3:
+        if ch == 0:
             # Create region if event occur and add it to the list that update
             # Their position. And if there is enough region left
-            if self.gv.last_classified_type[0] and self.waiting:
+            if self.gv.last_classified_type in [0, 1] and self.waiting:
                 spawn_region = self.waiting.pop()
                 # Select brush type based on event type
-                brush = self.brushes[self.gv.last_classified_type[0] - 6]
+                brush = self.brushes[self.gv.last_classified_type]
                 self.list[spawn_region][1].setBrush(brush)
-                self.list[spawn_region][1].setRegion([self.gv.DEQUE_LEN - 170,
-                                                      self.gv.DEQUE_LEN])
+                self.list[spawn_region][1].setRegion(
+                        [self.gv.DEQUE_LEN - 180, self.gv.DEQUE_LEN])
                 self.in_use.append(spawn_region)
-                self.gv.last_classified_type[0] = 0
+                self.gv.last_classified_type = None
             # keep track of the number of data that was created between call
             # to this function so that the regions pos is updated accordingly
             delta_data = self.gv.n_data_created - self.last_n_data_created
@@ -53,12 +53,12 @@ class Regions:
                 for r_no in self.in_use:
                     self.list[r_no][0] -= delta_data
                     pos = self.list[r_no][0]
-                    self.list[r_no][1].setRegion([pos - 170, pos])
+                    self.list[r_no][1].setRegion([pos - 180, pos])
                     # Remove region out of view
                     if self.list[r_no][0] < 0:
                         self.waiting.append(r_no)
-                        self.list[r_no][1].setRegion([self.gv.DEQUE_LEN,
-                                                         self.gv.DEQUE_LEN])
+                        self.list[r_no][1].setRegion(
+                                [self.gv.DEQUE_LEN, self.gv.DEQUE_LEN])
                         self.list[r_no][0] = self.gv.DEQUE_LEN
                         self.to_delete.append(r_no)
 
