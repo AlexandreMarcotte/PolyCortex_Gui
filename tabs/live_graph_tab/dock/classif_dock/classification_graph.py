@@ -13,10 +13,12 @@ class ClassifGraph:
     def __init__(self, gv, show_classif_plot, n_classif_plot):
         self.N_CLASSIF_TYPE = 3
         self.gv = gv
+
+        # Classifier
         clf_path = 'machine_learning/linear_svm_fitted_model.pkl'
-        # Classificateur
-        self.clf = joblib.load(os.path.join(os.getcwd(), clf_path))
-        self.model = load_model('/home/alex/Desktop/openBCI_eeg_gui/machine_learning/cnn_1D_model.h5')
+        # self.clf = joblib.load(os.path.join(os.getcwd(), clf_path))
+        self.model = load_model(
+                '/home/alex/Desktop/openBCI_eeg_gui/machine_learning/cyn_model.h5')
 
         self.CLASSIF_MEMORY_LEN = 5
         self.last_classif = np.array(
@@ -62,17 +64,14 @@ class ClassifGraph:
             # class_type = self.clf.predict([emg_signal])[0]
             emg_signal = np.reshape(emg_signal, (1, 180, 1))
             class_type = self.model.predict(emg_signal).argmax(-1)
-
-            PLOT = False
-            if class_type in [0, 1] and PLOT:
-                plt.plot(emg_signal[0])
-                plt.title(f'class type: {class_type}')
-                plt.show()
-                print('the predicted class_type: ', class_type)
-
         else:
             class_type = 0
         self.last_classif[self.i] = class_type
+
+        SHOW_PLOT = False
+        if SHOW_PLOT:
+            print('last_classif: ', self.last_classif)
+            self.show_plt_of_current_classif(emg_signal, class_type)
 
         # update refracting period to false if the refraction time is passed
         if self.is_refract_period:
@@ -86,22 +85,28 @@ class ClassifGraph:
             self.n_classif_queue[no_class].append(self.y[no_class])
         # Select the event of a certain type if over a threshold of firering
         # Type CLOSE
+        if self.y[1] >= 1:
+            self.update_after_classif(1)
 
-        if self.y[0] >= 2:
-            self.y = np.array(np.zeros(self.N_CLASSIF_TYPE))
-            self.gv.last_classified_type = 0
-            self.refract_period_init_t = time()
-            self.is_refract_period = True
-        # Type PINCH
-        elif self.y[1] >= 2:
-            self.y = np.array(np.zeros(self.N_CLASSIF_TYPE))
-            self.gv.last_classified_type = 1
-            self.refract_period_init_t = time()
-            self.is_refract_period = True
-        # Increase itt
+        elif self.y[0] >= 2:
+            self.update_after_classif(0)
+
+
         self.i += 1
         if self.i == self.CLASSIF_MEMORY_LEN:
             self.i = 0
+
+    def show_plt_of_current_classif(self, emg_signal, class_type):
+        plt.plot(emg_signal[0])
+        plt.title(f'classif_type: {class_type}')
+        plt.show()
+
+    def update_after_classif(self, classif_type ):
+        self.y = np.array(np.zeros(self.N_CLASSIF_TYPE))
+        self.gv.last_classified_type = classif_type
+        self.refract_period_init_t = time()
+        self.is_refract_period = True
+    # Type PINCH
 
     def update_bar_chart_plotting(self):
         # Remove All item from the graph
@@ -117,7 +122,3 @@ class ClassifGraph:
                         self.n_classif_queue[classif_type])
                 self.curve_n_classif[classif_type].setPen(
                         self.pen_color[classif_type])
-
-
-
-
