@@ -114,12 +114,12 @@ class Dispatcher:
             y = butter_bandpass_filter(
                     self.filter_process.data_queue[ch],                            # TODO: ALEXM: There is a problem when the filtering of a bandpass filter filter all 0 it increase the signal to infinity
                     self.min_pass_filter, self.max_pass_filter,
-                    self.desired_read_freq, order=3)
+                    self.desired_read_freq, order=2)
             # Bandstop
             y = butter_bandpass_filter(
                     # y, self.min_bandstop_filter, self.max_bandstop_filter,
                     y, self.min_cut_filter, self.max_cut_filter,
-                    self.desired_read_freq, order=3, filter_type='bandstop')
+                    self.desired_read_freq, order=2, filter_type='bandstop')
             self.filter_chunk.append(list(y[-self.once_every:][::-1]))
         # put the data once at the time at every loop so the signal is not showing
         # all jerky
