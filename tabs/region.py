@@ -20,7 +20,8 @@ class Regions:
            this method at the same time of running an experiment or while
            reading from a file (then add box with text)
           * Currently only done for the ch 0 """
-        non_zero_type = np.array(self.exp_q)[np.nonzero(np.array(self.exp_q))[0]]
+        non_zero_type = np.array(self.exp_q)[
+                np.nonzero(np.array(self.exp_q))[0]]
         non_zero_pos = np.nonzero(np.array(self.exp_q))[0]
 
         # Set the position of the regions delimiting events (when an
