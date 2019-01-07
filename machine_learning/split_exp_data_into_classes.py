@@ -1,19 +1,18 @@
+# --General Packages--
 # ProcessData
 from generate_signal.file_reader import read_data_from_file
 import os
 import numpy as np
 import matplotlib.pyplot as plt
-import time
-# Visualisation of all signal and the std deviation between the same type
-import seaborn as sns
-import pandas as pd
-from pandas.plotting import andrews_curves
-# Classification
 from sklearn import svm
-
 from sklearn.externals import joblib
-# My packages
+# --My Packages--
 from data_processing_pipeline.uniformize_data import uniformize_data
+
+# Experiment protocol
+# red midle forearm where watch and yellow one finger below still at the center
+# of the forearm the red is connected at the bottom and the yellow on top at the
+# pin N1P
 
 
 class ProcessData:
@@ -180,16 +179,16 @@ def main():
     exp_files_list = os.listdir(exp_dir)
 
     # Train data:
-    process_data = ProcessData(exp_dir, exp_files_list, colors, (0, 5))
+    process_data = ProcessData(exp_dir, exp_files_list, colors, (0, 6))
     x_train = process_data.X
     y_train = process_data.y
     print('HERE')
     # Test data:
-    process_data = ProcessData(exp_dir, exp_files_list, colors, (4, 5))
+    process_data = ProcessData(exp_dir, exp_files_list, colors, (6, 8))
     x_test = process_data.X
     y_test = process_data.y
     # Validation data:
-    process_data = ProcessData(exp_dir, exp_files_list, colors, (5, 6))
+    process_data = ProcessData(exp_dir, exp_files_list, colors, (7, 8))
     x_val = process_data.X
     y_val = process_data.y
 
