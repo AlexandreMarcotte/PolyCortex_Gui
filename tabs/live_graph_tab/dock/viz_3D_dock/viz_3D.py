@@ -136,7 +136,7 @@ class Viz3D(Dock):
         DataSaver(
                 self.gv.main_window, self.gv, settings_d.layout,               # TODO: ALEXM: Add a tooltip
                 saving_type='Save', pos=(0, 8), size=(1, 1),
-                save_file_button=False, choose_b_size=(1, 1))
+                save_file_button=True, choose_b_size=(1, 1))
         # return modify_curve_layout, modify_curve_gr
         self.show_3D_viz_b(settings_d.layout)
 
