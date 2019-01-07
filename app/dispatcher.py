@@ -26,6 +26,7 @@ class Dispatcher:
         self.max_cut_filter= 63
         self.filter_min_bound = 0
         self.filter_max_bound = self.DEQUE_LEN
+        self.filter_to_use = []
 
         # Variable change in the menubar
         self.stream_origin = 'Stream from synthetic data'
@@ -82,15 +83,15 @@ class Dispatcher:
 
         self.filter_itt += 1
         for ch in range(self.N_CH):
-            if self.use_filter and \
+            if self.filter_to_use and \
                     self.n_data_created > self.N_DATA_BEFORE_FILTER:
                 self.filter_data(ch, signal)
             else:
                 self.data_queue[ch].append(signal[ch])
 
             self.all_data[ch].append(self.data_queue[ch][-1])
-        if len(self.all_data[0]) % 1000 == 0:
-            print('N_data', len(self.all_data[0]))
+        # if len(self.all_data[0]) % 1000 == 0:
+        #     print('N_data', len(self.all_data[0]))
 
         t = time()
         self.t_queue.append(t - self.t_init)
@@ -110,16 +111,26 @@ class Dispatcher:
         self.filter_process.data_queue[ch].append(signal[ch])
 
         if self.filter_itt % self.once_every == 0:
-            # Bandpass
-            y = butter_bandpass_filter(
-                    self.filter_process.data_queue[ch],                            # TODO: ALEXM: There is a problem when the filtering of a bandpass filter filter all 0 it increase the signal to infinity
-                    self.min_pass_filter, self.max_pass_filter,
-                    self.desired_read_freq, order=2)
-            # Bandstop
-            y = butter_bandpass_filter(
-                    # y, self.min_bandstop_filter, self.max_bandstop_filter,
-                    y, self.min_cut_filter, self.max_cut_filter,
-                    self.desired_read_freq, order=2, filter_type='bandstop')
+            print('filter_to use', self.filter_to_use)
+            if 'bandpass' in self.filter_to_use:
+                # Bandpass
+                y = butter_bandpass_filter(
+                        self.filter_process.data_queue[ch],                        # TODO: ALEXM: There is a problem when the filtering of a bandpass filter filter all 0 it increase the signal to infinity
+                        self.min_pass_filter, self.max_pass_filter,
+                        self.desired_read_freq, order=2)
+            else:
+                # So that we create the y for the second even if the first
+                # filter don't exist
+                y = self.filter_process.data_queue[ch]
+
+            if 'bandstop' in self.filter_to_use:
+                # Bandstop
+                y = butter_bandpass_filter(
+                        # y, self.min_bandstop_filter, self.max_bandstop_filter,
+                        y, self.min_cut_filter, self.max_cut_filter,
+                        self.desired_read_freq, order=2,
+                        filter_type='bandstop')
+
             self.filter_chunk.append(list(y[-self.once_every:][::-1]))
         # put the data once at the time at every loop so the signal is not showing
         # all jerky

@@ -155,8 +155,12 @@ class FftGraph:
                 settings_d.layout, 'Log', (0, 3), ['False', 'True'],
                 self.log_axis)
         create_param_combobox(
-                settings_d.layout, 'Filter', (0, 4), ['False', 'True'],
+                settings_d.layout, 'Filter', (0, 4), ['No filter',
+                'Bandpass', 'Bandstop', 'Both'],
                 self.show_filter)
+        self.combo_to_filter = {
+                'No filter': [], 'Bandpass': ['bandpass'],
+                'Bandstop': ['bandstop'], 'Both': ['bandpass', 'bandstop']}
         create_param_combobox(
                 settings_d.layout, 'Ch On', (0, 5),
                 ['ch 1', 'ch 2', 'ch 3', 'ch 4',
@@ -231,7 +235,7 @@ class FftGraph:
         pass
 
     def show_filter(self, txt):
-        self.gv.use_filter = eval(txt)
+        self.gv.filter_to_use = self.combo_to_filter[txt]
 
     @QtCore.pyqtSlot(bool)
     def start(self, checked):
