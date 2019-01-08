@@ -49,8 +49,8 @@ class Game:
         self.all_sprites.update()
         # check if player hits a platform - only if falling
         if self.player.vel.y > 0:
-            hits = pg.sprite.spritecollide(self.player, self.platforms,
-                                           dokill=False)
+            hits = pg.sprite.spritecollide(
+                    self.player, self.platforms, dokill=False)
             if hits:
                 self.player.pos.y = hits[0].rect.top + 1
                 self.player.vel.y = 0
