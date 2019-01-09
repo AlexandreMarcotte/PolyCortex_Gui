@@ -111,8 +111,8 @@ if __name__ == '__main__':
     y_val = np.load('y_val.npy')
     y_val = to_categorical(y_val, num_classes=3)
 
-    model.save('forearm_model.h5')
-    model_loaded = load_model('forearm_model.h5')
+    model.save('poly2_model.h5')
+    model_loaded = load_model('poly2_model.h5')
 
     predictions = model_loaded.predict(x_val).argmax(-1)
     prediction_proportion = model_loaded.predict(x_val)

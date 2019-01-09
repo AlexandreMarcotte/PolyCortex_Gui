@@ -179,12 +179,12 @@ def main():
     exp_files_list = os.listdir(exp_dir)
 
     # Train data:
-    process_data = ProcessData(exp_dir, exp_files_list, colors, (0, 6))
+    process_data = ProcessData(exp_dir, exp_files_list, colors, (0, 7))
     x_train = process_data.X
     y_train = process_data.y
     print('HERE')
     # Test data:
-    process_data = ProcessData(exp_dir, exp_files_list, colors, (6, 8))
+    process_data = ProcessData(exp_dir, exp_files_list, colors, (7, 9))
     x_test = process_data.X
     y_test = process_data.y
     # Validation data:
