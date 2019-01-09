@@ -127,7 +127,7 @@ class MainWindow(QMainWindow):
 
     def start_the_game(self):
         """Start the miniGame"""
-        run_game = RunGame()
+        run_game = RunGame(self.gv)
         run_game.start()
 
     def create_toolbar(self):
