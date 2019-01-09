@@ -27,7 +27,7 @@ class ClassifGraph(Graph):
                 d = uniformize_data(d, len(d))
                 # classif_value = self.clf.predict([d])[0]
             else:
-                classif_value= 0
+                classif_value = 0
             # set all the same type for all the interval of classification
             for _ in range(self.classif_interval):
                 classified_data.append(classif_value)

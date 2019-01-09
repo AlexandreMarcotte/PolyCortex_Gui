@@ -38,6 +38,7 @@ class AvgClassifGraph(Graph):
             #         remove_first_data=2, data_q=data, t_q=t)
             #     freq_range = freq_calculator.get_freq_range()
             #     fft = freq_calculator.fft()
+            data = data.reshape((data.shape[0],))
             self.curve.setData(data)
         except IndexError as e:
             print(e)
