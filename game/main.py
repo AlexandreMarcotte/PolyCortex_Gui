@@ -8,10 +8,12 @@ import threading
 
 
 class Game:
-    def __init__(self):
+    def __init__(self, gv):
         """
         Initialize game window, etc
         """
+        self.gv = gv
+
         pg.init()
         pg.mixer.init()
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))
@@ -21,12 +23,14 @@ class Game:
         self.all_sprites = None
         self.playing = False
 
+        self.itt = 0
+
     def new(self):
         # start a new game
         self.all_sprites = pg.sprite.Group()
         self.platforms = pg.sprite.Group()
         # player
-        self.player = Player(self)
+        self.player = Player(self, self.gv)
         self.all_sprites.add(self.player)
         # platform
         for plat in PLATFORM_LIST:
@@ -63,9 +67,12 @@ class Game:
                 if self.playing:
                     self.playing = False
                     self.running = False
-            if event.type == pg.KEYDOWN:
-                if event.key == pg.K_SPACE:
-                    self.player.jump()
+        self.itt += 1
+        print(self.itt, 'gv', self.gv.class_detected[1])
+        if self.gv.class_detected[0] == 1:
+        # if event.type == pg.KEYDOWN:
+        #     if event.key == pg.K_SPACE:
+            self.player.jump()
 
     def draw(self):
         # Game Loop - draw
@@ -83,9 +90,9 @@ class Game:
 
    
 class RunGame(threading.Thread):
-    def __init__(self):
+    def __init__(self, gv):
         super().__init__()
-        self.g = Game()
+        self.g = Game(gv)
         self.g.show_start_screen()
 
     def run(self):
@@ -95,6 +102,6 @@ class RunGame(threading.Thread):
 
 
 if __name__ == '__main__':
-    run_game = RunGame()
+    run_game = RunGame(gv)
     run_game.start()
 

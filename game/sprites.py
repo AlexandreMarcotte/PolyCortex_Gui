@@ -5,9 +5,11 @@ vec = pg.math.Vector2
 
 
 class Player(pg.sprite.Sprite):
-    def __init__(self, game):
+    def __init__(self, game, gv):
         pg.sprite.Sprite.__init__(self)
         self.game = game
+        self.gv = gv
+
         self.image = pg.Surface((30, 40))
         self.image.fill(YELLOW)
         self.rect = self.image.get_rect()
@@ -29,8 +31,9 @@ class Player(pg.sprite.Sprite):
         keys = pg.key.get_pressed()
         if keys[pg.K_LEFT]:
             self.acc.x = -PLAYER_ACC
-        if keys[pg.K_RIGHT]:
-            self.acc.x = PLAYER_ACC
+        if self.gv.class_detected[0] == 0:
+        # if keys[pg.K_RIGHT]:
+            self.acc.x = PLAYER_ACC * 5
         # apply friction
         self.acc.x += self.vel.x * PLAYER_FRICTION
         # equations of motion
