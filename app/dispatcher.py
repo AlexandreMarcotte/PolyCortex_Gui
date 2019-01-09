@@ -57,8 +57,11 @@ class Dispatcher:
         self.all_t = deque(np.zeros(self.DEQUE_LEN))
         self.all_experiment_val = deque(np.zeros(self.DEQUE_LEN))
         # Classification
-        self.last_classified_type = None
         self.emg_signal_len = 170
+        self.last_classified_type = None
+        self.class_type = [2 for _ in range(N_CH)]
+        self.class_detected = [2 for _ in range(N_CH)]
+        self.ch_to_classify = [0]
         # FFT
         self.freq_calculator = FreqCalculator(self, remove_first_data=0)
         # Wave graph
