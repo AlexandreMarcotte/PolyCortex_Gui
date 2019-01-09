@@ -39,10 +39,15 @@ class EegPlotsCreator:
         # General Layout
         self.gv = gv
         self.layout = layout
+
         self.dock_area = DockArea()
         self.layout.addWidget(self.dock_area, 1, 1, 1, 8)
 
         self.stream_source = None
+        # Regions
+        self.N_CLASSIF_REGIONS_PER_PLOT = 9
+        self.regions = [Regions(self.gv, self.N_CLASSIF_REGIONS_PER_PLOT)
+                        for _ in range(self.gv.N_CH + 1)]
         # Variables
         self.btns = []
         self.ts = self.gv.t_queue
@@ -219,7 +224,7 @@ class EegPlotsCreator:
         self.plots.append(plot)
         layout.addWidget(plot, *plot_pos)
         curve = self.create_curve(plot, ch, q)
-        eeg_graph = EegGraph(ch, q, self.gv, self.ts, curve, self.regions)
+        eeg_graph = EegGraph(ch, q, self.gv, self.ts, curve, self.regions[ch])
         self.eeg_graphes.append(eeg_graph)
         self.timers.append(QtCore.QTimer())
         self.timers[ch].timeout.connect(self.eeg_graphes[ch].update_graph)
@@ -253,19 +258,17 @@ class EegPlotsCreator:
             rowspan = 4
             q = self.gv.data_queue[ch]
 
-        self.add_classif_regions_to_plot(plot)
+            self.add_classif_regions_to_plot(plot, ch)
 
         return plot, q, rowspan
 
-    def add_classif_regions_to_plot(self, plot):
+    def add_classif_regions_to_plot(self, plot, ch):
         """Create colored region (10) and placed them all at the beginning
            of each plot (will be used to indicated classification of a
            region of the signal or event occured in experiments"""
-        self.N_CLASSIF_REGIONS_PER_PLOT = 9
-        self.regions = Regions(self.gv, self.N_CLASSIF_REGIONS_PER_PLOT)
         for i in range(self.N_CLASSIF_REGIONS_PER_PLOT):
-            self.regions.list.append([0, pg.LinearRegionItem([0, 0])])
-            plot.addItem(self.regions.list[i][1], ignoreBounds=True)
+            self.regions[ch].list.append([0, pg.LinearRegionItem([0, 0])])
+            plot.addItem(self.regions[ch].list[i][1], ignoreBounds=True)
         return plot
 
     def create_curve(self, plot, ch, q):
@@ -293,7 +296,6 @@ class EegPlotsCreator:
             stream_source = CreateSyntheticData(
                     self.gv, callback=self.gv.collect_data,
                     read_freq=self.gv.DEQUE_LEN)
-
         elif self.gv.stream_origin == 'Stream from file':
             stream_source = FileReader(
                     self.gv, self.gv.stream_path, self.gv.collect_data,
