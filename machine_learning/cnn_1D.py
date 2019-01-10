@@ -16,9 +16,7 @@ def train_cnn(nb_classes, x_train, y_train, x_test, y_test):
     y_train = to_categorical(y_train, num_classes=nb_classes)
     y_test = to_categorical(y_test, num_classes=nb_classes)
 
-
-    shape_ord = (x_train.shape[1], 1)
-    nb_epoch = 500
+    nb_epoch = 50
     batch_size = 60
     # First layer
     nb_filters_1 = 90
@@ -29,17 +27,26 @@ def train_cnn(nb_classes, x_train, y_train, x_test, y_test):
     nb_conv2 = 30
     nb_filters_2 = 2
 
+    shape_ord = (x_train.shape[1], 1)
+
+    selected_optimizer = 'Adam'
     # OPTIMIZERS
-    # optimizer = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
-    # optimizer = Adagrad(lr=0.01, epsilon=1e-08, decay=0.0)
-    # optimizer = Adadelta(lr=1.0, rho=0.95, epsilon=1e-08, decay=0.0)
-    optimizer = Adam(
-            lr=0.0001, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.0)
-    # optimizer = Nadam(
-    #         lr=0.002, beta_1=0.9, beta_2=0.999, epsilon=None,
-    #         schedule_decay=0.004)
-    # optimizer = Adamax(
-    #         lr=0.002, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0)
+    if selected_optimizer == 'SGD':
+        optimizer = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
+    elif selected_optimizer == 'Adagrad':
+        optimizer = Adagrad(lr=0.01, epsilon=1e-08, decay=0.0)
+    elif selected_optimizer == 'Adadelta':
+        optimizer = Adadelta(lr=1.0, rho=0.95, epsilon=1e-08, decay=0.0)
+    elif selected_optimizer == 'Adam':
+        optimizer = Adam(
+                lr=0.0001, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.0)
+    elif selected_optimizer == 'Nadam':
+        optimizer = Nadam(
+                lr=0.002, beta_1=0.9, beta_2=0.999, epsilon=None,
+                schedule_decay=0.004)
+    elif selected_optimizer == 'Nadam':
+        optimizer = Adamax(
+                lr=0.002, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0)
 
     model = Sequential()
     model.add(Conv1D(
@@ -111,8 +118,8 @@ if __name__ == '__main__':
     y_val = np.load('y_val.npy')
     y_val = to_categorical(y_val, num_classes=3)
 
-    model.save('poly2_model.h5')
-    model_loaded = load_model('poly2_model.h5')
+    model.save('model_test.h5')
+    model_loaded = load_model('model_test.h5')
 
     predictions = model_loaded.predict(x_val).argmax(-1)
     prediction_proportion = model_loaded.predict(x_val)
