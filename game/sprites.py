@@ -29,11 +29,12 @@ class Player(pg.sprite.Sprite):
     def update(self):
         self.acc = vec(0, PLAYER_GRAV)
         keys = pg.key.get_pressed()
-        if keys[pg.K_LEFT]:
-            self.acc.x = -PLAYER_ACC
+        # if keys[pg.K_LEFT]:
         if self.gv.class_detected[0] == 0:
+            self.acc.x = -PLAYER_ACC * 4
+        if self.gv.class_detected[1] == 0:
         # if keys[pg.K_RIGHT]:
-            self.acc.x = PLAYER_ACC * 5
+            self.acc.x = PLAYER_ACC * 4
         # apply friction
         self.acc.x += self.vel.x * PLAYER_FRICTION
         # equations of motion
