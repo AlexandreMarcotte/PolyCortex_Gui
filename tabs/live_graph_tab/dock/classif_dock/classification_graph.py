@@ -34,7 +34,7 @@ class ClassifGraph:
         self.n_classif_queue = [deque(np.zeros(N_DATA), maxlen=N_DATA)
                                 for _ in range(self.N_CLASSIF_TYPE)]
         self.curve_n_classif = []
-        self.REFRACT_PERIOD_T = 0.6
+        self.REFRACT_PERIOD_T = 0.95
         self.refract_period_init_t = 0
         self.is_refract_period = False
         for ch in range(self.N_CLASSIF_TYPE):
@@ -109,11 +109,11 @@ class ClassifGraph:
     def classification_firing(self, ch):
         self.gv.class_detected[ch] = 2
         # Type close
-        if self.y[1] >= 1:
+        if self.y[1] >= 2:
             self.gv.class_detected[ch] = 1
             self.update_after_classif(1)
         # Type pinch
-        elif self.y[0] >= 2:
+        elif self.y[0] >= 3:
             self.gv.class_detected[ch] = 0
             self.update_after_classif(0)
 
@@ -137,6 +137,3 @@ class ClassifGraph:
                     self.n_classif_queue[classif_type])
                 self.curve_n_classif[classif_type].setPen(
                     self.pen_color[classif_type])
-
-
-

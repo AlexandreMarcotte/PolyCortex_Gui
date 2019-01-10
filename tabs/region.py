@@ -81,7 +81,7 @@ class Regions:
                 if self.list[r_no][0] < 0:
                     self.region_waiting.append(r_no)
                     self.list[r_no][1].setRegion(
-                        [self.gv.DEQUE_LEN, self.gv.DEQUE_LEN])
+                            [self.gv.DEQUE_LEN, self.gv.DEQUE_LEN])
                     self.list[r_no][0] = self.gv.DEQUE_LEN
                     self.to_delete.append(r_no)
         # Remove the regions that are out of the view
