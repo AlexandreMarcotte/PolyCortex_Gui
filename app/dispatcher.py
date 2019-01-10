@@ -43,7 +43,7 @@ class Dispatcher:
 
         self.data_queue = [
                 deque(np.zeros(DEQUE_LEN),
-                maxlen=DEQUE_LEN) for _ in range(N_CH)]      # One deque per channel initialize at 0
+                maxlen=DEQUE_LEN) for _ in range(N_CH)]  # One deque per channel initialize at 0
 
         self.experiment_type = 0
         self.t_queue = deque(np.zeros(self.DEQUE_LEN), maxlen=self.DEQUE_LEN)
@@ -58,10 +58,10 @@ class Dispatcher:
         self.all_experiment_val = deque(np.zeros(self.DEQUE_LEN))
         # Classification
         self.emg_signal_len = 170
-        self.last_classified_type = None
+        self.last_classified_type = [2 for _ in range(N_CH)]
         self.class_type = [2 for _ in range(N_CH)]
         self.class_detected = [2 for _ in range(N_CH)]
-        self.ch_to_classify = [0]
+        self.ch_to_classify = [0, 1]
         # FFT
         self.freq_calculator = FreqCalculator(self, remove_first_data=0)
         # Wave graph
