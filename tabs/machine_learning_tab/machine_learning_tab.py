@@ -20,14 +20,14 @@ class MachineLearningTab(QWidget):
 
     def create_txt_dock(self):
         # txt
-        txt_dock = Dock('txt dock')
+        txt_dock = Dock('Results')
         self.dock_area.addDock(txt_dock, 'right')
         txt_layout = pg.LayoutWidget()
         txt_dock.addWidget(txt_layout)
         txt = QTextEdit()
         txt_layout.addWidget(txt, 0, 1)
         # btn
-        b = RotatedButton('ToolBox', orientation='east')
+        b = RotatedButton('Settings', orientation='east')
         # b.setMaximumWidth(20)
         b.setCheckable(True)
         b.clicked.connect(self.open_tool_box)
@@ -41,12 +41,24 @@ class MachineLearningTab(QWidget):
         tool_dock.addWidget(tool_layout)
 
         tb = QToolBox()
-        for i in range(3):
-            tb.addItem(QPlainTextEdit(), f'Tool {i+1}')
+
+        self.create_optimizer_toolbox(tb)
+        self.create_neural_network_layer_toolbox(tb)
+
         tool_layout.addWidget(tb)
 
-        tool_dock.hide()
         return tool_dock
+
+    def create_optimizer_toolbox(self, tb):
+        # Optimizer layout
+        optimizer_layout = pg.LayoutWidget()
+        optimizer_layout.addWidget(QPushButton('Test123'))
+        optimizer_layout.addWidget(QTextEdit('Here I go again'))
+        tb.addItem(optimizer_layout, 'Optimizer')
+        # tb.addItem(QPushButton('Test2'))
+
+    def create_neural_network_layer_toolbox(self, tb):
+        tb.addItem(QPlainTextEdit(), f'Layer #1')
 
     # @QtCore.pyqtSlot(bool)
     def open_tool_box(self, checked):
