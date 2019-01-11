@@ -30,6 +30,5 @@ class EegGraph:
             self.curve.setData(self.q)
             # Detect the occurence of events by placing a region around them
             if self.ch in self.gv.ch_to_classify:
-                print('CHHHH', self.ch)
                 self.regions.detect_exp_event()
                 self.regions.classif_event()
