@@ -114,7 +114,6 @@ class Dispatcher:
         self.filter_process.data_queue[ch].append(signal[ch])
 
         if self.filter_itt % self.once_every == 0:
-            print('filter_to use', self.filter_to_use)
             if 'bandpass' in self.filter_to_use:
                 # Bandpass
                 y = butter_bandpass_filter(
