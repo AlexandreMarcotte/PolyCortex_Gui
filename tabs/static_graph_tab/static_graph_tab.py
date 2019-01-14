@@ -7,6 +7,7 @@ from .groups.left_graph_layout import LeftGraphLayout
 from .groups.file_selector import FileSelector
 from tabs.static_graph_tab.updater import Updater
 
+
 class StaticGraphTab(QWidget):
     def __init__(self, gv):
         super().__init__()
