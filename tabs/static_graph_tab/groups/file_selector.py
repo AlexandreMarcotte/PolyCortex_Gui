@@ -37,7 +37,8 @@ class FileSelector(Group):
 
     def add_choose_file_b(self, layout):
         b = QtGui.QPushButton('Choose file containing data')
-        b.setStyleSheet(f'background-color: {dark_blue_tab}')
+        b.setStyleSheet(f'''background-color: {dark_blue_tab};
+                        color: {white}; ''')
         b.clicked.connect(partial(self.choose_file))
         layout.addWidget(b, 0, 0)
 
