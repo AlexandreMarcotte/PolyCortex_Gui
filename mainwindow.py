@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
 from PyQt5.QtWidgets import *
-from PyQt5 import QtGui, QtCore
-from PyQt5.QtCore import Qt, pyqtSlot
-from PyQt5.QtGui import QPixmap, QIcon
+from PyQt5 import QtGui
+from PyQt5.QtGui import QIcon
 import qdarkstyle
 # from pyqtgraph.Qt import QtGui
 import os
 from functools import partial
-# My packages
-## Game
-from game.main import RunGame
+# --My packages--
 from tabs.tab_widget import TabWidget
+from game.main import RunGame
+from app.pyqt_frequently_used import select_file
 
 
 class MainWindow(QMainWindow):
@@ -81,18 +80,18 @@ class MainWindow(QMainWindow):
     def create_stream_from_file_menu(self):
         self.from_file = QMenu(title='From file')
         self.from_file.setStatusTip(
-            'Stream data from previously saved file...')
+                'Stream data from previously saved file...')
         self.controlPanel.addMenu(self.from_file)
 
         self.choose_file = QtGui.QAction('Choose file...')
         self.choose_file.setStatusTip(
-            'Choose the file from which you want to stream data...')
+                'Choose the file from which you want to stream data...')
         self.from_file.addAction(self.choose_file)
         self.choose_file.name = 'Stream from file'
 
     def create_muse_menu(self):
-        self.muse = QtGui.QAction(QIcon('./img/muse.png'),
-                                     'Muse')                                   # TODO: ALEXM Utiliser une liste déroulante plutot
+        self.muse = QtGui.QAction(
+                QIcon('./img/muse.png'), 'Muse')                                   # TODO: ALEXM Utiliser une liste déroulante plutot
         self.muse.setStatusTip('Stream data from Muse headband...')
         self.muse.name = 'Stream from Muse'
         self.controlPanel.addAction(self.muse)
@@ -107,15 +106,10 @@ class MainWindow(QMainWindow):
             self.choose_streaming_file()
 
     def choose_streaming_file(self):
-        # From: https://pythonspot.com/pyqt5-file-dialog/
-        options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
-        file_name, _ = QFileDialog.getOpenFileName(
-            self, "QFileDialog.getOpenFileName()", "",
-            "All Files (*);;Python Files (*.py)", options=options)
-        if file_name:
-            self.gv.stream_path = file_name
-            print('Streaming from: ', file_name)
+        f_name = select_file(self, open=True)
+        if f_name:
+            self.gv.stream_path = f_name
+            print('Streaming from: ', f_name)
 
     def create_menu_start_game(self):
         # ---Start game---
