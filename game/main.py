@@ -3,8 +3,19 @@ import pygame as pg
 import random
 from game.settings import *
 from game.sprites import *
-# multithreading 
+import os
+# multithreading
 import threading
+
+
+def set_pygame_window_at_a_desired_pos():
+    pg.display.set_mode((0, 0), pg.FULLSCREEN)
+    screen_info = pg.display.Info()
+    SCREEN_W = screen_info.current_w
+    SCREEN_H = screen_info.current_h
+    pg.quit()
+    os.environ['SDL_VIDEO_WINDOW_POS'] = f'{SCREEN_W},{SCREEN_H}'
+    return SCREEN_W, SCREEN_H
 
 
 class Game:
@@ -14,10 +25,17 @@ class Game:
         """
         self.gv = gv
 
+        SCREEN_W, SCREEN_H = set_pygame_window_at_a_desired_pos()
         pg.init()
         pg.mixer.init()
-        self.screen = pg.display.set_mode((WIDTH, HEIGHT))
-        pg.display.set_caption('My Game')
+        pg.display.set_mode((WIDTH, HEIGHT))
+
+        self.screen = pg.display.set_mode(
+                (WIDTH, HEIGHT))
+        self.gv.openbci_gui.setGeometry(
+                0, 0, SCREEN_W - WIDTH, HEIGHT)
+
+        pg.display.set_caption('EMG Platformer')
         self.clock = pg.time.Clock()
         self.running = True
         self.all_sprites = None
@@ -68,7 +86,6 @@ class Game:
                     self.playing = False
                     self.running = False
         self.itt += 1
-        print(self.itt, 'gv', self.gv.class_detected[1])
         if self.gv.class_detected[0] == 1:
         # if event.type == pg.KEYDOWN:
         #     if event.key == pg.K_SPACE:
