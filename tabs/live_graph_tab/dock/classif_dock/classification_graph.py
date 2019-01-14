@@ -15,10 +15,13 @@ class ClassifGraph:
         self.gv = gv
 
         # Classifier
-        clf_path = 'machine_learning/linear_svm_fitted_model.pkl'
+        # clf_path = 'machine_learning/linear_svm_fitted_model.pkl'
         # self.clf = joblib.load(os.path.join(os.getcwd(), clf_path))
-        self.model = load_model(
-                '/home/alex/Desktop/openBCI_eeg_gui/machine_learning/poly2_model.h5')
+        # print('cwd', os.getcwd())
+        # model_path = os.path.join(
+        #         os.getcwd(), './machine_learning/models/poly2_model.h5')
+        # print('model_path', model_path)
+        self.model = load_model('./machine_learning/models/poly2_model.h5')
 
         self.CLASSIF_MEMORY_LEN = 5
         self.last_classif = np.array(
