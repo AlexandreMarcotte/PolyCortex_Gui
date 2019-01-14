@@ -16,7 +16,7 @@ class PinSettings:
         self.command = {
                 'Ch': 0, 'Power down': 0, 'PGA Gain': 0, 'Input Type': 0,
                 'Biais': 0, 'SRB2': 0, 'SRB1': 0
-                       }
+                }
 
         self.settings = {
                 'PGA Gain':
@@ -32,16 +32,16 @@ class PinSettings:
                         {'No': 0, 'Yes': 1},
                 'SRB1':
                         {'Off': 0, 'On': 1}
-                        }
+                }
         self.add_pin_settings_to_layout(layout)
 
     def add_pin_settings_to_layout(self, layout):
         self.gr, self.ch_layout = create_gr()
         for i, (s_name, s) in enumerate(self.settings.items()):
             create_param_combobox(
-                self.ch_layout, None, (i%5, i//5), s,
-                conn_func=partial(self.change_hardware_settings, s_name),
-                editable=False, tip=s_name)
+                    self.ch_layout, None, (i%5, i//5), s,
+                    conn_func=partial(self.change_hardware_settings, s_name),
+                    editable=False, tip=s_name)
         layout.addWidget(self.gr, self.ch, 0)
 
     def change_hardware_settings(self, s_name, opt_selected):
