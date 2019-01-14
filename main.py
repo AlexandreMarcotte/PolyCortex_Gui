@@ -19,6 +19,7 @@ def main():
                                                                                # in many of this project classes
     # Create the Gui
     openbci_gui = MainWindow(app, gv)
+    gv.openbci_gui = openbci_gui
 
     @atexit.register   # work only if click on x on the window
     def save_data_at_exit():
