@@ -16,6 +16,7 @@ class Dispatcher:
 
         self.filter_process = FilterProcess(N_CH=N_CH, DEQUE_LEN=DEQUE_LEN)
         self.filter_itt = 0
+        # TEST
         self.once_every = 30
         self.filter_chunk = []
         self.use_filter = False
