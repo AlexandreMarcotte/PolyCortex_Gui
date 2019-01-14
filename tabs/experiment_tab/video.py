@@ -5,10 +5,12 @@
 # --General Packages--
 from PyQt5.QtCore import QDir, Qt, QUrl
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
-# from PyQt5.QtMultimediaWidgets import QVideoWidget
+# from PyQt5.QtMultimediaWidgets import QVideoWidget                           # TODO: ALEXM: find out why this line is not working in this project and working in other
+                                                                               # error message:  Process finished with exit code 139 (interrupted by signal 11: SIGSEGV)
 import PyQt5
 from PyQt5.QtWidgets import (QApplication, QFileDialog, QHBoxLayout, QLabel,
-                             QPushButton, QSizePolicy, QSlider, QStyle, QVBoxLayout, QWidget)
+                             QPushButton, QSizePolicy, QSlider, QStyle,
+                             QVBoxLayout, QWidget)
 from PyQt5.QtWidgets import QMainWindow,QWidget, QPushButton, QAction
 from PyQt5.QtGui import QIcon
 import sys
@@ -17,17 +19,16 @@ import pyqtgraph as pg
 # --My Packages--
 
 
-class Video_exp:
+class Video:
     def __init__(self, area, below_dock):
         self.dock = self.init_dock(area, below_dock)
         # Layout
         self.layout = pg.LayoutWidget()
         self.dock.addWidget(self.layout)
-        self.layout.addWidget()
         # Video player
-        self.mediaPlayer = PyQt5.QtMultimediaWidgets.QMediaPlayer(
-                None, QMediaPlayer.VideoSurface)
-        # videoWidget = QVideoWidget()
+        # PyQt5.QtMultimedia.QMediaPlayer
+        self.mediaPlayer = QMediaPlayer(None, QMediaPlayer.VideoSurface)
+        # videoWidget = PyQt5.QtMultimedia.()
         # self.layout.addWidget(videoWidget)
 
     def init_dock(self, area, below_dock):
