@@ -18,12 +18,12 @@ class btn:
         if max_height is not None:
             self.b.setMaximumHeight(max_height)
         if txt_color:
-            self.b.setStyleSheet(f'''background-color: {color}; 
-                                    color: {txt_color}; 
-                                    font-size: {font_size}pt;''')
+            self.b.setStyleSheet(
+                    f'''background-color: {color}; color: {txt_color}; 
+                        font-size: {font_size}pt;''')
         else:
-            self.b.setStyleSheet(f'''background-color: {color}; 
-                                     font-size: {font_size}pt''')
+            self.b.setStyleSheet(
+                    f'''background-color: {color}; font-size: {font_size}pt''')
         if tip is not None:
             self.b.setToolTip(tip)
         if toggle:

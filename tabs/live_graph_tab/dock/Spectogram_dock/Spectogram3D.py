@@ -4,7 +4,7 @@ from ... dock.dock import Dock
 import pyqtgraph as pg
 
 
-class FftOverTimeGraph2D(Dock):
+class Spectogram(Dock):
     def __init__(self, gv, layout):
 
         super().__init__(gv, 'fft', layout)
