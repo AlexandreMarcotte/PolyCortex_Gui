@@ -19,9 +19,9 @@ class Dispatcher:
         self.once_every = 30
         self.filter_chunk = []
         self.use_filter = False
-        self.N_DATA_BEFORE_FILTER = 100
-        self.min_pass_filter = 2
-        self.max_pass_filter = 100
+        self.N_DATA_BEFORE_FILTER = 0
+        self.min_pass_filter = 1
+        self.max_pass_filter = 124
         self.min_cut_filter = 57
         self.max_cut_filter= 63
         self.filter_min_bound = 0
