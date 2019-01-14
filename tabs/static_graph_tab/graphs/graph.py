@@ -2,19 +2,20 @@ import os
 from app.colors import *
 import pyqtgraph as pg
 
+
 class Graph:
     def __init__(self):
         self.plot = pg.PlotWidget()
         # self.curve = None
 
     def add_plot(self, layout, y=0, x=0, h=1, w=1, x_range=10000,
-                 hide_axis=False, show_grid=False):
+                 hide_axis=False, show_grid=False, alpha=0.5):
         if x_range:
             self.plot.setXRange(0, x_range)
         if hide_axis:
             self.plot.plotItem.hideAxis('bottom')
         if show_grid:
-            self.plot.plotItem.showGrid(y=True, alpha=0.5)
+            self.plot.plotItem.showGrid(y=True, alpha=alpha)
 
         layout.addWidget(self.plot, y, x, h, w)
 
