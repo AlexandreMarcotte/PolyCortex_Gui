@@ -32,8 +32,11 @@ class CreateSyntheticData(threading.Thread):
             self.s.append(self.m * sin(freq * self.t))
 
     def run(self):
-        t_init = time()
         """Create random data and a time stamp for each of them"""
+        self.create_synthetic_datas()
+
+    def create_synthetic_datas(self):
+        t_init = time()
         while 1:
             i = self.gv.n_data_created % len(self.t)
             chs_sig = []
