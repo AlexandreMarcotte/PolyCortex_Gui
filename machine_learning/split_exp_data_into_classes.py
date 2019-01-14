@@ -213,12 +213,12 @@ def main():
     # find_classifier_accuracy(x_test, y_test, clf)
 
     # Save
-    np.save('x_train', x_train)
-    np.save('y_train', y_train)
-    np.save('x_test', x_test)
-    np.save('y_test', y_test)
-    np.save('x_val', x_val)
-    np.save('y_val', y_val)
+    np.save('./np_data/x_train', x_train)
+    np.save('./np_data/y_train', y_train)
+    np.save('./np_data/x_test', x_test)
+    np.save('./np_data/y_test', y_test)
+    np.save('./np_data/x_val', x_val)
+    np.save('./np_data/y_val', y_val)
 
 
 if __name__ == '__main__':
