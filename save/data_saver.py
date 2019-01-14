@@ -1,11 +1,10 @@
-import atexit
 from functools import partial
 import os
 # from save_to_file import WriteDataToFile
 from app.colors import *
+from app.pyqt_frequently_used import select_file
 
 from PyQt5 import QtGui
-from PyQt5.QtWidgets import *
 
 
 class DataSaver:
@@ -47,12 +46,7 @@ class DataSaver:
         self.layout.addWidget(save_cur_data_b, self.pos[0]+1, self.pos[1], 1, 2)
 
     def save_file_dialog(self):
-        # From: https://pythonspot.com/pyqt5-file-dialog/
-        options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
-        f_name, _ = QFileDialog.getSaveFileName(
-            self.main_window, 'QFileDialog.getSaveFileName()', '',
-            'All Files (*);;Text Files (*.txt)', options=options)
+        f_name = select_file(self.main_window, open=False, f_extension='.csv')
         if f_name:
             if self.saving_type == 'eeg save':
                 self.gv.save_path = f_name
