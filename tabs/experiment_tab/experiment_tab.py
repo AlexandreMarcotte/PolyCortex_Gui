@@ -1,23 +1,13 @@
 # -*- coding: utf-8 -*-
 # -- General packages --
-from PyQt5 import QtGui, QtCore
-from PyQt5.QtCore import Qt, pyqtSlot
 from PyQt5.QtWidgets import *
-
 from pyqtgraph.dockarea import *
-
-import pyqtgraph as pg
-from functools import partial
-
-from random import randint
-
 # -- My packages --
-from tabs.experiment_tab.emg_experiment.action import Action
 from tabs.experiment_tab.emg_experiment.emg import EmgDock
 from .p300 import P300Dock
 from .N100 import N100Dock
 from .basic_p300 import BasicP300
-from app.colors import *
+from .video import Video
 
 
 class ExperimentTab(QWidget):
@@ -42,6 +32,8 @@ class ExperimentTab(QWidget):
     def create_docks(self):
         # EMG
         emg_dock = EmgDock(self.area, self.gv)
+        # Video
+        video_dock = Video(self.area, emg_dock.emg_dock)
         # N100
         n100_dock = N100Dock(self.area, emg_dock.emg_dock)
         # P300
