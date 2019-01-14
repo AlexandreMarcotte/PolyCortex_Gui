@@ -27,7 +27,7 @@ class LeftGraphLayout(Group):
     def init_graphs(self, parent_layout, gv):                                # TODO: ALEXM: find how redefinintion of functions are done
         for ch in range(gv.N_CH):
             self.layout, gr = self.create_gr_and_layout(
-                name=f'ch {ch + 1}', parent_layout=parent_layout, ch=ch)
+                    name=f'ch {ch + 1}', parent_layout=parent_layout, ch=ch)
             self.create_graphs()
 
     def create_graphs(self):
@@ -38,19 +38,20 @@ class LeftGraphLayout(Group):
     def create_classif_graph(self):
         classif_graph = ClassifGraph(self.gv)
         classif_graph.add_plot(
-            self.layout, y=1, x=4, x_range=self.x_range, show_grid=True)
+                self.layout, y=1, x=4, x_range=self.x_range, show_grid=True)
         classif_graph.add_region([self.r_left, self.r_left], yellow)
         self.classif_graphs.append(classif_graph)
 
     def create_portion_graph(self):
         portion_graph = PortionGraph()
-        portion_graph.add_plot(self.layout, y=0, x=4, x_range=self.x_range)
+        portion_graph.add_plot(
+                self.layout, y=0, x=4, x_range=self.x_range, show_grid=True)
         self.add_red_classif_region(portion_graph)
 
     def add_red_classif_region(self, portion_graph):
         # Put the classification region inside the full graph region
         portion_graph.add_region(
-            [self.r_left, self.r_left + self.gv.emg_signal_len], pale_red)
+                [self.r_left, self.r_left + self.gv.emg_signal_len], pale_red)
         portion_graph.classif_region = portion_graph.region
         self.portion_graphs.append(portion_graph)
 
