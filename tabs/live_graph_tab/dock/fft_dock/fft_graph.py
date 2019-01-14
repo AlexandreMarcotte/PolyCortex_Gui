@@ -62,7 +62,7 @@ class FftGraph:
         plot.plotItem.showGrid(x=True, y=True, alpha=0.3)
         plot.plotItem.setLabel(axis='bottom', text='Frequency', units='Hz')    # TODO: ALEXM : verifier l'uniter
         plot.plotItem.setLabel(axis='left', text='Amplitude', units='None')
-        plot.setXRange(0, 100)
+        plot.setXRange(0, 130)
         plot.setYRange(0, 1000000)
         # Add to tab layout
         self.plot_d.layout.addWidget(plot, 2, 0, 5, 5)
