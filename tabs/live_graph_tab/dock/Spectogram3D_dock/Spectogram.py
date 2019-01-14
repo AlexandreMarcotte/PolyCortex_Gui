@@ -1,12 +1,11 @@
+# --General Packages--
 import numpy as np
-# -- My packages --
+# --My packages--
 from ... dock.dock import Dock
 import pyqtgraph.opengl as gl
-from app.pyqt_frequently_used import *
-from app.activation_b import btn
 
 
-class FftOverTimeGraph3D(Dock):
+class Spectogram3D(Dock):
     def __init__(self, gv, layout):
 
         super().__init__(gv, 'fft', layout)
@@ -23,8 +22,6 @@ class FftOverTimeGraph3D(Dock):
 
         self.init_choose_ch_combobox()
         self.init_on_off_button()
-
-        # self.layout.addWidget(self.secondary_gr, 0, 0)
 
         self.timer.timeout.connect(self.update)
 
