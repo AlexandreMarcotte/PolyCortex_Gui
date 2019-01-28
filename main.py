@@ -1,35 +1,31 @@
-# General packages
-from collections import deque
-import numpy as np
-# My packages
-from visualisation_with_pyqt import OpenBciGui
+# --General packages--
 # PyQt5
 from PyQt5.QtWidgets import QApplication
 import sys
-# Dark theme
-import qdarkstyle
-
 import atexit
-# Game
-from game.main import RunGame
+# --My packages--
+from app.dispatcher import Dispatcher
+from mainwindow import MainWindow
+from save.write_to_file import write_to_file
 
 
 def main():
-    # Game
-    # run_game = RunGame()
-    # run_game.start()
-
     # Start the multigraphes
     app = QApplication(sys.argv)
-    # Apply dark theme
-    app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
+
+    N_CH = 8
+    DEQUE_LEN = 1250
+    gv = Dispatcher(N_CH=N_CH, DEQUE_LEN=DEQUE_LEN)                            # Create the global variable that will be
+                                                                               # in many of this project classes
     # Create the Gui
-    open_bci_gui = OpenBciGui()
-    open_bci_gui.create_gui()
+    openbci_gui = MainWindow(app, gv)
+    gv.openbci_gui = openbci_gui
 
     @atexit.register   # work only if click on x on the window
     def save_data_at_exit():
-        open_bci_gui.main_window.tab_1.write_to_file()
+        # pass
+        print('saving')
+        write_to_file(gv)                                                    # TODO: ALEXM: kill all the thread here (create a JOIN method in the threads)
 
     # start the main tread that contains all the timers
     sys.exit(app.exec_())

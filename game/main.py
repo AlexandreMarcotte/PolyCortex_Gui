@@ -3,30 +3,52 @@ import pygame as pg
 import random
 from game.settings import *
 from game.sprites import *
-# multithreading 
+import os
+# multithreading
 import threading
 
 
+def set_pygame_window_at_a_desired_pos():
+    pg.display.set_mode((0, 0), pg.FULLSCREEN)
+    screen_info = pg.display.Info()
+    SCREEN_W = screen_info.current_w
+    SCREEN_H = screen_info.current_h
+    pg.quit()
+    os.environ['SDL_VIDEO_WINDOW_POS'] = f'{SCREEN_W},{SCREEN_H}'
+    return SCREEN_W, SCREEN_H
+
+
 class Game:
-    def __init__(self):
+    def __init__(self, gv):
         """
         Initialize game window, etc
         """
+        self.gv = gv
+
+        SCREEN_W, SCREEN_H = set_pygame_window_at_a_desired_pos()
         pg.init()
         pg.mixer.init()
-        self.screen = pg.display.set_mode((WIDTH, HEIGHT))
-        pg.display.set_caption('My Game')
+        pg.display.set_mode((WIDTH, HEIGHT))
+
+        self.screen = pg.display.set_mode(
+                (WIDTH, HEIGHT))
+        self.gv.openbci_gui.setGeometry(
+                0, 0, SCREEN_W - WIDTH, HEIGHT)
+
+        pg.display.set_caption('EMG Platformer')
         self.clock = pg.time.Clock()
         self.running = True
         self.all_sprites = None
         self.playing = False
+
+        self.itt = 0
 
     def new(self):
         # start a new game
         self.all_sprites = pg.sprite.Group()
         self.platforms = pg.sprite.Group()
         # player
-        self.player = Player(self)
+        self.player = Player(self, self.gv)
         self.all_sprites.add(self.player)
         # platform
         for plat in PLATFORM_LIST:
@@ -49,8 +71,8 @@ class Game:
         self.all_sprites.update()
         # check if player hits a platform - only if falling
         if self.player.vel.y > 0:
-            hits = pg.sprite.spritecollide(self.player, self.platforms,
-                                           dokill=False)
+            hits = pg.sprite.spritecollide(
+                    self.player, self.platforms, dokill=False)
             if hits:
                 self.player.pos.y = hits[0].rect.top + 1
                 self.player.vel.y = 0
@@ -63,9 +85,11 @@ class Game:
                 if self.playing:
                     self.playing = False
                     self.running = False
-            if event.type == pg.KEYDOWN:
-                if event.key == pg.K_SPACE:
-                    self.player.jump()
+        self.itt += 1
+        if self.gv.class_detected[0] == 1:
+        # if event.type == pg.KEYDOWN:
+        #     if event.key == pg.K_SPACE:
+            self.player.jump()
 
     def draw(self):
         # Game Loop - draw
@@ -83,9 +107,9 @@ class Game:
 
    
 class RunGame(threading.Thread):
-    def __init__(self):
+    def __init__(self, gv):
         super().__init__()
-        self.g = Game()
+        self.g = Game(gv)
         self.g.show_start_screen()
 
     def run(self):
@@ -95,6 +119,6 @@ class RunGame(threading.Thread):
 
 
 if __name__ == '__main__':
-    run_game = RunGame()
+    run_game = RunGame(gv)
     run_game.start()
 
