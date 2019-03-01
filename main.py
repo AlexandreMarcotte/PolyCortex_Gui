@@ -7,9 +7,11 @@ import atexit
 from app.dispatcher import Dispatcher
 from mainwindow import MainWindow
 from save.write_to_file import write_to_file
+import pyqtgraph as pg
 
 
 def main():
+    pg.setConfigOptions(antialias=True)
     # Start the multigraphes
     app = QApplication(sys.argv)
 
