@@ -21,7 +21,7 @@ class ClassifGraph:
         # model_path = os.path.join(
         #         os.getcwd(), './machine_learning/models/poly2_model.h5')
         # print('model_path', model_path)
-        self.model = load_model('./machine_learning/models/poly2_model.h5')
+        self.model = load_model('./machine_learning/models/cyn_model.h5')
 
         self.CLASSIF_MEMORY_LEN = 5
         self.last_classif = np.array(

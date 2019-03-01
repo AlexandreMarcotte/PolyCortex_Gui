@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def write_to_file(gv):
     print(f'Save data to file...')
     with open(gv.save_path, 'w') as f:

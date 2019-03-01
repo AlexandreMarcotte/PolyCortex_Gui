@@ -1,6 +1,5 @@
 import numpy as np
 import threading
-from collections import deque
 from time import time, sleep
 import csv
 

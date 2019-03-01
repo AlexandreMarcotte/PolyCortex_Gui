@@ -7,6 +7,7 @@ from app.colors import *
 # -- General packages -- 
 from PyQt5.QtGui import *
 
+
 class LeftGraphLayout(Group):
     def __init__(self, gv, right_panel):
         super().__init__()

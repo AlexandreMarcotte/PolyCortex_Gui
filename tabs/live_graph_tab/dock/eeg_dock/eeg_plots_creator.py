@@ -100,8 +100,8 @@ class EegPlotsCreator:
 
     def create_write_hardware_dock(self):
         write_hardware_d = InnerDock(
-                self.layout, 'Write to hardware', b_pos=(0, 4), toggle_button=True,
-                size=(1, 1), b_checked=True)
+                self.layout, 'Write to hardware', b_pos=(0, 4),
+                toggle_button=True, size=(1, 1), b_checked=True)
         self.write_hardware_l_e = QtGui.QLineEdit('x1040000X')
         write_hardware_d.layout.addWidget(self.write_hardware_l_e)
         btn('Write serial', write_hardware_d.layout,

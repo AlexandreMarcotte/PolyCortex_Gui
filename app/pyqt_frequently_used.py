@@ -3,6 +3,8 @@ from PyQt5.QtCore import Qt
 from app.colors import *
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QLineEdit
+import matplotlib.pyplot as plt
+import numpy as np
 
 
 def select_file(main_window, open=True, f_extension='.py'):
@@ -20,6 +22,7 @@ def select_file(main_window, open=True, f_extension='.py'):
             main_window, 'QFileDialog.getSaveFileName()', '',
             f'All Files (*);;Text Files (*{f_extension})', options=options)
     return f_name
+
 
 def create_gr(margin=False):
     l = QGridLayout()
@@ -113,4 +116,12 @@ class TripletBox:
             l_e.setMaximumWidth(30)
             layout.addWidget(l_e, 1, col+i)
             self.all_l_e.append(l_e)
+
+
+def create_cmap(z):
+    cmap = plt.get_cmap('jet')
+    min_z = np.min(z)
+    max_z = np.max(z)
+    cmap = cmap((z - min_z)/(max_z - min_z))
+    return cmap
 
