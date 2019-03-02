@@ -11,7 +11,8 @@ import pyqtgraph as pg
 
 
 def main():
-    pg.setConfigOptions(antialias=True)
+    # Make it look WAY better but it is a bit more laggy, set it as a setting that can be activated
+    pg.setConfigOptions(antialias=True)  # Look at how much it change the performances
     # Start the multigraphes
     app = QApplication(sys.argv)
 

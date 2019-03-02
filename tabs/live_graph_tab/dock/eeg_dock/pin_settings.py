@@ -44,11 +44,18 @@ class PinSettings:
                     editable=False, tip=s_name)
         layout.addWidget(self.gr, self.ch, 0)
 
-    def change_hardware_settings(self, s_name, opt_selected):
-        sett_command = self.settings[s_name][opt_selected]
+    def change_hardware_settings(self, setting_name, opt_selected):
+        if setting_name == 'PGA Gain':
+            # Remove the x in the string of the gain
+            gain = opt_selected[1:]
+            self.gv.gain = int(gain)
+            # Calcul the new scalling factor
+            self.gv.scaling_factor[self.ch] = 4.5 / (self.gv.gain * (2**(23-1)))
+
+        sett_command = self.settings[setting_name][opt_selected]
         # Create the setting values
         self.command['Ch'] = self.ch + 1
-        self.command[s_name] = sett_command
+        self.command[setting_name] = sett_command
         # Start the setting string
         byte_settings = 'x'
         for key, val in self.command.items():

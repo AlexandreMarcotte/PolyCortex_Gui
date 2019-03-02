@@ -13,10 +13,15 @@ class Dispatcher:
         self.main_window = None
         self.N_CH = N_CH
         self.DEQUE_LEN = DEQUE_LEN
+        self.gain = 1
+        # Initialise the scaling factor
+        sf = 4.5 / (self.gain * (2**(23-1)))
+        # Create the scaling factor for every channel
+        self.scaling_factor = [sf for _ in range(N_CH)]
+
 
         self.filter_process = FilterProcess(N_CH=N_CH, DEQUE_LEN=DEQUE_LEN)
         self.filter_itt = 0
-        # TEST
         self.once_every = 30
         self.filter_chunk = []
         self.use_filter = False
@@ -84,6 +89,12 @@ class Dispatcher:
         """Callback function to use in the generating functions"""
         if self.stream_origin == 'Stream from OpenBCI':
             signal = signal.channel_data
+            # Apply the scaling factor to all channels to the data to have
+            # the real voltage amplitude
+            # signal = [s * self.scaling_factor[s_no]
+            #           for s_no, s in enumerate(signal)]   # The machine learning was done
+            # without the scaling so let it commented for the moment while I do other training
+            # data on scaled and filtered signal.
 
         self.filter_itt += 1
         for ch in range(self.N_CH):
