@@ -19,7 +19,6 @@ class Dispatcher:
         # Create the scaling factor for every channel
         self.scaling_factor = [sf for _ in range(N_CH)]
 
-
         self.filter_process = FilterProcess(N_CH=N_CH, DEQUE_LEN=DEQUE_LEN)
         self.filter_itt = 0
         self.once_every = 30

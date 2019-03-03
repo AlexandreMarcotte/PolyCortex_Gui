@@ -21,15 +21,18 @@ class CreateSyntheticData(threading.Thread):
         self.t = np.linspace(0, 2 * pi, self.gv.DEQUE_LEN)
         ## signal shape
         self.m = 1000
-        self.s1 = self.m * sin(3*self.t)
-        self.s2 = self.m * sin(20 * self.t)
-        self.s3 = self.m * sin(40 * self.t)
-        self.s4 = self.m * sin(60 * self.t)
+        # Modulation factor is use to have the proper frequency of the signal
+        # from their omega value based on the read speed intented by the program
+        modulation_factor = len(self.t) / read_freq
+        self.s1 = self.m * sin(3 *  modulation_factor * self.t)
+        self.s2 = self.m * sin(20 * modulation_factor * self.t)
+        self.s3 = self.m * sin(40 * modulation_factor * self.t)
+        self.s4 = self.m * sin(60 * modulation_factor * self.t)
 
         # 100 harmonic signal to test filtering
         self.s = []
         for freq in range(1, 100, 1):
-            self.s.append(self.m * sin(freq * self.t))
+            self.s.append(self.m * sin(freq * modulation_factor * self.t))
 
     def run(self):
         """Create random data and a time stamp for each of them"""
