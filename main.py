@@ -7,9 +7,12 @@ import atexit
 from app.dispatcher import Dispatcher
 from mainwindow import MainWindow
 from save.write_to_file import write_to_file
+import pyqtgraph as pg
 
 
 def main():
+    # Make it look WAY better but it is a bit more laggy, set it as a setting that can be activated
+    pg.setConfigOptions(antialias=True)  # Look at how much it change the performances
     # Start the multigraphes
     app = QApplication(sys.argv)
 

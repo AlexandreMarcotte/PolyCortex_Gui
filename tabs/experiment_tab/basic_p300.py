@@ -45,11 +45,11 @@ class BasicP300(Experiment):
             # Red
             self.clear_screen()
             p = SquareItem(
-                x=np.zeros(n_red_rect),
-                y=np.linspace(0, 10, n_red_rect),
-                w=10 * np.ones(n_red_rect),
-                h=0.35 * np.ones(n_red_rect),
-                color=p300_white)
+                    x=np.zeros(n_red_rect),
+                    y=np.linspace(0, 10, n_red_rect),
+                    w=10 * np.ones(n_red_rect),
+                    h=0.35 * np.ones(n_red_rect),
+                    color=p300_white)
             self.refresh()
             self.plot.addItem(p)
             self.gv.experiment_type = 1

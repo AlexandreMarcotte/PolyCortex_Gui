@@ -7,6 +7,7 @@ from app.rotated_button import RotatedButton
 from functools import partial
 from PyQt5 import QtCore, QtGui
 import sys
+import os
 # --My Packages--
 from machine_learning.cnn_1D import Learner
 from app.pyqt_frequently_used import select_file
@@ -98,11 +99,12 @@ class MachineLearningTab(QWidget):
         self.result_txt_edit.insertPlainText(message)
 
     # Put on a new thread
-    def train_learner_cnn(self):
+    def train_learner_cnn(self, ):
         sys.stdout = Stream_console(self.result_txt_edit, self)
         sys.stdout.message.connect(self.write_consol_message_in_txt_edit)
 
         hist, model = self.learner.train_cnn()
+        save_path = os.path.join(os.getcwd(), self.learner.save_model_path)
         model.save(self.learner.save_model_path)
         self.plot_results(self.training_plot, hist)
         # Put the stdout back to the console
@@ -257,10 +259,16 @@ class MachineLearningTab(QWidget):
 
     def create_training_toolbox(self, tb):
         self.model_form = {
-                'n epoch': pg.SpinBox(value=self.learner.n_epoch, step=1),
+                'n epoch': self.create_spin_box(
+                        value=self.learner.n_epoch, step=1),
                 'batch size': pg.SpinBox(value=self.learner.batch_size, step=1)
                 }
         self.create_toolbox(tb, 'Training', self.model_form)
+
+    def create_spin_box(self, value, step=1):
+        spin_box = pg.SpinBox(value=value, step=step)
+        spin_box.step = step
+        return spin_box
 
     def init_combo_param(self, params):
         combo = QComboBox()
@@ -271,15 +279,25 @@ class MachineLearningTab(QWidget):
     def create_and_connect_spin_box(self, form_dict, f_l, toolbox_name):
         for title_label, param in form_dict.items():
             if type(param) is pg.SpinBox:
+                try:
+                    print('param', param.step)
+                except AttributeError as e:
+                    param.step = 0.1
+                    print('error', e)
+
                 param.valueChanged.connect(partial(
-                        self.change_var_value, title_label, toolbox_name))
+                        self.change_var_value, title_label, toolbox_name,
+                        param.step))
             elif type(param) is QComboBox:
                 param.activated[str].connect(partial(
                         self.change_var_value, title_label, toolbox_name))
             f_l.addRow(QLabel(f'{title_label}: '), param)
         return f_l
 
-    def change_var_value(self, var_name, toolbox_name, value):
+    def change_var_value(self, var_name, toolbox_name, value, step=0.1):
+        if type(step) is int:
+            print('step')
+
         exec(f'self.learner.{var_name.replace(" ", "_")} = {value}')
 
     def open_toolbox(self, checked):

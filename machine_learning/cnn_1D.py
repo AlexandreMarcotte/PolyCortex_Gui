@@ -10,30 +10,35 @@ import numpy as np
 import matplotlib.pyplot as plt
 from time import sleep
 import os
-# --My Packages--
 
 
 class Learner:
-    def __init__(self):
+    def __init__(self, path_till_load_file='machine_learning/np_data'):
+        self.path_till_load_file = path_till_load_file
+
         self.n_classes = 3
         self.load_all_data()
         self.init_cnn_variables()
 
     def load_all_data(self):
-        self.x_train, self.y_train = self.load_data('x_train.npy', 'y_train.npy')
-        self.x_test, self.y_test = self.load_data('x_test.npy', 'y_test.npy')
+        self.x_train, self.y_train = self.load_data(
+                'x_train.npy', 'y_train.npy')
+        self.x_test, self.y_test = self.load_data(
+                'x_test.npy', 'y_test.npy')
         self.x_val, self.y_val = self.load_data('x_val.npy', 'y_val.npy')
         self.y_val = to_categorical(self.y_val, num_classes=3)
 
     def load_data(self, x_f_name, y_f_name):
-        x = np.load(
-                os.path.join(os.getcwd(), 'machine_learning/np_data', x_f_name))
+
+        path = os.path.join(os.getcwd(), self.path_till_load_file)
+        x = np.load(os.path.join(path, x_f_name))
         x = x.reshape(-1, *x.shape[-2:])
-        y= np.load(os.path.join(os.getcwd(), 'machine_learning/np_data', y_f_name))
+        y= np.load(os.path.join(path, y_f_name))
+
         return x, y
 
     def init_cnn_variables(self):
-        self.n_epoch = 30
+        self.n_epoch = 3
         self.batch_size = 60
         self.n_filters = [90, 20]
         self.n_pool = 10
@@ -44,8 +49,9 @@ class Learner:
         self.optimizer, self.optimizer_params = self.select_optimizer()
         self.activation_unit = 'relu'
 
-        self.save_model_path = './machine_learning/models/poly2_model.h5'
-        self.load_model_path = './machine_learning/models/poly2_model.h5'
+        self.model_name = 'poly3_model.h5'
+        self.save_model_path = os.path.join('machine_learning/models/', self.model_name)
+        self.load_model_path = os.path.join('machine_learning/models/', self.model_name)
 
     def train_cnn(self):
         """
@@ -155,9 +161,9 @@ if __name__ == '__main__':
     hist, model = learner.train_cnn()
     learner.plot_results(hist)
 
-    model.save('model_test.h5')
+    model.save(learner.save_model_path)
 
-    learner.show_evaluation_plots()
+    # learner.show_evaluation_plots()
 
 
 
