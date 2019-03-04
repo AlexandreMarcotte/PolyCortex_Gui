@@ -1,4 +1,5 @@
 import numpy as np
+from pyqtgraph.Qt import QtGui
 # -- My packages --
 from ... dock.dock import Dock
 import pyqtgraph as pg
@@ -26,8 +27,33 @@ class Spectogram(Dock):
         """"""
         vb = pg.ViewBox()
         vb.setAspectLocked()
+        # img of the spectrogram
         img = pg.ImageItem()                                                   # TODO: ALEXM: rotate so that it is in the right direction (longest with longest)
         vb.addItem(img)
+        # grid
+        g = pg.GridItem()
+        vb.addItem(g)
+        # pen for lines
+        pen = pg.mkPen(color=(255, 255, 255, 90), width=1)
+        # brain wave freq text
+        for w_name, w in self.gv.waves.items():
+            w_freq_begin_pos = w.freq_range[0]
+            # (vertical line) - Separation line between the different wave frequencies
+            l = pg.InfiniteLine(w_freq_begin_pos, pen=pen)
+            vb.addItem(l)
+            # (txt) - Add the name of each specific wave frequency
+            if w_name == 'gamma':
+                w_freq_end_pos = w.freq_range[1]
+                l = pg.InfiniteLine(w_freq_end_pos, pen=pen)
+                vb.addItem(l)
+
+            font = QtGui.QFont()
+            font.setPixelSize(10)
+            w_name_item = pg.TextItem(w_name, angle=90)
+            w_name_item.setFont(font)
+            w_name_item.setPos(w_freq_begin_pos-2, 200)
+            vb.addItem(w_name_item)
+
         pg_layout = pg.GraphicsLayoutWidget()
         pg_layout.addItem(vb)
         return pg_layout, img

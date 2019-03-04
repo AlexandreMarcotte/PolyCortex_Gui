@@ -1,7 +1,5 @@
 # --General Packages--
 import pyqtgraph as pg
-from PyQt5 import QtGui
-from functools import partial
 # -- My packages --
 from ... dock.dock import Dock
 from app.pyqt_frequently_used import *
