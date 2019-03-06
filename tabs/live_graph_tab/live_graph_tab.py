@@ -13,8 +13,8 @@ from .dock.power_band_over_time_dock.power_band_over_time_graph import \
 from .dock.fft_dock.fft_graph import FftGraph
 from .dock.classif_dock.classification_plot_creator import ClassifPlotCreator
 from .dock.viz_3D_dock.viz_3D import Viz3D
-from .dock.Spectogram3D_dock.Spectogram3D import Spectogram3D
-from .dock.Spectogram_dock.Spectogram import Spectogram
+from .dock.spectogram3d_dock.Spectogram3D import Spectogram3D
+from .dock.spectogram_dock.Spectogram import Spectogram
 
 
 class LiveGraphTab(QWidget):

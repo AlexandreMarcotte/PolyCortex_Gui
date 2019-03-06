@@ -39,8 +39,8 @@ from generate_signal.from_file import FileReader
 
 class MainEegDock:
     def __init__(self, gv, layout):
-        # General Layout
         self.gv = gv
+        # General Layout
         self.layout = layout
 
         self.dock_area = DockArea()
@@ -71,26 +71,9 @@ class MainEegDock:
         self.grps = self.create_all_eeg_plot()
         self.eeg_dock = self.create_eeg_dock(self.grps)
         # Need to be fully created after the eeg dock is created
-        self.settings_pin_d = pin_settings_dock.create_pins_setting_dock()
+        self.settings_pins_d = pin_settings_dock.create_pins_setting_dock()
         # Create time dock
-        TimeDock(self)
-
-    def start_freq_counter_timer(self):
-        self.freq_counter_timer = QtCore.QTimer()
-        self.freq_counter_timer.timeout.connect(self.freq_counter.update)
-        self.freq_counter_timer.start(50)
-
-    def change_num_plot_per_row(self, plot_per_row):
-        # Eeg dock
-        self.eeg_dock.dock.close()
-        self.GR_PER_COL = int(plot_per_row)
-        self.eeg_dock = self.create_eeg_dock(self.grps)
-        # Time dock
-        self.dock_area.moveDock(self.time_d.dock, 'bottom', self.eeg_dock.dock)
-        # Hardware settings dock
-        self.dock_area.moveDock(
-            self.setting_pins_d.dock, 'left', self.eeg_dock.dock)
-
+        self.time_dock = TimeDock(self)
 
     def init_streaming_source(self):
         """      """
@@ -122,6 +105,11 @@ class MainEegDock:
         except AttributeError as e:
             print("Come on bro, this  value doesn't make sens")
 
+    def start_freq_counter_timer(self):
+        self.freq_counter_timer = QtCore.QTimer()
+        self.freq_counter_timer.timeout.connect(self.freq_counter.update)
+        self.freq_counter_timer.start(50)
+
     @QtCore.pyqtSlot(bool)
     def start_timers(self, checked):
         self.stream_source = self.init_streaming_source()
@@ -138,15 +126,17 @@ class MainEegDock:
             # self.stream_source.join()
         # self.set_default_hardware_param()
 
-    def create_eeg_dock(self, grps):
-        eeg_d = InnerDock(self.layout, 'Part EEG')
-        splitters = self.create_splitter(grps)
-        s_factor = len(splitters)//self.GR_PER_COL
-        for no, s in enumerate(splitters):
-            # Add 1 to the row to be in line with the hardware settings
-            eeg_d.layout.addWidget(s, no%s_factor, no//s_factor)
-        self.dock_area.addDock(eeg_d.dock)
-        return eeg_d
+    def change_num_plot_per_row(self, plot_per_row):
+        # Eeg dock
+        self.eeg_dock.dock.close()
+        self.GR_PER_COL = int(plot_per_row)
+        self.eeg_dock = self.create_eeg_dock(self.grps)
+        # Time dock
+        self.dock_area.moveDock(
+            self.time_dock.time_d.dock, 'bottom', self.eeg_dock.dock)
+        # Hardware settings dock
+        self.dock_area.moveDock(
+            self.settings_pins_d.dock, 'left', self.eeg_dock.dock)
 
     @QtCore.pyqtSlot(bool)
     def open_dock(self, dock, checked):
@@ -157,6 +147,26 @@ class MainEegDock:
 
     def set_saver(self, data_saver):
         self.data_saver = data_saver
+
+    def set_default_hardware_param(self):
+        byte_settings = 'x1006110X'
+        try:
+            for b in byte_settings:
+                self.stream_source.board.ser_write(b.encode())
+                sleep(0.01)
+        except AttributeError as e:
+            # Means we are not streaming from the OpenBCI
+            print('ERROR', e)
+
+    def create_eeg_dock(self, grps):
+        eeg_d = InnerDock(self.layout, 'Part EEG')
+        splitters = self.create_splitter(grps)
+        s_factor = len(splitters)//self.GR_PER_COL
+        for no, s in enumerate(splitters):
+            # Add 1 to the row to be in line with the hardware settings
+            eeg_d.layout.addWidget(s, no%s_factor, no//s_factor)
+        self.dock_area.addDock(eeg_d.dock)
+        return eeg_d
 
     def create_all_eeg_plot(self):
         """
@@ -236,16 +246,6 @@ class MainEegDock:
                 toggle=True, max_width=19, max_height=19,
                 tip=f'Start/Stop the ch{ch+1} signal')
         self.btns.append(self.btn)
-
-    def set_default_hardware_param(self):
-        byte_settings = 'x1006110X'
-        try:
-            for b in byte_settings:
-                self.stream_source.board.ser_write(b.encode())
-                sleep(0.01)
-        except AttributeError as e:
-            # Means we are not streaming from the OpenBCI
-            print('ERROR', e)
 
     def assign_action_to_ch(self, ch, ch_layout):
         max_width = 17

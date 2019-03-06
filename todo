@@ -1,13 +1,16 @@
 - Add grid 3D to spectogram 3D
 - improve the visual of the game
-    -
 - Ability to have two player at the same time on the game
 - Do other learning with scaled data or (unscale them for the predictor?)
 - Ability to change the x axis len in the spectogram from the settings
     (so that you can focus on lets say only (0->100)
-- Put the spectogram in the direction so that the time is the x direction (?)
+
 - Add axis
 - Ability to turn on off the clean graph
+- Clean MainEegDock to have EegDock in another class and to put the method
+  that correspond to settings_dock inside its class
+- Add axis to the spectogram
+- Add moving display legend of the value of each line at there end (like in Charles application)
 
 
 
@@ -15,6 +18,5 @@
 
 
 
-
-
+- (DONE) Put the spectogram in the direction so that the time is the x direction (?)
 - (DONE) Ajouter des axes axes au spectogram
