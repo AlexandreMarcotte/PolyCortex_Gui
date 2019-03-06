@@ -37,9 +37,7 @@ from generate_signal.from_file import FileReader
 # from generate_signal.from_muse import StreamFromMuse
 
 
-
-
-class EegPlotsCreator:
+class MainEegDock:
     def __init__(self, gv, layout):
         # General Layout
         self.gv = gv

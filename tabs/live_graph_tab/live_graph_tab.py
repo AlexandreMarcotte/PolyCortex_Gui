@@ -6,7 +6,7 @@ import pyqtgraph as pg
 from pyqtgraph.dockarea import *
 # -- My packages --
 ## Graphes
-from .dock.eeg_dock.eeg_plots_creator import EegPlotsCreator
+from .dock.eeg_dock.eeg_plots_creator import MainEegDock
 from .dock.power_band_dock.power_band_graph import PowerBandGraph
 from .dock.power_band_over_time_dock.power_band_over_time_graph import \
         PowerBandGraphOverTime
@@ -40,7 +40,7 @@ class LiveGraphTab(QWidget):
 
     def init_dock_layout(self):
         self.eeg = DockHandler(
-                'EEG', self, self.docks_menu, EegPlotsCreator, [self.gv],
+                'EEG', self, self.docks_menu, MainEegDock, [self.gv],
                 'left', size=(6, 10), scroll=True)
 
         self.fft = DockHandler(

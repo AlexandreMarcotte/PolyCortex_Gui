@@ -3,8 +3,8 @@ from tabs.live_graph_tab.dock.banner_dock.banner import Banner
 
 
 class BannerDock:
-    def __init__(self, eeg_dock):
-        self.eeg_dock = eeg_dock
+    def __init__(self, main_eeg_dock):
+        self.eeg_dock = main_eeg_dock
         self.create_dock()
 
     def create_dock(self):

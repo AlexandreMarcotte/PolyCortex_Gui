@@ -8,31 +8,31 @@ import pyqtgraph as pg
 
 
 class SettingsDock:
-    def __init__(self, eeg_dock):
-        self.eeg_dock = eeg_dock
+    def __init__(self, main_eeg_dock):
+        self.main_eeg_dock = main_eeg_dock
         self.create_settings_dock()
 
     def create_settings_dock(self):
         settings_d = InnerDock(
-            self.eeg_dock.layout, 'Settings', b_pos=(0, 1),toggle_button=True,
+            self.main_eeg_dock.layout, 'Settings', b_pos=(0, 1),toggle_button=True,
             size=(1, 1))
         # Stop/Start button
         self.create_buttons(settings_d.layout)
         # Plot parameter
         self.create_all_combobox(settings_d.layout)
-        self.eeg_dock.dock_area.addDock(settings_d.dock)
+        self.main_eeg_dock.dock_area.addDock(settings_d.dock)
 
     def create_all_combobox(self, start_stop_l):
         create_param_combobox(
             start_stop_l, 'Vertical scale', (0, 1),
             ['Auto', '10 uv', '100 uv', '1000 uv', '10000 uv', '100000 uv'],
-            conn_func=self.eeg_dock.scale_y_axis)
+            conn_func=self.main_eeg_dock.scale_y_axis)
         create_param_combobox(
             start_stop_l, 'Horizontal scale', (0, 2), ['5s', '7s', '10s'],
             editable=False)
         create_param_combobox(
             start_stop_l, 'Nb of columns', (0, 3), ['1', '2', '4'],
-            editable=False, conn_func=self.eeg_dock.change_num_plot_per_row)
+            editable=False, conn_func=self.main_eeg_dock.change_num_plot_per_row)
         create_param_combobox(
             start_stop_l, 'Aliasing', (0, 4), ['on', 'off'],
             editable=False, conn_func=self.start_aliasing)
@@ -40,7 +40,7 @@ class SettingsDock:
     def create_buttons(self, layout):
         """Assign pushbutton for starting"""
         btn('Start', layout, (0, 0), toggle=True, max_width=100,
-            func_conn=self.eeg_dock.start_timers, color=dark_blue_tab,
+            func_conn=self.main_eeg_dock.start_timers, color=dark_blue_tab,
             txt_color=white)
 
     def start_aliasing(self, txt):  # Need to do it before creating the graph
