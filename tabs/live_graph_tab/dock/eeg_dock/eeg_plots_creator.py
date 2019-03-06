@@ -17,7 +17,6 @@ from app.colors import *
 from app.activation_b import btn
 from tabs.region import Regions
 from .eeg_graph import EegGraph
-from .pin_settings import PinSettings
 
 from app.pyqt_frequently_used import create_splitter, create_gr
 
@@ -27,6 +26,7 @@ from ..eeg_dock.inner_docks.write_hardware_dock import WriteHardwareDock
 from ..eeg_dock.inner_docks.banner_dock import BannerDock
 from ..eeg_dock.inner_docks.saving_dock import SavingDock
 from ..eeg_dock.inner_docks.settings_dock import SettingsDock
+from ..eeg_dock.inner_docks.pin_settings_dock import PinsSettingDock
 
 from data_processing_pipeline.frequency_counter import FrequencyCounter
 # Generate signal
@@ -67,12 +67,13 @@ class EegPlotsCreator:
         SavingDock(self)
         WriteHardwareDock(self)
         BannerDock(self)
-
+        pin_settings_dock = PinsSettingDock(self)
         # EEG
         self.grps = self.create_all_eeg_plot()
         self.eeg_dock = self.create_eeg_dock(self.grps)
-        # Settings pins
-        self.setting_pins_d = self.create_pins_setting_dock()
+        # Need to be fully created after the eeg dock is created
+        self.settings_pin_d = pin_settings_dock.create_pins_setting_dock()
+
         # Create time dock
         self.create_time_dock()
 
@@ -138,24 +139,6 @@ class EegPlotsCreator:
                 self.timers[i].stop()
             # self.stream_source.join()
         # self.set_default_hardware_param()
-
-    def create_pins_setting_dock(self):
-        settings_pins_d = self.set_settings_pins_layout()
-        self.dock_area.addDock(
-                settings_pins_d.dock, 'left', self.eeg_dock.dock)
-        settings_pins_d.dock.hide()
-        return settings_pins_d
-
-    def set_settings_pins_layout(self):
-        settings_pins_d = InnerDock(
-                self.layout, 'Pins settings', b_pos=(1, 0), toggle_button=True,
-                size=(1, 1), b_checked=False, b_orientation='east',
-                background_color='k')
-        self.pins_settings = []
-        for ch in range(self.gv.N_CH):
-            self.pins_settings.append(
-                    PinSettings(self, self.gv, settings_pins_d.layout, ch))
-        return settings_pins_d
 
     def create_eeg_dock(self, grps):
         eeg_d = InnerDock(self.layout, 'Part EEG')
