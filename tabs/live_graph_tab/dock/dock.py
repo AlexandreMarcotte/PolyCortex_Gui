@@ -6,7 +6,7 @@ from pyqtgraph.dockarea import *
 # -- My Packages --
 from app.activation_b import btn
 from app.pyqt_frequently_used import *
-from tabs.live_graph_tab.dock.Inner_dock import InnerDock
+from tabs.live_graph_tab.dock.inner_dock import InnerDock
 
 
 class Dock:

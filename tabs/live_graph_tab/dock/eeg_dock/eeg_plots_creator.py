@@ -1,4 +1,5 @@
 # -- General Packages --
+import re
 from time import sleep
 from collections import deque
 import numpy as np
@@ -6,16 +7,9 @@ import pyqtgraph as pg
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt
-import re
 from functools import partial
 from pyqtgraph.dockarea import *
 # -- My Packages --
-# Generate signal
-from generate_signal.from_openbci import SampleDataFromOPENBCI
-from generate_signal.from_synthetic_data import CreateSyntheticData
-from generate_signal.from_file import FileReader
-# from generate_signal.from_muse import StreamFromMuse
-
 from .ch_number_action import ChNumberAction
 from .action_button import ActionButton
 
@@ -25,13 +19,23 @@ from tabs.region import Regions
 from .eeg_graph import EegGraph
 from .pin_settings import PinSettings
 
-from data_processing_pipeline.frequency_counter import FrequencyCounter
-from app.pyqt_frequently_used import (
-        create_param_combobox, create_splitter, create_gr)
-from save.data_saver import DataSaver
-from tabs.live_graph_tab.dock.banner_dock.banner import Banner
+from app.pyqt_frequently_used import create_splitter, create_gr
 
-from tabs.live_graph_tab.dock.Inner_dock import InnerDock
+from tabs.live_graph_tab.dock.inner_dock import InnerDock
+# -Inner Docks-
+from ..eeg_dock.inner_docks.write_hardware_dock import WriteHardwareDock
+from ..eeg_dock.inner_docks.banner_dock import BannerDock
+from ..eeg_dock.inner_docks.saving_dock import SavingDock
+from ..eeg_dock.inner_docks.settings_dock import SettingsDock
+
+from data_processing_pipeline.frequency_counter import FrequencyCounter
+# Generate signal
+from generate_signal.from_openbci import SampleDataFromOPENBCI
+from generate_signal.from_synthetic_data import CreateSyntheticData
+from generate_signal.from_file import FileReader
+# from generate_signal.from_muse import StreamFromMuse
+
+
 
 
 class EegPlotsCreator:
@@ -57,14 +61,13 @@ class EegPlotsCreator:
         self.zero_q = deque(
                 np.zeros(self.gv.DEQUE_LEN), maxlen=self.gv.DEQUE_LEN)
         self.GR_PER_COL = 1
-        # Settings
-        self.create_settings_dock()
-        # Saving
-        self.create_saving_dock()
-        # Write to hardware
-        self.create_write_hardware_dock()
-        # Banner
-        self.create_banner_dock()
+
+        # Create docks
+        SettingsDock(self)
+        SavingDock(self)
+        WriteHardwareDock(self)
+        BannerDock(self)
+
         # EEG
         self.grps = self.create_all_eeg_plot()
         self.eeg_dock = self.create_eeg_dock(self.grps)
@@ -73,55 +76,68 @@ class EegPlotsCreator:
         # Create time dock
         self.create_time_dock()
 
-    def create_banner_dock(self):
-        banner_d = InnerDock(
-                self.layout, 'Banner', b_pos=(0, 3), b_checked=False,
-                toggle_button=True, size=(1, 1))
-        Banner(banner_d.layout)
-        self.dock_area.addDock(banner_d.dock)
-        banner_d.dock.hide()
+    def start_freq_counter_timer(self):
+        self.freq_counter_timer = QtCore.QTimer()
+        self.freq_counter_timer.timeout.connect(self.freq_counter.update)
+        self.freq_counter_timer.start(50)
 
-    def create_saving_dock(self):
-        saving_d = InnerDock(
-                self.layout, 'Saving', b_pos=(0, 2), toggle_button=True,
-                size=(1, 1))
-        DataSaver(self.gv.main_window, self.gv, saving_d.layout, size=(1,1))
-        self.dock_area.addDock(saving_d.dock)
+    def change_num_plot_per_row(self, plot_per_row):
+        # Eeg dock
+        self.eeg_dock.dock.close()
+        self.GR_PER_COL = int(plot_per_row)
+        self.eeg_dock = self.create_eeg_dock(self.grps)
+        # Time dock
+        self.dock_area.moveDock(self.time_d.dock, 'bottom', self.eeg_dock.dock)
+        # Hardware settings dock
+        self.dock_area.moveDock(
+            self.setting_pins_d.dock, 'left', self.eeg_dock.dock)
 
-    def create_settings_dock(self):
-        settings_d = InnerDock(
-                self.layout, 'Settings', b_pos=(0, 1),toggle_button=True,
-                size=(1, 1))
-        # Stop/Start button
-        self.create_buttons(settings_d.layout)
-        # Plot parameter
-        self.create_all_combobox(settings_d.layout)
-        self.dock_area.addDock(settings_d.dock)
 
-    def create_write_hardware_dock(self):
-        write_hardware_d = InnerDock(
-                self.layout, 'Write to hardware', b_pos=(0, 4),
-                toggle_button=True, size=(1, 1), b_checked=True)
-        self.write_hardware_l_e = QtGui.QLineEdit('x1040000X')
-        write_hardware_d.layout.addWidget(self.write_hardware_l_e)
-        btn('Write serial', write_hardware_d.layout,
-            func_conn=self.send_byte_to_hardware, pos=(0, 1))
-        self.dock_area.addDock(write_hardware_d.dock)
-        # write_hardware_d.dock.hide()
+    def init_streaming_source(self):
+        """      """
+        if self.gv.stream_origin == 'Stream from OpenBCI':
+            stream_source = SampleDataFromOPENBCI(self.gv)
+        elif self.gv.stream_origin == 'Stream from synthetic data':
+            # Create fake data for test case
+            stream_source = CreateSyntheticData(
+                self.gv, callback=self.gv.collect_data,
+                read_freq=1250)
+        elif self.gv.stream_origin == 'Stream from file':
+            stream_source = FileReader(
+                self.gv, self.gv.stream_path, self.gv.collect_data,
+                read_freq=250)
+        else:
+            raise('No streaming source selected')
 
-    def send_byte_to_hardware(self):
-        print('Send: ', f'{self.write_hardware_l_e.text()}')
-        byte_settings = self.write_hardware_l_e.text()
-        # self.stream_source.board.ser_write(byte_settings)
+        return stream_source
+
+    def scale_y_axis(self, txt):
         try:
-            for b in byte_settings:
-                self.stream_source.board.ser_write(b.encode())
-                sleep(0.01)
-            self.write_hardware_l_e.setText('')
+            if txt == 'Auto':
+                for plot in self.plots:
+                    plot.enableAutoRange()
+            else:
+                r = int(re.search(r'\d+', txt).group())
+                for plot in self.plots:
+                    plot.setYRange(-r, r)
         except AttributeError as e:
-        # Remove the command sent
-            print('You are not connected to the OpenBCI board')
-            self.write_hardware_l_e.setText('')
+            print("Come on bro, this  value doesn't make sens")
+
+    @QtCore.pyqtSlot(bool)
+    def start_timers(self, checked):
+        self.stream_source = self.init_streaming_source()
+        if checked:
+            self.freq_counter = FrequencyCounter(
+                self.gv, self.gv.stream_origin)
+            self.stream_source.start()
+            for i, tm in enumerate(self.timers):
+                self.timers[i].start(0)
+            self.start_freq_counter_timer()
+        else:
+            for i, tm in enumerate(self.timers):
+                self.timers[i].stop()
+            # self.stream_source.join()
+        # self.set_default_hardware_param()
 
     def create_pins_setting_dock(self):
         settings_pins_d = self.set_settings_pins_layout()
@@ -161,47 +177,6 @@ class EegPlotsCreator:
     def set_saver(self, data_saver):
         self.data_saver = data_saver
 
-    def create_buttons(self, layout):
-        """Assign pushbutton for starting"""
-        btn('Start', layout, (0, 0), toggle=True, max_width=100,
-            func_conn=self.start_timers, color=dark_blue_tab,
-            txt_color=white)
-
-    def create_all_combobox(self, start_stop_l):
-        create_param_combobox(
-                start_stop_l, 'Vertical scale', (0, 1),
-                ['Auto', '10 uv', '100 uv', '1000 uv', '10000 uv', '100000 uv'],
-                conn_func=self.scale_y_axis)
-        create_param_combobox(
-                start_stop_l, 'Horizontal scale', (0, 2), ['5s', '7s', '10s'],
-                editable=False)
-        create_param_combobox(
-                start_stop_l, 'Nb of columns', (0, 3), ['1', '2', '4'],
-                editable=False, conn_func=self.change_num_plot_per_row)
-
-    def change_num_plot_per_row(self, plot_per_row):
-        # Eeg dock
-        self.eeg_dock.dock.close()
-        self.GR_PER_COL = int(plot_per_row)
-        self.eeg_dock = self.create_eeg_dock(self.grps)
-        # Time dock
-        self.dock_area.moveDock(self.time_d.dock, 'bottom', self.eeg_dock.dock)
-        # Hardware settings dock
-        self.dock_area.moveDock(
-                self.setting_pins_d.dock, 'left', self.eeg_dock.dock)
-
-    def scale_y_axis(self, txt):
-        try:
-            if txt == 'Auto':
-                for plot in self.plots:
-                    plot.enableAutoRange()
-            else:
-                r = int(re.search(r'\d+', txt).group())
-                for plot in self.plots:
-                    plot.setYRange(-r, r)
-        except AttributeError as e:
-            print("Come on bro, this  value doesn't make sens")
-
     def create_all_eeg_plot(self):
         """
         """
@@ -215,7 +190,8 @@ class EegPlotsCreator:
     def create_time_dock(self):
         self.time_d = InnerDock(self.layout, 'time dock', size=(1, 1))
         self.add_ch_layout(
-            self.time_d.layout, ch=self.gv.N_CH, time_ch=True, plot_pos=(0, 0))
+                self.time_d.layout, ch=self.gv.N_CH, time_ch=True,
+                plot_pos=(0, 0))
         self.dock_area.addDock(self.time_d.dock)
 
     def add_ch_layout(
@@ -287,40 +263,6 @@ class EegPlotsCreator:
                 tip=f'Start/Stop the ch{ch+1} signal')
         self.btns.append(self.btn)
 
-    def init_streaming_source(self):
-        """      """
-        if self.gv.stream_origin == 'Stream from OpenBCI':
-            stream_source = SampleDataFromOPENBCI(self.gv)
-        elif self.gv.stream_origin == 'Stream from synthetic data':
-            # Create fake data for test case
-            stream_source = CreateSyntheticData(
-                    self.gv, callback=self.gv.collect_data,
-                    read_freq=1250)
-        elif self.gv.stream_origin == 'Stream from file':
-            stream_source = FileReader(
-                    self.gv, self.gv.stream_path, self.gv.collect_data,
-                    read_freq=250)
-        else:
-            raise('No streaming source selected')
-
-        return stream_source
-
-    @QtCore.pyqtSlot(bool)
-    def start_timers(self, checked):
-        self.stream_source = self.init_streaming_source()
-        if checked:
-            self.freq_counter = FrequencyCounter(
-                    self.gv, self.gv.stream_origin)
-            self.stream_source.start()
-            for i, tm in enumerate(self.timers):
-                self.timers[i].start(0)
-            self.start_freq_counter_timer()
-        else:
-            for i, tm in enumerate(self.timers):
-                self.timers[i].stop()
-            # self.stream_source.join()
-        # self.set_default_hardware_param()
-
     def set_default_hardware_param(self):
         byte_settings = 'x1006110X'
         try:
@@ -330,11 +272,6 @@ class EegPlotsCreator:
         except AttributeError as e:
             # Means we are not streaming from the OpenBCI
             print('ERROR', e)
-
-    def start_freq_counter_timer(self):
-        self.freq_counter_timer = QtCore.QTimer()
-        self.freq_counter_timer.timeout.connect(self.freq_counter.update)
-        self.freq_counter_timer.start(50)
 
     def assign_action_to_ch(self, ch, ch_layout):
         max_width = 17

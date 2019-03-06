@@ -19,7 +19,7 @@ from app.colors import *
 from app.activation_b import btn
 from app.pyqt_frequently_used import create_param_combobox
 from ... dock.dock import Dock
-from tabs.live_graph_tab.dock.Inner_dock import InnerDock
+from tabs.live_graph_tab.dock.inner_dock import InnerDock
 import pyqtgraph.metaarray as metaarray
 
 

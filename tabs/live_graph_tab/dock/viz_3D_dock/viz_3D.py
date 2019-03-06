@@ -20,7 +20,7 @@ from .signal import Signal
 from app.pyqt_frequently_used import (
         create_gr, create_txt_label, create_splitter, create_param_combobox,
         TripletBox)
-from tabs.live_graph_tab.dock.Inner_dock import InnerDock
+from tabs.live_graph_tab.dock.inner_dock import InnerDock
 
 
 class Viz3D(Dock):
