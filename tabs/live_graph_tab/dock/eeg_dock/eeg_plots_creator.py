@@ -27,6 +27,7 @@ from ..eeg_dock.inner_docks.banner_dock import BannerDock
 from ..eeg_dock.inner_docks.saving_dock import SavingDock
 from ..eeg_dock.inner_docks.settings_dock import SettingsDock
 from ..eeg_dock.inner_docks.pin_settings_dock import PinsSettingDock
+from ..eeg_dock.inner_docks.time_dock import TimeDock
 
 from data_processing_pipeline.frequency_counter import FrequencyCounter
 # Generate signal
@@ -73,9 +74,8 @@ class EegPlotsCreator:
         self.eeg_dock = self.create_eeg_dock(self.grps)
         # Need to be fully created after the eeg dock is created
         self.settings_pin_d = pin_settings_dock.create_pins_setting_dock()
-
         # Create time dock
-        self.create_time_dock()
+        TimeDock(self)
 
     def start_freq_counter_timer(self):
         self.freq_counter_timer = QtCore.QTimer()
@@ -169,13 +169,6 @@ class EegPlotsCreator:
             grps.append(self.gr)
             self.add_ch_layout(ch_layout, ch)
         return grps
-
-    def create_time_dock(self):
-        self.time_d = InnerDock(self.layout, 'time dock', size=(1, 1))
-        self.add_ch_layout(
-                self.time_d.layout, ch=self.gv.N_CH, time_ch=True,
-                plot_pos=(0, 0))
-        self.dock_area.addDock(self.time_d.dock)
 
     def add_ch_layout(
                 self, layout, ch, time_ch=False, plot_pos=(0, 1, 5, 6)):      # TODO: ALEXM: change the name of this function
