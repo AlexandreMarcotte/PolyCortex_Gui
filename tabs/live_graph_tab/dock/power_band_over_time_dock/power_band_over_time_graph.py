@@ -21,6 +21,7 @@ class PowerBandGraphOverTime(Dock):
         # freq_band_over_time
 
         self.plot = self.init_plot()
+        self.curves_points = self.add_curvepoint_legend()
 
         self.timer.timeout.connect(self.update)
 
@@ -41,8 +42,29 @@ class PowerBandGraphOverTime(Dock):
 
         return plot
 
+    # TODO: ALEXM: Create an object from that
+    def add_curvepoint_legend(self):
+        curve_points = []
+        for ch, wave_curve in enumerate(self.wave_curves):
+            curve_points.append(pg.CurvePoint(wave_curve))
+            self.plot.addItem(curve_points[ch])
+            text = pg.TextItem("test", anchor=(0.5, -1.0))
+            text.setParentItem(curve_points[ch])
+            arrow = pg.ArrowItem(angle=90)
+            arrow.setParentItem(curve_points[ch])
+        return curve_points
+
     def update(self):
-        for i in range(len(self.gv.waves)):
-            self.wave_curves[i].setData(
-                    self.gv.freq_calculator.all_freq_band_over_time[
-                        self.ch].wave_type_data[i])
+        for ch in range(len(self.gv.waves)):
+            new_data = self.gv.freq_calculator.all_freq_band_over_time[
+                            self.ch].wave_type_data[ch]
+            self.update_curves(ch, new_data)
+            # self.update_curve_points(ch, new_data)
+
+    def update_curve_points(self, ch, new_data):
+        self.curves_points.setPos(len(new_data), new_data[-1])
+
+    def update_curves(self, ch, new_data):
+        self.wave_curves[ch].setData(new_data)
+
+
