@@ -13,6 +13,7 @@ class PowerBandGraphOverTime(Dock):
         self.gv = gv
         self.layout = layout
 
+        self.pos = 0
         self.ch = 0
         self.wave_curves = []
 
@@ -31,7 +32,7 @@ class PowerBandGraphOverTime(Dock):
         plot.plotItem.showGrid(x=True, y=True, alpha=0.3)
         plot.plotItem.setLabel(axis='bottom', text='Time', units='Hz')         # TODO: ALEXM : verifier l'uniter
         plot.plotItem.setLabel(axis='left', text='Amplitude', units='None')
-        # plot.setXRange(0, 100)
+        plot.setXRange(0, 200)
         # plot.setYRange(0, 1000000)
         # Add to tab layout
         self.plot_d.layout.addWidget(plot, 2, 0, 1, 2)
@@ -45,10 +46,11 @@ class PowerBandGraphOverTime(Dock):
     # TODO: ALEXM: Create an object from that
     def add_curvepoint_legend(self):
         curve_points = []
-        for ch, wave_curve in enumerate(self.wave_curves):
+        for ch, (wave_curve, wave_name) \
+                in enumerate(zip(self.wave_curves, self.gv.waves)):
             curve_points.append(pg.CurvePoint(wave_curve))
             self.plot.addItem(curve_points[ch])
-            text = pg.TextItem("test", anchor=(0.5, -1.0))
+            text = pg.TextItem(wave_name, anchor=(0.5, -1.0))
             text.setParentItem(curve_points[ch])
             arrow = pg.ArrowItem(angle=90)
             arrow.setParentItem(curve_points[ch])
@@ -59,10 +61,11 @@ class PowerBandGraphOverTime(Dock):
             new_data = self.gv.freq_calculator.all_freq_band_over_time[
                             self.ch].wave_type_data[ch]
             self.update_curves(ch, new_data)
-            # self.update_curve_points(ch, new_data)
+            self.update_curve_points(ch)
 
-    def update_curve_points(self, ch, new_data):
-        self.curves_points.setPos(len(new_data), new_data[-1])
+    def update_curve_points(self, ch):
+        self.pos += 1
+        self.curves_points[ch].setPos(self.pos)
 
     def update_curves(self, ch, new_data):
         self.wave_curves[ch].setData(new_data)
