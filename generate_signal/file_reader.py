@@ -26,6 +26,6 @@ def read_data_from_file(file_name, N_CH=8):
                 for ch_no, ch in enumerate(eeg_ch):
                     data[ch_no].append(float(ch))
             except IndexError as e:
-                print('INDEXERROR: ', all_ch_line)
+                print('INDEX_ERROR: ', all_ch_line)
 
     return data, t, exp

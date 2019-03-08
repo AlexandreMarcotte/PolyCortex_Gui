@@ -23,7 +23,7 @@ class FileSelector(Group):
         self.data = []
         self.t = []
         self.exp = []
-        self.file_name = './experiment_csv/2exp_pinch_close_2018-08-29 19:44:54.567417.csv'
+        self.file_name = './experiment_csv/pinch_close.csv'
 
         self.gr, self.path_line_edit = self.init_layout()
 

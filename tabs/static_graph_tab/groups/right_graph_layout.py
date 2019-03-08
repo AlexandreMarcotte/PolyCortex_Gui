@@ -12,7 +12,7 @@ class RightGraphLayout(Group):
         self.sliders = []
 
         parent_layout, self.gr = self.create_gr_and_layout(
-                'Portion graph')
+                'Full graph')
         self.add_all_graph(parent_layout, gv)
 
     def add_all_graph(self, parent_layout, gv):                                # TODO: ALEXM: find how redefinintion of functions are done

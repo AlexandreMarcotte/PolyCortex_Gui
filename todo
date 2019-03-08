@@ -13,11 +13,12 @@
 - Add moving display legend of the value of each line at there end (like in Charles application)
 - Change the position of pinSettings to a specifi location on the top of the
     so that it doesnt change when I click on it and close it.
+
+
+
+
 - Set the second static graphs to occupy all the rows instead of leaving the
     last one blank
-
-
-
 
 
 
