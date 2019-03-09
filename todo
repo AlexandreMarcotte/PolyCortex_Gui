@@ -13,14 +13,13 @@
 - Add moving display legend of the value of each line at there end (like in Charles application)
 - Change the position of pinSettings to a specifi location on the top of the
     so that it doesnt change when I click on it and close it.
+- I don't think it's normal that the Spectogram is 600 value long shouldn't it be
+  only 125 like the fft from which it is derived? (look at it)
 
 
 
 
-- Set the second static graphs to occupy all the rows instead of leaving the
+(DONE)- Set the second static graphs to occupy all the rows instead of leaving the
     last one blank
-
-
-
 - (DONE) Put the spectogram in the direction so that the time is the x direction (?)
 - (DONE) Ajouter des axes axes au spectogram

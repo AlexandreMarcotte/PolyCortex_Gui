@@ -27,6 +27,16 @@ class Spectogram(Dock):
         """"""
         vb = pg.ViewBox()
         vb.setAspectLocked()
+        # Add axis
+        # self.add_axis(vb, 'left', 200, '')
+        # self.add_axis(vb, 'bottom', 0, 'T')
+        # self.add_axis_name(vb)
+        self.add_axis_name(
+                vb, name='Time (n of freq calculated)', pos=(100, 0), angle=0)
+        self.add_axis_name(
+            vb, name='Frequency (Hz - need to correct)', pos=(-10, 50),
+            angle=90)
+
         # img of the spectrogram
         img = pg.ImageItem()                                                   # TODO: ALEXM: rotate so that it is in the right direction (longest with longest)
         vb.addItem(img)
@@ -39,6 +49,20 @@ class Spectogram(Dock):
         pg_layout = pg.GraphicsLayoutWidget()
         pg_layout.addItem(vb)
         return pg_layout, img
+
+    def add_axis_name(self, vb, name, pos=(0, 0), angle=0):
+        font = QtGui.QFont()
+        font.setPixelSize(10)
+        axis = pg.TextItem(name, angle=angle)
+        axis.setFont(font)
+        axis.setPos(*pos)
+        vb.addItem(axis)
+
+    def add_axis(self, vb, orientation, height, label):
+        axis = pg.AxisItem(orientation=orientation, showValues=False)
+        axis.setHeight(height)
+        axis.setLabel(label)
+        vb.addItem(axis)
 
     def add_wave_name_txt_label(self, vb):
         # pen for lines
