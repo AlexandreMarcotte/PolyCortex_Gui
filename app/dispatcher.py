@@ -36,11 +36,13 @@ class Dispatcher:
 
         # Variable change in the menubar
         self.stream_origin = 'Stream from synthetic data'
-        self.stream_path = f'experiment_csv/2exp_pinch_close_2018-08-29 18:55:22.627296.csv'
+        self.stream_path = f'experiment_csv/pinch_close.csv'
 
         self.t_init = time()
         init_time = datetime.now()
-        self.save_path = f'./experiment_csv/2exp_pinch_close_{init_time}.csv'
+        self.save_path = f'./experiment_csv/1.csv'   # 2exp_pinch_close_{init_time}.csv'
+        # Find an other way to save the file directly otherwise the
+        # filename is too long and it cannot be cloned to windows machines
         self.used_read_freq = 250
         self.desired_read_freq = 250
         self.read_period = 1 / self.desired_read_freq
