@@ -15,6 +15,7 @@
     so that it doesnt change when I click on it and close it.
 - I don't think it's normal that the Spectogram is 600 value long shouldn't it be
   only 125 like the fft from which it is derived? (look at it)
+- Download the 3D head that I deleted when I was cleaning my computer
 
 
 

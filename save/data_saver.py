@@ -5,6 +5,8 @@ from app.colors import *
 from app.pyqt_frequently_used import select_file
 
 from PyQt5 import QtGui
+# --My Packages--
+from save.write_to_file import write_to_file
 
 
 class DataSaver:
@@ -43,6 +45,7 @@ class DataSaver:
         """Button to save all the current data that was generated"""
         save_cur_data_b = QtGui.QPushButton('Save data Now')
         save_cur_data_b.setStyleSheet(f'background-color: {grey3})')
+        save_cur_data_b.clicked.connect(partial(write_to_file, self.gv))
         self.layout.addWidget(save_cur_data_b, self.pos[0]+1, self.pos[1], 1, 2)
 
     def save_file_dialog(self):

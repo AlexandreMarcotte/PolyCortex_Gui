@@ -27,7 +27,7 @@ class Dispatcher:
         self.use_filter = False
         self.N_DATA_BEFORE_FILTER = 0
         self.min_pass_filter = 1
-        self.max_pass_filter = 124
+        self.max_pass_filter = 50
         self.min_cut_filter = 57
         self.max_cut_filter= 63
         self.filter_min_bound = 0
@@ -147,10 +147,10 @@ class Dispatcher:
                         self.desired_read_freq, order=3,
                         filter_type='bandstop')
 
-                y = butter_bandpass_filter(
+                # y = butter_bandpass_filter(
                     # y, self.min_bandstop_filter, self.max_bandstop_filter,
-                    y, 118, 122, self.desired_read_freq, order=3,
-                    filter_type='bandstop')
+                    # y, 118, 122, self.desired_read_freq, order=3,
+                    # filter_type='bandstop')
 
             self.filter_chunk.append(list(y[-self.once_every:][::-1]))
         # put the data once at the time at every loop so the signal is not showing

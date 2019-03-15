@@ -148,6 +148,3 @@ class DockHandler:
             if self.name == 'EEG':
                 self.tab.eeg.dock_obj.set_saver(self.tab.saving.dock_obj)
 
-
-
-
