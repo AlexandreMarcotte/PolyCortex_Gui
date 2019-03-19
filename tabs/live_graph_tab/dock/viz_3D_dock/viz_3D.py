@@ -68,6 +68,7 @@ class Viz3D(Dock):
 
     def create_head(self):
         path = mne.datasets.sample.data_path()
+        print('path', path)
         surf = mne.read_bem_surfaces(
                 path + '/subjects/sample/bem/sample-head.fif')[0]
         points, triangles = surf['rr'], surf['tris']

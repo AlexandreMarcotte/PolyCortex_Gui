@@ -34,6 +34,7 @@ class FftGraph:
         self.dock_area = DockArea()
         layout.addWidget(self.dock_area, 1, 0, 1, 8)
         # Plot
+        self.ch_to_show = list(range(self.gv.N_CH))
         self.plot_d = self.init_plot_dock()
         self.plot = self.init_plot()
         self.add_regions_filter_to_plot()
@@ -125,7 +126,8 @@ class FftGraph:
         self.all_frequency()
 
     def all_frequency(self):
-        for ch in range(self.gv.N_CH):
+        # for ch in range(self.gv.N_CH):
+        for ch in self.ch_to_show:
             f_range, fft = self.gv.freq_calculator.get_fft_to_plot(
                     np.array(self.gv.data_queue[ch])[
                     self.gv.filter_min_bound:self.gv.filter_max_bound])
@@ -164,7 +166,7 @@ class FftGraph:
         create_param_combobox(
                 settings_d.layout, 'Ch On', (0, 5),
                 ['ch 1', 'ch 2', 'ch 3', 'ch 4',
-                 'ch 5', 'ch 6', 'ch 7', 'ch 8'],
+                 'ch 5', 'ch 6', 'ch 7', 'ch 8', 'all'],
                 self.ch_on_off, editable=False)
 
         self.dock_area.addDock(settings_d.dock, 'top')
@@ -231,8 +233,16 @@ class FftGraph:
     def log_axis(self, txt):
         self.plot.setLogMode(y=eval(txt))
 
-    def ch_on_off(self):
-        pass
+    def ch_on_off(self, ch):
+        if ch == 'all':
+            self.ch_to_show = list(range(self.gv.N_CH))
+        else:
+            self.ch_to_show = [int(ch[3:]) - 1]
+        self.clear_curves()
+
+    def clear_curves(self):
+        for c in self.curve_freq:
+            c.clear()
 
     def show_filter(self, txt):
         self.gv.filter_to_use = self.combo_to_filter[txt]
