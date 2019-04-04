@@ -38,7 +38,7 @@ class Learner:
         return x, y
 
     def init_cnn_variables(self):
-        self.n_epoch = 3
+        self.n_epoch = 200
         self.batch_size = 60
         self.n_filters = [90, 20]
         self.n_pool = 10

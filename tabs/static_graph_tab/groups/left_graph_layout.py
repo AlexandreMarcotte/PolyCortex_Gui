@@ -20,7 +20,7 @@ class LeftGraphLayout(Group):
         self.avg_classif_graphs = []
 
         self.x_range = 2000
-        name = 'Avg classif graph - Portion graph - Classif graph'
+        name = 'Avgerage classification graph - Portion graph - Classification graph'
         parent_layout, self.gr = self.create_gr_and_layout(name)
 
         self.init_graphs(parent_layout, gv)
@@ -28,7 +28,7 @@ class LeftGraphLayout(Group):
     def init_graphs(self, parent_layout, gv):                                # TODO: ALEXM: find how redefinintion of functions are done
         for ch in range(gv.N_CH):
             self.layout, gr = self.create_gr_and_layout(
-                    name=f'ch {ch + 1}', parent_layout=parent_layout, ch=ch)
+                    name=f'Electrod {ch + 1}', parent_layout=parent_layout, ch=ch)
             self.create_graphs()
 
     def create_graphs(self):

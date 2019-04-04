@@ -21,8 +21,23 @@ button_colors = ['red', 'yellow', 'green', 'cyan',
                  'red', 'yellow', 'green', 'cyan',
                  'blue', 'magenta', 'grey', 'white']                           # TODO: ALEXM: Generate colors from pyqt instead
 
+# 58 167 215
 dark_blue = 'rgba(0, 0, 80, 0.4)'
-dark_blue_tab = 'rgba(62, 62, 160, 1)'
+# Polycortex Color
+# lighter blue
+# dark_blue_tab = 'rgba(70, 175, 230, 1)'
+dark_blue_tab = 'rgba(60, 160, 210, 1)'
+# slightly Darker
+# dark_blue_tab = 'rgba(30, 130, 170, 1)'
+# Really Darker
+# dark_blue_tab = 'rgba(18, 90, 140, 1)'
+
+
+
+# old
+# dark_blue = 'rgba(0, 0, 80, 0.4)'
+# dark_blue_tab = 'rgba(62, 62, 160, 1)'
+
 grey = 'rgba(100, 100, 100, 0.5)'
 light_grey = 'rgba(130, 130, 130, 0.7)'
 grey2 = 'rgba(160, 160, 160, 0.5)'
@@ -31,7 +46,7 @@ label_grey = 'rgba(215, 215, 215, 0.7)'
 green_b = 'rgba(0, 100, 0, 0.5)'
 red_b =  'rgba(100, 0, 0, 0.5)'
 blue_b = 'rgba(0, 0, 170, 0.5)'
-white = 'rgba(255, 255, 255, 0.8)'
+white = 'rgba(255, 255, 255, 1)'
 black = 'rgba(0, 0, 0, 0.5)'
 
 DARK_GREY = '#585858'  # hexa

@@ -15,6 +15,10 @@ pyopengl = "*"
 pynput = "*"
 nibabel = "*"
 qdarkstyle = "*"
+pipfile = "*"
+keras = "*"
+tensorflow = "*"
+mne = "*"
 
 [dev-packages]
 

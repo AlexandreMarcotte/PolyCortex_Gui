@@ -16,6 +16,11 @@
 - I don't think it's normal that the Spectogram is 600 value long shouldn't it be
   only 125 like the fft from which it is derived? (look at it)
 - Download the 3D head that I deleted when I was cleaning my computer
+- Reject data if the time sleep in the frequency adjustement is really really
+close to 0 (try to keep them to be saved in the file but reject them to be plotted and
+to be filter)
+- Mettre le temps comme échelle du static graph
+- Mettre les fichiers dans un repo séparé pour pas que ça soit aussi long a télécharger
 
 
 
@@ -24,3 +29,4 @@
     last one blank
 - (DONE) Put the spectogram in the direction so that the time is the x direction (?)
 - (DONE) Ajouter des axes axes au spectogram
+

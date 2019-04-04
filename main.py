@@ -6,11 +6,14 @@ import atexit
 from app.dispatcher import Dispatcher
 from mainwindow import MainWindow
 import pyqtgraph as pg
+from pyqtgraph.dockarea.Dock import DockLabel
+from app.update_pyqtgraph_dock_tab import update_style_patched
 
 
 def main():
     # pg.setConfigOptions(antialias=True)  # Look at how much it change the performances
     # Start the multigraphes
+    DockLabel.updateStyle = update_style_patched
     app = QApplication(sys.argv)
 
     N_CH = 8

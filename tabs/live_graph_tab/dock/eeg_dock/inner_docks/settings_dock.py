@@ -2,8 +2,10 @@ from tabs.live_graph_tab.dock.inner_dock import InnerDock
 from app.pyqt_frequently_used import create_param_combobox
 from app.activation_b import btn
 from PyQt5 import QtCore, QtGui
+from PyQt5.QtWidgets import *
 from app.colors import *
 import pyqtgraph as pg
+from PyQt5.QtGui import QPixmap
 # -- My Packages --
 
 
@@ -18,6 +20,7 @@ class SettingsDock:
             size=(1, 1))
         # Stop/Start button
         self.create_buttons(settings_d.layout)
+        self.create_polycortex_label(settings_d.layout)
         # Plot parameter
         self.create_all_combobox(settings_d.layout)
         self.main_eeg_dock.dock_area.addDock(settings_d.dock)
@@ -42,6 +45,12 @@ class SettingsDock:
         btn('Start', layout, (0, 0), toggle=True, max_width=100,
             func_conn=self.main_eeg_dock.start_timers, color=dark_blue_tab,
             txt_color=white)
+
+    def create_polycortex_label(self, layout):
+        polycortex_label = QLabel()
+        polycortex_name_image = QPixmap('./img/polycortex_name.png')
+        polycortex_label.setPixmap(polycortex_name_image)
+        layout.addWidget(polycortex_label, 1, 0, 1, 1)
 
     def start_aliasing(self, txt):  # Need to do it before creating the graph
         # (don't work here but work when called in the main at the start)

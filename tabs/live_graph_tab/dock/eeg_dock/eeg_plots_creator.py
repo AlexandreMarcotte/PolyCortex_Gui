@@ -34,6 +34,7 @@ from data_processing_pipeline.frequency_counter import FrequencyCounter
 from generate_signal.from_openbci import SampleDataFromOPENBCI
 from generate_signal.from_synthetic_data import CreateSyntheticData
 from generate_signal.from_file import FileReader
+from generate_signal.from_pcb import PcbReader
 # from generate_signal.from_muse import StreamFromMuse
 
 
@@ -88,6 +89,9 @@ class MainEegDock:
             stream_source = FileReader(
                 self.gv, self.gv.stream_path, self.gv.collect_data,
                 read_freq=250)
+        elif self.gv.stream_origin == 'Stream from pcb':
+            stream_source = PcbReader(
+                    self.gv, self.gv.collect_data, read_freq=250)
         else:
             raise('No streaming source selected')
 
@@ -275,7 +279,7 @@ class MainEegDock:
 
     def create_color_button(self, ch, ch_layout):
         """Create color button to change the color of the line"""
-        color_btn = pg.ColorButton(close_fit=True)
+        color_btn = pg.ColorButton()
         color_btn.setMaximumWidth(17)
         color_btn.setToolTip('Click to change the color of the line')
         color_btn.sigColorChanged.connect(partial(self.change_line_color, ch))

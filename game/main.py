@@ -87,6 +87,8 @@ class Game:
                     self.running = False
         self.itt += 1
         if self.gv.class_detected[0] == 1:
+            print('here')
+            print(self.gv.class_detected[0])
         # if event.type == pg.KEYDOWN:
         #     if event.key == pg.K_SPACE:
             self.player.jump()
