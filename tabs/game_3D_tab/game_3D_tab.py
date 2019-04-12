@@ -24,7 +24,8 @@ class Game3DTab(QWidget):
         game_3d = Game3D(self)
         listen_keybr = keyboard.Listener(
                 on_press=game_3d.on_press, on_release=game_3d.on_release)
-        listen_keybr.start()
+        # Uncomment if you want to play the game
+        # listen_keybr.start()
 
         self.setLayout(self.layout)
 

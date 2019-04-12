@@ -4,6 +4,7 @@ from time import sleep
 from time import time
 import numpy as np
 
+
 class PcbReader(threading.Thread):
     def __init__(self, gv, collect_data, read_freq):
         super().__init__()
@@ -24,6 +25,10 @@ class PcbReader(threading.Thread):
             byte_signal = self.ser.readline()
             try:
                 signal[0] = int(byte_signal[:-2])
+                # If list of value
+                # byte_signal = byte_signal.split(sep=',')
+                # for no, ch_val in enumerate(byte_signal):
+                #     signal[no] = int(ch_val)
             except ValueError as e:
                 print(e)
                 print('byte_signal not valid: ', byte_signal)

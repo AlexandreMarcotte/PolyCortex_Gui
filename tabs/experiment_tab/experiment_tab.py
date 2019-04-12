@@ -33,7 +33,7 @@ class ExperimentTab(QWidget):
         # EMG
         emg_dock = EmgDock(self.area, self.gv)
         # Video
-        video_dock = Video(self.area, emg_dock.emg_dock)
+        # video_dock = Video(self.area, emg_dock.emg_dock)
         # N100
         n100_dock = N100Dock(self.area, emg_dock.emg_dock)
         # P300

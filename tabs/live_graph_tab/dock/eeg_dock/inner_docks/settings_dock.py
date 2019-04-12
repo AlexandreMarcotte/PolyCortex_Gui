@@ -48,7 +48,8 @@ class SettingsDock:
 
     def create_polycortex_label(self, layout):
         polycortex_label = QLabel()
-        polycortex_name_image = QPixmap('./img/polycortex_name.png')
+        polycortex_name_image = QPixmap(
+                './img/polycortex_name_alpha_background.png')
         polycortex_label.setPixmap(polycortex_name_image)
         layout.addWidget(polycortex_label, 1, 0, 1, 1)
 

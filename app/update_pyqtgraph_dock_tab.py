@@ -6,12 +6,12 @@ def update_style_patched(self):
     if self.dim:
         fg = '#FFFFFF'
         bg = '#1E82AA'
-        border = '#46AFD2'
+        border = '#1E82AA'
     # Clicked
     else:
         fg = '#FFFFFF'
         bg = '#46AFD2'
-        border = '#1E82AA'
+        border = '#46AFD2'
 
     if self.orientation == 'vertical':
         self.vStyle = """DockLabel {

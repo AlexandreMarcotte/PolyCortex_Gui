@@ -21,7 +21,9 @@ class MainWindow(QMainWindow):
         self.name = 'PolyCortex Gui'
         self.openbci_logo_path = './img/openbci_logo.png'
         self.file_icon_path = './img/file.png'
-        self.polycortex_logo_path = './img/polycortex_logo.png'
+        self.polycortex_logo_path_alpha_background = \
+                './img/polycortex_logo_alpha_background.png'
+        self.polycortex_logo_path =  './img/polycortex_logo.png'
         self.sinus_logo_path = './img/sinus.png'
         self.icon = QtGui.QIcon(self.polycortex_logo_path)
         self.pos = (0, 0)
@@ -80,7 +82,7 @@ class MainWindow(QMainWindow):
 
     def create_pcb_menu(self):
         self.pcb = QtGui.QAction(
-                QIcon(self.polycortex_logo_path), "PolyCortex's PCB")
+                QIcon(self.polycortex_logo_path_alpha_background), "PolyCortex's PCB")
         self.pcb.setStatusTip('Stream the data from PolyCortex PCB')
         self.pcb.name = 'Stream from pcb'
         self.controlPanel.addAction(self.pcb)
@@ -174,7 +176,7 @@ class MainWindow(QMainWindow):
         return light_act
 
     def create_polycortex_info_btn(self):
-        polycortex_icon = QIcon(self.polycortex_logo_path)
+        polycortex_icon = QIcon(self.polycortex_logo_path_alpha_background)
         polyCortex_actn = QAction(polycortex_icon, 'PolyCortex', self)
         polyCortex_actn.setStatusTip('Get information about PolyCortex Society')
         polyCortex_actn.triggered.connect(self.show_polycortex_info_page)

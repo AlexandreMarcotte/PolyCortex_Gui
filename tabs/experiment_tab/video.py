@@ -4,7 +4,7 @@
 
 # --General Packages--
 from PyQt5.QtCore import QDir, Qt, QUrl
-from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
+# from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 # from PyQt5.QtMultimediaWidgets import QVideoWidget                           # TODO: ALEXM: find out why this line is not working in this project and working in other
                                                                                # error message:  Process finished with exit code 139 (interrupted by signal 11: SIGSEGV)
 import PyQt5
@@ -27,7 +27,7 @@ class Video:
         self.dock.addWidget(self.layout)
         # Video player
         # PyQt5.QtMultimedia.QMediaPlayer
-        self.mediaPlayer = QMediaPlayer(None, QMediaPlayer.VideoSurface)
+        # self.mediaPlayer = QMediaPlayer(None, QMediaPlayer.VideoSurface)
         # videoWidget = PyQt5.QtMultimedia.()
         # self.layout.addWidget(videoWidget)
 

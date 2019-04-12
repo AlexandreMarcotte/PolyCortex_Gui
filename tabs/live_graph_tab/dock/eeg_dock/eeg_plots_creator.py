@@ -119,7 +119,7 @@ class MainEegDock:
         self.stream_source = self.init_streaming_source()
         if checked:
             self.freq_counter = FrequencyCounter(
-                self.gv, self.gv.stream_origin)
+                    self.gv, self.gv.stream_origin)
             self.stream_source.start()
             for i, tm in enumerate(self.timers):
                 self.timers[i].start(0)
@@ -259,13 +259,15 @@ class MainEegDock:
                 ch_layout, 0, self.gv, ch, conn_func='avg')
         btn('A', ch_layout, (0, 8), action=actn_btn,
                 toggle=True, tip='Show average value of queue',
-                max_width=max_width, max_height=max_height, color=dark_blue_tab)
+                max_width=max_width, max_height=max_height, color=dark_blue_tab,
+                txt_color=white)
         # Max
         actn_btn = ActionButton(
                 ch_layout, 1, self.gv, ch, conn_func='max')
         btn('M', ch_layout, (1, 8), action=actn_btn,
                 toggle=True, tip='Show max value of queue',
-                max_width=max_width, max_height=max_height, color=dark_blue_tab)
+                max_width=max_width, max_height=max_height, color=dark_blue_tab,
+                txt_color=white)
         # Detection
         actn_btn = ActionButton(
                 ch_layout, 2, self.gv, ch, conn_func='filter',
@@ -273,7 +275,7 @@ class MainEegDock:
         btn('F',ch_layout, (2, 8), action=actn_btn,
                 toggle=True, tip='''Show the size of the fft window on which
                 the fft is calculated for all ch''', max_width=max_width,
-                max_height=max_height, color=dark_blue_tab)
+                max_height=max_height, color=dark_blue_tab, txt_color=white)
 
         self.create_color_button(ch, ch_layout)
 
