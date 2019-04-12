@@ -1,0 +1,67 @@
+
+#include <Wire.h>
+
+// ADS7828 I2C address = 0x48(72)
+#define Addr 0x48
+int i = 0;
+void setup()
+{
+  // Initialize I2C communication as MASTER
+  Wire.begin();
+  // Initialize serial communication, set baud rate = 9600
+  Serial.begin(9600);
+  delay(4);
+
+}
+
+void loop()
+{
+  int raw_adc;
+  byte data[2];
+
+  int code;
+  if(i==0){
+    code=0b10000100;
+  }
+  else if(i==1){
+    code=0b11000100;
+  }
+  else if(i==2){
+    code=0b10010100;
+  }
+  else if(i==3){
+    code=0b11010100;
+  }
+  Wire.beginTransmission(Addr);
+
+  Wire.write(code);
+
+  // Stop I2C transmission
+  Wire.endTransmission();
+
+  // Request 2 bytes of data
+  Wire.requestFrom(Addr, 2);
+
+  // Read 2 bytes of data
+  // raw_adc msb, raw_adc lsb
+  if(Wire.available() == 2)
+    {
+    data[0] = Wire.read();
+    data[1] = Wire.read();
+
+    delay(4);
+
+    // Converting the data to 12 bits
+    raw_adc = ((data[0] & 0x0F) * 256) + data[1];
+    Serial.println(raw_adc);
+    }
+    i++;
+    if(i==4){
+      i=0;
+      }
+
+
+    // Output data to serial monitor
+    //Serial.println(raw_adc);
+
+}

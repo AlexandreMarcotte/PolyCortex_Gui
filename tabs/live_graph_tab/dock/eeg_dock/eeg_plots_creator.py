@@ -91,7 +91,7 @@ class MainEegDock:
                 read_freq=250)
         elif self.gv.stream_origin == 'Stream from pcb':
             stream_source = PcbReader(
-                    self.gv, self.gv.collect_data, read_freq=250)
+                    self.gv, self.gv.collect_data, read_freq=400)
         else:
             raise('No streaming source selected')
 

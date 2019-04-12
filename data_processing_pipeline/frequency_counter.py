@@ -12,7 +12,7 @@ class FrequencyCounter:
         self.t_between_calcul_freq = 0.3
 
     def update(self):
-        print('update freq counter')
+        # print('update freq counter')
         # Calcul frequency less often
         self.freq = self.calcul_last_freq()
         if self.stream_origin != 'Stream from OpenBCI': #and self.stream_origin != 'Stream from pcb':
