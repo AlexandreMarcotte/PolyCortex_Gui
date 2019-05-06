@@ -11,7 +11,6 @@ from app.colors import *
 from app.activation_b import btn
 from ... dock.dock import Dock
 # To draw the brain
-from .object_3D_creator import Obj3DCreator
 from save.data_saver import DataSaver
 from .sphere import Sphere
 from .brain import Brain
@@ -21,6 +20,7 @@ from app.pyqt_frequently_used import (
         create_gr, create_txt_label, create_splitter, create_param_combobox,
         TripletBox)
 from tabs.live_graph_tab.dock.inner_dock import InnerDock
+from .read_nii_data import read_nii_data
 
 
 class Viz3D(Dock):
@@ -161,12 +161,10 @@ class Viz3D(Dock):
             location=(pos[0][0], pos[1][1], pos[2][2]))
 
     def create_total_brain(self):
-        self.brain_v = Brain()
-        self.brain_v.volume(show_box=False, show_axis=False)
-        self.view.addItem(self.brain_v.volume)
-        self.brain_s = Brain()
-        self.brain_s.scatter()
-        self.view.addItem(self.brain_s.volume)
+        brain_data = read_nii_data(
+            nii_path='tabs/live_graph_tab/dock/viz_3D_dock/inplane001.nii')
+        self.brain = Brain(brain_data, 'volume')
+        self.view.addItem(self.brain.item)
 
     def create_plot_lines(self):
         for n in range(self.gv.N_CH):

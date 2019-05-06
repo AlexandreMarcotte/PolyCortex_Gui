@@ -137,10 +137,10 @@ class MainEegDock:
         self.eeg_dock = self.create_eeg_dock(self.grps)
         # Time dock
         self.dock_area.moveDock(
-            self.time_dock.time_d.dock, 'bottom', self.eeg_dock.dock)
+                self.time_dock.time_d.dock, 'bottom', self.eeg_dock.dock)
         # Hardware settings dock
         self.dock_area.moveDock(
-            self.settings_pins_d.dock, 'left', self.eeg_dock.dock)
+                self.settings_pins_d.dock, 'left', self.eeg_dock.dock)
 
     @QtCore.pyqtSlot(bool)
     def open_dock(self, dock, checked):
