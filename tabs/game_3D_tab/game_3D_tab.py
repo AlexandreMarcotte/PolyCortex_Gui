@@ -12,6 +12,7 @@ from pynput import keyboard
 import threading
 from random import randint
 
+
 class Game3DTab(QWidget):
     def __init__(self):
         super().__init__()
@@ -102,16 +103,16 @@ class Game3D:
         self.w.addItem(self.m)
 
     def update_character_pos(self):
-        if self.key_pressed=='l':
+        if self.key_pressed == 'l':
             self.m.translate(0.2, 0, 0)
             self.x_pos += 0.2
-        if self.key_pressed=='j':
+        if self.key_pressed == 'j':
             self.m.translate(-0.2, 0, 0)
             self.x_pos -= 0.2
-        if self.key_pressed=='i':
+        if self.key_pressed == 'i':
             self.m.translate(0, 0.3, 0)
             self.y_pos += 0.3
-        if self.key_pressed=='k':
+        if self.key_pressed == 'k':
             self.m.translate(0,-0.3, 0)
             self.y_pos -= 0.3
 
@@ -137,12 +138,13 @@ class Game3D:
             # Stop listener
             pass
 
+
 class Food:
     def __init__(self, height):
         self.sphere = gl.MeshData.sphere(rows=10, cols=10)
-        self.mesh = gl.GLMeshItem(meshdata=self.sphere, smooth=True,
-                                  color=(1, 0, 0, 1), shader='edgeHilight',
-                                  glOptions='opaque')
+        self.mesh = gl.GLMeshItem(
+                meshdata=self.sphere, smooth=True, color=(1, 0, 0, 1),
+                shader='edgeHilight', glOptions='opaque')
         self.height = height
         self.mesh.scale(1, 1, self.height)
         self.x = randint(-10, 10)

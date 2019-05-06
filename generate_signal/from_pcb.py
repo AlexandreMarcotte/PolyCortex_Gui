@@ -24,6 +24,7 @@ class PcbReader(threading.Thread):
             signal = np.zeros(8)
             for ch in range(4):
                 byte_signal = self.ser.readline()
+                print('sig', byte_signal)
                 try:
                     signal[ch] = int(byte_signal[:-2])
                     # If list of value
@@ -37,7 +38,7 @@ class PcbReader(threading.Thread):
                 t = time() - t_init
                 self.collect_data(signal, t=t)
 
-                sleep(self.read_period)
+                # sleep(self.read_period)
 
 
     if __name__ == '__main__':
