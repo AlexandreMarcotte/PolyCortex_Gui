@@ -34,8 +34,8 @@ class LiveGraphTab(QWidget):
         self.layout.addWidget(self.area)
 
     def create_docks_menu(self):
-        docks_menu = self.parent.main_menu.addMenu('Add or Remove Dock')
-        self.parent.main_menu.addMenu(docks_menu)
+        docks_menu = self.parent.menu_bar.main_menu.addMenu('Add or Remove Dock')
+        self.parent.menu_bar.main_menu.addMenu(docks_menu)
         return docks_menu
 
     def init_dock_layout(self):
