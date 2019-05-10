@@ -17,8 +17,8 @@ else:
     list: nm -D ./libQtGui.so.4 > ~./list.txt
     """
     qtlib = ctypes.cdll.LoadLibrary(find_library("QtGui"))
-    drawPoints = getattr(qtlib, '_ZN8QPainter10drawPointsEPK7QPointFi')
-    drawRects = getattr(qtlib, '_ZN8QPainter9drawRectsEPK6QRectFi')
+    # drawPoints = getattr(qtlib, '_ZN8QPainter10drawPointsEPK7QPointFi')
+    # drawRects = getattr(qtlib, '_ZN8QPainter9drawRectsEPK6QRectFi')
 
 
 class SquareItem(QtGui.QGraphicsItem):
