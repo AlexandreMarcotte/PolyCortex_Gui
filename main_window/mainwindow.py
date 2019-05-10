@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 from PyQt5.QtWidgets import *
 from PyQt5 import QtGui
-from PyQt5.QtCore import QRect
 from PyQt5.QtGui import QIcon
-import qdarkstyle
 # from pyqtgraph.Qt import Rect
 import os
 from functools import partial
@@ -11,6 +9,7 @@ from functools import partial
 from tabs.tab_widget import TabWidget
 from game.main import RunGame
 from app.pyqt_frequently_used import select_file
+from .tool_bar import ToolBar
 
 
 class MainWindow(QMainWindow):
@@ -39,7 +38,8 @@ class MainWindow(QMainWindow):
         # Add a menu bar
         self.create_menu_bar()
         # Add a toolbar
-        self.create_toolbar()
+        self.tool_bar = ToolBar(self)
+        self.addToolBar(self.tool_bar)
         # message at the bottom
         self.statusBar().showMessage(self.intro_message)
 
@@ -141,70 +141,4 @@ class MainWindow(QMainWindow):
         """Start the miniGame"""
         run_game = RunGame(self.gv)
         run_game.start()
-
-    def create_toolbar(self):
-        main_tb = QToolBar('main actions')
-        main_tb.addAction(self.create_exit_action())
-        main_tb.addAction(self.create_dark_mode_activator())
-        main_tb.addAction(self.create_polycortex_info_btn())
-        self.addToolBar(main_tb)
-        # tree_tb = QToolBar('tree toolbar')
-        # tree_tb.setOrientation(Qt.Vertical)
-        #
-        # tree_action = QAction('1:Tree', self)
-        # tree_tb.addAction(tree_action)
-        # a2 = QAction('2:', self)
-        # tree_tb.addAction(a2)
-        # self.addToolBar(Qt.LeftToolBarArea, tree_tb)
-
-    def create_exit_action(self):
-        base_path = os.getcwd()
-        path = os.path.join(base_path, 'app/exit.png')
-        exitIcon = QIcon(path)
-        exit_actn = QAction(exitIcon, 'Exit', self)
-        exit_actn.setShortcut('Ctrl+Q')
-        exit_actn.setStatusTip('Exit application')
-        exit_actn.triggered.connect(self.close)
-        return exit_actn
-
-    def create_dark_mode_activator(self):
-        base_path = os.getcwd()
-        path = os.path.join(base_path, 'img/light_mode.png')
-        light_act = QAction(QIcon(path), 'change light style', self)
-        light_act.setStatusTip('Change style to qdarkstyle')
-        light_act.triggered.connect(self.change_light_style)
-        return light_act
-
-    def create_polycortex_info_btn(self):
-        polycortex_icon = QIcon(self.polycortex_logo_path_alpha_background)
-        polyCortex_actn = QAction(polycortex_icon, 'PolyCortex', self)
-        polyCortex_actn.setStatusTip('Get information about PolyCortex Society')
-        polyCortex_actn.triggered.connect(self.show_polycortex_info_page)
-        self.w = None
-        return polyCortex_actn
-
-    def show_polycortex_info_page(self):
-        print('show polycortex infor page')
-        self.polycortex_info_win = MyPopup()
-        self.polycortex_info_win.setGeometry(QRect(100, 200, 400, 200))
-        self.polycortex_info_win.show()
-
-    def change_light_style(self):
-        self.app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
-
-
-class MyPopup(QWidget):
-    def __init__(self):
-        QWidget.__init__(self)
-        self.setWindowTitle('Learn more about PolyCortex')
-
-        self.layout = QVBoxLayout()
-        self.info = QLabel(
-               'PolyCortex is Polytechnique Montreal club for\n'
-               'neuroscience and BCI, it was founded in 2013 \n'
-               'by Benjamin De Leener & Gabriel Mangeat\n\n'
-               'To learn more about PolyCortex visite the link: \n\n\n'
-               'http://polycortex.polymtl.ca/')
-        self.layout.addWidget(self.info)
-        self.setLayout(self.layout)
 

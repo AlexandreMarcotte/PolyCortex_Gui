@@ -1,11 +1,9 @@
 # --General packages--
 from PyQt5.QtWidgets import QApplication
 import sys
-import atexit
 # --My packages--
 from app.dispatcher import Dispatcher
-from mainwindow import MainWindow
-import pyqtgraph as pg
+from main_window.mainwindow import MainWindow
 from pyqtgraph.dockarea.Dock import DockLabel
 from app.update_pyqtgraph_dock_tab import update_style_patched
 
