@@ -4,7 +4,7 @@ from PyQt5 import QtGui
 # --My packages--
 from tabs.tab_widget import TabWidget
 from .tool_bar import ToolBar
-from .menu_bar import MenuBar
+from .menu_bar.menu_bar import MenuBar
 
 
 class MainWindow(QMainWindow):
@@ -31,7 +31,7 @@ class MainWindow(QMainWindow):
         self.setWindowIcon(self.icon)
         self.setGeometry(*self.pos, *self.size)
         # Add a menu bar
-        self.menu_bar = MenuBar(self, self.gv)######self.create_menu_bar()
+        self.menu_bar = MenuBar(self, self.gv)
         # Add a toolbar
         self.tool_bar = ToolBar(self)
         self.addToolBar(self.tool_bar)

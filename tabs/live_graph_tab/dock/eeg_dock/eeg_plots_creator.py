@@ -78,18 +78,18 @@ class MainEegDock:
 
     def init_streaming_source(self):
         """      """
-        if self.gv.stream_origin == 'Stream from OpenBCI':
+        if self.gv.stream_origin == 'OpenBCI':
             stream_source = SampleDataFromOPENBCI(self.gv)
-        elif self.gv.stream_origin == 'Stream from synthetic data':
+        elif self.gv.stream_origin == 'Synthetic data':
             # Create fake data for test case
             stream_source = CreateSyntheticData(
                 self.gv, callback=self.gv.collect_data,
                 read_freq=1250)
-        elif self.gv.stream_origin == 'Stream from file':
+        elif self.gv.stream_origin == 'File':
             stream_source = FileReader(
                 self.gv, self.gv.stream_path, self.gv.collect_data,
                 read_freq=250)
-        elif self.gv.stream_origin == 'Stream from pcb':
+        elif self.gv.stream_origin == 'Pcb':
             stream_source = PcbReader(
                     self.gv, self.gv.collect_data, read_freq=400)
         else:
