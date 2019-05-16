@@ -39,6 +39,7 @@ class Dispatcher:
         # Variable change in the menubar
         self.stream_origin = 'Synthetic data'
         self.stream_path = f'experiment_csv/pinch_close.csv'
+        self.stream_source = None
 
         self.t_init = time()
         init_time = datetime.now()

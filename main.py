@@ -1,6 +1,7 @@
 # --General packages--
 from PyQt5.QtWidgets import QApplication
 import sys
+import atexit
 # --My packages--
 from app.dispatcher import Dispatcher
 from main_window.mainwindow import MainWindow
@@ -21,6 +22,16 @@ def main():
     # Create the Gui
     openbci_gui = MainWindow(app, gv)
     gv.openbci_gui = openbci_gui
+
+    @atexit.register   # work only if click on x on the window
+    def save_data_at_exit():
+        print('EXIT')
+        if gv.stream_origin == 'OpenBCI':
+            gv.stream_source.board.disconnect()
+            gv.stream_source.board.stop()  # application need to be closed with
+                                           # the x of the window
+        # print('saving')
+        # write_to_file(gv)
 
     # start the main tread that contains all the timers
     sys.exit(app.exec_())

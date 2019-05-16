@@ -79,6 +79,7 @@ class MainEegDock:
     @QtCore.pyqtSlot(bool)
     def start_timers(self, checked):
         self.stream_source = self.init_streaming_source()
+        self.gv.stream_source = self.stream_source
         if checked:
             self.freq_counter = FrequencyCounter(
                 self.gv, self.gv.stream_origin)

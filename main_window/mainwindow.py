@@ -8,24 +8,30 @@ from .menu_bar.menu_bar import MenuBar
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, app, gv):
+    def __init__(self, app, gv, pos=(0, 0), size=(1350, 950),
+                 name="PolyCortex Gui",
+                 intro_message='Running the experiment ...'):
         super().__init__()
         self.app = app
         self.gv = gv
-        self.name = 'PolyCortex Gui'
+        self.pos = pos
+        self.size = size
+        self.name = name
+        self.intro_message = intro_message
+
+        self.init_file_path()
+        self.icon = QtGui.QIcon(self.polycortex_logo_path)
+
+        self.init_mainwindow()
+
+    def init_file_path(self):
         self.openbci_logo_path = './img/openbci_logo.png'
         self.file_icon_path = './img/file.png'
         self.polycortex_logo_path_alpha_background = \
-                './img/polycortex_logo_alpha_background.png'
+            './img/polycortex_logo_alpha_background.png'
         self.polycortex_logo_path =  './img/polycortex_logo.png'
         self.sinus_logo_path = './img/sinus.png'
-        self.icon = QtGui.QIcon(self.polycortex_logo_path)
-        self.pos = (0, 0)
-        self.size = (1350, 950)
-        self.intro_message = 'Running the experiment ...'
 
-        self.init_mainwindow()
-    
     def init_mainwindow(self):
         self.setWindowTitle(self.name)
         self.setWindowIcon(self.icon)

@@ -306,9 +306,9 @@ class OpenBCIBoard(object):
       logging.warning('sent <s>: stopped streaming')
 
   def disconnect(self):
-    if(self.streaming == True):
+    if self.streaming == True:
       self.stop()
-    if (self.ser.isOpen()):
+    if self.ser.isOpen():
       print("Closing Serial...")
       self.ser.close()
       logging.warning('serial closed')
