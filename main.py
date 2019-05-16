@@ -2,6 +2,7 @@
 from PyQt5.QtWidgets import QApplication
 import sys
 import atexit
+import serial
 # --My packages--
 from app.dispatcher import Dispatcher
 from main_window.mainwindow import MainWindow
@@ -27,8 +28,10 @@ def main():
     def save_data_at_exit():
         print('EXIT')
         if gv.stream_origin == 'OpenBCI':
+            # serial.Serial(port='/dev/ttyUSB0').close()
+            print(gv.stream_source.board.ser.isopen())
             gv.stream_source.board.disconnect()
-            gv.stream_source.board.stop()  # application need to be closed with
+            # gv.stream_source.board.stop()  # application need to be closed with
                                            # the x of the window
         # print('saving')
         # write_to_file(gv)
