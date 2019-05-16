@@ -19,11 +19,12 @@ def set_pygame_window_at_a_desired_pos():
 
 
 class Game:
-    def __init__(self, gv):
+    def __init__(self, gv, test_mode=False):
         """
         Initialize game window, etc
         """
         self.gv = gv
+        self.test_mode = test_mode
 
         SCREEN_W, SCREEN_H = set_pygame_window_at_a_desired_pos()
         pg.init()
@@ -32,8 +33,10 @@ class Game:
 
         self.screen = pg.display.set_mode(
                 (WIDTH, HEIGHT))
-        self.gv.openbci_gui.setGeometry(
-                0, 0, SCREEN_W - WIDTH, HEIGHT)
+
+        if not test_mode:
+            self.gv.openbci_gui.setGeometry(
+                    0, 0, SCREEN_W - WIDTH, HEIGHT)
 
         pg.display.set_caption('EMG Platformer')
         self.clock = pg.time.Clock()
@@ -48,7 +51,7 @@ class Game:
         self.all_sprites = pg.sprite.Group()
         self.platforms = pg.sprite.Group()
         # player
-        self.player = Player(self, self.gv)
+        self.player = Player(self, self.gv, test_mode=self.test_mode)
         self.all_sprites.add(self.player)
         # platform
         for plat in PLATFORM_LIST:
@@ -85,13 +88,17 @@ class Game:
                 if self.playing:
                     self.playing = False
                     self.running = False
-        self.itt += 1
-        if self.gv.class_detected[0] == 1:
-            print('here')
-            print(self.gv.class_detected[0])
-        # if event.type == pg.KEYDOWN:
-        #     if event.key == pg.K_SPACE:
-            self.player.jump()
+
+            self.itt += 1
+            if self.test_mode:
+                print('here')
+                if event.type == pg.KEYDOWN:
+                    if event.key == pg.K_SPACE:
+                        self.player.jump()
+            else:
+                if self.gv.class_detected[0] == 1:
+                    print(self.gv.class_detected[0])
+                    self.player.jump()
 
     def draw(self):
         # Game Loop - draw
@@ -111,7 +118,7 @@ class Game:
 class RunGame(threading.Thread):
     def __init__(self, gv):
         super().__init__()
-        self.g = Game(gv)
+        self.g = Game(gv, test_mode=True)
         self.g.show_start_screen()
 
     def run(self):
@@ -121,6 +128,7 @@ class RunGame(threading.Thread):
 
 
 if __name__ == '__main__':
+    gv = []
     run_game = RunGame(gv)
     run_game.start()
 
