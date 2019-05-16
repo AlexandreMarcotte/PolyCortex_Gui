@@ -68,8 +68,8 @@ class OpenBCIBoard(object):
   """
 
   def __init__(self, port=None, baud=115200, filter_data=True,
-        scaled_output=True, daisy=False, aux=False, impedance=False, log=True,
-        timeout=None):
+            scaled_output=True, daisy=False, aux=False, impedance=False,
+            log=True, timeout=None):
     self.log = log # print_incoming_text needs log
     self.streaming = False
     self.baudrate = baud
@@ -80,7 +80,7 @@ class OpenBCIBoard(object):
     # might be handy to know API
     self.board_type = "cyton"
     print("Connecting to V3 at port %s" %(port))
-    self.ser = serial.Serial(port= port, baudrate = baud, timeout=timeout)
+    self.ser = serial.Serial(port=port, baudrate=baud, timeout=timeout)
 
     print("Serial established...")
 

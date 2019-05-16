@@ -5,7 +5,8 @@ from app.pyqt_frequently_used import select_file
 
 
 class MenuAction(QtGui.QAction):
-    def __init__(self, name, gv, main_window=None, icon_path=None, status_tip='', shortcut=None):
+    def __init__(self, name, gv, main_window=None, icon_path=None,
+                 status_tip='', shortcut=None):
         super().__init__()
 
         self.name = name

@@ -15,7 +15,7 @@ class FrequencyCounter:
         # print('update freq counter')
         # Calcul frequency less often
         self.freq = self.calcul_last_freq()
-        if self.stream_origin != 'Stream from OpenBCI': #and self.stream_origin != 'Stream from pcb':
+        if self.stream_origin != 'OpenBCI': # and self.stream_origin != 'Stream from pcb':
             if self.freq < self.gv.desired_read_freq:
                 self.adjust_freq_up()
                 # print('UP')

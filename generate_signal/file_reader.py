@@ -1,8 +1,9 @@
 from collections import deque
 import numpy as np
 
-# Used in the tab 3 where we create static graphes
+
 def read_data_from_file(file_name, N_CH=8):
+    """Read data from CSV to create the static graph"""
     n_data = 0
     # Count the total number of data point
     with open(file_name, 'r') as f:

@@ -17,6 +17,7 @@ class ExperimentTab(QWidget):
         self.gv = gv
         # Create the tab itself
         self.create_tab()
+        self.create_docks()
 
     def create_tab(self):
         # Insert the tab layout inside the main window frame
@@ -24,8 +25,6 @@ class ExperimentTab(QWidget):
         # Add docs to the tab
         self.area = DockArea()
         self.layout.addWidget(self.area)
-
-        self.create_docks()
 
         self.setLayout(self.layout)
 

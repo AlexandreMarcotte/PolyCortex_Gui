@@ -1,5 +1,6 @@
 from pyqtgraph.dockarea import *
 
+
 class N100Dock:
     def __init__(self, area, below_dock):
         self.init_dock(area, below_dock)

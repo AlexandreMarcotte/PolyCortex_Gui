@@ -25,7 +25,7 @@ class MenuBar:
         ## Create menu action
         # OpenBCI
         self.openbci_actn = MenuAction(
-                name='OpenBci', gv=self.gv, icon_path='./img/openbci_logo.png',
+                name='OpenBCI', gv=self.gv, icon_path='./img/openbci_logo.png',
                 status_tip='Stream data from Openbci...', shortcut='Ctrl+O' )
         self.controlPanel.addAction(self.openbci_actn)
         # PCB
