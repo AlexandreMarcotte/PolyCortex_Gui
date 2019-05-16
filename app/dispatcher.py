@@ -26,16 +26,18 @@ class Dispatcher:
         self.filter_chunk = []
         self.use_filter = False
         self.N_DATA_BEFORE_FILTER = 0
-        self.min_pass_filter = 1
-        self.max_pass_filter = 50
-        self.min_cut_filter = 57
-        self.max_cut_filter= 63
+        self.min_pass_filter = 2
+        self.max_pass_filter = 122
+        self.min_cut_filter1 = 57
+        self.max_cut_filter1 = 63
+        self.min_cut_filter2 = 117
+        self.max_cut_filter2 = 123
         self.filter_min_bound = 0
         self.filter_max_bound = self.DEQUE_LEN
         self.filter_to_use = []
 
         # Variable change in the menubar
-        self.stream_origin = 'Stream from synthetic data'
+        self.stream_origin = 'Synthetic data'
         self.stream_path = f'experiment_csv/pinch_close.csv'
 
         self.t_init = time()
@@ -89,7 +91,7 @@ class Dispatcher:
 
     def collect_data(self, signal, t=None):
         """Callback function to use in the generating functions"""
-        if self.stream_origin == 'Stream from OpenBCI':
+        if self.stream_origin == 'OpenBCI':
             signal = signal.channel_data
             # Apply the scaling factor to all channels to the data to have
             # the real voltage amplitude
@@ -114,7 +116,7 @@ class Dispatcher:
         self.t_queue.append(t - self.t_init)
         self.all_t.append(t - self.t_init)
         # Experiment
-        if self.experiment_type != 0:  # An event occured
+        if self.experiment_type != 0:  # An event occurred
             self.experiment_queue.append(self.experiment_type)
             self.all_experiment_val.append(self.experiment_type)
             self.experiment_type = 0
@@ -124,7 +126,7 @@ class Dispatcher:
 
         self.n_data_created += 1
 
-    def filter_data(self, ch, signal):                                       # TODO: ALEXM: I tried to put that into a class 2 times and it made the filtering look weird (try again)
+    def filter_data(self, ch, signal):                                          # TODO: ALEXM: I tried to put that into a class 2 times and it made the filtering look weird (try again)
         self.filter_process.data_queue[ch].append(signal[ch])
 
         if self.filter_itt % self.once_every == 0:
@@ -140,17 +142,18 @@ class Dispatcher:
                 y = self.filter_process.data_queue[ch]
 
             if 'bandstop' in self.filter_to_use:
-                # Bandstop
+                # Bandstop 60Hz
                 y = butter_bandpass_filter(
                         # y, self.min_bandstop_filter, self.max_bandstop_filter,
-                        y, self.min_cut_filter, self.max_cut_filter,
+                        y, self.min_cut_filter1, self.max_cut_filter1,
                         self.desired_read_freq, order=3,
                         filter_type='bandstop')
-
-                # y = butter_bandpass_filter(
+                # Bandstop 120Hz
+                y = butter_bandpass_filter(
                     # y, self.min_bandstop_filter, self.max_bandstop_filter,
-                    # y, 118, 122, self.desired_read_freq, order=3,
-                    # filter_type='bandstop')
+                    y, self.min_cut_filter2, self.max_cut_filter2,
+                    self.desired_read_freq, order=3,
+                    filter_type='bandstop')
 
             self.filter_chunk.append(list(y[-self.once_every:][::-1]))
         # put the data once at the time at every loop so the signal is not showing
