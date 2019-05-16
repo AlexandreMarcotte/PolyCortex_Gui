@@ -104,7 +104,7 @@ class FftGraph:
         self.plot.addItem(self.pass_f_region, ignoreBounds=True)
         # Band cut filter
         self.cut_f_region = pg.LinearRegionItem(
-                [self.gv.min_cut_filter, self.gv.max_cut_filter])
+                [self.gv.min_cut_filter1, self.gv.max_cut_filter1])
         self.cut_f_region.setBrush(red)
         self.plot.addItem(self.cut_f_region, ignoreBounds=True)
 

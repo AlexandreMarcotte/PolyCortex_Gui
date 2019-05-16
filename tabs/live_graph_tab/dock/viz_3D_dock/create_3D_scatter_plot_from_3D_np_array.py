@@ -20,6 +20,7 @@ def create_3D_scatter_plot_from_np_array(np_array, scale=1):
     item.translate(-np_array.shape[0]/2 * scale,
                    -np_array.shape[1]/2 * scale,
                    -np_array.shape[2]/2 * scale)
+
     # item = pg.ScatterPlotItem(size=100, pen=pg.mkPen('w'))
     # spots = [{'pos': pos, 'size': 10} for pos in self.pos]
     # item.addPoints(spots)

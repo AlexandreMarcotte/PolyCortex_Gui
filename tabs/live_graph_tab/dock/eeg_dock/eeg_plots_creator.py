@@ -76,6 +76,22 @@ class MainEegDock:
         # Create time dock
         self.time_dock = TimeDock(self)
 
+    @QtCore.pyqtSlot(bool)
+    def start_timers(self, checked):
+        self.stream_source = self.init_streaming_source()
+        if checked:
+            self.freq_counter = FrequencyCounter(
+                self.gv, self.gv.stream_origin)
+            self.stream_source.start()
+            for i, tm in enumerate(self.timers):
+                self.timers[i].start(0)
+            self.start_freq_counter_timer()
+        else:
+            for i, tm in enumerate(self.timers):
+                self.timers[i].stop()
+            # self.stream_source.join()
+        # self.set_default_hardware_param()
+
     def init_streaming_source(self):
         """      """
         if self.gv.stream_origin == 'OpenBCI':
@@ -107,28 +123,12 @@ class MainEegDock:
                 for plot in self.plots:
                     plot.setYRange(-r, r)
         except AttributeError as e:
-            print("Come on bro, this  value doesn't make sens")
+            print("Invalide value")
 
     def start_freq_counter_timer(self):
         self.freq_counter_timer = QtCore.QTimer()
         self.freq_counter_timer.timeout.connect(self.freq_counter.update)
         self.freq_counter_timer.start(50)
-
-    @QtCore.pyqtSlot(bool)
-    def start_timers(self, checked):
-        self.stream_source = self.init_streaming_source()
-        if checked:
-            self.freq_counter = FrequencyCounter(
-                    self.gv, self.gv.stream_origin)
-            self.stream_source.start()
-            for i, tm in enumerate(self.timers):
-                self.timers[i].start(0)
-            self.start_freq_counter_timer()
-        else:
-            for i, tm in enumerate(self.timers):
-                self.timers[i].stop()
-            # self.stream_source.join()
-        # self.set_default_hardware_param()
 
     def change_num_plot_per_row(self, plot_per_row):
         # Eeg dock
