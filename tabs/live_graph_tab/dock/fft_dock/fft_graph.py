@@ -75,37 +75,19 @@ class FftGraph:
         self.gv.curve_freq = self.curve_freq
         return plot
 
-    def add_param_tree(self):
-        self.ptree = ptree.ParameterTree(showHeader=False)
-        self.filter = DataFilterParameter()
-        params = ptree.Parameter.create(
-                name='params', type='group', children=[self.filter])
-        self.ptree.setParameters(params, showTop=False)
-
-        self.filter_layout.addWidget(self.ptree)
-
-        self.filterText = TextItem(border=getConfigOption('foreground'))
-        self.filterText.setPos(60, 20)
-        self.filterText.setParentItem(self.plot.plotItem)
-        self.filter.sigFilterChanged.connect(self.filterChanged)
-        self.filter.setFields([('butterFilter', {'units': 'Hz'})])
-
-    def filterChanged(self):
-        print('cool')
-
     def add_regions_filter_to_plot(self):
         """Add a region to the plot that will be use as the bondaries for
         the filter (blue for pass and red for cut)"""
         # Band pass filter
         self.pass_f_region = pg.LinearRegionItem(
-                [self.gv.min_pass_filter, self.gv.max_pass_filter])            # TODO: ALEXM: avoid redondancy in the creation of filters
-        self.pass_f_region.setBrush(blue)
-        self.plot.addItem(self.pass_f_region, ignoreBounds=True)
+                values=[self.gv.min_pass_filter, self.gv.max_pass_filter],
+                brush=blue)            # TODO: ALEXM: avoid redondancy in the creation of filters
+        self.plot.addItem(self.pass_f_region)
         # Band cut filter
         self.cut_f_region = pg.LinearRegionItem(
-                [self.gv.min_cut_filter, self.gv.max_cut_filter])
-        self.cut_f_region.setBrush(red)
-        self.plot.addItem(self.cut_f_region, ignoreBounds=True)
+                values=[self.gv.min_cut_filter, self.gv.max_cut_filter],
+                brush=red)
+        self.plot.addItem(self.cut_f_region)
 
     def connect_classif_region(self):
         self.pass_f_region.sigRegionChanged.connect(
@@ -125,15 +107,11 @@ class FftGraph:
         self.all_frequency()
 
     def all_frequency(self):
-        # for ch in range(self.gv.N_CH):
         for ch in self.ch_to_show:
             f_range, fft = self.gv.freq_calculator.get_fft_to_plot(
                     np.array(self.gv.data_queue[ch])[
                     self.gv.filter_min_bound:self.gv.filter_max_bound])
             self.curve_freq[ch].setData(f_range, fft)
-            # self.curve_freq[ch].setData(
-            #         self.gv.freq_calculator.freq_range,
-            #         self.gv.freq_calculator.fft[ch])                         # TODO: ALEXM prendre abs ou real? avec real il y a des valeurs negatives est-ce que c'est normal?
 
     def init_on_off_button(self, layout):
         btn('Start', layout, (0, 0), func_conn=self.start,
