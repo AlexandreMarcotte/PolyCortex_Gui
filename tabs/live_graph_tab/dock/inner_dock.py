@@ -19,9 +19,9 @@ class InnerDock:
         self.b_orientation = b_orientation
         self.background_color = background_color
 
-        self.dock, self.layout = self.create_dock(main_layout, name)
+        self.dock, self.layout = self.init_dock(main_layout, name)
 
-    def create_dock(self, main_layout, name):
+    def init_dock(self, main_layout, name):
         if self.size is not None:
             dock = Dock(name, size=self.size)
         else:
