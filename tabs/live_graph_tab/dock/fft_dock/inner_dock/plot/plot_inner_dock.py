@@ -6,6 +6,7 @@ import numpy as np
 # --My Packages--
 from app.colors import *
 from tabs.live_graph_tab.dock.inner_dock import InnerDock
+from .filter_region import FilterRegion
 
 
 class PlotInnerDock(InnerDock):
@@ -22,8 +23,7 @@ class PlotInnerDock(InnerDock):
         plot = self._set_plot_settings()
         self._add_plot(plot)
         self._add_curves_to_plot(plot)
-        self._add_regions_filter_to_plot(plot)
-        self._connect_classif_region()
+        self.add_filter_to_plot(plot)
         return plot
 
     def _set_plot_settings(self):
@@ -41,40 +41,25 @@ class PlotInnerDock(InnerDock):
     def _add_curves_to_plot(self, plot):
         for ch in range(self.gv.N_CH):
             self.freq_curves.append(
-                plot.plot(deque(np.ones(self.gv.DEQUE_LEN),
-                                maxlen=self.gv.DEQUE_LEN)))
+                plot.plot(
+                    deque(np.ones(self.gv.DEQUE_LEN),
+                          maxlen=self.gv.DEQUE_LEN)))
             self.freq_curves[ch].setPen(pen_colors[ch])
         # Keep track of the curve value in the dispatcher
         self.gv.freq_curves = self.freq_curves
         return plot
 
-    def _add_regions_filter_to_plot(self, plot):
-        """Add a region to the plot that will be use as the bondaries for
-        the filter (blue for pass and red for cut)"""
-        # Band pass filter
-        self.pass_f_region = pg.LinearRegionItem(
-            values=[self.gv.min_pass_filter, self.gv.max_pass_filter],
-            brush=blue)
-        plot.addItem(self.pass_f_region)
-        # Band cut filter
-        self.cut_f_region = pg.LinearRegionItem(
-            values=[self.gv.min_cut_filter, self.gv.max_cut_filter],
-            brush=red)
-        plot.addItem(self.cut_f_region)
-
-    def _connect_classif_region(self):
-        self.pass_f_region.sigRegionChanged.connect(
-            partial(self._update_pass_filter_region))
-        self.cut_f_region.sigRegionChanged.connect(
-            partial(self._update_cut_filter_region))
-
-    def _update_pass_filter_region(self):
-        self.gv.min_pass_filter, self.gv.max_pass_filter = \
-            self.pass_f_region.getRegion()
-
-    def _update_cut_filter_region(self):
-        self.gv.min_cut_filter, self.gv.max_cut_filter = \
-            self.cut_f_region.getRegion()
-
-
+    def add_filter_to_plot(self, plot):
+        # Pass filter
+        pass_filter = FilterRegion(
+                self.gv, type='pass', color=blue,
+                min_boundary=self.gv.min_pass_filter,
+                max_boundary=self.gv.max_pass_filter)
+        plot.addItem(pass_filter.region)
+        # Cut filter
+        cut_filter = FilterRegion(
+                self.gv, type='cut', color=red,
+                min_boundary=self.gv.min_cut_filter,
+                max_boundary=self.gv.max_cut_filter)
+        plot.addItem(cut_filter.region)
 

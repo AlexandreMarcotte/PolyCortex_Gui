@@ -8,7 +8,7 @@ from .dock.eeg_dock.eeg_plots_creator import MainEegDock
 from .dock.power_band_dock.power_band_graph import PowerBandGraph
 from .dock.power_band_over_time_dock.power_band_over_time_graph import \
         PowerBandGraphOverTime
-from .dock.fft_dock.fft_graph import FftGraphDock
+from .dock.fft_dock.fft_dock import FftDock
 from .dock.classif_dock.classification_plot_creator import ClassifPlotCreator
 from .dock.viz_3D_dock.viz_3D import Viz3D
 from .dock.spectogram3d_dock.Spectogram3D import Spectogram3D
@@ -44,7 +44,7 @@ class LiveGraphTab(QWidget):
                 'left', size=(6, 10), scroll=True)
 
         self.fft = DockHandler(
-                'FFT', self, self.docks_menu, FftGraphDock, [self.gv], 'right',
+                'FFT', self, self.docks_menu, FftDock, [self.gv], 'right',
                 size=(5, 10), scroll=True)
 
         self.power_band = DockHandler(

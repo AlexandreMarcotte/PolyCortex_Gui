@@ -26,7 +26,6 @@ class PowerBandGraph(Dock):
         self.timer.timeout.connect(self.update)
 
     def init_plot(self):
-        """"""
         plot = pg.PlotWidget(background=dark_grey)
         self.plot_d.layout.addWidget(plot, 2, 0, 1, 2)
         waves_names = [wave_name for wave_name in self.gv.waves]

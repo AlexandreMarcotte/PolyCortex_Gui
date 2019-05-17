@@ -3,11 +3,11 @@
 from pyqtgraph.dockarea import *
 # -- My packages --
 from tabs.live_graph_tab.dock.inner_dock import InnerDock
-from .settings_inner_dock import SettingsInnerDock
-from .plot_inner_dock import PlotInnerDock
+from tabs.live_graph_tab.dock.fft_dock.inner_dock.settings.settings_inner_dock import SettingsInnerDock
+from tabs.live_graph_tab.dock.fft_dock.inner_dock.plot.plot_inner_dock import PlotInnerDock
 
 
-class FftGraphDock:
+class FftDock:
     def __init__(self, gv, layout):
         self.gv = gv
         self.layout = layout
