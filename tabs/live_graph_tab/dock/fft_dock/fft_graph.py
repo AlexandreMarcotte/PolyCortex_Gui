@@ -43,7 +43,6 @@ class FftGraph:
         self.create_settings_dock()
         # Filter settings
         self.filter_d = self.create_filter_settings_dock()
-        self.init_filters()
 
         self.timer = self.init_timer()
 
@@ -178,44 +177,6 @@ class FftGraph:
         self.dock_area.addDock(filter_d.dock, 'right')
         filter_d.dock.hide()
         return filter_d
-
-    def init_filters(self):
-        ## Create flowchart, define input/output terminals
-        fc = Flowchart(terminals={
-                'dataIn': {'io': 'in'},
-                'dataOut': {'io': 'out'}})
-        ## Add flowchart control panel to the main window
-        self.filter_d.layout.addWidget(fc.widget(), 0, 0, 2, 1)
-        ## Add two plot widgets
-        pw1 = pg.PlotWidget()
-        pw2 = pg.PlotWidget()
-        self.filter_d.layout.addWidget(pw1, 0, 1)
-        self.filter_d.layout.addWidget(pw2, 1, 1)
-        ## generate signal data to pass through the flowchart
-        data = np.random.normal(size=1000)
-        data[200:300] += 1
-        data += np.sin(np.linspace(0, 100, 1000))
-        data = metaarray.MetaArray(data, info=[{'name': 'Time', 'values': np.linspace(0, 1.0, len(data))}, {}])
-        ## Feed data into the input terminal of the flowchart
-        fc.setInput(dataIn=data)
-        ## populate the flowchart with a basic set of processing nodes.
-        ## (usually we let the user do this)
-        plotList = {'Top Plot': pw1, 'Bottom Plot': pw2}
-
-        pw1Node = fc.createNode('PlotWidget', pos=(0, -150))
-        pw1Node.setPlotList(plotList)
-        pw1Node.setPlot(pw1)
-
-        pw2Node = fc.createNode('PlotWidget', pos=(150, -150))
-        pw2Node.setPlot(pw2)
-        pw2Node.setPlotList(plotList)
-
-        fNode = fc.createNode('GaussianFilter', pos=(0, 0))
-        fNode.ctrls['sigma'].setValue(5)
-        fc.connectTerminals(fc['dataIn'], fNode['In'])
-        fc.connectTerminals(fc['dataIn'], pw1Node['In'])
-        fc.connectTerminals(fNode['Out'], pw2Node['In'])
-        fc.connectTerminals(fNode['Out'], fc['dataOut'])
 
     def scale_axis(self, txt, axis_name):
         try:
