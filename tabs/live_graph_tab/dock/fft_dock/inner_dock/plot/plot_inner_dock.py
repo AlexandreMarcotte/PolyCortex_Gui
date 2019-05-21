@@ -1,8 +1,8 @@
 # --General Packages--
 import pyqtgraph as pg
 from collections import deque
-from functools import partial
 import numpy as np
+from PyQt5 import QtCore
 # --My Packages--
 from app.colors import *
 from tabs.live_graph_tab.dock.inner_dock import InnerDock
@@ -16,6 +16,7 @@ class PlotInnerDock(InnerDock):
         self.gv = gv
 
         self.freq_curves = []
+        self.ch_to_show = list(range(self.gv.N_CH))
 
         self.plot = self._init_plot()
 
@@ -23,10 +24,11 @@ class PlotInnerDock(InnerDock):
         plot = self._set_plot_settings()
         self._add_plot(plot)
         self._add_curves_to_plot(plot)
-        self.add_filter_to_plot(plot)
+        self.add_filter_region_to_plot(plot)
         return plot
 
-    def _set_plot_settings(self):
+    @staticmethod
+    def _set_plot_settings():
         plot = pg.PlotWidget(background=dark_grey)
         plot.plotItem.showGrid(x=True, y=True, alpha=0.3)
         plot.plotItem.setLabel(axis='bottom', text='Frequency', units='Hz')     # TODO: ALEXM : verifier l'uniter
@@ -40,8 +42,7 @@ class PlotInnerDock(InnerDock):
 
     def _add_curves_to_plot(self, plot):
         for ch in range(self.gv.N_CH):
-            self.freq_curves.append(
-                plot.plot(
+            self.freq_curves.append(plot.plot(
                     deque(np.ones(self.gv.DEQUE_LEN),
                           maxlen=self.gv.DEQUE_LEN)))
             self.freq_curves[ch].setPen(pen_colors[ch])
@@ -49,7 +50,7 @@ class PlotInnerDock(InnerDock):
         self.gv.freq_curves = self.freq_curves
         return plot
 
-    def add_filter_to_plot(self, plot):
+    def add_filter_region_to_plot(self, plot):
         # Pass filter
         pass_filter = FilterRegion(
                 self.gv, type='pass', color=blue,
@@ -63,3 +64,14 @@ class PlotInnerDock(InnerDock):
                 max_boundary=self.gv.max_cut_filter)
         plot.addItem(cut_filter.region)
 
+    def init_timer(self):
+        timer = QtCore.QTimer()
+        timer.timeout.connect(self._update_all_frequency)
+        return timer
+
+    def _update_all_frequency(self):
+        for ch in self.ch_to_show:
+            f_range, fft = self.gv.freq_calculator.get_fft_to_plot(
+                np.array(self.gv.data_queue[ch])[
+                self.gv.filter_min_bound: self.gv.filter_max_bound])
+            self.freq_curves[ch].setData(f_range, fft)

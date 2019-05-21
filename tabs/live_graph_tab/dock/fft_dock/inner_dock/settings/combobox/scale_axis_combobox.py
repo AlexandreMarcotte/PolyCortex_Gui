@@ -13,7 +13,8 @@ class ScaleAxisCombobox(SettingCombobox):
         self._connect(axis_name)
 
     def _connect(self, axis_name):
-        self.activated[str].connect(partial(self.scale_axis, axis_name=axis_name))
+        self.activated[str].connect(
+                partial(self.scale_axis, axis_name=axis_name))
 
     def scale_axis(self, txt, axis_name):
         try:

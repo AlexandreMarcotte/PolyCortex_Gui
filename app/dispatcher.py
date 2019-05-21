@@ -20,6 +20,7 @@ class Dispatcher:
         # Create the scaling factor for every channel
         self.scaling_factor = [sf for _ in range(N_CH)]
 
+        # Filter
         self.filter_process = FilterProcess(N_CH=N_CH, DEQUE_LEN=DEQUE_LEN)
         self.filter_itt = 0
         self.once_every = 30
@@ -62,11 +63,13 @@ class Dispatcher:
                 np.zeros(self.DEQUE_LEN), maxlen=self.DEQUE_LEN)
         self.t_init = time()
         self.n_data_created = 0
+
         # All data
         self.all_data = [
                 deque(np.zeros(self.DEQUE_LEN)) for _ in range(self.N_CH)]
         self.all_t = deque(np.zeros(self.DEQUE_LEN))
         self.all_experiment_val = deque(np.zeros(self.DEQUE_LEN))
+
         # Classification
         self.emg_signal_len = 170
         self.last_classified_type = [2 for _ in range(N_CH)]
