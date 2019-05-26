@@ -9,7 +9,7 @@ from app.pyqt_frequently_used import *
 
 class PowerBandGraphOverTime(Dock):
     def __init__(self, gv, layout):
-        super().__init__(gv, 'fft', layout)
+        super().__init__(gv=gv, dock_type='fft', secondary_layout=layout)
         self.gv = gv
         self.layout = layout
 
