@@ -1,4 +1,5 @@
 from PyQt5.QtWidgets import *
+from PyQt5.QtCore import QRect
 
 
 class MyPopUp(QWidget):
@@ -6,6 +7,7 @@ class MyPopUp(QWidget):
         QWidget.__init__(self)
         self.setWindowTitle('Learn more about PolyCortex')
 
+        self.setGeometry(QRect(100, 200, 400, 200))
         self.layout = QVBoxLayout()
         self.info = QLabel(
             'PolyCortex is Polytechnique Montreal club for\n'

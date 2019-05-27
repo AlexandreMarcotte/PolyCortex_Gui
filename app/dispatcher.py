@@ -165,7 +165,6 @@ class Dispatcher:
         # put the data once at the time at every loop so the signal is not showing
         # all jerky
         if any(self.filter_chunk):
-            # print(self.filter_chunk)
             val = self.filter_chunk[ch].pop()
             self.data_queue[ch].append(val)
             # When you removed the last one init the list again to []

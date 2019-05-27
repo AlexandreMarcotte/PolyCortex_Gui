@@ -24,7 +24,7 @@ class CreateSyntheticData(threading.Thread):
         # Modulation factor is use to have the proper frequency of the signal
         # from their omega value based on the read speed intented by the program
         modulation_factor = len(self.t) / read_freq
-        self.s1 = self.m * sin(3 *  modulation_factor * self.t)
+        self.s1 = self.m * sin(3 * modulation_factor * self.t)
         self.s2 = self.m * sin(20 * modulation_factor * self.t)
         self.s3 = self.m * sin(40 * modulation_factor * self.t)
         self.s4 = self.m * sin(60 * modulation_factor * self.t)
@@ -70,7 +70,7 @@ class CreateSyntheticData(threading.Thread):
 
                 chs_sig.append(signal)
 
-            self.callback(chs_sig, t = time() - t_init)
+            self.callback(chs_sig, t=time() - t_init)
             # self.n_data_created += 1
 
             sleep(self.gv.read_period)

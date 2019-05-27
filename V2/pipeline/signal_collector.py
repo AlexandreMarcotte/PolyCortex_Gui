@@ -4,8 +4,8 @@ from collections import deque
 
 
 class SignalCollector:
-    def __init__(self):
-        self.signal_deque = deque(np.ones(1000), maxlen=1000)
+    def __init__(self, len=1000):
+        self.signal_deque = deque(np.ones(len), maxlen=len)
         self.i = 0
 
     def fill_signal_queue(self, signal, timestamp=None):
