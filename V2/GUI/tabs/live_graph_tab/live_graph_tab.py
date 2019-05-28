@@ -14,19 +14,15 @@ class LiveGraphTab(QWidget):
         self.layout = QHBoxLayout(self)
         self.layout.addWidget(self.area)
         # Init docks
-        self.plot_dock = self.init_plot_dock()
-        self.filter_signal_dock = self.init_filter_signal_dock()
+        self.init_dock('Input Signal', [self.pipeline.signal_collector.input])
+        self.init_dock('Filter Sig out & in', [self.pipeline.filter_stage.output,
+                                               self.pipeline.filter_stage.input])
+        self.init_dock('Filtered Signal input', [self.pipeline.filter_stage.input])
+        self.init_dock('Timestamp', [self.pipeline.signal_collector.timestamps])
+        self.init_dock('FFT', [self.pipeline.fft_stage.output])
 
-    def init_plot_dock(self):
-        plot_dock = PlotDockWidget(
-                'Input Signal', signals=[self.pipeline.signal_collector.input])
-        self.area.addDock(plot_dock)
-        return plot_dock
-
-    def init_filter_signal_dock(self):
-        filter_signal_dock = PlotDockWidget(
-                'Filtered Signal', signals=[self.pipeline.filter_stage.output])
-        self.area.addDock(filter_signal_dock)
-        return filter_signal_dock
-
+    def init_dock(self, name, signals):
+        dock = PlotDockWidget(name, signals=signals)
+        self.area.addDock(dock)
+        return dock
 

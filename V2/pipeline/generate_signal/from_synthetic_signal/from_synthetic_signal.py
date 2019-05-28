@@ -8,8 +8,9 @@ class SyntheticSignal:
     def create_synthetic_signal(self):
         sin1 = SinusSignal(amplitude=2, angular_freq=60, len=1000)
         sin2 = SinusSignal(amplitude=1, angular_freq=4, len=1000)
+        sin3 = SinusSignal(amplitude=3, angular_freq=10, len=1000)
 
-        synthetic_signal = sin1.array + sin2.array
+        synthetic_signal = sin1.array + sin2.array + sin3.array
 
         synthetic_signal = self.add_impulsion(synthetic_signal)
 

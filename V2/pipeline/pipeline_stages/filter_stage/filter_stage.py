@@ -7,7 +7,6 @@ class FilterStage(PipelineStage):
         """filter : A list of filter"""
         super().__init__(input)
         self.filter = Filter()
-        self.start()
 
     def work(self):
         filtered_data = self.filter.filter_signal(self.input)

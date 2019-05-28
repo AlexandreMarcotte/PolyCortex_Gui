@@ -9,9 +9,4 @@ class PlotDockWidget(Dock):
     def __init__(self, name, signals=()):
         DockLabel.updateStyle = update_style_patched
         super().__init__(name)
-        self.scroll_plot = self.add_plot(signals)
-
-    def add_plot(self, signals):
-        scroll_plot = ScrollPlotWidget(signals)
-        self.addWidget(scroll_plot)
-        return scroll_plot
+        self.addWidget(ScrollPlotWidget(signals))
