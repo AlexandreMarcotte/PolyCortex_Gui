@@ -7,6 +7,8 @@ from .combobox.ch_on_combobox import ChOnCombobox
 from .start_button import StartButton
 
 
+
+
 class SettingsInnerDock(InnerDock):
     def __init__(self, gv, parent, plot_inner_dock):
         super().__init__(

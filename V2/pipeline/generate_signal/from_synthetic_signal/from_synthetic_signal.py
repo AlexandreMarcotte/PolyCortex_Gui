@@ -1,4 +1,4 @@
-from V2.pipeline.input_signal.sinus_signal import SinusSignal
+from V2.pipeline.generate_signal.from_synthetic_signal.sinus_signal import SinusSignal
 
 
 class SyntheticSignal:
@@ -11,11 +11,11 @@ class SyntheticSignal:
 
         synthetic_signal = sin1.array + sin2.array
 
-        # synthetic_signal = self.add_impultion(synthetic_signal)
+        synthetic_signal = self.add_impulsion(synthetic_signal)
 
         return synthetic_signal
 
-    def add_impultion(self, signal):
+    def add_impulsion(self, signal):
         # add impulsion to sinus
         for i in range(len(signal)):
             if i % 200 == 0:

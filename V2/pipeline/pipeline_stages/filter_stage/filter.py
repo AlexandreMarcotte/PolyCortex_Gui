@@ -2,7 +2,7 @@ from scipy.signal import butter, lfilter
 
 
 class Filter:
-    def __init__(self, cut_freq=(55, 65), stream_freq=1000, order=3,
+    def __init__(self, cut_freq=(50, 70), stream_freq=1000, order=3,
                  filter_type='bandstop'):
         self.cut_freq = cut_freq
         self.stream_freq = stream_freq

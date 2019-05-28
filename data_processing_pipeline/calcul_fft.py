@@ -57,7 +57,7 @@ class FreqCalculator:
 
     def calcul_fft(self, queue):
         fft = np.fft.fft(queue)
-        return abs(fft[:len(queue)// 2])
+        return abs(fft[:len(queue) // 2])
 
     def get_fft_to_plot(self, queue):
         fft = self.calcul_fft(queue)

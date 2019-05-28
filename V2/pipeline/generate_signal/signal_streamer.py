@@ -1,8 +1,8 @@
 from time import time, sleep
 import threading
 # --My Packages--
-from V2.pipeline.general_func.time_this import time_this
-from V2.pipeline.signal_collector import SignalCollector
+from V2.general_func.time_this import time_this
+from V2.pipeline.generate_signal.signal_collector import SignalCollector
 
 
 class SignalStreamer(threading.Thread):
@@ -11,7 +11,7 @@ class SignalStreamer(threading.Thread):
         - Synthetic data (sinus/noise/impulsion)
         - CSV data (ex: data savec from OpenBCI experiment)
     # Arguments:
-        input_signal:
+        generate_signal:
         signal_collector:
         stream_freq:
     """
@@ -26,6 +26,8 @@ class SignalStreamer(threading.Thread):
         self.daemon = True
 
         self.stream_period = self.stream_period(stream_freq)
+
+        self.start()
 
     @staticmethod
     def stream_period(stream_freq):

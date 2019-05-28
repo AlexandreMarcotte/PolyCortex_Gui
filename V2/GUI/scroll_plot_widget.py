@@ -1,7 +1,7 @@
 import pyqtgraph as pg
 
 
-class ScrollPlot(pg.PlotWidget):
+class ScrollPlotWidget(pg.PlotWidget):
     def __init__(self, signals=()):
         super().__init__()
         self.signals = signals
@@ -9,7 +9,7 @@ class ScrollPlot(pg.PlotWidget):
         self.curves = self.init_curves(signals)
         # Timer
         self.timer = self.init_timer()
-        self.timer.start()
+        self.timer.start(10)
 
     def init_timer(self):
         t = pg.QtCore.QTimer()

@@ -45,6 +45,7 @@ class ExitAction(QAction):
     def create_exit_icon(self):
         base_path = os.getcwd()
         path = os.path.join(base_path, 'app/exit.png')
+        print(path)
         exit_icon = QIcon(path)
         return exit_icon
 
