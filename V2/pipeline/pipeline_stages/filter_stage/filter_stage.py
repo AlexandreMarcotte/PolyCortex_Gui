@@ -13,3 +13,4 @@ class FilterStage(PipelineStage):
         # Set all the data to the output
         for i in range(len(self.output)):
             self.output[i] = filtered_data[i]
+

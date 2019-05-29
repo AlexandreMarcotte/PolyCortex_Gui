@@ -5,6 +5,7 @@ from ... dock.dock import Dock
 import pyqtgraph as pg
 from app.pyqt_frequently_used import create_cmap
 
+
 class Spectogram(Dock):
     def __init__(self, gv, layout):
 
