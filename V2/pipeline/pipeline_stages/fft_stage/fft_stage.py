@@ -9,10 +9,35 @@ class FftStage(PipelineStage):
         self.timestamps = timestamps
 
     def work(self):
+        print('fft_stage: work')
         fft_range, fft_signal = self.get_fft_to_plot(self.input)
 
         for i in range(len(fft_signal)):
             self.output[i] = fft_signal[i]
+
+    def get_freq_range(self, n_data):
+        """Calculate FFT (Remove freq 0 because it gives a really high
+         value on the graph"""
+        return np.linspace(0, n_data//2/self.get_delta_t(), n_data//2)
+
+    def calcul_fft(self, queue):
+        fft = np.fft.fft(queue)
+        output = abs(fft[:len(queue) // 2])
+        return output
+
+    def get_fft_to_plot(self, queue):
+        fft = self.calcul_fft(queue)
+        f_range = self.get_freq_range(len(queue))
+        return f_range, fft
+
+    def get_delta_t(self):
+        """interval of time from the first to the last value that was
+        add to the queue"""
+        return self.timestamps[-1] - self.timestamps[0]
+
+
+
+
 
         # self.gv = gv
         # self.remove_first_data = remove_first_data
@@ -57,26 +82,6 @@ class FftStage(PipelineStage):
         # for ch in range(len(self.all_freq_band_over_time)):
         # self.all_freq_band_over_time[ch].add_data_to_queue(freq_per_band)
         # return freq_per_band
-
-    def get_freq_range(self, n_data):
-        """Calculate FFT (Remove freq 0 because it gives a really high
-         value on the graph"""
-        return np.linspace(0, n_data//2/self.get_delta_t(), n_data//2)
-
-    def calcul_fft(self, queue):
-        fft = np.fft.fft(queue)
-        output = abs(fft[:len(queue) // 2])
-        return output
-
-    def get_fft_to_plot(self, queue):
-        fft = self.calcul_fft(queue)
-        f_range = self.get_freq_range(len(queue))
-        return f_range, fft
-
-    def get_delta_t(self):
-        """interval of time from the first to the last value that was
-        add to the queue"""
-        return self.timestamps[-1] - self.timestamps[0]
 
 
 # class FreqBandOverTime:

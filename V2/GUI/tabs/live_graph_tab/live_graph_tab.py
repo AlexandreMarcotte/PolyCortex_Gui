@@ -1,7 +1,10 @@
 from pyqtgraph.dockarea import *
-from V2.GUI.tabs.live_graph_tab.plot_dock_widget import PlotDockWidget
+from .plot_dock_widget import PlotDockWidget
 from V2.pipeline.pipeline import Pipeline
 from PyQt5.QtWidgets import *
+# --My packages--
+from .plot_widgets.scroll_plot_widget import ScrollPlotWidget
+from .plot_widgets.spectrogram_plot_widget import SpectogramPlotWidget
 
 
 class LiveGraphTab(QWidget):
@@ -13,23 +16,30 @@ class LiveGraphTab(QWidget):
         self.area = DockArea()
         self.layout = QHBoxLayout(self)
         self.layout.addWidget(self.area)
-        # Init docks
-        self.init_dock('Input Signal',
-                       [self.pipeline.signal_collector.input])
-        self.init_dock('Filter Sig out & in',
-                       [self.pipeline.filter_stage.output,
-                        self.pipeline.filter_stage.input])
-        self.init_dock('Filtered Signal input',
-                       [self.pipeline.filter_stage.input])
-        self.init_dock('Timestamp',
-                       [self.pipeline.signal_collector.timestamps])
-        self.init_dock('FFT',
-                       [self.pipeline.fft_stage.output])
-        self.init_dock('Spectrogram',
-                       [self.pipeline.fft_stage.output], plot_type='2D')
+        self.init_docks()
 
-    def init_dock(self, name, signals, plot_type='1D'):
-        dock = PlotDockWidget(name, signals=signals, plot_type=plot_type)
-        self.area.addDock(dock)
-        return dock
+    def init_docks(self):
+        self.area.addDock(PlotDockWidget(name='Input Signal',
+            plot=ScrollPlotWidget(
+                signals=[self.pipeline.signal_collector.input])))
 
+        self.area.addDock(PlotDockWidget(
+            name='Filter Sig out & in',
+            plot=ScrollPlotWidget(
+                signals=[self.pipeline.filter_stage.output,
+                         self.pipeline.filter_stage.input])))
+
+        self.area.addDock(PlotDockWidget(
+            name='Timestamp',   
+            plot=ScrollPlotWidget(
+                signals=[self.pipeline.signal_collector.timestamps])))
+
+        self.area.addDock(PlotDockWidget(
+            name='FFT',
+            plot=ScrollPlotWidget(
+                signals=[self.pipeline.fft_stage.output])))
+
+        self.area.addDock(PlotDockWidget(
+            name='Spectogram',
+            plot=SpectogramPlotWidget(
+                signals=[self.pipeline.fft_stage.output])))

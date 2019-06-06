@@ -1,3 +1,5 @@
+import numpy as np
+# --My Packages--
 from V2.pipeline.generate_signal.from_synthetic_signal.sinus_signal import SinusSignal
 
 
@@ -6,15 +8,19 @@ class SyntheticSignal:
         self.signal = self.create_synthetic_signal()
 
     def create_synthetic_signal(self):
-        sin1 = SinusSignal(amplitude=2, angular_freq=60, len=1000)
-        sin2 = SinusSignal(amplitude=1, angular_freq=4, len=1000)
-        sin3 = SinusSignal(amplitude=3, angular_freq=10, len=1000)
+        sinus_signal = (SinusSignal(2, 60).array
+                      + SinusSignal(1, 4).array
+                      + SinusSignal(3, 10).array)
+                      # + SinusSignal(3, 90).array)
 
-        synthetic_signal = sin1.array + sin2.array + sin3.array
+        sinus_signal = self.add_impulsion(sinus_signal)
+        # sinus_signal += np.random.random(len(sinus_signal)) * 6
 
-        synthetic_signal = self.add_impulsion(synthetic_signal)
+        return sinus_signal
 
-        return synthetic_signal
+    def create_sum_of_sin_signals(self, sinus_signals: list):
+        return sum([SinusSignal(amplitude, angular_freq).array for
+                         amplitude, angular_freq in sinus_signals])
 
     def add_impulsion(self, signal):
         # add impulsion to sinus

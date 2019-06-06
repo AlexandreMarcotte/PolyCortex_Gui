@@ -1,16 +1,18 @@
 from V2.pipeline.pipeline_stages.pipeline_stage import PipelineStage
-from V2.pipeline.pipeline_stages.filter_stage.filter import Filter
 
 
 class FilterStage(PipelineStage):
-    def __init__(self, input):
+    def __init__(self, input, filter: list):
         """filter : A list of filter"""
         super().__init__(input)
-        self.filter = Filter()
+        self.filter = filter
 
     def work(self):
-        filtered_data = self.filter.filter_signal(self.input)
+        print('filter_stage: Work')
+        filtered_data = self.input
+        for f in self.filter:
+            filtered_data = f.filter_signal(filtered_data)
         # Set all the data to the output
-        for i in range(len(self.output)):
+        for i in range(len(self.output)):  # TODO: ALEXM Find a better way to do this
             self.output[i] = filtered_data[i]
 

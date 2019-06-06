@@ -1,8 +1,7 @@
-# --General Packages--
-import pyqtgraph as pg
 from PyQt5 import QtCore
 from pyqtgraph.dockarea import *
 from functools import partial
+import pyqtgraph as pg
 # --My Packages--
 from app.activation_b import btn
 from app.rotated_button import RotatedButton

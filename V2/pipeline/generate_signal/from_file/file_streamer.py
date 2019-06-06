@@ -1,22 +1,23 @@
-import numpy as np
-import threading
 from time import time, sleep
 import csv
+# --My Packages--
+from ..streamer import Streamer
 
 
-class FileStreamer(threading.Thread):
-    def __init__(self, file_name, signal_collector, stream_freq=250):
-        super().__init__()
+class FileStreamer(Streamer):
+    def __init__(self,
+                 file_name,
+                 signal_collector,
+                 stream_freq=250):
+        super().__init__(file_name, signal_collector, stream_freq)
+
         self.file_name = file_name
         self.signal_collector = signal_collector
         self.stream_period = 1/stream_freq
 
         self.start()
 
-    def run(self):
-        self.stream_from_file()
-
-    def stream_from_file(self):
+    def stream_signal(self):
         t_init = time()
         print('Stream from: ', self.file_name)
         with open(self.file_name) as f:

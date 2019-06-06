@@ -28,7 +28,22 @@ class Spectogram(Dock):
         """"""
         vb = pg.ViewBox()
         vb.setAspectLocked()
-        # Add axis
+        # Add axisxScale = pg.AxisItem(orientation='bottom', linkView=vb)
+        # See ViewBox.py in pyqtgraph
+        # xScale = pg.AxisItem(orientation='bottom', linkView=vb)
+        # vb.addItem(xScale, (1, 1))
+        # yScale = pg.AxisItem(orientation='left', linkView=vb)
+        # vb.addItem(yScale, (0, 0))
+
+        # xlabelStyle = {'color': '#FFF', 'font-size': '1pt'}
+        #
+        # xScale.setLabel('This is the x axisss', units='V', **xlabelStyle)
+        # xfont = QtGui.QFont('Times', 10)
+        # xScale.setStyle(tickFont=xfont, tickTextWidth=1, tickTextHeight=1)
+        # tickTextWidth=1, tickTextHeight=1
+        # xScale.setLabel(text="<span style='color: #ff0000; font-size: 0.001pt; font-weight: bold'>X</span> <i>Axis</i>; ", units="s")
+        # yScale.setLabel('Y Axis', units='V')
+
         # self.add_axis(vb, 'left', 200, '')
         # self.add_axis(vb, 'bottom', 0, 'T')
         # self.add_axis_name(vb)

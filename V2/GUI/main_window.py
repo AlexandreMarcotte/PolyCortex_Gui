@@ -1,8 +1,8 @@
 from PyQt5.QtWidgets import *
 # --My Packages--
-from V2.GUI.menu_bar import MenuBar
-from V2.GUI.toolbar import ToolBar
-from V2.GUI.tabs.table_widget import TableWidget
+from .menu_bar import MenuBar
+from .toolbar import ToolBar
+from .tabs.table_widget import TableWidget
 
 
 class MainWindow(QMainWindow):
