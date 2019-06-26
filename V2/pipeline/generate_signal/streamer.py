@@ -19,7 +19,6 @@ class Streamer(Thread):
         self.stream_period = self._stream_period(stream_freq)
 
         self.t_init = time()
-        self.start()
 
     def time_stamp(self):
         """Calculate time elapse since beginning of the thread"""
@@ -34,7 +33,7 @@ class Streamer(Thread):
         self.stream_signal()
 
     @abstractclassmethod
-    def stream_signal(cls):
+    def stream_signal(self):
         """Overload this function to loop over the array of data to send into
            the data collector"""
 

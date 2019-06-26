@@ -70,6 +70,7 @@ class LiveGraphTab(QWidget):
 
         self.visualization3D = DockHandler(
                 'Visualization 3D', self, self.docks_menu, Viz3D, [self.gv],
+
                 'below', self.classification.dock, scroll=True)
 
         self.fft.dock.raiseDock()

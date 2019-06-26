@@ -9,7 +9,8 @@ class PipelineStage(Thread):
         super().__init__()
         self.input = input
 
-        self.output = deque(input, maxlen=len(input))
+        self.output = [deque(input[0], maxlen=len(input[0]))
+                       for _ in range(len(input))]
 
         self.daemon = True
         self.run_stage = True

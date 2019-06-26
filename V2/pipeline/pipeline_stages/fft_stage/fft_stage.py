@@ -5,11 +5,11 @@ from V2.pipeline.pipeline_stages.pipeline_stage import PipelineStage
 class FftStage(PipelineStage):
     def __init__(self, input, timestamps):
         super().__init__(input)
-
+        self.input = input
         self.timestamps = timestamps
 
     def work(self):
-        print('fft_stage: work')
+        # print('fft_stage: work')
         fft_range, fft_signal = self.get_fft_to_plot(self.input)
 
         for i in range(len(fft_signal)):

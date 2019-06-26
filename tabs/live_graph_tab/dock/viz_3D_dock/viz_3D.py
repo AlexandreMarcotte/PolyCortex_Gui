@@ -163,7 +163,7 @@ class Viz3D(Dock):
     def create_total_brain(self):
         brain_data = read_nii_data(
             nii_path='tabs/live_graph_tab/dock/viz_3D_dock/inplane001.nii')
-        self.brain = Brain(brain_data, 'volume')
+        self.brain = Brain(brain_data)
         self.view.addItem(self.brain.item)
 
     def create_plot_lines(self):

@@ -20,6 +20,6 @@ class Brain:
 
         if type == 'volume':
             self.item = create_3D_volume_from_3D_np_array(
-                    self.brain_3d_array, scale=3, show_box=show_box,
+                    self.brain_3d_array, scale=1, show_box=show_box,
                     show_axis=show_axis)
 

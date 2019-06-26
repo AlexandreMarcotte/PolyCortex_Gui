@@ -23,7 +23,7 @@ class FileReader(threading.Thread):
         with open(self.file_name) as f:
             data = csv.reader(f)
             for line in data:
-                print('Line', line)
+                # print('Line', line)
                 signal = np.array([float(val) for val in line[:8]])
                 t = time() - t_init
                 self.collect_data(signal, t=t)

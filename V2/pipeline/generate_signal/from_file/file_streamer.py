@@ -1,5 +1,6 @@
 from time import time, sleep
 import csv
+import numpy as np
 # --My Packages--
 from ..streamer import Streamer
 
@@ -15,16 +16,14 @@ class FileStreamer(Streamer):
         self.signal_collector = signal_collector
         self.stream_period = 1/stream_freq
 
-        self.start()
-
     def stream_signal(self):
         t_init = time()
         print('Stream from: ', self.file_name)
         with open(self.file_name) as f:
             data = csv.reader(f)
             for line in data:
-                # signal = np.array([float(val) for val in line[:8]])
-                signal = float(line[0])
+                signal = np.array([float(val) for val in line[:8]])
+                # signal = float(line[0])
                 timestamp = time() - t_init
                 self.signal_collector.fill_signal_queue(
                     signal, timestamp=timestamp)
