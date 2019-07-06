@@ -7,7 +7,6 @@ from V2.GUI.main_window import MainWindow
 
 def main():
     app = QApplication(sys.argv)
-    # app.setStyle('cleanlooks')
     main_window = MainWindow()
     main_window.show()
     QtGui.QApplication.instance().exec_()

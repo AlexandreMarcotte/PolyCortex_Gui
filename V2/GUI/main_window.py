@@ -16,14 +16,10 @@ class MainWindow(QMainWindow):
         # MenuBar
         self.setMenuBar(MenuBar())
         # Toolbar
-        self.init_toolbar()
+        self.addToolBar(ToolBar(self))
         # Start Bar
         self.intro_message = 'Running the experiment ...'
         self.statusBar().showMessage(self.intro_message)
-
-    def init_toolbar(self):
-        self.addToolBar(ToolBar(self))
-
 
 
 

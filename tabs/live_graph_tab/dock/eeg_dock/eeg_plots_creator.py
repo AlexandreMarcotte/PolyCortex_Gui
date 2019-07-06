@@ -114,7 +114,7 @@ class MainEegDock:
 
         return stream_source
 
-    def scale_y_axis(self, txt):
+    def scale_y_axis(self, txt):  ###
         try:
             if txt == 'Auto':
                 for plot in self.plots:
