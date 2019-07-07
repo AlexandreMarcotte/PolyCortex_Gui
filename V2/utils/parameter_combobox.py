@@ -8,29 +8,33 @@ class ParameterCombobox:
             cols=1, tip=None):
         """ Create a parameter combobox under a text label """
 
-        self.txt_label = self.create_txt_label(name)
+        self.txt_label = self._create_txt_label(name)
         self.cb = self.create_cb(param, editable, conn_func, tip)
 
-        self.add_to_layout(layout, pos, cols)
+        self._add_to_layout(layout, pos, cols)
 
     def create_cb(self, param, editable, conn_func, tip):
         cb = QComboBox()
         for val in param:
             cb.addItem(val)
         cb.setEditable(editable)
-        if conn_func is not None:
-            cb.activated[str].connect(conn_func)
+        # if conn_func is not None:
+        #     cb.activated[str].connect(conn_func)
         if tip is not None:
             cb.setToolTip(tip)
         cb.setStyleSheet('font-size: 10pt;')
         return cb
 
-    def add_to_layout(self, layout, pos, cols):
+    def connect_cb(self, conn_func):
+        self.conn_func = conn_func
+        self.cb.activated[str].connect(self.conn_func)
+
+    def _add_to_layout(self, layout, pos, cols):
         layout.addWidget(self.txt_label, *pos)
         shift = 1
         layout.addWidget(self.cb, pos[0] + shift, pos[1], 1, cols)
 
-    def create_txt_label(self, name):
+    def _create_txt_label(self, name):
         if name is not None:
             label = QLabel(name)
             label.setFrameShape(QFrame.Panel)

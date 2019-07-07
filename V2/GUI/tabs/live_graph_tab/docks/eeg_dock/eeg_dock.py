@@ -8,15 +8,15 @@ class EegDock(MyDock):
     def __init__(self, upper):
         super().__init__('EEG_dock')
         self.upper = upper
-        self.init_settings_inner_dock()
-        self.init_eeg_plots_dock()
+        self.settings_dock = self.init_settings_inner_dock()
+        self.eeg_plots_dock = self.init_eeg_plots_dock()
 
     def init_settings_inner_dock(self):
         settings_dock = SettingsDock(self.layout)
         self.dock_area.addDock(settings_dock.dock)
+        return settings_dock
 
     def init_eeg_plots_dock(self):
         eeg_plots_dock = EegPlotsDock()
         self.dock_area.addDock(eeg_plots_dock)
-
-
+        return eeg_plots_dock

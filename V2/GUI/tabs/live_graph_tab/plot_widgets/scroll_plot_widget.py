@@ -8,6 +8,7 @@ class ScrollPlotWidget(pg.PlotWidget, LivePlot):
     def __init__(self):
         """Signals: list of signal to plot in this scroll plot"""
         super().__init__()
+        self.signals = []
         # Curve
         self.curves = self._init_curves()
         # Timer
@@ -25,9 +26,8 @@ class ScrollPlotWidget(pg.PlotWidget, LivePlot):
         self.signals = signals
 
     def update(self):
-        pass
-        # for i, signal in enumerate(self.signals):
-        #     self.curves[i].setData(signal)
+        for i, signal in enumerate(self.signals):
+            self.curves[i].setData(signal)
 
     def scale_y_axis(self, txt):
         try:

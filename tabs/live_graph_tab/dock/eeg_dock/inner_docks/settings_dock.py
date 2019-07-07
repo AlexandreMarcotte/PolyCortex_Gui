@@ -9,7 +9,7 @@ from PyQt5.QtGui import QPixmap
 # -- My Packages --
 
 
-class SettingsDock:
+class SettingsDock: ###
     def __init__(self, main_eeg_dock):
         self.main_eeg_dock = main_eeg_dock
         self.create_settings_dock()

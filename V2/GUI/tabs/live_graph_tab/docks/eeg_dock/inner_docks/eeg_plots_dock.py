@@ -10,9 +10,9 @@ class EegPlotsDock(MyDock):
         self._init_plots()
 
     def _init_plots(self):
-        # self.plot_docks = []
+        self.plot_docks = []
         for i in range(8):
-            # plot_dock =
-            # self.plot_docks.append(plot_dock)
-            self.dock_area.addDock(PlotDock(name=str(i), plot=ScrollPlotWidget()))
+            plot_dock = PlotDock(name=str(i), plot=ScrollPlotWidget())
+            self.plot_docks.append(plot_dock)
+            self.dock_area.addDock(plot_dock)
 
