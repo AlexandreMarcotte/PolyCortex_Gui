@@ -1,8 +1,9 @@
 from PyQt5.QtWidgets import *
-from .live_graph_tab.live_graph_tab_controller import LiveGraphTabController
+from V2.GUI.tabs.live_graph_tab.controller.live_graph_tab_controller import LiveGraphTabController
 
 
 class TableWidget(QTabWidget):
+    """ Control the creation of the tabs"""
     def __init__(self, parent):
         super().__init__(parent)
 
