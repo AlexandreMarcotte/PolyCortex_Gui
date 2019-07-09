@@ -2,13 +2,12 @@ from pyqtgraph.dockarea import *
 from PyQt5.QtWidgets import *
 # --My packages--
 from .docks.eeg_dock.eeg_dock import EegDock
+# from .docks.fft_dock.fft_dock import FftDock
 
 
 class View(QWidget):
-    def __init__(self, model):
+    def __init__(self):
         super().__init__()
-
-        self._model = model
 
         self.area = DockArea()
         self.layout = QHBoxLayout(self)
@@ -17,12 +16,23 @@ class View(QWidget):
 
     def init_docks(self):
         self.eeg_dock = self.init_eeg_dock()
+        # self.fft_dock = self.init_fft_dock()
 
     def init_eeg_dock(self):
-        eeg_dock = EegDock(self)
-        self.area.addDock(eeg_dock)
+        eeg_dock = EegDock()
+        self.area.addDock(eeg_dock.dock)
         return eeg_dock
 
+    def init_fft_dock(self):
+        pass
+
+
+
+
+
+        # fft_dock = EegDock()
+        # self.area.addDock(fft_dock, 'right', self.eeg_dock)
+        # return fft_dock
 
         # eeg_inner_dock.dock_area.addDock(PlotDockWidget(
         #     name='Filter Sig out & in',

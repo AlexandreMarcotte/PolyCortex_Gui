@@ -4,10 +4,10 @@ from app.colors import *
 
 
 class btn:
-    def __init__(self, name, layout, pos, size=(1, 1), func_conn=None,
-                 action=None, color=None, toggle=False, tip=None,
-                 max_width=1200, min_width=15, max_height=None,
-                 txt_color=None, font_size=11):
+    def __init__(self, name, layout, pos=(0, 0), size=(1, 1), func_conn=None,
+                 action=None, color=dark_blue_tab, toggle=False, tip=None,
+                 max_width=100, min_width=15, max_height=None,
+                 txt_color=white, font_size=11):
         if name == 'Start':
             max_width = 85
             min_width = 85

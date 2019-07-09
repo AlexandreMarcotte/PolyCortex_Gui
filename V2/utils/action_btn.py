@@ -1,9 +1,7 @@
 from PyQt5.QtWidgets import *
-from functools import partial
-from app.colors import *
 
 
-class ActivationBtn(QPushButton):
+class Btn(QPushButton):
     def __init__(self, name, color=None, toggle=False, tip=None,
                  max_width=1200, min_width=15, max_height=None,
                  txt_color=None, font_size=11):
@@ -39,7 +37,7 @@ class ActivationBtn(QPushButton):
 
     def set_style(self):
         if self._txt_color:
-            self.b.setStyleSheet(
+            self.setStyleSheet(
                 f'''background-color: {self._color}; color: {self._txt_color}; 
                     font-size: {self._font_size}pt;''')
         else:

@@ -1,4 +1,4 @@
-class EegGraph:
+class EegGraph: ###
     def __init__(self, ch, q, gv, ts, curve, regions):
         """
         Class containing a single EEG graph

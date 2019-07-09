@@ -1,7 +1,7 @@
 from PyQt5 import QtGui, QtCore
 
 
-class ChNumberAction:
+class ChNumberAction: ###
     def __init__(self, timers, ch):
         self.timers = timers
         self.ch = ch

@@ -2,6 +2,7 @@ import pyqtgraph as pg
 import re
 # --My Packages--
 from .live_plot import LivePlot
+from V2.utils.colors import *
 
 
 class ScrollPlotWidget(pg.PlotWidget, LivePlot):
@@ -10,7 +11,15 @@ class ScrollPlotWidget(pg.PlotWidget, LivePlot):
         super().__init__()
         self.signals = []
         # Curve
+        self._init_plot_appearance()
         self.curves = self._init_curves()
+
+    def _init_plot_appearance(self):
+        self.plotItem.showGrid(x=True, y=True, alpha=0.2)
+        self.plotItem.setLabel(axis='left', units='v')
+        self.plotItem.hideAxis('bottom')
+        self.setBackground(dark_grey)
+        # self.setYRange(-3000, 3000)
 
     def _init_curves(self):
         curves = []

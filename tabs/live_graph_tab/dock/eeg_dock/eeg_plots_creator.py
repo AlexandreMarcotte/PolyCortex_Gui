@@ -252,7 +252,7 @@ class MainEegDock:
                 tip=f'Start/Stop the ch{ch+1} signal')
         self.btns.append(self.btn)
 
-    def assign_action_to_ch(self, ch, ch_layout):
+    def assign_action_to_ch(self, ch, ch_layout): ###
         max_width = 17
         max_height = 18
         # Average
@@ -273,7 +273,7 @@ class MainEegDock:
         actn_btn = ActionButton(
                 ch_layout, 2, self.gv, ch, conn_func='filter',
                 plot_creator=self)
-        btn('F',ch_layout, (2, 8), action=actn_btn,
+        btn('F', ch_layout, (2, 8), action=actn_btn,
                 toggle=True, tip='''Show the size of the fft window on which
                 the fft is calculated for all ch''', max_width=max_width,
                 max_height=max_height, color=dark_blue_tab, txt_color=white)

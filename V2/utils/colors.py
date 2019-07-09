@@ -9,6 +9,7 @@ blue = (0, 0, 255, 10)
 yellow = (255, 255, 0, 45)
 purple = (146, 56, 219, 45)
 dark_grey = (3, 3, 3)
+white_tuple = (255, 255, 255)
 
 pen_colors = ['r', 'y', 'g', 'c', 'b', 'm',
               (100, 100, 100), 'w', 'k', (100, 100, 100), (100, 100, 100),
@@ -50,6 +51,7 @@ white = 'rgba(255, 255, 255, 1)'
 black = 'rgba(0, 0, 0, 0.5)'
 
 DARK_GREY = '#585858'  # hexa
+WHITE = '#FFFFFF'  # hexa
 LIGHT_GREY = '#C8C8C8'
 
 blue_plane='rgba(0, 0, 255, 0.4)'

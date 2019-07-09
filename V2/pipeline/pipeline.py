@@ -20,10 +20,10 @@ class Pipeline:
                         Filter(cut_freq=(55, 65), filter_type='bandstop')])
         self.filter_stage.start()
         # FFT
-        # self.fft_stage = FftStage(
-        #         input=self.filter_stage.input,
-        #         timestamps=self.signal_collector.timestamps)
-        # self.fft_stage.start()
+        self.fft_stage = FftStage(
+                input=self.filter_stage.input,
+                timestamps=self.signal_collector.timestamps)
+        self.fft_stage.start()
 
     def start_signal_streamer(self, stream_origin='Synthetic data'):
         if stream_origin == 'Synthetic data':

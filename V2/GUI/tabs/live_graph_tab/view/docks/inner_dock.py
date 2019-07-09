@@ -1,55 +1,61 @@
-from PyQt5 import QtCore
-from pyqtgraph.dockarea import *
-from functools import partial
 import pyqtgraph as pg
+from PyQt5.QtWidgets import QScrollArea
+from pyqtgraph.dockarea import DockArea, Dock
 # --My Packages--
 from app.activation_b import btn
 from app.rotated_button import RotatedButton
 
 
 class InnerDock:
-    def __init__(self, main_layout, name, b_pos=(0, 0), b_checked=True,
-                 toggle_button=False, size=None, b_orientation=None,
-                 background_color=None):
-        self.b_pos = b_pos
-        self.b_checked = b_checked
-        self.toggle_button = toggle_button
-        self.size = size
-        self.b_orientation = b_orientation
-        self.background_color = background_color
+    def __init__(self, main_layout=None, name='', b_pos=(0, 0), b_checked=True,
+                 toggle_btn=True, size=(1, 1), b_orientation=None,
+                 background_color=None, set_scroll=False, add_dock_area=False,
+                 margin=(1, 1, 1, 1), hide_title=True):
 
-        self.dock, self.layout = self.init_dock(main_layout, name)
+        self._create_toggle_button(
+            toggle_btn, main_layout, name, b_orientation, b_pos, b_checked)
+        self.layout = pg.LayoutWidget()
+        self.dock = Dock(name, size=size, hideTitle=hide_title)
+        self._add_scroll_area(set_scroll)
+        self._add_dock_area(add_dock_area, margin)
+        self._set_background_color(background_color)
 
-    def init_dock(self, main_layout, name):
-        if self.size is not None:
-            dock = Dock(name, size=self.size)
+    def _set_background_color(self, background_color):
+        if background_color is not None:
+            pg.setConfigOption('background', background_color)
+
+    def _add_scroll_area(self, set_scroll):
+        if set_scroll:
+            scroll = QScrollArea()
+            scroll.setWidgetResizable(True)
+            self.dock.addWidget(scroll)
+            scroll.setWidget(self.layout)
         else:
-            dock = Dock(name)
-        dock.hideTitleBar()
-        if self.toggle_button:
-            self.create_button(main_layout, name)
-        layout = pg.LayoutWidget()
-        if self.background_color is not None:
-            pg.setConfigOption('background', self.background_color)
-        dock.addWidget(layout)
-        return dock, layout
+            self.dock.addWidget(self.layout)
 
-    def create_button(self, main_layout, name):
-        if self.b_orientation is not None:
-            button = RotatedButton(
-                name, orientation=self.b_orientation)
-            button.setMaximumWidth(20)
-            button.setCheckable(True)
-            button.clicked.connect(self.open)
-            main_layout.addWidget(button, *self.b_pos)
-        else:
-            button = btn(
-                name, main_layout, self.b_pos, func_conn=self.open,
-                toggle=True, max_height=18, font_size=10)
-            button.b.setChecked(self.b_checked)
+    def _add_dock_area(self, add_dock_area, margin):
+        if add_dock_area:
+            self.dock_area = DockArea()
+            self.dock_area.layout.setContentsMargins(*margin)
+            self.layout.addWidget(self.dock_area, 1, 0, 1, 1)
 
-    # @QtCore.pyqtSlot(bool)
-    def open(self, checked):
+    def _create_toggle_button(
+            self, toggle_btn, main_layout, name, b_orientation, b_pos, b_checked):
+        if toggle_btn:
+            if b_orientation is not None:
+                button = RotatedButton(
+                    name, orientation=b_orientation)
+                button.setMaximumWidth(20)
+                button.setCheckable(True)
+                button.clicked.connect(self._open)
+                main_layout.addWidget(button, *b_pos)
+            else:
+                button = btn(
+                    name, main_layout, b_pos, func_conn=self._open,
+                    toggle=True, max_height=18, font_size=10)
+            button.b.setChecked(b_checked)
+
+    def _open(self, checked):
         if checked:
             self.dock.show()
         else:

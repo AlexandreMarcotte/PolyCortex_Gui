@@ -9,7 +9,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle('PolyCortex Gui')
-        self.setGeometry(100, 100, 600, 500)
+        self.setGeometry(100, 100, 600, 800)
         # Tab
         self.table_widget = TableWidget(self)
         self.setCentralWidget(self.table_widget)
