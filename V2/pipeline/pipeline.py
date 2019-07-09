@@ -22,7 +22,7 @@ class Pipeline:
         # FFT
         self.fft_stage = FftStage(
                 input=self.filter_stage.input,
-                timestamps=self.signal_collector.timestamps)
+                timestamps=self.signal_collector.timestamps, remove_first_freq=1)
         self.fft_stage.start()
 
     def start_signal_streamer(self, stream_origin='Synthetic data'):

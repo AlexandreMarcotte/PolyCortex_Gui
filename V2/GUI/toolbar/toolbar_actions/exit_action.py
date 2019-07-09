@@ -1,16 +1,6 @@
-# -- General Packages --
-from PyQt5.QtWidgets import *
-from PyQt5.QtGui import QIcon
 import os
-
-
-class ToolBar(QToolBar):
-    def __init__(self, main_window):
-        super().__init__()
-
-        self.main_window = main_window
-
-        self.addAction(ExitAction(self, main_window))
+from PyQt5.QtWidgets import QAction
+from PyQt5.QtGui import QIcon
 
 
 class ExitAction(QAction):
@@ -27,4 +17,3 @@ class ExitAction(QAction):
         path = os.path.join(base_path, 'GUI/img/exit.png')
         exit_icon = QIcon(path)
         return exit_icon
-

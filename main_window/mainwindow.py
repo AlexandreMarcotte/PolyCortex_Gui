@@ -29,7 +29,7 @@ class MainWindow(QMainWindow):
         self.file_icon_path = './img/file.png'
         self.polycortex_logo_path_alpha_background = \
             './img/polycortex_logo_alpha_background.png'
-        self.polycortex_logo_path =  './img/polycortex_logo.png'
+        self.polycortex_logo_path = './img/polycortex_logo.png'
         self.sinus_logo_path = './img/sinus.png'
 
     def init_mainwindow(self):

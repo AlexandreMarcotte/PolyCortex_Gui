@@ -9,11 +9,11 @@ class ParameterCombobox:
         """ Create a parameter combobox under a text label """
 
         self.txt_label = self._create_txt_label(name)
-        self.cb = self.create_cb(param, editable, conn_func, tip)
+        self.cb = self._create_combobox(param, editable, conn_func, tip)
 
         self._add_to_layout(layout, pos, cols)
 
-    def create_cb(self, param, editable, conn_func, tip):
+    def _create_combobox(self, param, editable, conn_func, tip):
         cb = QComboBox()
         for val in param:
             cb.addItem(val)

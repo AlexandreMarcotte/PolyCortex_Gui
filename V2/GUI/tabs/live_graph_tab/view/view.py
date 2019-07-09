@@ -2,7 +2,7 @@ from pyqtgraph.dockarea import *
 from PyQt5.QtWidgets import *
 # --My packages--
 from .docks.eeg_dock.eeg_dock import EegDock
-# from .docks.fft_dock.fft_dock import FftDock
+from .docks.fft_dock.fft_dock import FftDock
 
 
 class View(QWidget):
@@ -15,16 +15,18 @@ class View(QWidget):
         self.init_docks()
 
     def init_docks(self):
-        self.eeg_dock = self.init_eeg_dock()
-        # self.fft_dock = self.init_fft_dock()
+        self.eeg_dock = self._init_eeg_dock()
+        self.fft_dock = self._init_fft_dock()
 
-    def init_eeg_dock(self):
+    def _init_eeg_dock(self):
         eeg_dock = EegDock()
         self.area.addDock(eeg_dock.dock)
         return eeg_dock
 
-    def init_fft_dock(self):
-        pass
+    def _init_fft_dock(self):
+        fft_dock = FftDock()
+        self.area.addDock(fft_dock.dock, 'right', self.eeg_dock.dock)
+        return fft_dock
 
 
 

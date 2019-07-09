@@ -1,24 +1,26 @@
 # --My packages--
-from V2.utils.my_dock import MyDock
-from V2.GUI.tabs.live_graph_tab.view.docks.eeg_dock.inner_docks.eeg_settings_dock import EegSettingsDock
-from ..eeg_dock.inner_docks.eeg_plots_dock import EegPlotsDock
-from V2.GUI.tabs.live_graph_tab.view.plot_widgets.spectrogram_plot_widget import SpectogramPlotWidget
+from V2.GUI.tabs.live_graph_tab.view.docks.inner_dock import InnerDock
+from V2.GUI.tabs.live_graph_tab.view.docks.fft_dock.inner_docks.fft_settings_dock import FftSettingsDock
 from V2.GUI.tabs.live_graph_tab.plot_dock import PlotDock
 
 
-# class EegDock(MyDock):
-#     def __init__(self):
-#         super().__init__('FFT_dock')
-#         self.settings_dock = self._init_settings_inner_dock()
-#         self.eeg_plots_dock = self._init_eeg_plots_dock()
-#
-#     def _init_settings_inner_dock(self):
-#         settings_dock = EegSettingsDock(self.layout)
-#         self.dock_area.addDock(settings_dock.dock)
-#         return settings_dock
-#
-#     def _init_eeg_plots_dock(self):
-#         eeg_plots_dock = EegPlotsDock()
-#         self.dock_area.addDock(eeg_plots_dock)
-#         return eeg_plots_dock
-#
+class FftDock(InnerDock):
+    def __init__(self):
+        super().__init__(
+            name='FFT', toggle_btn=False, add_dock_area=True,
+            set_scroll=True, hide_title=False)
+
+        self.settings_dock = FftSettingsDock(self.layout)
+        self.plot_dock = PlotDock(add_btn=False)
+
+        self.inner_docks = [self.settings_dock, self.plot_dock]
+        self.add_all_dock_to_dock_area()
+
+    def add_all_dock_to_dock_area(self):
+        for inner_dock in self.inner_docks:
+            # TODO: ALEXM: Try to remove this construct
+            try:
+                self.dock_area.addDock(inner_dock.dock)
+            except AttributeError:
+                self.dock_area.addDock(inner_dock)
+

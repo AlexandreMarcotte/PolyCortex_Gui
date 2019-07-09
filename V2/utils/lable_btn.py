@@ -9,8 +9,8 @@ from V2.utils.colors import *
 class LabelBtn(Btn):
     def __init__(self, name, tip=None, conn_func='avg'):
         super().__init__(
-                name, color=dark_blue_tab, toggle=True, tip=tip, max_width=19,
-                min_width=15, max_height=19,
+                name, color=dark_blue_tab, toggle=True, tip=tip, max_width=23,
+                min_width=15, max_height=23,
                 txt_color=white, font_size=11)
 
         self.data_queue = None

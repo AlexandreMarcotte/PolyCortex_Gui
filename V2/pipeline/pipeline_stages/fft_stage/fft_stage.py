@@ -3,17 +3,20 @@ from V2.pipeline.pipeline_stages.pipeline_stage import PipelineStage
 
 
 class FftStage(PipelineStage):
-    def __init__(self, input, timestamps):
+    def __init__(self, input, timestamps, remove_first_freq=1):
         super().__init__(input)
         self.input = input
+        print(len(input), 'len input')
         self.timestamps = timestamps
+        self.remove_first_freq = remove_first_freq
 
     def work(self):
-        # print('fft_stage: work')
-        fft_range, fft_signal = self.get_fft_to_plot(self.input)
+        for ch in range(len(self.input)):
+            fft_range, fft_signal = self.get_fft_to_plot(self.input[ch])
 
-        for i in range(len(fft_signal)):
-            self.output[i] = fft_signal[i]
+            for i in range(len(fft_signal)):
+                if i > self.remove_first_freq:
+                    self.output[ch][i] = fft_signal[i]
 
     def get_freq_range(self, n_data):
         """Calculate FFT (Remove freq 0 because it gives a really high

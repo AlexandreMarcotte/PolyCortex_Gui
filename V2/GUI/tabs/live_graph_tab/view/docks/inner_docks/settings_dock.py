@@ -8,7 +8,7 @@ from app.activation_b import btn
 
 class SettingsDock(InnerDock):
     def __init__(self, main_layout):
-        super().__init__(main_layout, name='Settings')
+        super().__init__(main_layout=main_layout, name='Settings')
         self.main_layout = main_layout
         self._create_settings_dock()
 

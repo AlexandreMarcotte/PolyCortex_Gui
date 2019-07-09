@@ -2,13 +2,14 @@ import pyqtgraph as pg
 from PyQt5.QtWidgets import QScrollArea
 from pyqtgraph.dockarea import DockArea, Dock
 # --My Packages--
-from app.activation_b import btn
-from app.rotated_button import RotatedButton
+# from app.activation_b import btn
+from V2.utils.action_btn import Btn
+from V2.utils.rotated_button import RotatedButton
 
 
 class InnerDock:
-    def __init__(self, main_layout=None, name='', b_pos=(0, 0), b_checked=True,
-                 toggle_btn=True, size=(1, 1), b_orientation=None,
+    def __init__(self, name='', size=(1, 1), main_layout=None, b_pos=(0, 0),
+                 b_checked=True, toggle_btn=True, b_orientation=None,
                  background_color=None, set_scroll=False, add_dock_area=False,
                  margin=(1, 1, 1, 1), hide_title=True):
 
@@ -44,16 +45,15 @@ class InnerDock:
         if toggle_btn:
             if b_orientation is not None:
                 button = RotatedButton(
-                    name, orientation=b_orientation)
+                        name, orientation=b_orientation)
                 button.setMaximumWidth(20)
                 button.setCheckable(True)
-                button.clicked.connect(self._open)
-                main_layout.addWidget(button, *b_pos)
             else:
-                button = btn(
-                    name, main_layout, b_pos, func_conn=self._open,
-                    toggle=True, max_height=18, font_size=10)
-            button.b.setChecked(b_checked)
+                button = Btn(
+                        name, b_pos, toggle=True, max_height=18, font_size=10)
+            main_layout.addWidget(button)
+            button.clicked.connect(self._open)
+            button.setChecked(b_checked)
 
     def _open(self, checked):
         if checked:

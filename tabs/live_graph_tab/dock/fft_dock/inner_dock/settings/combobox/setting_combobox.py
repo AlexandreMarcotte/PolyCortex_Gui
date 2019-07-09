@@ -20,17 +20,17 @@ class SettingCombobox(QComboBox):
         self.add_param_combobox_to_layout(layout)
 
     def set_txt_label_appearance(self):
-        l = QLabel(self._name)
-        l.setFrameShape(QFrame.Panel)
-        l.setFrameShadow(QFrame.Sunken)
-        l.setLineWidth(1)
-        l.setAlignment(Qt.AlignCenter)
-        l.setStyleSheet(
+        label = QLabel(self._name)
+        label.setFrameShape(QFrame.Panel)
+        label.setFrameShadow(QFrame.Sunken)
+        label.setLineWidth(1)
+        label.setAlignment(Qt.AlignCenter)
+        label.setStyleSheet(
                 f"""font-weight: 420; 
                 background-color: {label_grey}; 
                 font-size: 10pt;""")
-        l.setMaximumHeight(26)
-        return l
+        label.setMaximumHeight(26)
+        return label
 
     def add_param_combobox_to_layout(self, layout):
         # Label

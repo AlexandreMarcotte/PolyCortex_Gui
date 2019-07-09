@@ -27,9 +27,9 @@ class EegPlotsDockConnector:
         max_val_btn.clicked.connect(max_val_btn.show_action)
 
     def connect_plots(self, ch):
-        signals = [self._model.pipeline.signal_collector.input[ch],
-                   self._model.pipeline.filter_stage.output[ch]]
+        signals = [self._model.pipeline.signal_collector.input[ch]]
+        self.plot_dock[ch].scroll_plot.connect_signals(signals)
+                   # self._model.pipeline.filter_stage.output[ch]]
         # if ch == 0:
         #     signals = [self._model.pipeline.fft_stage.input[0]]
-        self.plot_dock[ch].scroll_plot.connect_signals(signals)
 

@@ -5,7 +5,8 @@ from V2.GUI.tabs.live_graph_tab.plot_dock import PlotDock
 
 
 class EegPlotsDock(InnerDock):
-    def __init__(self, size=(10, 10)):
+    def __init__(self, size=(1, 10)):
+        # DockLabel.updateStyle = update_style_patched
         super().__init__(
                 name='eeg_plots_dock', size=size, toggle_btn=False,
                 add_dock_area=True, set_scroll=True)
