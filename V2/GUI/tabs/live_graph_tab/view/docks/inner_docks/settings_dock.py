@@ -3,14 +3,13 @@ import pyqtgraph as pg
 from abc import abstractclassmethod
 # -- My Packages --
 from V2.GUI.tabs.live_graph_tab.view.docks.inner_dock import InnerDock
-from app.activation_b import btn
+from V2.utils.btn import Btn
 
 
 class SettingsDock(InnerDock):
     def __init__(self, main_layout):
         super().__init__(main_layout=main_layout, name='Settings')
         self.main_layout = main_layout
-        self._create_settings_dock()
 
     def _create_settings_dock(self):
         # Stop/Start button
@@ -18,7 +17,8 @@ class SettingsDock(InnerDock):
 
     def _create_start_buttons(self):
         """Assign pushbutton for starting"""
-        self.start_btn = btn('Start', self.layout, toggle=True)
+        self.start_btn = Btn('Start', toggle=True)
+        self.layout.addWidget(self.start_btn, 0, 0)
 
     @abstractclassmethod
     def _create_all_combobox(self):

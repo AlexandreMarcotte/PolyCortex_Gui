@@ -12,11 +12,12 @@ class View(QWidget):
         self.area = DockArea()
         self.layout = QHBoxLayout(self)
         self.layout.addWidget(self.area)
-        self.init_docks()
+        self._init_docks()
 
-    def init_docks(self):
+    def _init_docks(self):
         self.eeg_dock = self._init_eeg_dock()
         self.fft_dock = self._init_fft_dock()
+        self.visualization_3D_dock = self._init_visualization_3D_dock()
 
     def _init_eeg_dock(self):
         eeg_dock = EegDock()
@@ -28,6 +29,11 @@ class View(QWidget):
         self.area.addDock(fft_dock.dock, 'right', self.eeg_dock.dock)
         return fft_dock
 
+    def _init_visualization_3D_dock(self):
+        visualization_3D_dock = FftDock()
+        self.area.addDock(
+            visualization_3D_dock.dock, 'bottom', self.fft_dock.dock)
+        return visualization_3D_dock
 
 
 

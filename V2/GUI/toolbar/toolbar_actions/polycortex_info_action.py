@@ -11,7 +11,6 @@ class PolycortexInfoAction(QAction):
 
         self.setStatusTip('Get information about PolyCortex Society')
         self.triggered.connect(self.show_polycortex_info_page)
-        # self.w = None
 
     def show_polycortex_info_page(self):
         self.polycortex_info_win = PopUp()

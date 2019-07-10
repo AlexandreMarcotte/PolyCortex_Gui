@@ -48,7 +48,9 @@ green_b = 'rgba(0, 100, 0, 0.5)'
 red_b =  'rgba(100, 0, 0, 0.5)'
 blue_b = 'rgba(0, 0, 170, 0.5)'
 white = 'rgba(255, 255, 255, 1)'
-black = 'rgba(0, 0, 0, 0.5)'
+transparent_black = 'rgba(0, 0, 0, 0.5)'
+black = 'rgba(0, 0, 0, 0.8)'
+
 
 DARK_GREY = '#585858'  # hexa
 WHITE = '#FFFFFF'  # hexa

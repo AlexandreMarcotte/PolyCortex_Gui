@@ -2,7 +2,7 @@ from PyQt5 import QtCore
 from PyQt5.QtWidgets import *
 import numpy as np
 # --My packages--
-from .action_btn import Btn
+from .btn import Btn
 from V2.utils.colors import *
 
 

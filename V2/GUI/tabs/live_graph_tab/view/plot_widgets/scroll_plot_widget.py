@@ -6,13 +6,17 @@ from V2.utils.colors import *
 
 
 class ScrollPlotWidget(pg.PlotWidget, LivePlot):
-    def __init__(self):
+    def __init__(self, curve_color='w'):
         """Signals: list of signal to plot in this scroll plot"""
         super().__init__()
+
+        self.curve_color = curve_color
+
         self.signals = []
+        self.curves = []
         # Curve
         self._init_plot_appearance()
-        self.curves = self._init_curves()
+        # self.curves = self._init_curves()
 
     def _init_plot_appearance(self):
         self.plotItem.showGrid(x=True, y=True, alpha=0.2)
@@ -21,17 +25,22 @@ class ScrollPlotWidget(pg.PlotWidget, LivePlot):
         self.setBackground(dark_grey)
         # self.setYRange(-3000, 3000)
 
-    def _init_curves(self):
+    def _init_curves(self, signals):
         curves = []
-        # for signal in signals:
-        for ch in range(8):
-            curves.append(self.plot())
+        for signal in signals:
+            curve = self.plot(signal)
+            curve.setPen(self.curve_color)
+            curves.append(curve)
         return curves
 
     def connect_signals(self, signals):
         self.signals = signals
+        self.curves = self._init_curves(signals)
+        # Start the timer at the connection
+        self.timer = self.init_timer()
+        self.timer.start(10)
 
-    def update(self):
+    def _update(self):
         for i, signal in enumerate(self.signals):
             self.curves[i].setData(signal)
 

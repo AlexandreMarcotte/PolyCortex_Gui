@@ -1,6 +1,8 @@
 from pyqtgraph.dockarea import *
+import pyqtgraph as pg
+from functools import partial
 # --My packages--
-from V2.utils.action_btn import Btn
+from V2.utils.btn import Btn
 from V2.utils.lable_btn import LabelBtn
 from V2.utils.colors import *
 from V2.GUI.tabs.live_graph_tab.view.plot_widgets.scroll_plot_widget import ScrollPlotWidget
@@ -16,8 +18,8 @@ class PlotDock(Dock):
             self._add_all_btn()
 
     def _add_plot(self):
-        self.scroll_plot = ScrollPlotWidget()
-        self.addWidget(self.scroll_plot, 0, 1, 3, 9)
+        self.scroll_plot = ScrollPlotWidget(curve_color=pen_colors[self._ch])
+        self.addWidget(self.scroll_plot, 0, 1, 4, 9)
 
     def _add_all_btn(self):
         # Just for visualisation test at the moment
@@ -27,8 +29,8 @@ class PlotDock(Dock):
     def _add_toggle_on_off_btn(self):
         toggle_btn = Btn(
                 name=str(self._ch+1), max_width=23, max_height=23,
-                color=button_colors[self._ch], toggle=True,
-                tip=f'Start/Stop the ch{self._ch+1} signal')
+                color=button_colors[self._ch], txt_color=black,
+                toggle=True, tip=f'Start/Stop the ch{self._ch+1} signal')
 
         self.addWidget(toggle_btn, 0, 0, 1, 1)
         return toggle_btn
@@ -50,3 +52,20 @@ class PlotDock(Dock):
             self.addWidget(btn, no, 10, 1, 1)
             self.addWidget(btn.label, no, 9, 1, 1)
 
+        self.create_color_button()
+
+    def create_color_button(self):
+        """Create color button to change the color of the line"""
+        color_btn = pg.ColorButton()
+        color_btn.setMaximumWidth(23)
+        color_btn.setMaximumHeight(23)
+        color_btn.setToolTip('Click to change the color of the line')
+        color_btn.sigColorChanged.connect(partial(self.change_line_color))
+        self.addWidget(color_btn, 3, 10)
+
+    def change_line_color(self):
+        print('change color')
+        # color = color_btn.color()
+        # self.eeg_graphes[self.ch].curve.setPen(color)
+        # self.gv.curve_freq[self.ch].setPen(color)
+        # self.btns[self.ch].set_color(color)
