@@ -17,7 +17,7 @@ class View(QWidget):
     def _init_docks(self):
         self.eeg_dock = self._init_eeg_dock()
         self.fft_dock = self._init_fft_dock()
-        self.visualization_3D_dock = self._init_visualization_3D_dock()
+        # self.visualization_3D_dock = self._init_visualization_3D_dock()
 
     def _init_eeg_dock(self):
         eeg_dock = EegDock()
