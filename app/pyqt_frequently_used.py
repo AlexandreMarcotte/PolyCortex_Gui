@@ -53,6 +53,29 @@ def create_txt_label(name):
     return l
 
 
+class TripletBox:
+    def __init__(self, gv, name, col, layout, colors=None):
+        self.gv = gv
+        self.name = name
+
+        self.N_COMBO_BOX = 3
+        self.all_l_e = []
+        self.add_triplet_txt_box(col, layout, colors)
+
+    def add_triplet_txt_box(self, col, layout, colors=None):
+        for i in range(self.N_COMBO_BOX):
+            l_e = ClickableLineEdit(self.gv, i, self.name)
+            if colors is not None:
+                l_e.setStyleSheet(
+                        f"""border-style: solid; 
+                            border-color: {colors[i]}; 
+                            border-width: 1px 1px 1px 1px;
+                         """)
+            l_e.setMaximumWidth(30)
+            layout.addWidget(l_e, 1, col+i)
+            self.all_l_e.append(l_e)
+
+
 def create_param_combobox(
             layout, name, pos, param, conn_func=None, editable=True,
             cols=1, tip=None):
@@ -93,29 +116,6 @@ class ClickableLineEdit(QLineEdit):
             self.gv.rotation_axis = self.planes[self.i]
             print('angle', self.i)
         QLineEdit.mousePressEvent(self, event)
-
-
-class TripletBox:
-    def __init__(self, gv, name, col, layout, colors=None):
-        self.gv = gv
-        self.name = name
-
-        self.N_COMBO_BOX = 3
-        self.all_l_e = []
-        self.add_triplet_txt_box(col, layout, colors)
-
-    def add_triplet_txt_box(self, col, layout, colors=None):
-        for i in range(self.N_COMBO_BOX):
-            l_e = ClickableLineEdit(self.gv, i, self.name)
-            if colors is not None:
-                l_e.setStyleSheet(
-                        f"""border-style: solid; 
-                            border-color: {colors[i]}; 
-                            border-width: 1px 1px 1px 1px;
-                         """)
-            l_e.setMaximumWidth(30)
-            layout.addWidget(l_e, 1, col+i)
-            self.all_l_e.append(l_e)
 
 
 def create_cmap(z):

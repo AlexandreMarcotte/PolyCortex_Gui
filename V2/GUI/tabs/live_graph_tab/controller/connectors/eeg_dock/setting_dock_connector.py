@@ -12,7 +12,7 @@ class SettingDockConnector:
     def _connect_vertical_axis(self):
         # v axis
         for ch in range(self._n_ch):
-            scale_v_axis = self.view.eeg_dock.plots_dock.plot_docks[ch].scroll_plot.scale_y_axis
+            scale_v_axis = self.view.eeg_dock.plot_dock.plot_docks[ch].scroll_plot.scale_y_axis
             self.settings_dock.vertical_scale_cb.connect_cb(scale_v_axis)
 
     def _connect_horizontal_axis(self):

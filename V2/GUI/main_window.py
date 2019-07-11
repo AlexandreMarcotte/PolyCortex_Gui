@@ -17,7 +17,7 @@ class MainWindow(QMainWindow):
         super().__init__()
         DockLabel.updateStyle = update_style_patched
         self.setWindowTitle('PolyCortex Gui')
-        self.setGeometry(100, 100, 1200, 800)
+        self.setGeometry(100, 100, 1300, 900)
         # Tab
         self.table_widget = TableWidget(self)
         self.setCentralWidget(self.table_widget)

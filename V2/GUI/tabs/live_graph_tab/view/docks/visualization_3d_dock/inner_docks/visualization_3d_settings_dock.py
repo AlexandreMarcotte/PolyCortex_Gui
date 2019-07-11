@@ -1,9 +1,12 @@
 # -- My Packages --
 from V2.utils.parameter_combobox import ParameterCombobox
 from V2.GUI.tabs.live_graph_tab.view.docks.inner_docks.settings_dock import SettingsDock
+from V2.utils.triplet_box import TripletBox
+from V2.utils.colors import *
+from V2.utils.data_saver import DataSaver
+from V2.utils.btn import Btn
 
-
-class FftSettingsDock(SettingsDock):
+class Visualisation3dSettingsDock(SettingsDock):
     def __init__(self, main_layout):
         super().__init__(main_layout)
         self._create_settings_dock()
@@ -15,19 +18,18 @@ class FftSettingsDock(SettingsDock):
 
     def _create_all_combobox(self):
         self.ch_to_move_cb = ParameterCombobox(
-            self.layout, 'Ch to move', (0, 1), [str(ch+1) for ch in range(8)])
-        self.max_microV_cb = ParameterCombobox(
-            self.layout, 'Max Uv', (0, 2), ['Auto','1000 uv', '10000 uv',
-                                            '100000 uv', '1000000 uv', '10000000 uv'], editable=False)
-        self.log_cb = ParameterCombobox(
-            self.layout, 'Log', (0, 3), ['False', 'True'], editable=False)
-        self.filter_cb = ParameterCombobox(
-            self.layout, 'Filter', (0, 4), ['No filter', 'Bandpass',
-                                            'Bandstop', 'Both'], editable=False)
-        self.ch_on_cb = ParameterCombobox(
-            self.layout, 'Ch On/Off', (0, 5), ['ch 1', 'ch 2', 'ch 3', 'ch 4',
-                                               'ch 5', 'ch 6', 'ch 7', 'ch 8', 'all'], editable=False)
-
-
-
+            self.inner_layout, 'Ch to move', (0, 1), [str(ch + 1) for ch in range(8)])
+        # Position
+        self.pos_triplet_box = TripletBox(
+            self.inner_layout, 'Position', (0, 2),
+            colors=(blue_plane, green_plane, red_plane))
+        # Angle
+        self.pos_triplet_box = TripletBox(
+            self.inner_layout, 'Angle', (0, 5),
+            colors=(blue_plane, green_plane, red_plane))
+        # Data saver
+        self.data_saver = DataSaver(self.inner_layout, pos=(0, 8))
+        # Show 3D
+        self.show_3d_btn = Btn('Show 3D', color=grey3)
+        self.inner_layout.addWidget(self.show_3d_btn, 1, 0)
 

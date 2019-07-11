@@ -4,7 +4,7 @@ class EegPlotsDockConnector:
         self._view = view
         self._model = model
 
-        self.plot_dock = self._view.eeg_dock.plots_dock.plot_docks
+        self.plot_dock = self._view.eeg_dock.plot_dock.plot_docks
 
     def connect(self):
         for ch in range(self._n_ch):

@@ -18,18 +18,18 @@ class FftSettingsDock(SettingsDock):
 
     def _create_all_combobox(self):
         self.scale_axis_cb = ParameterCombobox(
-            self.layout, 'Max Freq', (0, 1),
+            self.inner_layout, 'Max Freq', (0, 1),
             ['Auto', '60 Hz', '80 Hz', '100 Hz', '120 Hz'])
         self.max_microV_cb = ParameterCombobox(
-            self.layout, 'Max Uv', (0, 2), ['Auto','1000 uv', '10000 uv',
+            self.inner_layout, 'Max Uv', (0, 2), ['Auto', '1000 uv', '10000 uv',
             '100000 uv', '1000000 uv', '10000000 uv'], editable=False)
         self.log_cb = ParameterCombobox(
-            self.layout, 'Log', (0, 3), ['False', 'True'], editable=False)
+            self.inner_layout, 'Log', (0, 3), ['False', 'True'], editable=False)
         self.filter_cb = ParameterCombobox(
-            self.layout, 'Filter', (0, 4), ['No filter', 'Bandpass',
+            self.inner_layout, 'Filter', (0, 4), ['No filter', 'Bandpass',
             'Bandstop', 'Both'], editable=False)
         self.ch_on_cb = ParameterCombobox(
-            self.layout, 'Ch On/Off', (0, 5), ['ch 1', 'ch 2', 'ch 3', 'ch 4',
+            self.inner_layout, 'Ch On/Off', (0, 5), ['ch 1', 'ch 2', 'ch 3', 'ch 4',
             'ch 5', 'ch 6', 'ch 7', 'ch 8', 'all'], editable=False)
 
 

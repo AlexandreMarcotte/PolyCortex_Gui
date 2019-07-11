@@ -22,16 +22,16 @@ class EegSettingsDock(SettingsDock):
 
     def _create_all_combobox(self):
         self.vertical_scale_cb = ParameterCombobox(
-            self.layout, 'Vertical scale', (0, 1),
+            self.inner_layout, 'Vertical scale', (0, 1),
             ['Auto', '10 uv', '100 uv', '1000 uv', '10000 uv', '100000 uv'])
         self.horizontal_scale_cb = ParameterCombobox(
-            self.layout, 'Horizontal scale', (0, 2), ['5s', '7s', '10s'],
+            self.inner_layout, 'Horizontal scale', (0, 2), ['5s', '7s', '10s'],
             editable=False)
         self.nb_columns_cb = ParameterCombobox(
-            self.layout, 'Nb of columns', (0, 3), ['1', '2', '4'],
+            self.inner_layout, 'Nb of columns', (0, 3), ['1', '2', '4'],
             editable=False)
         self.aliasing_cb = ParameterCombobox(
-            self.layout, 'Aliasing', (0, 4), ['on', 'off'],
+            self.inner_layout, 'Aliasing', (0, 4), ['on', 'off'],
             editable=False)
 
     def _create_polycortex_label(self):
@@ -39,4 +39,4 @@ class EegSettingsDock(SettingsDock):
         polycortex_name_img = QPixmap(
                 './GUI/img/polycortex_name_alpha_background.png')
         polycortex_label.setPixmap(polycortex_name_img)
-        self.layout.addWidget(polycortex_label, 1, 0, 1, 1)
+        self.inner_layout.addWidget(polycortex_label, 1, 0, 1, 1)

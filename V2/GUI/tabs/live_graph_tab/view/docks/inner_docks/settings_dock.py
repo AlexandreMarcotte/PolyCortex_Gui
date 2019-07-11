@@ -8,8 +8,8 @@ from V2.utils.btn import Btn
 
 class SettingsDock(InnerDock):
     def __init__(self, main_layout):
-        super().__init__(main_layout=main_layout, name='Settings')
-        self.main_layout = main_layout
+        super().__init__(external_layout=main_layout, name='Settings')
+        self.external_layout = main_layout
 
     def _create_settings_dock(self):
         # Stop/Start button
@@ -18,7 +18,7 @@ class SettingsDock(InnerDock):
     def _create_start_buttons(self):
         """Assign pushbutton for starting"""
         self.start_btn = Btn('Start', toggle=True)
-        self.layout.addWidget(self.start_btn, 0, 0)
+        self.inner_layout.addWidget(self.start_btn, 0, 0)
 
     @abstractclassmethod
     def _create_all_combobox(self):
