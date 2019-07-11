@@ -7,9 +7,10 @@ from V2.utils.rotated_button import RotatedButton
 
 
 class InnerDock(Dock):
-    def __init__(self, name='', size=(1, 1), external_layout=None, b_checked=True,
-                 toggle_btn=True, b_orientation=None, set_scroll=False,
-                 add_dock_area=False, margin=(1, 1, 1, 1), hide_title=True):
+    def __init__(self, name='', size=(1, 1), external_layout=None,
+                 b_checked=True, toggle_btn=True, b_orientation=None,
+                 set_scroll=False, add_dock_area=False, margin=(1, 1, 1, 1),
+                 hide_title=True):
 
         super().__init__(
             name, size=size, hideTitle=hide_title, autoOrientation=False)

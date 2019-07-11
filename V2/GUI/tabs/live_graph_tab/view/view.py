@@ -10,6 +10,7 @@ from V2.GUI.tabs.live_graph_tab.view.docks.eeg_dock.inner_docks.eeg_settings_doc
 from V2.GUI.tabs.live_graph_tab.view.docks.eeg_dock.inner_docks.eeg_plots_dock import EegPlotsDock
 from V2.GUI.tabs.live_graph_tab.view.docks.eeg_dock.inner_docks.saving_dock import SavingDock
 from V2.GUI.tabs.live_graph_tab.view.docks.eeg_dock.inner_docks.banner_dock import BannerDock
+from V2.GUI.tabs.live_graph_tab.view.docks.eeg_dock.inner_docks.write_to_hardware_dock import WriteHardwareDock
 # Viz 3D
 from V2.GUI.tabs.live_graph_tab.view.docks.visualization_3d_dock.inner_docks.visualization_3d_settings_dock import Visualisation3dSettingsDock
 from V2.GUI.tabs.live_graph_tab.view.docks.visualization_3d_dock.inner_docks.plot.visualization_3d_plot_dock import Visualization3dPlotsDock
@@ -38,6 +39,12 @@ class View(QWidget):
         # Banner dock
         self.banner_dock = BannerDock(external_layout=self.eeg_dock.inner_layout)
         self.eeg_dock.add_dock(self.banner_dock, 'top', self.eeg_dock.plot_dock)
+        self.banner_dock.hide()
+        # Write harware dock
+        self.write_hardware_dock = WriteHardwareDock(
+            external_layout=self.eeg_dock.inner_layout)
+        self.eeg_dock.add_dock(
+            self.write_hardware_dock, 'top', self.eeg_dock.plot_dock)
 
         self.area.addDock(self.eeg_dock)
 
