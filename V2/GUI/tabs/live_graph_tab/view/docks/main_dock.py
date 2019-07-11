@@ -12,9 +12,13 @@ class MainDock(InnerDock):
         self.plot_dock = plot_dock
 
         self.inner_docks = [self.settings_dock, self.plot_dock]
-        self.add_all_dock_to_dock_area()
+        self._add_all_dock_to_dock_area()
 
-    def add_all_dock_to_dock_area(self):
+    def _add_all_dock_to_dock_area(self):
         for inner_dock in self.inner_docks:
             self.dock_area.addDock(inner_dock)
+
+    def add_dock(self, dock, relative_pos, other_dock):
+        self.dock_area.addDock(dock, relative_pos, other_dock)
+
 

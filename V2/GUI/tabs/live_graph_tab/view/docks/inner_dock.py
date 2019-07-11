@@ -20,6 +20,8 @@ class InnerDock(Dock):
             toggle_btn, external_layout, name, b_orientation, b_checked)
         self._add_scroll_area(set_scroll)
         self._add_dock_area(add_dock_area, margin)
+        if not b_checked:
+            self.hide()
 
     def _add_scroll_area(self, set_scroll):
         if set_scroll:

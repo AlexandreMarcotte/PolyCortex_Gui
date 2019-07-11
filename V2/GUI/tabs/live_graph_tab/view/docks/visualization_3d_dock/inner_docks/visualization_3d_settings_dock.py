@@ -6,6 +6,7 @@ from V2.utils.colors import *
 from V2.utils.data_saver import DataSaver
 from V2.utils.btn import Btn
 
+
 class Visualisation3dSettingsDock(SettingsDock):
     def __init__(self, main_layout):
         super().__init__(main_layout)
@@ -18,7 +19,8 @@ class Visualisation3dSettingsDock(SettingsDock):
 
     def _create_all_combobox(self):
         self.ch_to_move_cb = ParameterCombobox(
-            self.inner_layout, 'Ch to move', (0, 1), [str(ch + 1) for ch in range(8)])
+            self.inner_layout, 'Ch to move', (0, 1),
+            [str(ch + 1) for ch in range(8)])
         # Position
         self.pos_triplet_box = TripletBox(
             self.inner_layout, 'Position', (0, 2),

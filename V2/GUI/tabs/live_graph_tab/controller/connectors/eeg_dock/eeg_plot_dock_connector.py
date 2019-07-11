@@ -14,7 +14,7 @@ class EegPlotsDockConnector:
 
     def _connect_toggle_btn(self, ch):
         self.plot_dock[ch].toggle_btn.clicked.connect(
-                self.plot_dock[ch].scroll_plot.toggle_timer)
+                self.plot_dock[ch].plot.toggle_timer)
 
     def _connect_control_btn(self, ch):
         # Avg val btn
@@ -28,7 +28,7 @@ class EegPlotsDockConnector:
 
     def connect_plots(self, ch):
         signals = [self._model.pipeline.signal_collector.input[ch]]
-        self.plot_dock[ch].scroll_plot.connect_signals(signals)
+        self.plot_dock[ch].plot.connect_signals(signals)
                    # self._model.pipeline.filter_stage.output[ch]]
         # if ch == 0:
         #     signals = [self._model.pipeline.fft_stage.input[0]]

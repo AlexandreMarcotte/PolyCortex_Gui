@@ -8,9 +8,11 @@ from V2.GUI.tabs.live_graph_tab.plot_dock import PlotDock
 # EEG
 from V2.GUI.tabs.live_graph_tab.view.docks.eeg_dock.inner_docks.eeg_settings_dock import EegSettingsDock
 from V2.GUI.tabs.live_graph_tab.view.docks.eeg_dock.inner_docks.eeg_plots_dock import EegPlotsDock
+from V2.GUI.tabs.live_graph_tab.view.docks.eeg_dock.inner_docks.saving_dock import SavingDock
+from V2.GUI.tabs.live_graph_tab.view.docks.eeg_dock.inner_docks.banner_dock import BannerDock
 # Viz 3D
 from V2.GUI.tabs.live_graph_tab.view.docks.visualization_3d_dock.inner_docks.visualization_3d_settings_dock import Visualisation3dSettingsDock
-# from V2.GUI.tabs.live_graph_tab.view.docks.visualization_3d_dock.inner_docks.visualization_3d_plot_dock import
+from V2.GUI.tabs.live_graph_tab.view.docks.visualization_3d_dock.inner_docks.plot.visualization_3d_plot_dock import Visualization3dPlotsDock
 
 
 class View(QWidget):
@@ -30,17 +32,24 @@ class View(QWidget):
     def _init_eeg_dock(self):
         self.eeg_dock = MainDock(name='EEG',
             settings_dock=EegSettingsDock, plot_dock=EegPlotsDock())
+        # Saving dock
+        self.saving_dock = SavingDock(external_layout=self.eeg_dock.inner_layout)
+        self.eeg_dock.add_dock(self.saving_dock, 'top', self.eeg_dock.plot_dock)
+        # Banner dock
+        self.banner_dock = BannerDock(external_layout=self.eeg_dock.inner_layout)
+        self.eeg_dock.add_dock(self.banner_dock, 'top', self.eeg_dock.plot_dock)
+
         self.area.addDock(self.eeg_dock)
 
     def _init_fft_dock(self):
         self.fft_dock = MainDock(name='FFT',
-            settings_dock=FftSettingsDock, plot_dock=PlotDock(add_btn=False))
+            settings_dock=FftSettingsDock, plot_dock=PlotDock(curve_color='b'))
         self.area.addDock(self.fft_dock, 'right', self.eeg_dock)
 
     def _init_visualization_3D_dock(self):
         self.visualization_3D_dock = MainDock(name='Visualization 3D',
             settings_dock=Visualisation3dSettingsDock,
-            plot_dock=PlotDock(add_btn=False))
+            plot_dock=Visualization3dPlotsDock())
         self.area.addDock(self.visualization_3D_dock, 'bottom', self.fft_dock)
 
 
