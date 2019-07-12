@@ -1,3 +1,6 @@
+import numpy as np
+
+
 class EegPlotsDockConnector:
     def __init__(self, n_ch, view, model):
         self._n_ch = n_ch
@@ -11,6 +14,9 @@ class EegPlotsDockConnector:
             self._connect_toggle_btn(ch)
             self._connect_control_btn(ch)
             self.connect_plots(ch)
+        self._view.eeg_dock.plot_dock.time_dock.plot.curr_time = \
+            self._model.pipeline.signal_collector.timestamps
+        self._view.eeg_dock.plot_dock.time_dock.plot.timer.start(0)
 
     def _connect_toggle_btn(self, ch):
         self.plot_dock[ch].toggle_btn.clicked.connect(

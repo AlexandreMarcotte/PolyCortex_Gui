@@ -14,6 +14,7 @@ from V2.GUI.tabs.live_graph_tab.view.docks.eeg_dock.inner_docks.pins_settings_do
 from V2.GUI.tabs.live_graph_tab.view.docks.fft_dock.inner_docks.fft_settings_dock import FftSettingsDock
 from V2.GUI.tabs.live_graph_tab.view.docks.fft_dock.inner_docks.filter_dock import FilterDock
 from V2.GUI.tabs.live_graph_tab.plot_dock import PlotDock
+from V2.GUI.tabs.live_graph_tab.view.docks.fft_dock.inner_docks.plot.fft_plot import FftPlot
 # Viz 3D
 from V2.GUI.tabs.live_graph_tab.view.docks.visualization_3d_dock.inner_docks.visualization_3d_settings_dock import Visualisation3dSettingsDock
 from V2.GUI.tabs.live_graph_tab.view.docks.visualization_3d_dock.inner_docks.plot.visualization_3d_plot_dock import Visualization3dPlotsDock
@@ -22,7 +23,6 @@ from V2.GUI.tabs.live_graph_tab.view.docks.visualization_3d_dock.inner_docks.plo
 class View(QWidget):
     def __init__(self):
         super().__init__()
-
         self.area = DockArea()
         self.layout = QHBoxLayout(self)
         self.layout.addWidget(self.area)
@@ -36,7 +36,7 @@ class View(QWidget):
     def _init_eeg_dock(self):
         self.eeg_dock = MainDock(name='EEG',
             settings_dock=EegSettingsDock, plot_dock=EegPlotsDock(),
-            margin=(7, 0, 0, 0))
+            margin=(7, 0, 0, -100))
         # Saving dock
         self.saving_dock = SavingDock(
             external_layout=self.eeg_dock.inner_layout)
@@ -64,7 +64,7 @@ class View(QWidget):
     def _init_fft_dock(self):
         self.fft_dock = MainDock(name='FFT',
             settings_dock=FftSettingsDock, plot_dock=PlotDock(
-                curve_color=pen_colors))
+                plot=FftPlot, curve_color=pen_colors))
         self.area.addDock(self.fft_dock, 'right', self.eeg_dock)
         # Filter dock
         self.filter_dock = FilterDock(external_layout=self.fft_dock.inner_layout)

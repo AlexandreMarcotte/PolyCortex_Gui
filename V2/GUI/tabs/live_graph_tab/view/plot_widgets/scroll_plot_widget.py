@@ -15,7 +15,6 @@ class ScrollPlotWidget(pg.PlotWidget, LivePlot):
         self.signals = []
         self.curves = []
         # Curve
-        self._init_plot_appearance()
         # self.curves = self._init_curves()
 
     def _init_plot_appearance(self):
@@ -23,7 +22,6 @@ class ScrollPlotWidget(pg.PlotWidget, LivePlot):
         self.plotItem.setLabel(axis='left', units='v')
         self.plotItem.hideAxis('bottom')
         self.setBackground(dark_grey)
-        # self.setYRange(-3000, 3000)
 
     def _init_curves(self, signals):
         curves = []
@@ -33,12 +31,13 @@ class ScrollPlotWidget(pg.PlotWidget, LivePlot):
             curves.append(curve)
         return curves
 
-    def connect_signals(self, signals):
+    def connect_signals(self, signals, t_interval=0):
+        self._init_plot_appearance()
         self.signals = signals
         self.curves = self._init_curves(signals)
         # Start the timer at the connection
         self.timer = self.init_timer()
-        self.timer.start(10)
+        self.timer.start(t_interval)
 
     def _update(self):
         for i, signal in enumerate(self.signals):

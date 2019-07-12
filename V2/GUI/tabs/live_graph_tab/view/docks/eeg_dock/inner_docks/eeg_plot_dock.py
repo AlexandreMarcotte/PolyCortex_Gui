@@ -9,12 +9,13 @@ from V2.utils.color_btn import ColorBtn
 
 
 class EegPlotDock(PlotDock):
-    def __init__(self, ch):
+    def __init__(self, ch, add_btn=True):
         self._ch = ch
         self.curve_color = (pen_colors[ch])
         super().__init__(curve_color=self.curve_color)
 
-        self._add_all_btn()
+        if add_btn:
+            self._add_all_btn()
 
     def _add_all_btn(self):
         # Just for visualisation test at the moment

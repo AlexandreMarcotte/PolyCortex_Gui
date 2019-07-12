@@ -11,3 +11,4 @@ class TableWidget(QTabWidget):
 
     def add_tabs(self):
         self.addTab(LiveGraphTabController()._view, 'Live graph')
+        # self.addTab(LiveGraphTabController()._view, 'Experiment')

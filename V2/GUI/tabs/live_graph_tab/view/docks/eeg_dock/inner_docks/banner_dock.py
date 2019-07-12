@@ -11,11 +11,17 @@ class BannerDock(InnerDock):
         self._add_banners()
 
     def _add_banners(self):
+        self._add_polycortex_banner()
+        self._add_openbci_banner()
+
+    def _add_polycortex_banner(self):
         # Polycortex
         polycortex_banner = QLabel()
         polycortex_banner.setPixmap(
             QtGui.QPixmap('./GUI/img/polycortex_banner.png'))
         self.inner_layout.addWidget(polycortex_banner, 0, 0)
+
+    def _add_openbci_banner(self):
         # OpenBci
         open_bci_banner = QLabel()
         open_bci_banner.setPixmap(

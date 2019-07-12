@@ -16,7 +16,7 @@ class DataSaver:
         self.save_path_line_edit = self._init_save_path_line_edit(save_path)
 
         self.chose_save_path_btn = self._init_btn(
-            'Choose save path', pos=(pos[0], pos[1]+1))
+            'Save path', pos=(pos[0], pos[1]+1))
 
         self.save_data_now_btn = self._init_btn(
             'Save data now', pos=(self.pos[0]+1, self.pos[1]), size=(1, 2))
