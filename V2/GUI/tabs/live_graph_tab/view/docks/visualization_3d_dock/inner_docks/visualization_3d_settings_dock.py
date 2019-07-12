@@ -32,6 +32,6 @@ class Visualisation3dSettingsDock(SettingsDock):
         # Data saver
         self.data_saver = DataSaver(self.inner_layout, pos=(0, 8))
         # Show 3D
-        self.show_3d_btn = Btn('Show 3D', color=grey3)
+        self.show_3d_btn = Btn('Show 3D', color=grey3, txt_color=black)
         self.inner_layout.addWidget(self.show_3d_btn, 1, 0)
 

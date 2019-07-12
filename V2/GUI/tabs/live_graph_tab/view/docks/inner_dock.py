@@ -8,12 +8,14 @@ from V2.utils.rotated_button import RotatedButton
 
 class InnerDock(Dock):
     def __init__(self, name='', size=(1, 1), external_layout=None,
-                 b_checked=True, toggle_btn=True, b_orientation=None,
-                 set_scroll=False, add_dock_area=False, margin=(1, 1, 1, 1),
+                 b_checked=True, b_pos=None, toggle_btn=True, b_orientation=None,
+                 set_scroll=False, add_dock_area=False, margin=(0, 0, 0, 0),
                  hide_title=True):
 
         super().__init__(
             name, size=size, hideTitle=hide_title, autoOrientation=False)
+
+        self.b_pos = b_pos
 
         self.inner_layout = pg.LayoutWidget()
 
@@ -48,9 +50,11 @@ class InnerDock(Dock):
                 button.setMaximumWidth(20)
                 button.setCheckable(True)
             else:
-                button = Btn( name, toggle=True, max_height=18, font_size=10)
-
-            external_layout.addWidget(button)
+                button = Btn(name, toggle=True, max_height=18, font_size=10)
+            if self.b_pos:
+                external_layout.addWidget(button, *self.b_pos)
+            else:
+                external_layout.addWidget(button)
             button.clicked.connect(self._open)
             button.setChecked(b_checked)
 

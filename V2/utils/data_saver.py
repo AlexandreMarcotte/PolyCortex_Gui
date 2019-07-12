@@ -6,6 +6,7 @@ from V2.utils.colors import *
 from V2.utils.btn import Btn
 from save.write_to_file import write_to_file
 
+
 class DataSaver:
     def __init__(self, layout, save_path=os.getcwd(), pos=(0, 0)):
 

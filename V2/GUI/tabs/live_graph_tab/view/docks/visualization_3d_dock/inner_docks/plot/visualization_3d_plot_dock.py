@@ -27,7 +27,8 @@ class Visualization3dPlotsDock(Dock):
             axis='z', mvt=np.array([0, 0, 1]), key=('j', 'k'),
             color=(255, 0, 0, 4))
 
-    def _init_plot(self):
+    @staticmethod
+    def _init_plot():
         view = gl.GLViewWidget()
         view.opts['distance'] = 370
         view.opts['azimuth'] = 40
