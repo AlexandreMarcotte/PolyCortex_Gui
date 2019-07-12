@@ -4,13 +4,14 @@ from pyqtgraph.dockarea import DockArea, Dock
 # --My Packages--
 from V2.utils.btn import Btn
 from V2.utils.rotated_button import RotatedButton
+from V2.utils.colors import *
 
 
 class InnerDock(Dock):
     def __init__(self, name='', size=(1, 1), external_layout=None,
                  b_checked=True, b_pos=None, toggle_btn=True, b_orientation=None,
                  set_scroll=False, add_dock_area=False, margin=(0, 0, 0, 0),
-                 hide_title=True):
+                 hide_title=True, back_ground_color=True):
 
         super().__init__(
             name, size=size, hideTitle=hide_title, autoOrientation=False)
@@ -25,6 +26,8 @@ class InnerDock(Dock):
         self._add_dock_area(add_dock_area, margin)
         if not b_checked:
             self.hide()
+        # if back_ground_color:
+        #     self.setStyleSheet(f"background-color:{background_grey};")
 
     def _add_scroll_area(self, set_scroll):
         if set_scroll:

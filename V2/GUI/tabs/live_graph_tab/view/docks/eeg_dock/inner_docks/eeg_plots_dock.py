@@ -7,8 +7,9 @@ from .eeg_plot_dock import EegPlotDock
 class EegPlotsDock(InnerDock):
     def __init__(self, size=(1, 10)):
         super().__init__(
-                name='eeg_plots_dock', size=size, toggle_btn=False,
-                add_dock_area=True, set_scroll=True)
+            name='eeg_plots_dock', size=size, toggle_btn=False,
+            add_dock_area=True, set_scroll=True,
+            back_ground_color=False)
 
         self._init_plots()
 

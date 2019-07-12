@@ -1,6 +1,7 @@
 from pyqtgraph.dockarea import *
 from PyQt5.QtWidgets import *
 # --My packages--
+from V2.utils.colors import *
 from V2.GUI.tabs.live_graph_tab.view.docks.main_dock import MainDock
 # EEG
 from V2.GUI.tabs.live_graph_tab.view.docks.eeg_dock.inner_docks.eeg_settings_dock import EegSettingsDock
@@ -37,10 +38,12 @@ class View(QWidget):
             settings_dock=EegSettingsDock, plot_dock=EegPlotsDock(),
             margin=(7, 0, 0, 0))
         # Saving dock
-        self.saving_dock = SavingDock(external_layout=self.eeg_dock.inner_layout)
+        self.saving_dock = SavingDock(
+            external_layout=self.eeg_dock.inner_layout)
         self.eeg_dock.add_dock(self.saving_dock, 'top', self.eeg_dock.plot_dock)
         # Banner dock
-        self.banner_dock = BannerDock(external_layout=self.eeg_dock.inner_layout)
+        self.banner_dock = BannerDock(
+            external_layout=self.eeg_dock.inner_layout)
         self.eeg_dock.add_dock(self.banner_dock, 'top', self.eeg_dock.plot_dock)
         self.banner_dock.hide()
         # Write hardware dock
@@ -48,8 +51,10 @@ class View(QWidget):
             external_layout=self.eeg_dock.inner_layout)
         self.eeg_dock.add_dock(
             self.write_hardware_dock, 'top', self.eeg_dock.plot_dock)
+        self.write_hardware_dock.hide()
         # Pins settings dock
-        self.pins_settings_dock = PinsSettingsDock(external_layout=self.eeg_dock)
+        self.pins_settings_dock = PinsSettingsDock(
+            external_layout=self.eeg_dock)
         self.eeg_dock.add_dock(
             self.pins_settings_dock, 'left', self.eeg_dock.plot_dock)
         self.pins_settings_dock.hide()
@@ -58,7 +63,8 @@ class View(QWidget):
 
     def _init_fft_dock(self):
         self.fft_dock = MainDock(name='FFT',
-            settings_dock=FftSettingsDock, plot_dock=PlotDock(curve_color='b'))
+            settings_dock=FftSettingsDock, plot_dock=PlotDock(
+                curve_color=pen_colors))
         self.area.addDock(self.fft_dock, 'right', self.eeg_dock)
         # Filter dock
         self.filter_dock = FilterDock(external_layout=self.fft_dock.inner_layout)

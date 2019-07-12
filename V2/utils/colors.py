@@ -39,6 +39,7 @@ dark_blue_tab = 'rgba(60, 160, 210, 1)'
 # dark_blue = 'rgba(0, 0, 80, 0.4)'
 # dark_blue_tab = 'rgba(62, 62, 160, 1)'
 
+background_grey = 'rgba(245, 245, 245, 1)'
 grey = 'rgba(100, 100, 100, 0.5)'
 light_grey = 'rgba(130, 130, 130, 0.7)'
 grey2 = 'rgba(160, 160, 160, 0.5)'

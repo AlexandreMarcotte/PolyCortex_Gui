@@ -6,7 +6,7 @@ from V2.utils.colors import *
 
 
 class ScrollPlotWidget(pg.PlotWidget, LivePlot):
-    def __init__(self, curve_color='w'):
+    def __init__(self, curve_color=('w')):
         """Signals: list of signal to plot in this scroll plot"""
         super().__init__()
 
@@ -27,9 +27,9 @@ class ScrollPlotWidget(pg.PlotWidget, LivePlot):
 
     def _init_curves(self, signals):
         curves = []
-        for signal in signals:
+        for color, signal in zip(self.curve_color, signals):
             curve = self.plot(signal)
-            curve.setPen(self.curve_color)
+            curve.setPen(color)
             curves.append(curve)
         return curves
 

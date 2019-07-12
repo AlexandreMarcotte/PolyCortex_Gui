@@ -1,4 +1,3 @@
-from pyqtgraph.dockarea import *
 import pyqtgraph as pg
 from functools import partial
 # --My packages--
@@ -6,13 +5,14 @@ from V2.utils.btn import Btn
 from V2.utils.lable_btn import LabelBtn
 from V2.utils.colors import *
 from V2.GUI.tabs.live_graph_tab.plot_dock import PlotDock
+from V2.utils.color_btn import ColorBtn
 
 
 class EegPlotDock(PlotDock):
     def __init__(self, ch):
         self._ch = ch
-        curve_color = pen_colors[ch]
-        super().__init__(curve_color=curve_color)
+        self.curve_color = (pen_colors[ch])
+        super().__init__(curve_color=self.curve_color)
 
         self._add_all_btn()
 
@@ -51,7 +51,7 @@ class EegPlotDock(PlotDock):
 
     def create_color_button(self):
         """Create color button to change the color of the line"""
-        color_btn = pg.ColorButton()
+        color_btn = ColorBtn(color=self.curve_color)
         color_btn.setMaximumWidth(23)
         color_btn.setMaximumHeight(23)
         color_btn.setToolTip('Click to change the color of the line')

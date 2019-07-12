@@ -33,6 +33,7 @@ class PinSettings:
     def add_pin_settings_to_layout(self, layout):
         self.gr, self.ch_layout = create_gr()
         for i, (s_name, s) in enumerate(self.settings.items()):
+            pass
             # create_param_combobox(
             #     self.ch_layout, None, (i%5, i//5), s, s_name),
             #     editable=False, tip=s_name)

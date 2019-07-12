@@ -9,8 +9,8 @@ from V2.GUI.tabs.live_graph_tab.view.docks.inner_dock import InnerDock
 class WriteHardwareDock(InnerDock):
     def __init__(self, external_layout=None):
         super().__init__(
-            name='Write hardware', toggle_btn=True, set_scroll=False,
-            external_layout=external_layout)
+            name='Write hardware', toggle_btn=True, b_checked=False,
+            set_scroll=False, external_layout=external_layout)
 
         self._add_line_edit()
         self._add_btn()

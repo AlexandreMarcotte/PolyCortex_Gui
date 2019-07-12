@@ -7,7 +7,8 @@ class MainDock(InnerDock):
                  margin=(0, 0, 0, 0)):
         super().__init__(
             name=name, toggle_btn=False, add_dock_area=True,
-            set_scroll=True, hide_title=False, margin=margin)
+            set_scroll=True, hide_title=False, margin=margin,
+            back_ground_color=False)
 
         self.settings_dock = settings_dock(self.inner_layout)
         self.plot_dock = plot_dock
