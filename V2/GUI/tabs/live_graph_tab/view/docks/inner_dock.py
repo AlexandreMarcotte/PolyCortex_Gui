@@ -11,7 +11,7 @@ class InnerDock(Dock):
     def __init__(self, name='', size=(1, 1), external_layout=None,
                  b_checked=True, b_pos=None, toggle_btn=True, b_orientation=None,
                  set_scroll=False, add_dock_area=False, margin=(0, 0, 0, 0),
-                 hide_title=True, back_ground_color=True):
+                 hide_title=True):
 
         super().__init__(
             name, size=size, hideTitle=hide_title, autoOrientation=False)
@@ -48,8 +48,7 @@ class InnerDock(Dock):
             self, toggle_btn, external_layout, name, b_orientation, b_checked):
         if toggle_btn:
             if b_orientation is not None:
-                button = RotatedButton(
-                    name, orientation=b_orientation)
+                button = RotatedButton(name, orientation=b_orientation)
                 button.setMaximumWidth(20)
                 button.setCheckable(True)
             else:

@@ -53,7 +53,7 @@ class Spectogram(Dock):
             vb, name='Frequency (Hz - need to correct)', pos=(-10, 50),
             angle=90)
 
-        # img of the spectrogram
+        # img of the spectrogram_dock
         img = pg.ImageItem()                                                   # TODO: ALEXM: rotate so that it is in the right direction (longest with longest)
         vb.addItem(img)
         # grid

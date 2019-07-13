@@ -1,6 +1,3 @@
-import numpy as np
-
-
 class EegPlotsDockConnector:
     def __init__(self, n_ch, view, model):
         self._n_ch = n_ch

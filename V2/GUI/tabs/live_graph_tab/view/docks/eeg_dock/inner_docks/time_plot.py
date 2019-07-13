@@ -13,6 +13,7 @@ class TimePlot(pg.PlotWidget, LivePlot):
 
     def _init_plot_appearance(self):
         self.plotItem.hideAxis('left')
+        self.plotItem.hideAxis('bottom')
         self.plotItem.showAxis('top')
 
     def _update(self):

@@ -4,17 +4,12 @@ from PyQt5.QtWidgets import *
 from V2.utils.colors import *
 from V2.GUI.tabs.live_graph_tab.view.docks.main_dock import MainDock
 # EEG
-from V2.GUI.tabs.live_graph_tab.view.docks.eeg_dock.inner_docks.eeg_settings_dock import EegSettingsDock
 from V2.GUI.tabs.live_graph_tab.view.docks.eeg_dock.inner_docks.eeg_plots_dock import EegPlotsDock
 from V2.GUI.tabs.live_graph_tab.view.docks.eeg_dock.inner_docks.saving_dock import SavingDock
-from V2.GUI.tabs.live_graph_tab.view.docks.eeg_dock.inner_docks.banner_dock import BannerDock
-from V2.GUI.tabs.live_graph_tab.view.docks.eeg_dock.inner_docks.write_to_hardware_dock import WriteHardwareDock
-from V2.GUI.tabs.live_graph_tab.view.docks.eeg_dock.inner_docks.pins_settings_dock import PinsSettingsDock
+from V2.GUI.tabs.live_graph_tab.view.docks.eeg_dock.eeg_dock import EegDock
+
 # FFT
-from V2.GUI.tabs.live_graph_tab.view.docks.fft_dock.inner_docks.fft_settings_dock import FftSettingsDock
-from V2.GUI.tabs.live_graph_tab.view.docks.fft_dock.inner_docks.filter_dock import FilterDock
-from V2.GUI.tabs.live_graph_tab.plot_dock import PlotDock
-from V2.GUI.tabs.live_graph_tab.view.docks.fft_dock.inner_docks.plot.fft_plot import FftPlot
+from V2.GUI.tabs.live_graph_tab.view.docks.fft_dock.fft_dock import FftDock
 # Viz 3D
 from V2.GUI.tabs.live_graph_tab.view.docks.visualization_3d_dock.inner_docks.visualization_3d_settings_dock import Visualisation3dSettingsDock
 from V2.GUI.tabs.live_graph_tab.view.docks.visualization_3d_dock.inner_docks.plot.visualization_3d_plot_dock import Visualization3dPlotsDock
@@ -34,42 +29,12 @@ class View(QWidget):
         self._init_visualization_3D_dock()
 
     def _init_eeg_dock(self):
-        self.eeg_dock = MainDock(name='EEG',
-            settings_dock=EegSettingsDock, plot_dock=EegPlotsDock(),
-            margin=(7, 0, 0, -100))
-        # Saving dock
-        self.saving_dock = SavingDock(
-            external_layout=self.eeg_dock.inner_layout)
-        self.eeg_dock.add_dock(self.saving_dock, 'top', self.eeg_dock.plot_dock)
-        # Banner dock
-        self.banner_dock = BannerDock(
-            external_layout=self.eeg_dock.inner_layout)
-        self.eeg_dock.add_dock(self.banner_dock, 'top', self.eeg_dock.plot_dock)
-        self.banner_dock.hide()
-        # Write hardware dock
-        self.write_hardware_dock = WriteHardwareDock(
-            external_layout=self.eeg_dock.inner_layout)
-        self.eeg_dock.add_dock(
-            self.write_hardware_dock, 'top', self.eeg_dock.plot_dock)
-        self.write_hardware_dock.hide()
-        # Pins settings dock
-        self.pins_settings_dock = PinsSettingsDock(
-            external_layout=self.eeg_dock)
-        self.eeg_dock.add_dock(
-            self.pins_settings_dock, 'left', self.eeg_dock.plot_dock)
-        self.pins_settings_dock.hide()
-
+        self.eeg_dock = EegDock()
         self.area.addDock(self.eeg_dock)
 
     def _init_fft_dock(self):
-        self.fft_dock = MainDock(name='FFT',
-            settings_dock=FftSettingsDock, plot_dock=PlotDock(
-                plot=FftPlot, curve_color=pen_colors))
+        self.fft_dock = FftDock()
         self.area.addDock(self.fft_dock, 'right', self.eeg_dock)
-        # Filter dock
-        self.filter_dock = FilterDock(external_layout=self.fft_dock.inner_layout)
-        self.fft_dock.add_dock(self.filter_dock, 'right', self.fft_dock.plot_dock)
-        self.filter_dock.hide()
 
     def _init_visualization_3D_dock(self):
         self.visualization_3D_dock = MainDock(name='Visualization 3D',

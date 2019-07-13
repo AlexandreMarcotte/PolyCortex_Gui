@@ -6,7 +6,7 @@ class PinsSettingsDock(InnerDock):
         super().__init__(
             name='Pin Settings', toggle_btn=True, b_checked=False,
             external_layout=external_layout, b_orientation='east',
-            b_pos=(0, 0), back_ground_color=True)
+            b_pos=(0, 0))
 
     def set_settings_pins_layout(self):
         pass
