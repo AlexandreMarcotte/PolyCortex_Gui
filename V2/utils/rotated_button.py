@@ -8,6 +8,8 @@ class RotatedButton(Btn):
     def __init__(self, text, orientation="west"):
         super().__init__(text, font_size=9)
         self.orientation = orientation
+        self.setMaximumWidth(20)
+        self.setCheckable(True)
 
     def paintEvent(self, event):
         painter = QStylePainter(self)

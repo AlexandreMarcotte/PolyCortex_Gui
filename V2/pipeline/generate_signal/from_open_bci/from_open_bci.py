@@ -1,15 +1,20 @@
 import threading
 import logging
 from time import sleep
+# --My Packages--
 # OpenBCI hardware module
-import openbci_interface.open_bci_v3 as bci
+from . import open_bci_v3 as bci
+from ..signal_collector import SignalCollector
 
 
-class SampleDataFromOPENBCI(threading.Thread):
-    def __init__(self, gv):
+class SampleDataFromOpenBci(threading.Thread):
+    def __init__(self, signal_collector: SignalCollector):
         super().__init__()
-        self.gv = gv
+
+        self.signal_collector = signal_collector
+
         port = '/dev/ttyUSB0'  # if using Linux
+
         # (if encounter error: [Errno 13] could not open port /dev/ttyUSB0:
         #  Permission denied
         #  => see: https://askubuntu.com/questions/58119/changing-permissions-on-serial-port
@@ -23,8 +28,8 @@ class SampleDataFromOPENBCI(threading.Thread):
         # https://askubuntu.com/questions/210177/serial-port-terminal-cannot-open-dev-ttys0-permission-denied
         self.board = bci.OpenBCIBoard(
                 port=port, scaled_output=False, log=True, filter_data=True)
-        print("Board Instantiated")
+        print('Board Instantiated')
         sleep(5)  # TODO: I changed it to 1 and it was 5 before see if there is a problem
 
     def run(self):
-        self.board.start_streaming(self.gv.collect_data)
+        self.board.start_streaming(self.signal_collector.fill_signal_queue)

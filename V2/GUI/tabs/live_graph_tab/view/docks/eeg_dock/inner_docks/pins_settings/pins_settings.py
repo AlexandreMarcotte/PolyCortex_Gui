@@ -1,12 +1,8 @@
-#-My Packages-
-from app.pyqt_frequently_used import create_gr
+from PyQt5.QtWidgets import QComboBox
 
 
 class PinSettings:
-    def __init__(self, eeg_plot_creator, gv, layout, ch):
-        self.eeg_plot_creator = eeg_plot_creator
-        self.gv = gv
-        self.ch = ch
+    def __init__(self):
 
         self.command = {
             'Ch': 0, 'Power down': 0, 'PGA Gain': 0, 'Input Type': 0,
@@ -28,17 +24,37 @@ class PinSettings:
             'SRB1':
                 {'Off': 0, 'On': 1}
         }
-        self.add_pin_settings_to_layout(layout)
+        self.comboboxes = dict()
 
     def add_pin_settings_to_layout(self, layout):
-        self.gr, self.ch_layout = create_gr()
-        for i, (s_name, s) in enumerate(self.settings.items()):
-            pass
-            # create_param_combobox(
-            #     self.ch_layout, None, (i%5, i//5), s, s_name),
-            #     editable=False, tip=s_name)
+        for i, (setting_name, settings) in enumerate(self.settings.items()):
+            cb = QComboBox()
+            self.comboboxes[setting_name] = cb
+            # Save for further uses
+            cb.setStyleSheet(
+                'QComboBox'
+                '{background-color: rgba(16, 16, 16, 100);'
+                'border-color: rgba(16, 16, 16, 100);'
+                ' color:white;}')
+            for setting in settings:
+                cb.addItem(setting)
+            layout.addWidget(cb, 0, i+1)
 
-        layout.addWidget(self.gr, self.ch, 0)
+    def hide_pins_settings(self):
+         # itterate over all cb
+        for cb in self.comboboxes.values():
+            cb.hide()
+
+    def show_pins_settings(self):
+        for cb in self.comboboxes.values():
+            cb.show()
+
+
+
+
+
+
+
 
     """
     def change_hardware_settings(self, setting_name, opt_selected):

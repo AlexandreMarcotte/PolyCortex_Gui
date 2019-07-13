@@ -49,8 +49,8 @@ class InnerDock(Dock):
         if toggle_btn:
             if b_orientation is not None:
                 button = RotatedButton(name, orientation=b_orientation)
-                button.setMaximumWidth(20)
-                button.setCheckable(True)
+                # button.setMaximumWidth(20)
+                # button.setCheckable(True)
             else:
                 button = Btn(name, toggle=True, max_height=18, font_size=10)
             if self.b_pos:

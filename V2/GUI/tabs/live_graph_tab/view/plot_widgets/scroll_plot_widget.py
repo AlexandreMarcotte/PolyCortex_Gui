@@ -31,11 +31,13 @@ class ScrollPlotWidget(pg.PlotWidget, LivePlot):
             curves.append(curve)
         return curves
 
-    def connect_signals(self, signals, t_interval=0):
+    def connect_signals(self, signals):
         self._init_plot_appearance()
         self.signals = signals
         self.curves = self._init_curves(signals)
         # Start the timer at the connection
+
+    def connect_timers(self, t_interval=0):
         self.timer = self.init_timer()
         self.timer.start(t_interval)
 

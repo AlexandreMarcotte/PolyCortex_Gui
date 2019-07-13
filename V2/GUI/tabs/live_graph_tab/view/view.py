@@ -1,13 +1,9 @@
 from pyqtgraph.dockarea import *
 from PyQt5.QtWidgets import *
 # --My packages--
-from V2.utils.colors import *
 from V2.GUI.tabs.live_graph_tab.view.docks.main_dock import MainDock
 # EEG
-from V2.GUI.tabs.live_graph_tab.view.docks.eeg_dock.inner_docks.eeg_plots_dock import EegPlotsDock
-from V2.GUI.tabs.live_graph_tab.view.docks.eeg_dock.inner_docks.saving_dock import SavingDock
 from V2.GUI.tabs.live_graph_tab.view.docks.eeg_dock.eeg_dock import EegDock
-
 # FFT
 from V2.GUI.tabs.live_graph_tab.view.docks.fft_dock.fft_dock import FftDock
 # Viz 3D

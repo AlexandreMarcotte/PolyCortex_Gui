@@ -1,21 +1,20 @@
-import pyqtgraph as pg
 from functools import partial
+from PyQt5.QtWidgets import *
 # --My packages--
 from V2.utils.btn import Btn
 from V2.utils.lable_btn import LabelBtn
 from V2.utils.colors import *
 from V2.GUI.tabs.live_graph_tab.plot_dock import PlotDock
 from V2.utils.color_btn import ColorBtn
+from V2.GUI.tabs.live_graph_tab.view.docks.eeg_dock.inner_docks.pins_settings.pins_settings import PinSettings
 
 
 class EegPlotDock(PlotDock):
-    def __init__(self, ch, add_btn=True):
+    def __init__(self, ch):
         self._ch = ch
         self.curve_color = (pen_colors[ch])
         super().__init__(curve_color=self.curve_color)
-
-        if add_btn:
-            self._add_all_btn()
+        self._add_all_btn()
 
     def _add_all_btn(self):
         # Just for visualisation test at the moment
@@ -24,7 +23,7 @@ class EegPlotDock(PlotDock):
 
     def _add_toggle_on_off_btn(self):
         toggle_btn = Btn(
-            name=str(self._ch+1), max_width=23, max_height=23,
+            name=str(self._ch+1), max_width=23, max_height=39,
             color=button_colors[self._ch], txt_color=black,
             toggle=True, tip=f'Start/Stop the ch{self._ch+1} signal')
 
@@ -45,10 +44,16 @@ class EegPlotDock(PlotDock):
 
         for no, btn in enumerate(
                 [self.avg_value_btn, self.max_value_btn, self.fft_size_btn]):
-            self.addWidget(btn, no, 10, 1, 1)
-            self.addWidget(btn.label, no, 9, 1, 1)
+            self.addWidget(btn, no, 6)
+            self.addWidget(btn.label, no, 5)
 
         self.create_color_button()
+
+        self.add_pin_setting_cb()
+
+    def add_pin_setting_cb(self):
+        self.pins_settings = PinSettings()
+        self.pins_settings.add_pin_settings_to_layout(self)
 
     def create_color_button(self):
         """Create color button to change the color of the line"""
@@ -57,7 +62,7 @@ class EegPlotDock(PlotDock):
         color_btn.setMaximumHeight(23)
         color_btn.setToolTip('Click to change the color of the line')
         color_btn.sigColorChanged.connect(partial(self.change_line_color))
-        self.addWidget(color_btn, 3, 10)
+        self.addWidget(color_btn, 3, 6)
 
     def change_line_color(self):
         print('change color')

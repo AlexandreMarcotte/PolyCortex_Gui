@@ -32,7 +32,6 @@ def create_gr(margin=False):
     gr.setLayout(l)
     return gr, l
 
-
 def create_splitter(first_gr, second_gr, direction=Qt.Horizontal):
     s = QSplitter(direction)
     s.addWidget(first_gr)

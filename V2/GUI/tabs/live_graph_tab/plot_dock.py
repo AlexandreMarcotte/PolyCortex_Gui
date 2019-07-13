@@ -9,6 +9,6 @@ class PlotDock(Dock):
         super().__init__(name='', hideTitle=True)
         self.plot = plot(curve_color=curve_color)
 
-        self.addWidget(self.plot, 0, 1, 4, 9)
-        self.setStyleSheet("background-color:black;")
+        self.addWidget(self.plot, 0, 1, 4, 5)
+        self.setStyleSheet('background-color:rgba(0, 0, 0, 255);')
 

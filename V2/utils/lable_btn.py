@@ -9,8 +9,8 @@ from V2.utils.colors import *
 class LabelBtn(Btn):
     def __init__(self, name, tip=None, conn_func='avg'):
         super().__init__(
-                name, color=dark_blue_tab, toggle=True, tip=tip, max_width=23,
-                min_width=15, max_height=23,
+                name, color=dark_blue_tab, toggle=True, tip=tip, max_width=29,
+                min_width=15, max_height=39,
                 txt_color=white, font_size=11)
 
         self.data_queue = None
@@ -47,7 +47,7 @@ class LabelBtn(Btn):
     @QtCore.pyqtSlot(bool)
     def show_action(self, checked):
         if checked:
-            self.timer.start(300)
+            self.timer.start(200)
             # if self.conn_func == 'filter':
             #     self.filter_region.setRegion([0, self.gv.DEQUE_LEN])
         else:

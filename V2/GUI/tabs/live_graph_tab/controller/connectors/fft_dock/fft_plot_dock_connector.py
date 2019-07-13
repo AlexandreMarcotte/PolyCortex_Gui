@@ -10,4 +10,5 @@ class FftPlotsDockConnector:
 
     def connect_plot(self):
         signals = [self._model.pipeline.fft_stage.output[ch] for ch in range(8)]
-        self.plot_dock.plot.connect_signals(signals, t_interval=200)
+        self.plot_dock.plot.connect_signals(signals)
+        self.plot_dock.plot.connect_timers()

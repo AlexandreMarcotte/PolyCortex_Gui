@@ -4,8 +4,8 @@ from app.colors import *
 
 
 class ParameterCombobox(QComboBox):
-    def __init__(self, layout, name, pos, param, editable=True,
-            cols=1, tip=None):
+    def __init__(self, layout, name, pos, param, editable=True, cols=1,
+                 tip=None):
         """ Create a parameter combobox under a text label """
         super().__init__()
 
