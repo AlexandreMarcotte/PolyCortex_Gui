@@ -14,7 +14,6 @@ class ParameterCombobox(QComboBox):
         # self.QLineEdit.setAlignment(Qt.AlignCenter)
         self._add_to_layout(layout, pos, cols)
 
-
     def _create_combobox(self, param, editable, tip):
         for val in param:
             self.addItem(val)
@@ -23,9 +22,9 @@ class ParameterCombobox(QComboBox):
             self.setToolTip(tip)
         self.setStyleSheet('font-size: 10pt;')
 
-    def connect_cb(self, conn_func):
-        self.conn_func = conn_func
-        self.activated[str].connect(self.conn_func)
+    # def connect_cb(self, conn_func):
+    #     self.conn_func = conn_func
+    #     self.activated[str].connect(self.conn_func)
 
     def _add_to_layout(self, layout, pos, cols):
         layout.addWidget(self.txt_label, *pos)

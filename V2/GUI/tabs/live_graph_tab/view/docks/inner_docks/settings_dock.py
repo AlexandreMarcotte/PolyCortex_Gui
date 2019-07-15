@@ -26,21 +26,25 @@ class SettingsDock(InnerDock):
     def _create_all_combobox(self):
         """Overload this method to create the combobox to act on the dock graph"""
 
-    def start_aliasing(self, txt):  # Need to do it before creating the graph
-        # (don't work here but work when called in the main at the start)
-        # Make it look WAY better but it is a bit more laggy, set it as a setting that can be activated
-        if txt == 'on':
-            pg.setConfigOptions(antialias=True)  # Look at how much it change the performances
-        elif txt == 'off':
-            pg.setConfigOptions(antialias=False)
 
     def paintEvent(self, e):
         qp = QPainter()
         qp.begin(self)
-        self.drawWidget(qp)
+        self._draw_grey_rectangle(qp)
         qp.end()
 
-    def drawWidget(self, qp):
-        qp.setPen(QColor(200, 200, 200))
-        qp.setBrush(QColor(210, 215, 215))
-        qp.drawRect(0, 0, 3000, 36)
+    def _draw_grey_rectangle(self, qp):
+        w = self.size().width()
+        h = self.size().height()
+        qp.setPen(QColor(210, 215, 255))
+        qp.setBrush(QColor(210, 215, 255))
+        # Pale blue up
+        qp.drawRect(0, 10, w, 26)
+        qp.drawRoundedRect(
+            0, 0, w, 15, 8, 8)
+        # Cream down
+        qp.setPen(QColor(249, 248, 245))
+        qp.setBrush(QColor(249, 248, 245))
+        qp.drawRect(0, 38, w, 26)
+        qp.drawRoundedRect(
+            0, h-10, w, 10, 8, 8)

@@ -17,7 +17,7 @@ class FftSettingsDock(SettingsDock):
         self._create_all_combobox()
 
     def _create_all_combobox(self):
-        self.scale_axis_cb = ParameterCombobox(
+        self.scale_freq_axis_cb = ParameterCombobox(
             self.inner_layout, 'Max Freq', (0, 1),
             ['Auto', '60 Hz', '80 Hz', '100 Hz', '120 Hz'])
         self.max_microV_cb = ParameterCombobox(

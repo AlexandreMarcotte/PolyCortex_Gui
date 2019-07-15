@@ -45,14 +45,21 @@ class ScrollPlotWidget(pg.PlotWidget, LivePlot):
         for i, signal in enumerate(self.signals):
             self.curves[i].setData(signal)
 
-    def scale_y_axis(self, txt):
+    def scale_axis(self, txt, axis='y'):
+        print('here')
         try:
             if txt == 'Auto':
                 self.enableAutoRange()
             else:
                 r = int(re.search(r'\d+', txt).group())
-                self.setYRange(-r, r)
+                if axis == 'y':
+                    self.setYRange(-r, r)
+                elif axis == 'x':
+                    self.setXRange(0, r)
         except AttributeError as e:
             print("Invalide value")
+
+    def set_log_mode(self, is_log):
+        self.setLogMode(y=eval(is_log))
 
 
