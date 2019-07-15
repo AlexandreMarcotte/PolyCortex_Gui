@@ -34,11 +34,11 @@ class EegPlotsDockConnector:
         # Avg val btn
         avg_val_btn = self.plot_dock_list[ch].avg_value_btn
         avg_val_btn.data_queue = self._model.pipeline.signal_collector.input[ch]
-        avg_val_btn.clicked.connect(avg_val_btn.show_action)
+        # avg_val_btn.clicked.connect(avg_val_btn.show_action)
         # Max val btn
         max_val_btn = self.plot_dock_list[ch].max_value_btn
         max_val_btn.data_queue = self._model.pipeline.signal_collector.input[ch]
-        max_val_btn.clicked.connect(max_val_btn.show_action)
+        # max_val_btn.clicked.connect(max_val_btn.show_action)
 
     def connect_plots(self, ch):
         signals = [self._model.pipeline.signal_collector.input[ch]]

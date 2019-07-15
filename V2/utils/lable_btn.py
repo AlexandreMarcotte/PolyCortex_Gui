@@ -14,9 +14,7 @@ class LabelBtn(Btn):
                 txt_color=white, font_size=11)
 
         self.data_queue = None
-
-        self.conn_func = conn_func
-
+        # self.conn_func = conn_func
         actn = {'avg': self.update_avg,
                 'max': self.update_max}
                 # 'filter': self.change_filter_window_size}
@@ -28,10 +26,15 @@ class LabelBtn(Btn):
 
         self._init_timer()
         self.label = self._create_label()
+        self._connect()
 
     # def add_label_to_plot(self, plot):
     #     self.label = self._create_label()
     #     layout.addWidget(self.label, row, 6)
+
+    def _connect(self):
+        self.clicked.connect(self.show_action)
+
 
     def _create_label(self):
         style = ("""QLabel {background-color: rgba(0, 0, 0, 0); 

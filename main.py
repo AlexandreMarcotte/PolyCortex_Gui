@@ -1,3 +1,4 @@
+# https://stackoverflow.com/questions/26698628/mvc-design-with-qt-designer-and-pyqt-pyside
 # --General packages--
 from PyQt5.QtWidgets import QApplication
 import sys
