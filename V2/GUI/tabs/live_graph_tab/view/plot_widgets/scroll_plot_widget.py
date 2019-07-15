@@ -43,7 +43,6 @@ class ScrollPlotWidget(pg.PlotWidget, LivePlot):
 
     def _update(self):
         for i, signal in enumerate(self.signals):
-            print(i)
             self.curves[i].setData(signal)
 
     def scale_y_axis(self, txt):

@@ -10,7 +10,7 @@ class WriteHardwareDock(InnerDock):
     def __init__(self, external_layout=None):
         super().__init__(
             name='Write hardware', toggle_btn=True, b_checked=False,
-            set_scroll=False, external_layout=external_layout)
+            set_scroll=False, external_layout=external_layout, fixed_height=40)
 
         self._add_line_edit()
         self._add_btn()

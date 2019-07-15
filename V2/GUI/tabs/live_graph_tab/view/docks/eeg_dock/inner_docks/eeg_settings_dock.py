@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import *
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QPixmap, QPainter, QFont, QColor, QPen
+from PyQt5.QtCore import QObject, Qt, pyqtSignal
 # -- My Packages --
 from V2.utils.parameter_combobox import ParameterCombobox
 from V2.GUI.tabs.live_graph_tab.view.docks.inner_docks.settings_dock import SettingsDock
@@ -12,6 +13,7 @@ class EegSettingsDock(SettingsDock):
         self.main_layout = main_layout
 
         self._create_settings_dock()
+
 
     def _create_settings_dock(self):
         super()._create_settings_dock()

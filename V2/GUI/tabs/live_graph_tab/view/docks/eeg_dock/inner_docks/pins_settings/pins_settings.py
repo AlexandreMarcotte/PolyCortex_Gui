@@ -33,9 +33,11 @@ class PinSettings:
             # Save for further uses
             cb.setStyleSheet(
                 'QComboBox'
-                '{background-color: rgba(16, 16, 16, 100);'
-                'border-color: rgba(16, 16, 16, 100);'
-                ' color:white;}')
+                '{background-color: rgba(170, 170, 170, 200);'
+                'color:white;'
+                'selection-background-color: darkblue;'
+                'border: 2px solid rgba(220, 220, 220, 100);}'
+                'QListView{color:red; background-color:black}')
             for setting in settings:
                 cb.addItem(setting)
             layout.addWidget(cb, 0, i+1)

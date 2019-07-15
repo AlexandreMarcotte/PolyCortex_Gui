@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt
-from app.colors import *
+from V2.utils.colors import *
 
 
 class ParameterCombobox(QComboBox):
@@ -11,8 +11,9 @@ class ParameterCombobox(QComboBox):
 
         self.txt_label = self._create_txt_label(name)
         self._create_combobox(param, editable, tip)
-
+        # self.QLineEdit.setAlignment(Qt.AlignCenter)
         self._add_to_layout(layout, pos, cols)
+
 
     def _create_combobox(self, param, editable, tip):
         for val in param:
@@ -38,9 +39,10 @@ class ParameterCombobox(QComboBox):
             label.setFrameShadow(QFrame.Sunken)
             label.setLineWidth(1)
             label.setAlignment(Qt.AlignCenter)
-            label.setStyleSheet(f"""font-weight: 420; 
-                                background-color: {label_grey}; 
-                                font-size: 10pt;""")
+            # background-color: {label_grey};
+            label.setStyleSheet(f'''font-weight: 430;
+                                font-size: 10pt;
+                                background-color: {combobox_grey}''')
             label.setMaximumHeight(26)
         return label
 

@@ -9,11 +9,36 @@ from V2.GUI.tabs.live_graph_tab.view.docks.fft_dock.fft_dock import FftDock
 # Viz 3D
 from V2.GUI.tabs.live_graph_tab.view.docks.visualization_3d_dock.inner_docks.visualization_3d_settings_dock import Visualisation3dSettingsDock
 from V2.GUI.tabs.live_graph_tab.view.docks.visualization_3d_dock.inner_docks.plot.visualization_3d_plot_dock import Visualization3dPlotsDock
+#
+from .connectors.eeg_dock.eeg_plot_dock_connector import EegPlotsDockConnector
+from .connectors.eeg_dock.setting_dock_connector import SettingDockConnector
+from .connectors.fft_dock.fft_plot_dock_connector import FftPlotsDockConnector
+from ..model.model import Model
+from ..controller.controller import Controller
 
 
 class View(QWidget):
-    def __init__(self):
+    def __init__(self, model: Model, controller: Controller):
         super().__init__()
+        self.model = model
+        self.controller = controller
+
+        self._init_ui()
+        self._connect()
+        # listen for model event signals
+
+    def _connect(self):
+        """connect widgets to controller"""
+        # Plots
+        EegPlotsDockConnector(
+            n_ch=self.model.N_CH, view=self, model=self.model).connect()
+        # Settings
+        SettingDockConnector(
+            n_ch=self.model.N_CH, view=self).connect()
+        # Fft
+        FftPlotsDockConnector(view=self, model=self.model).connect()
+
+    def _init_ui(self):
         self.area = DockArea()
         self.layout = QHBoxLayout(self)
         self.layout.addWidget(self.area)

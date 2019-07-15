@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import *
-from V2.GUI.tabs.live_graph_tab.controller.live_graph_tab_controller import LiveGraphTabController
+from V2.GUI.tabs.live_graph_tab.controller.live_graph_tab_controller import LiveGraphTab
 
 
 class TableWidget(QTabWidget):
@@ -10,5 +10,5 @@ class TableWidget(QTabWidget):
         self.add_tabs()
 
     def add_tabs(self):
-        self.addTab(LiveGraphTabController()._view, 'Live graph')
+        self.addTab(LiveGraphTab()._view, 'Live graph')
         # self.addTab(LiveGraphTabController()._view, 'Experiment')

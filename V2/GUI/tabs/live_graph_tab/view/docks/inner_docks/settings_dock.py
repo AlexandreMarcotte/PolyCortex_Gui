@@ -1,6 +1,7 @@
 from app.colors import *
 import pyqtgraph as pg
 from abc import abstractclassmethod
+from PyQt5.QtGui import QPixmap, QPainter, QFont, QColor, QPen
 # -- My Packages --
 from V2.GUI.tabs.live_graph_tab.view.docks.inner_dock import InnerDock
 from V2.utils.btn import Btn
@@ -8,7 +9,8 @@ from V2.utils.btn import Btn
 
 class SettingsDock(InnerDock):
     def __init__(self, main_layout):
-        super().__init__(external_layout=main_layout, name='Settings')
+        super().__init__(external_layout=main_layout, name='Settings',
+                         fixed_height=73)
         self.external_layout = main_layout
 
     def _create_settings_dock(self):
@@ -32,4 +34,13 @@ class SettingsDock(InnerDock):
         elif txt == 'off':
             pg.setConfigOptions(antialias=False)
 
+    def paintEvent(self, e):
+        qp = QPainter()
+        qp.begin(self)
+        self.drawWidget(qp)
+        qp.end()
 
+    def drawWidget(self, qp):
+        qp.setPen(QColor(200, 200, 200))
+        qp.setBrush(QColor(210, 215, 215))
+        qp.drawRect(0, 0, 3000, 36)

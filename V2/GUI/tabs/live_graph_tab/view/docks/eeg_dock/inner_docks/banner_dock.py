@@ -7,7 +7,8 @@ class BannerDock(InnerDock):
     def __init__(self, size=(1, 1), external_layout=None):
         super().__init__(
             name='Banner', size=size, toggle_btn=True, add_dock_area=False,
-            set_scroll=False, external_layout=external_layout, b_checked=False)
+            set_scroll=False, external_layout=external_layout, b_checked=False,
+            fixed_height=60)
         self._add_banners()
 
     def _add_banners(self):
