@@ -3,7 +3,7 @@ import pyqtgraph as pg
 from functools import partial
 
 
-class FilterRegion:
+class FilterRegion: #####
     def __init__(self, gv, type, color, min_boundary=0, max_boundary=10):
         self.gv = gv
         self.type = type

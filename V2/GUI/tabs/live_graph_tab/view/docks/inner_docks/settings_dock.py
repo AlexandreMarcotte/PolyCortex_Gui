@@ -26,7 +26,6 @@ class SettingsDock(InnerDock):
     def _create_all_combobox(self):
         """Overload this method to create the combobox to act on the dock graph"""
 
-
     def paintEvent(self, e):
         qp = QPainter()
         qp.begin(self)
@@ -38,11 +37,11 @@ class SettingsDock(InnerDock):
         h = self.size().height()
         qp.setPen(QColor(210, 215, 255))
         qp.setBrush(QColor(210, 215, 255))
-        # Pale blue up
+        # Pale layout blue up
         qp.drawRect(0, 10, w, 26)
         qp.drawRoundedRect(
             0, 0, w, 15, 8, 8)
-        # Cream down
+        # Cream layout down
         qp.setPen(QColor(249, 248, 245))
         qp.setBrush(QColor(249, 248, 245))
         qp.drawRect(0, 38, w, 26)

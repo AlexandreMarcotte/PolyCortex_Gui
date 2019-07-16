@@ -33,3 +33,5 @@ class FftDock(InnerDock):
     def _add_plot(self):
         self.plot_dock = PlotDock(plot=FftPlot)
         self.dock_area.addDock(self.plot_dock)
+
+
