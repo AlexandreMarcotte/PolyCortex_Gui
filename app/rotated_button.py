@@ -7,6 +7,12 @@ class RotatedButton(QPushButton):
         super().__init__(text)
         self.orientation = orientation
 
+        self._set_appearance()
+
+    def _set_appearance(self):
+        self.setMaximumWidth(20)
+        self.setCheckable(True)
+
     def paintEvent(self, event):
         painter = QStylePainter(self)
         if self.orientation == 'west':

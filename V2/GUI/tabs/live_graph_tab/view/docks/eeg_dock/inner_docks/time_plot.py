@@ -15,6 +15,7 @@ class TimePlot(pg.PlotWidget, LivePlot):
         self.plotItem.hideAxis('left')
         self.plotItem.hideAxis('bottom')
         self.plotItem.showAxis('top')
+        self.setFixedHeight(30)
 
     def _update(self):
         self._increase_time()
