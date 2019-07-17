@@ -5,6 +5,9 @@ from PyQt5 import QtGui, QtCore
 class ColorBtn(pg.ColorButton):
     def __init__(self, parent=None, color=(255,255,255)):
         super().__init__(parent=None, color=color)
+        self.setMaximumWidth(23)
+        self.setMaximumHeight(23)
+        self.setToolTip('Click to change the color of the line')
 
     def paintEvent(self, ev):
         QtGui.QPushButton.paintEvent(self, ev)

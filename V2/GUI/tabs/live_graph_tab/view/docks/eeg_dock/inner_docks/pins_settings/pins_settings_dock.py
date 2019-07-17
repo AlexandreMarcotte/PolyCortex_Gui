@@ -1,5 +1,5 @@
-from V2.GUI.tabs.live_graph_tab.view.docks.inner_dock import InnerDock
-from .pins_settings import PinSettingsGroup
+# from V2.GUI.tabs.live_graph_tab.view.docks.inner_dock import InnerDock
+# from .pins_settings import PinSettingsGroup
 
 
 # class PinsSettingsDock(InnerDock):

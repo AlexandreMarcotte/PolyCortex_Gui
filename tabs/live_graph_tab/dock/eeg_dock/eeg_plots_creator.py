@@ -35,7 +35,7 @@ from generate_signal.from_openbci import SampleDataFromOPENBCI
 from generate_signal.from_synthetic_data import CreateSyntheticData
 from generate_signal.from_file import FileReader
 from generate_signal.from_pcb import PcbReader
-# from generate_signal.from_muse import StreamFromMuse
+# from signal_streamer.from_muse import StreamFromMuse
 
 
 class MainEegDock:

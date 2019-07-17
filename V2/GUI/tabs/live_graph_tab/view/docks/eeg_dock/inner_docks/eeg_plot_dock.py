@@ -33,17 +33,19 @@ class EegPlotDock(PlotDock):
     def _add_action_btn(self):
         # Average btn
         self.avg_value_btn = LabelBtn(
-            name='A', tip='Show average value of queue', conn_func='avg')
+            name='A', tip='Show average value of queue', conn_func='avg',
+            data_queue=self.plot.signals)
         # Maximum btn
         self.max_value_btn = LabelBtn(
-            name='M', tip='Show maximum value of queue', conn_func='max')
+            name='M', tip='Show maximum value of queue', conn_func='max',
+            data_queue=self.plot.signals)
         #  btn
         self.fft_size_btn = LabelBtn(
             name='F', tip='''Show the size of the fft window on 
                 which the fft is calculated for all ch''')
-
-        for no, btn in enumerate(
-                [self.avg_value_btn, self.max_value_btn, self.fft_size_btn]):
+        self.action_btns = [
+            self.avg_value_btn, self.max_value_btn, self.fft_size_btn]
+        for no, btn in enumerate(self.action_btns):
             self.addWidget(btn, no, 6)
             self.addWidget(btn.label, no, 5)
 
@@ -54,13 +56,11 @@ class EegPlotDock(PlotDock):
     def add_pin_setting_cb(self):
         self.pins_settings = PinSettings()
         self.pins_settings.add_pin_settings_to_layout(self)
+        self.pins_settings.hide_pins_settings()
 
     def create_color_button(self):
         """Create color button to change the color of the line"""
         color_btn = ColorBtn(color=self.curve_color)
-        color_btn.setMaximumWidth(23)
-        color_btn.setMaximumHeight(23)
-        color_btn.setToolTip('Click to change the color of the line')
         color_btn.sigColorChanged.connect(partial(self.change_line_color))
         self.addWidget(color_btn, 3, 6)
 

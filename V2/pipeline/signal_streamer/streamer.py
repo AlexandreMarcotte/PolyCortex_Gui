@@ -2,7 +2,7 @@ from threading import Thread
 from abc import abstractclassmethod
 from time import time
 # --My Packages--
-from V2.pipeline.generate_signal.signal_collector import SignalCollector
+from V2.pipeline.signal_streamer.signal_collector import SignalCollector
 
 
 class Streamer(Thread):

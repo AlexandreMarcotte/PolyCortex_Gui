@@ -10,8 +10,8 @@ class Btn(QPushButton):
 
         self._set_size(name, max_width, min_width, max_height)
         self._set_style(color, txt_color, font_size)
-        self.set_tip(tip)
-        self.set_toggle(toggle)
+        self._set_tip(tip)
+        self.setCheckable(toggle)
 
     def _set_size(self, name, max_width, min_width, max_height):
         if name == 'Start':
@@ -29,11 +29,8 @@ class Btn(QPushButton):
                 f'''background-color: {color}; color: {txt_color}; 
                     font-size: {font_size}pt;''')
 
-    def set_tip(self, tip):
+    def _set_tip(self, tip):
         if tip is not None:
             self.setToolTip(tip)
 
-    def set_toggle(self, toggle):
-        if toggle:
-            self.setCheckable(True)
 

@@ -1,39 +1,41 @@
 import numpy as np
+from collections import deque
 from V2.pipeline.pipeline_stages.pipeline_stage import PipelineStage
 
 
 class FftStage(PipelineStage):
     def __init__(self, input, timestamps, remove_first_freq=1):
         super().__init__(input)
+        # The output needs to be half the length because of the fft
+        self.output = [deque(input[0], maxlen=len(input[0])//2)
+                       for _ in range(len(input))]
         self.input = input
-        print(len(input), 'len input')
         self.timestamps = timestamps
         self.remove_first_freq = remove_first_freq
 
+        self.freq_range = np.ones(len(input[0])//2)
+
     def work(self):
-        for ch in range(len(self.input)):
-            fft_range, fft_signal = self.get_fft_to_plot(self.input[ch])
+        for ch, input in enumerate(self.input):
+            self.freq_range, self.output[ch] = self._get_fft_to_plot(input)
 
-            for i in range(len(fft_signal)):
-                if i > self.remove_first_freq:
-                    self.output[ch][i] = fft_signal[i]
+    def _get_fft_to_plot(self, queue):
+        fft = self._calcul_fft(queue)
+        freq_range = self._get_freq_range(len(queue))
+        return freq_range, fft
 
-    def get_freq_range(self, n_data):
-        """Calculate FFT (Remove freq 0 because it gives a really high
-         value on the graph"""
-        return np.linspace(0, n_data//2/self.get_delta_t(), n_data//2)
-
-    def calcul_fft(self, queue):
+    def _calcul_fft(self, queue):
         fft = np.fft.fft(queue)
         output = abs(fft[:len(queue) // 2])
         return output
 
-    def get_fft_to_plot(self, queue):
-        fft = self.calcul_fft(queue)
-        f_range = self.get_freq_range(len(queue))
-        return f_range, fft
+    def _get_freq_range(self, n_data):
+        """Calculate FFT (Remove freq 0 because it gives a really high
+         value on the graph"""
+        freq_range = np.linspace(0, n_data//2/self._get_delta_t(), n_data//2)
+        return freq_range
 
-    def get_delta_t(self):
+    def _get_delta_t(self):
         """interval of time from the first to the last value that was
         add to the queue"""
         return self.timestamps[-1] - self.timestamps[0]
@@ -95,3 +97,6 @@ class FftStage(PipelineStage):
 #     def add_data_to_queue(self, waves_avg):
 #         for i, val in enumerate(waves_avg):
 #             self.wave_type_data[i].append(val)
+
+
+

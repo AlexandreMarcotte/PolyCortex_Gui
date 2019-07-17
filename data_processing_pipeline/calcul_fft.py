@@ -68,7 +68,7 @@ class FreqCalculator:
         """interval of time from the first to the last value that was
         add to the queue"""
         return self.gv.t_queue[self.gv.filter_max_bound - 1] \
-              - self.gv.t_queue[self.gv.filter_min_bound]
+             - self.gv.t_queue[self.gv.filter_min_bound]
 
 
 class FreqBandOverTime:

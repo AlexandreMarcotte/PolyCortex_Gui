@@ -1,6 +1,6 @@
 from time import sleep
 # --My Packages--
-from V2.pipeline.generate_signal.signal_collector import SignalCollector
+from V2.pipeline.signal_streamer.signal_collector import SignalCollector
 from ..streamer import Streamer
 
 
@@ -10,7 +10,7 @@ class SyntheticStreamer(Streamer):
         - Synthetic data (sinus/noise/impulsion)
         - CSV data (ex: data savec from OpenBCI experiment)
     # Arguments:
-        generate_signal:
+        signal_streamer:
         signal_collector:
         stream_freq:
     """

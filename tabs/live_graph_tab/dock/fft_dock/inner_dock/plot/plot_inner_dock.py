@@ -74,4 +74,5 @@ class PlotInnerDock(InnerDock):
             f_range, fft = self.gv.freq_calculator.get_fft_to_plot(
                 np.array(self.gv.data_queue[ch])[
                 self.gv.filter_min_bound: self.gv.filter_max_bound])
+            print('LEN', len(f_range), 'LEN', len(fft))
             self.freq_curves[ch].setData(f_range, fft)

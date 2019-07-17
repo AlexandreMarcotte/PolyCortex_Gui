@@ -12,10 +12,11 @@ class ScrollPlotWidget(pg.PlotWidget, LivePlot):
 
         self.curve_color = curve_color
 
-        self.signals = []
+        self.signals = [0]
         self.curves = []
         # Curve
         # self.curves = self._init_curves()
+        self._init_plot_appearance()
 
     def _init_plot_appearance(self):
         self.plotItem.showGrid(x=True, y=True, alpha=0.2)
@@ -32,7 +33,6 @@ class ScrollPlotWidget(pg.PlotWidget, LivePlot):
         return curves
 
     def connect_signals(self, signals):
-        self._init_plot_appearance()
         self.signals = signals
         self.curves = self._init_curves(signals)
         # Start the timer at the connection

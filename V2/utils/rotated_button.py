@@ -6,7 +6,7 @@ from V2.utils.btn import Btn
 
 class RotatedButton(Btn):
     def __init__(self, text, orientation="west"):
-        super().__init__(text, font_size=9)
+        super().__init__(text, font_size=9, toggle=True)
         self.orientation = orientation
         self.setMaximumWidth(20)
         self.setCheckable(True)
@@ -20,7 +20,6 @@ class RotatedButton(Btn):
             painter.rotate(270)
             painter.translate(-1 * self.height(), 0)
         painter.drawControl(QStyle.CE_PushButton, self.getSyleOptions())
-        # self.setStyleSheet(f'''font-size: {9}pt;''')
 
     def sizeHint(self):
         size = super(RotatedButton, self).sizeHint()

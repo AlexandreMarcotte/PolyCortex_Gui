@@ -1,6 +1,6 @@
 import numpy as np
 # --My Packages--
-from V2.pipeline.generate_signal.from_synthetic_signal.sinus_signal import SinusSignal
+from V2.pipeline.signal_streamer.from_synthetic_signal.sinus_signal import SinusSignal
 
 
 class SyntheticSignal:

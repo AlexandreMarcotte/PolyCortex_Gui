@@ -1,19 +1,19 @@
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import *
 import numpy as np
+from collections import deque
 # --My packages--
 from .btn import Btn
 from V2.utils.colors import *
 
 
 class LabelBtn(Btn):
-    def __init__(self, name, tip=None, conn_func='avg'):
+    def __init__(self, name, tip=None, conn_func='avg', data_queue=deque([])):
         super().__init__(
                 name, color=dark_blue_tab, toggle=True, tip=tip, max_width=29,
-                min_width=15, max_height=39,
-                txt_color=white, font_size=11)
+                min_width=15, max_height=39, txt_color=white, font_size=11)
 
-        self.data_queue = None
+        self.data_queue = data_queue
         # self.conn_func = conn_func
         actn = {'avg': self.update_avg,
                 'max': self.update_max}

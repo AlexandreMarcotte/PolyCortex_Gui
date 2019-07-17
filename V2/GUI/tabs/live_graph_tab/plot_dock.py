@@ -16,10 +16,10 @@ class PlotDock(Dock):
     def paintEvent(self, e):
         qp = QPainter()
         qp.begin(self)
-        self.drawWidget(qp)
+        self._paint_black_background(qp)
         qp.end()
 
-    def drawWidget(self, qp):
+    def _paint_black_background(self, qp):
         qp.setPen(QColor(0, 0, 0))
         qp.setBrush(QColor(0, 0, 0))
         qp.drawRoundedRect(
