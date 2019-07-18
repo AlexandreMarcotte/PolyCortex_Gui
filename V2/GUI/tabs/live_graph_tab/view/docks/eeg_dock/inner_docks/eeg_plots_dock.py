@@ -22,7 +22,7 @@ class EegPlotsDock(InnerDock):
             self.plot_dock_list.append(plot_dock)
             self.dock_area.addDock(plot_dock)
         # Time plot
-        self.time_dock = PlotDock(plot=TimePlot, curve_color=('k'))
+        self.time_dock = PlotDock(plot=TimePlot(curve_color=('k')))
         self.dock_area.addDock(self.time_dock)
 
     def hide_pins_settings(self, checked):

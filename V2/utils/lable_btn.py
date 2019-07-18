@@ -8,12 +8,12 @@ from V2.utils.colors import *
 
 
 class LabelBtn(Btn):
-    def __init__(self, name, tip=None, conn_func='avg', data_queue=deque([])):
+    def __init__(self, name, tip=None, conn_func='avg', plot=None):
         super().__init__(
                 name, color=dark_blue_tab, toggle=True, tip=tip, max_width=29,
                 min_width=15, max_height=39, txt_color=white, font_size=11)
 
-        self.data_queue = data_queue
+        self.plot = plot
         # self.conn_func = conn_func
         actn = {'avg': self.update_avg,
                 'max': self.update_max}
@@ -28,13 +28,8 @@ class LabelBtn(Btn):
         self.label = self._create_label()
         self._connect()
 
-    # def add_label_to_plot(self, plot):
-    #     self.label = self._create_label()
-    #     layout.addWidget(self.label, row, 6)
-
     def _connect(self):
         self.clicked.connect(self.show_action)
-
 
     def _create_label(self):
         style = ("""QLabel {background-color: rgba(0, 0, 0, 0); 
@@ -67,10 +62,10 @@ class LabelBtn(Btn):
         #       'max_r', self.gv.filter_min_bound)
     def update_avg(self):
         """"Create the average label"""
-        avg_val = f'{np.round(np.average(self.data_queue), 2)} Vrms'
+        avg_val = f'{np.round(np.average(self.plot.signals), 2)} Vrms'
         self.label.setText(avg_val)
 
     def update_max(self):
         """Create the max label"""
-        max_val = f'{np.round(np.max(self.data_queue), 2)} Vrms'
+        max_val = f'{np.round(np.max(self.plot.signals), 2)} Vrms'
         self.label.setText(max_val)

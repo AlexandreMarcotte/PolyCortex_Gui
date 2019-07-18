@@ -4,6 +4,7 @@ from V2.GUI.tabs.live_graph_tab.view.docks.fft_dock.inner_docks.fft_settings_doc
 from V2.GUI.tabs.live_graph_tab.view.docks.inner_dock import InnerDock
 from V2.GUI.tabs.live_graph_tab.view.docks.fft_dock.inner_docks.plot.fft_plot import FftPlot
 from V2.GUI.tabs.live_graph_tab.plot_dock import PlotDock
+from V2.utils.colors import *
 
 
 class FftDock(InnerDock):
@@ -31,7 +32,7 @@ class FftDock(InnerDock):
         self.dock_area.addDock(self.settings_dock)
 
     def _add_plot(self):
-        self.plot_dock = PlotDock(plot=FftPlot)
+        self.plot_dock = PlotDock(plot=FftPlot(curve_color=pen_colors))
         self.dock_area.addDock(self.plot_dock)
 
 

@@ -8,8 +8,15 @@ from V2.utils.colors import *
 class FilterRegion(LinearRegionItem):
     def __init__(self, min_boundary=0, max_boundary=10, color=blue):
         super().__init__(values=[min_boundary, max_boundary], brush=color)
+        self.color = color
         self.min_boundary = min_boundary
         self.max_boundary = max_boundary
+
+        self.sigRegionChanged.connect(self.print_shit)
+
+    def print_shit(self):
+        min, max = self.getRegion()
+        print(self.color, 'min', min, 'max', max)
 
     def connect_filter_region(self, sig_filter):
         """Connect the filter region to the filter inside the connector module"""

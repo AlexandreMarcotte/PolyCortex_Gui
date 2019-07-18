@@ -11,7 +11,8 @@ from V2.GUI.tabs.live_graph_tab.view.docks.visualization_3d_dock.inner_docks.vis
 from V2.GUI.tabs.live_graph_tab.view.docks.visualization_3d_dock.inner_docks.plot.visualization_3d_plot_dock import Visualization3dPlotsDock
 #
 from .connectors.eeg_dock.eeg_plot_dock_connector import EegPlotsDockConnector
-from V2.GUI.tabs.live_graph_tab.view.connectors.fft_dock.fft_setting_dock_connector import FftSettingDockConnector
+from .connectors.eeg_dock.eeg_settings_dock_connector import EegSettingsDockConnector
+from V2.GUI.tabs.live_graph_tab.view.connectors.fft_dock.fft_settings_dock_connector import FftSettingsDockConnector
 from .connectors.fft_dock.fft_plot_dock_connector import FftPlotsDockConnector
 from ..model.model import Model
 from ..controller.controller import Controller
@@ -29,11 +30,14 @@ class View(QWidget):
 
     def _connect(self):
         """connect widgets to controller"""
+        # Settings
+        self.eeg_plots_dock_connector = EegSettingsDockConnector(
+            view=self, model=self.model)
         # Plots
         self.eeg_plots_dock_connector = EegPlotsDockConnector(
             view=self, model=self.model)
         # Settings
-        FftSettingDockConnector(
+        FftSettingsDockConnector(
             n_ch=self.model.N_CH, view=self).connect()
         # Fft
         FftPlotsDockConnector(view=self, model=self.model).connect()

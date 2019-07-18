@@ -15,14 +15,10 @@ class FftPlotsDockConnector:
 
     def connect(self):
         self._connect_plot()
-        self._connect_start_btn()
 
     def _connect_plot(self):
         self.plot.connect_signals(
             signals=self._model.pipeline.fft_stage.output,
             fft_stage=self._model.pipeline.fft_stage)
-        # self.plot.connect_timers(t_interval=200)
 
-    def _connect_start_btn(self):
-        self._view.fft_dock.settings_dock.start_btn.clicked.connect(
-            partial(self.plot.connect_timers, t_interval=200))
+

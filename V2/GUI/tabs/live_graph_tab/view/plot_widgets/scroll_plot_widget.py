@@ -6,7 +6,7 @@ from V2.utils.colors import *
 
 
 class ScrollPlotWidget(pg.PlotWidget, LivePlot):
-    def __init__(self, curve_color=('w')):
+    def __init__(self, curve_color=pen_colors):
         """Signals: list of signal to plot in this scroll plot"""
         super().__init__()
 
@@ -24,29 +24,35 @@ class ScrollPlotWidget(pg.PlotWidget, LivePlot):
         self.plotItem.hideAxis('bottom')
         self.setBackground(dark_grey)
 
-    def _init_curves(self, signals):
-        curves = []
-        for color, signal in zip(self.curve_color, signals):
-            curve = self.plot(signal)
-            curve.setPen(color)
-            curves.append(curve)
-        return curves
+    def connect_timers(self, t_interval=0):
+        self.timer = self.init_timer()
+        self.timer.start(t_interval)
 
     def connect_signals(self, signals):
         self.signals = signals
         self.curves = self._init_curves(signals)
         # Start the timer at the connection
 
-    def connect_timers(self, t_interval=0):
-        self.timer = self.init_timer()
-        self.timer.start(t_interval)
+    def _init_curves(self, signals):
+        curves = []
+        for i, signal in enumerate(signals):
+            curve = self.plot(signal)
+            # TODO: ALEXM: Or do a modulo over the list of colors
+            try:
+                color = self.curve_color[i]
+            except:
+                color = pen_colors[i]
+            curve.setPen(color)
+            curves.append(curve)
+        return curves
 
     def _update(self):
-        for i, signal in enumerate(self.signals):
-            self.curves[i].setData(signal)
+        for curve, signal in zip(self.curves, self.signals):
+            # print('iiiii', i)
+            # print('Len curves', len(self.curves))
+            curve.setData(signal)
 
     def scale_axis(self, txt, axis='y'):
-        print('here')
         try:
             if txt == 'Auto':
                 self.enableAutoRange()

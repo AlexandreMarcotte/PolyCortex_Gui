@@ -11,20 +11,19 @@ class Pipeline:
         self.signal_collector = SignalCollector(len=1000)
         # self.streamer = self.start_signal_streamer(stream_origin='File')
         self.streamer = SignalStreamerSelector(
-            stream_origin='File', signal_collector=self.signal_collector).streamer
+            stream_origin='File',
+            signal_collector=self.signal_collector).streamer
         # self.streamer.start()
         # Filter
-        """
         self.filter_stage = FilterStage(
                 input=self.signal_collector.input,
-                filter=[#Filter(cut_freq=(92,), filter_type='low'),
-                        Filter(cut_freq=(55, 65), filter_type='bandstop')])
-        # self.filter_stage.start()
-        """
+                filter=[Filter(cut_freq=(92,), filter_type='low'),
+                        Filter(cut_freq=(1, 15), filter_type='bandstop')])
+        self.filter_stage.start()
         # FFT
         self.fft_stage = FftStage(
-                input=self.signal_collector.input,
-                timestamps=self.signal_collector.timestamps, remove_first_freq=1)
+            input=self.signal_collector.input,
+            timestamps=self.signal_collector.timestamps, remove_first_freq=1)
 
     def start(self):
         self.streamer.start()

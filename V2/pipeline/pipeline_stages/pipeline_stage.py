@@ -8,7 +8,6 @@ class PipelineStage(Thread):
     def __init__(self, input, stream_period=0.04):
         super().__init__()
         self.input = input
-
         self.output = [deque(input[0], maxlen=len(input[0]))
                        for _ in range(len(input))]
 

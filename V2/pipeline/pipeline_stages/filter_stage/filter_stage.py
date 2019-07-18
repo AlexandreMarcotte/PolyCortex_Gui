@@ -5,6 +5,7 @@ class FilterStage(PipelineStage):
     def __init__(self, input: list, filter: list):
         """filter : A list of filter"""
         super().__init__(input)
+        self.input = input
         self.filter = filter
 
     def work(self):

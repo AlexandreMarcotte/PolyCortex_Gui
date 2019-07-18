@@ -7,13 +7,14 @@ from V2.utils.colors import *
 from V2.GUI.tabs.live_graph_tab.plot_dock import PlotDock
 from V2.utils.color_btn import ColorBtn
 from V2.GUI.tabs.live_graph_tab.view.docks.eeg_dock.inner_docks.pins_settings.pins_settings import PinSettings
+from V2.GUI.tabs.live_graph_tab.view.plot_widgets.scroll_plot_widget import ScrollPlotWidget
 
 
 class EegPlotDock(PlotDock):
     def __init__(self, ch):
         self._ch = ch
         self.curve_color = (pen_colors[ch])
-        super().__init__(curve_color=self.curve_color)
+        super().__init__(ScrollPlotWidget(self.curve_color))
         self._add_all_btn()
 
     def _add_all_btn(self):
@@ -34,11 +35,11 @@ class EegPlotDock(PlotDock):
         # Average btn
         self.avg_value_btn = LabelBtn(
             name='A', tip='Show average value of queue', conn_func='avg',
-            data_queue=self.plot.signals)
+            plot=self.plot)
         # Maximum btn
         self.max_value_btn = LabelBtn(
             name='M', tip='Show maximum value of queue', conn_func='max',
-            data_queue=self.plot.signals)
+            plot=self.plot)
         #  btn
         self.fft_size_btn = LabelBtn(
             name='F', tip='''Show the size of the fft window on 
