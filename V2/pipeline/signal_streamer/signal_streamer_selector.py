@@ -1,19 +1,20 @@
 import os
 from .from_synthetic_signal.synthetic_streamer import SyntheticStreamer
-from .from_synthetic_signal.from_synthetic_signal import SyntheticSignal
+from .from_synthetic_signal.synthetic_signal import SyntheticSignal
 from .from_file.file_streamer import FileStreamer
 
 
 class SignalStreamerSelector:
     def __init__(self, stream_origin, signal_collector):
+
         self.streamer = self._select_streamer(stream_origin, signal_collector)
 
     @staticmethod
     def _select_streamer(stream_origin, signal_collector):
         if stream_origin == 'Synthetic data':
             streamer = SyntheticStreamer(
-                input_signal=SyntheticSignal().signal,
-                signal_collector=signal_collector, stream_freq=250)
+                input_signal=SyntheticSignal(n_ch=8).signals,
+                signal_collector=signal_collector)
 
         elif stream_origin == 'File':
             base_path = os.getcwd()

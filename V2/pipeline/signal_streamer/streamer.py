@@ -30,10 +30,10 @@ class Streamer(Thread):
 
     def run(self):
         """Start the creation of the thread that create signal"""
-        self.stream_signal()
+        self._stream_signal()
 
     @abstractclassmethod
-    def stream_signal(self):
+    def _stream_signal(self):
         """Overload this function to loop over the array of data to send into
            the data collector"""
 

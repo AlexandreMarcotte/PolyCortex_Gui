@@ -16,7 +16,7 @@ class FileStreamer(Streamer):
         self.signal_collector = signal_collector
         self.stream_period = 1/stream_freq
 
-    def stream_signal(self):
+    def _stream_signal(self):
         t_init = time()
         print('Stream from: ', self.file_name)
         with open(self.file_name) as f:

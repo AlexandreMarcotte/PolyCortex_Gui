@@ -11,7 +11,7 @@ class Pipeline:
         self.signal_collector = SignalCollector(len=1000)
         # self.streamer = self.start_signal_streamer(stream_origin='File')
         self.streamer = SignalStreamerSelector(
-            stream_origin='File',
+            stream_origin='Synthetic data',
             signal_collector=self.signal_collector).streamer
         # self.streamer.start()
         # Filter
