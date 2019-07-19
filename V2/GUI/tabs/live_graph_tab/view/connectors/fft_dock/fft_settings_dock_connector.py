@@ -19,7 +19,7 @@ class FftSettingsDockConnector:
         self._connect_start_btn()
 
     def _connect_axis(self, cb, axis='x'):
-        # connect function
+        # Connect function
         scale_axis = self.plot.scale_axis
         cb.activated[str].connect(partial(scale_axis, axis=axis))
 
@@ -27,5 +27,5 @@ class FftSettingsDockConnector:
         self.settings_dock.log_cb.activated[str].connect(self.plot.set_log_mode)
 
     def _connect_start_btn(self):
-        self._view.fft_dock.settings_dock.start_btn.clicked.connect(
+        self.settings_dock.start_btn.clicked.connect(
             partial(self.plot.connect_timers, t_interval=200))

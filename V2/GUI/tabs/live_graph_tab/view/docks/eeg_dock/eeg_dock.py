@@ -30,7 +30,7 @@ class EegDock(InnerDock):
         self.dock_area.addDock(self.settings_dock)
 
     def _add_plot_dock(self):
-        self.plots_dock = EegPlotsDock()
+        self.plots_dock = EegPlotsDock(N_CH=8)
         self.dock_area.addDock(self.plots_dock)
 
     def _add_saving_dock(self):

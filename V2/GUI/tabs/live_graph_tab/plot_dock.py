@@ -1,11 +1,11 @@
-# --My packages--
-from V2.GUI.tabs.live_graph_tab.view.plot_widgets.scroll_plot_widget import ScrollPlotWidget
 from pyqtgraph.dockarea import Dock
 from PyQt5.QtGui import QPainter, QColor
+# --My packages--
+from .view.docks.fft_dock.inner_docks.plot.fft_plot import FftPlot
 
 
 class PlotDock(Dock):
-    def __init__(self, plot=ScrollPlotWidget):
+    def __init__(self, plot:(FftPlot)=None):
         super().__init__(name='', hideTitle=True)
         self.plot = plot
 

@@ -26,16 +26,21 @@ class View(QWidget):
 
         self._init_ui()
         self._connect()
-        # listen for model event signals
 
     def _connect(self):
         """connect widgets to controller"""
+        self._connect_eeg()
+        self._connect_fft()
+
+    def _connect_eeg(self):
         # Settings
-        self.eeg_plots_dock_connector = EegSettingsDockConnector(
+        self.eeg_settings_dock_connector = EegSettingsDockConnector(
             view=self, model=self.model)
         # Plots
         self.eeg_plots_dock_connector = EegPlotsDockConnector(
             view=self, model=self.model)
+
+    def _connect_fft(self):
         # Settings
         FftSettingsDockConnector(
             n_ch=self.model.N_CH, view=self).connect()

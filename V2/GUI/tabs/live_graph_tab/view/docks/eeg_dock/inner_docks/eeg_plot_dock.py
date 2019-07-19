@@ -28,7 +28,7 @@ class EegPlotDock(PlotDock):
             color=button_colors[self._ch], txt_color=black,
             toggle=True, tip=f'Start/Stop the ch{self._ch+1} signal')
 
-        self.addWidget(toggle_btn, 0, 0, 1, 1)
+        self.addWidget(toggle_btn, 0, 0)
         return toggle_btn
 
     def _add_action_btn(self):

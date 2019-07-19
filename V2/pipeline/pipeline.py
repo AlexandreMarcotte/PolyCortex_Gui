@@ -17,12 +17,14 @@ class Pipeline:
         # Filter
         self.filter_stage = FilterStage(
                 input=self.signal_collector.input,
-                filter=[Filter(cut_freq=(92,), filter_type='low'),
-                        Filter(cut_freq=(1, 15), filter_type='bandstop')])
+                filters={
+                        # 'low': Filter(cut_freq=(92,), filter_type='low'),
+                         'bandstop': Filter(cut_freq=[1, 15],
+                                            filter_type='bandstop')})
         self.filter_stage.start()
         # FFT
         self.fft_stage = FftStage(
-            input=self.signal_collector.input,
+            input=self.filter_stage.output,
             timestamps=self.signal_collector.timestamps, remove_first_freq=1)
 
     def start(self):

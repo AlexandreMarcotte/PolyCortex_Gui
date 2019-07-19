@@ -16,9 +16,6 @@ class EegSettingsDockConnector:
 
             self._connect_start_btn()
 
-    def _connect_start_btn(self):
-        self.start_btn.clicked.connect(self._connect)
-
     def _connect(self):
         for ch in range(self._model.N_CH):
             self._connect_toggle_btn(ch)
@@ -28,6 +25,10 @@ class EegSettingsDockConnector:
             self._connect_axis(
                 plot=self.plots[ch].plot, cb=self.settings.vertical_scale_cb,
                 axis='y')
+        self.connect_pins_settings_btn()
+
+    def _connect_start_btn(self):
+        self.start_btn.clicked.connect(self._connect)
 
     def _connect_axis(self, plot, cb, axis='x'):
         scale_axis = plot.scale_axis
@@ -36,5 +37,9 @@ class EegSettingsDockConnector:
     def _connect_toggle_btn(self, ch):
         self.plots[ch].toggle_btn.clicked.connect(
             self.plots[ch].plot.toggle_timer)
+
+    def connect_pins_settings_btn(self):
+        self._view.eeg_dock.pins_settings_btn.clicked.connect(
+            self._view.eeg_dock.plots_dock.hide_pins_settings)
 
 
