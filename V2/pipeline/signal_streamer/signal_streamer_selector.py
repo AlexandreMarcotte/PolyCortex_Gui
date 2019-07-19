@@ -14,7 +14,7 @@ class SignalStreamerSelector:
         if stream_origin == 'Synthetic data':
             streamer = SyntheticStreamer(
                 input_signal=SyntheticSignal(n_ch=8).signals,
-                signal_collector=signal_collector)
+                signal_collector=signal_collector, stream_freq=250)
 
         elif stream_origin == 'File':
             base_path = os.getcwd()
@@ -23,7 +23,7 @@ class SignalStreamerSelector:
             # TODO: ALEXM: find a way to stream at the right frequency despite the delay
             streamer = FileStreamer(
                 file_name=path, signal_collector=signal_collector,
-                stream_freq=280)
+                stream_freq=300)
 
         elif stream_origin == 'OpenBci':
             streamer = SyntheticStreamer(

@@ -16,7 +16,8 @@ class Streamer(Thread):
         self.signal_collector = signal_collector
         self.daemon = True
 
-        self.stream_period = self._stream_period(stream_freq)
+        self.desired_stream_period = self._stream_period(stream_freq)
+        self.real_stream_period = self.desired_stream_period
 
         self.t_init = time()
 

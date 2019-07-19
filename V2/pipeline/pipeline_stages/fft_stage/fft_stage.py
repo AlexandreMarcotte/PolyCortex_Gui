@@ -16,22 +16,20 @@ class FftStage(PipelineStage):
         self.freq_range = np.ones(len(input[0])//2)
 
     def work(self):
+        self.freq_range = self._get_freq_range(len(self.input[0]))
         for ch, input in enumerate(self.input):
-            self.freq_range, self.output[ch] = self._get_fft_to_plot(input)
-
-    def _get_fft_to_plot(self, queue):
-        fft = self._calcul_fft(queue)
-        freq_range = self._get_freq_range(len(queue))
-        return freq_range, fft
+            self.output[ch] = self._calcul_fft(input)
 
     def _calcul_fft(self, queue):
         fft = np.fft.fft(queue)
-        output = abs(fft[:len(queue) // 2])
+        # Take the abs value to be in the Reel domain
+        output = abs(fft[:len(queue)//2])
         return output
 
     def _get_freq_range(self, n_data):
         """Calculate FFT (Remove freq 0 because it gives a really high
          value on the graph"""
+        # Remove the opposite side of the fft which is a symmetry
         freq_range = np.linspace(0, n_data//2/self._get_delta_t(), n_data//2)
         return freq_range
 
