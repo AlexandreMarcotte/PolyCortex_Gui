@@ -22,7 +22,7 @@ class FftSettingsDock(SettingsDock):
             ['Auto', '60 Hz', '80 Hz', '100 Hz', '120 Hz'])
         self.max_microV_cb = ParameterCombobox(
             self.inner_layout, 'Max Uv', (0, 2), ['Auto', '1000 uv', '10000 uv',
-            '100000 uv', '1000000 uv', '10000000 uv'], editable=False)
+            '100000 uv', '1000000 uv', '10000000 uv'])
         self.log_cb = ParameterCombobox(
             self.inner_layout, 'Log', (0, 3), ['False', 'True'], editable=False)
         self.filter_cb = ParameterCombobox(

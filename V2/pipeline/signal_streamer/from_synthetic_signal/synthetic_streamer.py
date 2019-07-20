@@ -1,7 +1,6 @@
 from time import sleep
 from typing import List
 # --My Packages--
-from ..stream_frequency_adjustor import StreamFrequencyAdjustor
 from V2.pipeline.signal_streamer.signal_collector import SignalCollector
 from ..streamer import Streamer
 from time import time
@@ -25,8 +24,6 @@ class SyntheticStreamer(Streamer):
         super().__init__(input_signal, signal_collector, stream_freq)
 
         self.stream_signal = True
-        self.stream_freq_adjustor = StreamFrequencyAdjustor(
-            desired_stream_period=self.desired_stream_period)
 
     def _stream_signal(self):
         """Loop over the array of data to send into the data collector"""
@@ -37,10 +34,7 @@ class SyntheticStreamer(Streamer):
                     single_signal, timestamp=self.time_stamp())
                 sleep(self.real_stream_period)
 
-                # TODO: ALEXM: Don't call at every iterations ??
-                self.real_stream_period = \
-                    self.stream_freq_adjustor.adjust_real_stream_period(
-                        current_t_stamp=time(),
-                        real_stream_period=self.real_stream_period)
+                self.adjust_stream_period()
+
 
 

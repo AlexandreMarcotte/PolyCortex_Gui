@@ -1,10 +1,8 @@
-- Add grid 3D to spectogram 3D
 - improve the visual of the game
 - Ability to have two player at the same time on the game
 - Do other learning with scaled data or (unscale them for the predictor?)
 - Ability to change the x axis len in the spectogram from the settings
     (so that you can focus on lets say only (0->100)
-
 - Add axis
 - Ability to turn on off the clean graph
 - Clean MainEegDock to have EegDock in another class and to put the method
@@ -19,12 +17,16 @@
 - Reject data if the time sleep in the frequency adjustement is really really
 close to 0 (try to keep them to be saved in the file but reject them to be plotted and
 to be filter)
-- Mettre le temps comme échelle du static graph
-- Mettre les fichiers dans un repo séparé pour pas que ça soit aussi long a télécharger
+
+
+TODO: NEW
 
 
 
 
+
+(DONE)- Mettre le temps comme échelle du static graph
+(DONE)- Mettre les fichiers dans un repo séparé pour pas que ça soit aussi long a télécharger
 (DONE)- Set the second static graphs to occupy all the rows instead of leaving the
     last one blank
 - (DONE) Put the spectogram in the direction so that the time is the x direction (?)

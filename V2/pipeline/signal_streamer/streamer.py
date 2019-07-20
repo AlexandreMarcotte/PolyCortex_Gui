@@ -3,6 +3,7 @@ from abc import abstractclassmethod
 from time import time
 # --My Packages--
 from V2.pipeline.signal_streamer.signal_collector import SignalCollector
+from .stream_frequency_adjustor import StreamFrequencyAdjustor
 
 
 class Streamer(Thread):
@@ -19,6 +20,9 @@ class Streamer(Thread):
         self.desired_stream_period = self._stream_period(stream_freq)
         self.real_stream_period = self.desired_stream_period
 
+        self.stream_freq_adjustor = StreamFrequencyAdjustor(
+            desired_stream_period=self.desired_stream_period)
+
         self.t_init = time()
 
     def time_stamp(self):
@@ -28,6 +32,13 @@ class Streamer(Thread):
     def _stream_period(self, stream_freq):
         """Calculate period from frequency"""
         return 1 / stream_freq
+
+    def adjust_stream_period(self):
+        # TODO: ALEXM: Don't call at every iterations ??
+        self.real_stream_period = \
+            self.stream_freq_adjustor.adjust_real_stream_period(
+                current_t_stamp=time(),
+                real_stream_period=self.real_stream_period)
 
     def run(self):
         """Start the creation of the thread that create signal"""
@@ -42,4 +53,5 @@ class Streamer(Thread):
     def work(self, single_signal):
         """Override this function to fill the signal queue of the data
             collector with every new signal that is received"""
+
 

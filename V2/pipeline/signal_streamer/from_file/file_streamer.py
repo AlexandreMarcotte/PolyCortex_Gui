@@ -29,4 +29,5 @@ class FileStreamer(Streamer):
                     signal, timestamp=timestamp)
                 sleep(self.stream_period)
 
+                self.adjust_stream_period()
 

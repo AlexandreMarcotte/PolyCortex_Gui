@@ -1,4 +1,5 @@
 # Colors used for the regions in the signal where event occur
+
 red = (255, 0, 0, 10)
 p300_red = (255, 0, 0, 255)
 pale_red = (255, 0, 0, 35)

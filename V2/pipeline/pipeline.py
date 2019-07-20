@@ -11,14 +11,13 @@ class Pipeline:
         self.signal_collector = SignalCollector(len=1000)
         # self.streamer = self.start_signal_streamer(stream_origin='File')
         self.streamer = SignalStreamerSelector(
-            stream_origin='Synthetic data',
+            stream_origin='File',
             signal_collector=self.signal_collector).streamer
         # self.streamer.start()
         # Filter
         self.filter_stage = FilterStage(
                 input=self.signal_collector.input,
-                filters={
-                        # 'low': Filter(cut_freq=(92,), filter_type='low'),
+                filters={ # 'low': Filter(cut_freq=(92,), filter_type='low'),
                          'bandstop': Filter(cut_freq=[1, 15],
                                             filter_type='bandstop')})
         self.filter_stage.start()
