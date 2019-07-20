@@ -1,6 +1,6 @@
 from V2.utils.clickable_line_edit import ClickableLineEdit
 from V2.utils.create_txt_label import Label
-from V2.utils.colors import *
+from V2.utils.colors import Color
 
 
 class TripletBox:
@@ -19,7 +19,7 @@ class TripletBox:
         self.layout.addWidget(pos_label, 0, self._pos[1], 1, self._N_COMBO_BOX)
         pos_label.setStyleSheet(f'''font-weight: 430;
                                 font-size: 10pt;
-                                background-color: {combobox_grey}''')
+                                background-color: {Color.combobox_grey}''')
 
     def _add_triplet_txt_box(self, pos, layout, colors=None):
         col = pos[1]

@@ -1,11 +1,11 @@
 from PyQt5.QtWidgets import QPushButton
-from V2.utils.colors import *
+from V2.utils.colors import Color
 
 
 class Btn(QPushButton):
-    def __init__(self, name, color=dark_blue_tab, toggle=False, tip=None,
+    def __init__(self, name, color=Color.dark_blue_tab, toggle=False, tip=None,
                  max_width=1200, min_width=15, max_height=None,
-                 txt_color=white, font_size=11):
+                 txt_color=Color.white, font_size=11):
         super().__init__(name)
 
         self._set_size(name, max_width, min_width, max_height)

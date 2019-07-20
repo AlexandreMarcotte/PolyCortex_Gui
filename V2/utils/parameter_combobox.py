@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt
-from V2.utils.colors import *
+from V2.utils.colors import Color
 
 
 class ParameterCombobox(QComboBox):
@@ -41,7 +41,7 @@ class ParameterCombobox(QComboBox):
             # background-color: {label_grey};
             label.setStyleSheet(f'''font-weight: 430;
                                 font-size: 10pt;
-                                background-color: {combobox_grey}''')
+                                background-color: {Color.combobox_grey}''')
             label.setMaximumHeight(26)
         return label
 

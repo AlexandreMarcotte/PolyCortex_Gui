@@ -2,7 +2,7 @@ from PyQt5 import QtCore, QtGui
 from time import sleep
 # --My Packages--
 from V2.utils.btn import Btn
-from V2.utils.colors import *
+from V2.utils.colors import Color
 from V2.GUI.tabs.live_graph_tab.view.docks.inner_dock import InnerDock
 
 
@@ -20,7 +20,7 @@ class WriteHardwareDock(InnerDock):
         self.inner_layout.addWidget(self.l_e, 0, 0, 1, 3)
 
     def _add_btn(self):
-        self.btn = Btn(name='Write serial', color=grey3, txt_color=black)
+        self.btn = Btn(name='Write serial', color=Color.grey3, txt_color=Color.black)
         self.inner_layout.addWidget(self.btn, 0, 3)
 
     def send_byte_to_hardware(self):

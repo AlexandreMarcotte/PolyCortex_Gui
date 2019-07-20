@@ -1,6 +1,7 @@
 from pyqtgraph.dockarea import *
 from PyQt5.QtWidgets import *
 # --My packages--
+from V2.utils.colors import Color
 from V2.GUI.tabs.live_graph_tab.view.docks.main_dock import MainDock
 # EEG
 from V2.GUI.tabs.live_graph_tab.view.docks.eeg_dock.eeg_dock import EegDock
@@ -21,6 +22,7 @@ from ..controller.controller import Controller
 class View(QWidget):
     def __init__(self, model: Model, controller: Controller):
         super().__init__()
+        Color.pen_colors[0] = 'b'
         self.model = model
         self.controller = controller
 
@@ -31,6 +33,7 @@ class View(QWidget):
         """connect widgets to controller"""
         self._connect_eeg()
         self._connect_fft()
+
 
     def _connect_eeg(self):
         # Settings
@@ -71,6 +74,8 @@ class View(QWidget):
             settings_dock=Visualisation3dSettingsDock,
             plot_dock=Visualization3dPlotsDock())
         self.area.addDock(self.visualization_3D_dock, 'bottom', self.fft_dock)
+
+
 
 
 

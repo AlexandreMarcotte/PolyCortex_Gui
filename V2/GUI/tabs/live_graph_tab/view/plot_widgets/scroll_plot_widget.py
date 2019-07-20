@@ -2,11 +2,11 @@ import pyqtgraph as pg
 import re
 # --My Packages--
 from .live_plot import LivePlot
-from V2.utils.colors import *
+from V2.utils.colors import Color
 
 
 class ScrollPlotWidget(pg.PlotWidget, LivePlot):
-    def __init__(self, curve_color=pen_colors):
+    def __init__(self, curve_color=Color.pen_colors):
         """Signals: list of signal to plot in this scroll plot"""
         super().__init__()
 
@@ -22,7 +22,7 @@ class ScrollPlotWidget(pg.PlotWidget, LivePlot):
         self.plotItem.showGrid(x=True, y=True, alpha=0.2)
         self.plotItem.setLabel(axis='left', units='v')
         self.plotItem.hideAxis('bottom')
-        self.setBackground(dark_grey)
+        self.setBackground(Color.dark_grey)
 
     def connect_timers(self, t_interval=0):
         self.timer = self.init_timer()
@@ -41,7 +41,7 @@ class ScrollPlotWidget(pg.PlotWidget, LivePlot):
             try:
                 color = self.curve_color[i]
             except:
-                color = pen_colors[i]
+                color = Color.pen_colors[i]
             curve.setPen(color)
             curves.append(curve)
         return curves

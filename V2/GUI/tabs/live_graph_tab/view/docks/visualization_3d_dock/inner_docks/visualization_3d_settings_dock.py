@@ -2,7 +2,7 @@
 from V2.utils.parameter_combobox import ParameterCombobox
 from V2.GUI.tabs.live_graph_tab.view.docks.inner_docks.settings_dock import SettingsDock
 from V2.utils.triplet_box import TripletBox
-from V2.utils.colors import *
+from V2.utils.colors import Color
 from V2.utils.data_saver import DataSaver
 from V2.utils.btn import Btn
 
@@ -24,14 +24,14 @@ class Visualisation3dSettingsDock(SettingsDock):
         # Position
         self.pos_triplet_box = TripletBox(
             self.inner_layout, 'Position', (0, 2),
-            colors=(blue_plane, green_plane, red_plane))
+            colors=(Color.blue_plane, Color.green_plane, Color.red_plane))
         # Angle
         self.pos_triplet_box = TripletBox(
             self.inner_layout, 'Angle', (0, 5),
-            colors=(blue_plane, green_plane, red_plane))
+            colors=(Color.blue_plane, Color.green_plane, Color.red_plane))
         # Data saver
         self.data_saver = DataSaver(self.inner_layout, pos=(0, 8))
         # Show 3D
-        self.show_3d_btn = Btn('Show 3D', color=grey3, txt_color=black)
+        self.show_3d_btn = Btn('Show 3D', color=Color.grey3, txt_color=Color.black)
         self.inner_layout.addWidget(self.show_3d_btn, 1, 0)
 

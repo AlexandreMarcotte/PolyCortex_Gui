@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<XMI xmi.version="1.2" timestamp="2019-07-19T15:06:09" verified="false" xmlns:UML="http://schema.omg.org/spec/UML/1.4">
+<XMI xmi.version="1.2" timestamp="2019-07-19T21:31:50" verified="false" xmlns:UML="http://schema.omg.org/spec/UML/1.4">
  <XMI.header>
   <XMI.documentation>
    <XMI.exporter>umbrello uml modeller http://umbrello.kde.org</XMI.exporter>
@@ -812,6 +812,7 @@
         <UML:AssociationEnd name="" visibility="public" isNavigable="true" isSpecification="false" changeability="changeable" type="utF58RRkQsXCK" xmi.id="u7zykMpFNd3i3" aggregation="none"/>
        </UML:Association.connection>
       </UML:Association>
+      <UML:Class name="Color" visibility="public" namespace="Logical_View" isSpecification="false" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="u2C17iVSNkfet"/>
      </UML:Namespace.ownedElement>
      <XMI.extension xmi.extender="umbrello">
       <diagrams resolution="96">
@@ -882,6 +883,7 @@
          <classwidget y="378.417" isinstance="0" showpubliconly="0" usesdiagramusefillcolor="0" usefillcolor="1" showopsigs="601" height="33" usesdiagramfillcolor="0" showoperations="1" xmi.id="uHlBScYT3dOi1" autoresize="1" width="163" showattsigs="601" showpackage="1" showstereotype="1" linewidth="0" fillcolor="#ffff00" showscope="1" showattributes="1" localid="u8mAVhZ7mGg1i" font="Ubuntu,11,-1,5,50,0,0,0,0,0" textcolor="#000000" x="-619.96" linecolor="#ff0000"/>
          <classwidget y="348.738" isinstance="0" showpubliconly="0" usesdiagramusefillcolor="0" usefillcolor="1" showopsigs="601" height="33" usesdiagramfillcolor="0" showoperations="1" xmi.id="uxogoPJNZ33cm" autoresize="1" width="179" showattsigs="601" showpackage="1" showstereotype="1" linewidth="0" fillcolor="#ffff00" showscope="1" showattributes="1" localid="u2qxrgsVegxab" font="Ubuntu,11,-1,5,50,0,0,0,0,0" textcolor="#000000" x="-1165.49" linecolor="#ff0000"/>
          <classwidget y="-162.556" isinstance="0" showpubliconly="0" usesdiagramusefillcolor="0" usefillcolor="1" showopsigs="601" height="33" usesdiagramfillcolor="0" showoperations="1" xmi.id="uCM6dwG83Qd92" autoresize="1" width="83" showattsigs="601" showpackage="1" showstereotype="1" linewidth="0" fillcolor="#ffff00" showscope="1" showattributes="1" localid="uTtoVExcqxvwP" font="Ubuntu,11,-1,5,50,0,0,0,0,0" textcolor="#000000" x="-184.702" linecolor="#ff0000"/>
+         <classwidget y="-507.554" isinstance="0" showpubliconly="0" usesdiagramusefillcolor="0" usefillcolor="1" showopsigs="601" height="33" usesdiagramfillcolor="0" showoperations="1" xmi.id="u2C17iVSNkfet" autoresize="1" width="50" showattsigs="601" showpackage="1" showstereotype="1" linewidth="0" fillcolor="#ffff00" showscope="1" showattributes="1" localid="usMHrdExcNpDt" font="Ubuntu,11,-1,5,50,0,0,0,0,0" textcolor="#000000" x="271.597" linecolor="#ff0000"/>
         </widgets>
         <messages/>
         <associations>
@@ -1284,7 +1286,7 @@
   </UML:Model>
  </XMI.content>
  <XMI.extensions xmi.extender="umbrello">
-  <docsettings uniqueid="u7zykMpFNd3i3" viewid="uLVPSdvdHIVDC" documentation=""/>
+  <docsettings uniqueid="usMHrdExcNpDt" viewid="uLVPSdvdHIVDC" documentation=""/>
   <listview>
    <listitem open="1" id="Views" type="800">
     <listitem open="1" id="Component_View" type="821"/>
@@ -1295,6 +1297,7 @@
      <listitem open="1" id="uRJRnYJIiDJCJ" type="813"/>
      <listitem open="1" id="uAEvdJ3Rj5XIO" type="813"/>
      <listitem open="1" id="udiprnT8UzKfI" type="813"/>
+     <listitem open="1" id="u2C17iVSNkfet" type="813"/>
      <listitem open="1" id="uCM6dwG83Qd92" type="813"/>
      <listitem open="1" id="u2ZUIioiIFXAF" type="813"/>
      <listitem open="1" id="uWRyWpHxmXgOQ" type="813"/>

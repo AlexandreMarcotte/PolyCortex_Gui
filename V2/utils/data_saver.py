@@ -2,7 +2,7 @@ import os
 
 from PyQt5.QtWidgets import *
 # --My Packages--
-from V2.utils.colors import *
+from V2.utils.colors import Color
 from V2.utils.btn import Btn
 from save.write_to_file import write_to_file
 
@@ -28,7 +28,7 @@ class DataSaver:
         return le
 
     def _init_btn(self, name, pos, size=(1, 1)):
-        b = Btn(name=name, color=grey3, txt_color=black)
+        b = Btn(name=name, color=Color.grey3, txt_color=Color.black)
         self.layout.addWidget(b, *pos, *size)
         return b
 

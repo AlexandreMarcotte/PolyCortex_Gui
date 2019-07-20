@@ -4,14 +4,14 @@ import numpy as np
 from collections import deque
 # --My packages--
 from .btn import Btn
-from V2.utils.colors import *
+from V2.utils.colors import Color
 
 
 class LabelBtn(Btn):
     def __init__(self, name, tip=None, conn_func='avg', plot=None):
         super().__init__(
-                name, color=dark_blue_tab, toggle=True, tip=tip, max_width=29,
-                min_width=15, max_height=39, txt_color=white, font_size=11)
+                name, color=Color.dark_blue_tab, toggle=True, tip=tip, max_width=29,
+                min_width=15, max_height=39, txt_color=Color.white, font_size=11)
 
         self.plot = plot
         # self.conn_func = conn_func

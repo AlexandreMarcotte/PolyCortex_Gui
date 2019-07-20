@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import *
 # --My packages--
 from V2.utils.btn import Btn
 from V2.utils.lable_btn import LabelBtn
-from V2.utils.colors import *
+from V2.utils.colors import Color
 from V2.GUI.tabs.live_graph_tab.plot_dock import PlotDock
 from V2.utils.color_btn import ColorBtn
 from V2.GUI.tabs.live_graph_tab.view.docks.eeg_dock.inner_docks.pins_settings.pins_settings import PinSettings
@@ -13,7 +13,7 @@ from V2.GUI.tabs.live_graph_tab.view.plot_widgets.scroll_plot_widget import Scro
 class EegPlotDock(PlotDock):
     def __init__(self, ch):
         self._ch = ch
-        self.curve_color = (pen_colors[ch])
+        self.curve_color = (Color.pen_colors[ch])
         super().__init__(ScrollPlotWidget(self.curve_color))
         self._add_all_btn()
 
@@ -25,7 +25,7 @@ class EegPlotDock(PlotDock):
     def _add_toggle_on_off_btn(self):
         toggle_btn = Btn(
             name=str(self._ch+1), max_width=23, max_height=39,
-            color=button_colors[self._ch], txt_color=black,
+            color=Color.button_colors[self._ch], txt_color=Color.black,
             toggle=True, tip=f'Start/Stop the ch{self._ch+1} signal')
 
         self.addWidget(toggle_btn, 0, 0)

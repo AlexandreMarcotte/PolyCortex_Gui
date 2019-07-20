@@ -1,6 +1,6 @@
 from V2.GUI.tabs.live_graph_tab.view.plot_widgets.scroll_plot_widget import ScrollPlotWidget
 from V2.GUI.tabs.live_graph_tab.view.docks.fft_dock.filter_region import FilterRegion
-from V2.utils.colors import *
+from V2.utils.colors import Color
 
 
 class FftPlot(ScrollPlotWidget):
@@ -21,7 +21,7 @@ class FftPlot(ScrollPlotWidget):
         # self.addItem(self.band_pass)
         # Bandcut
         self.band_cut = FilterRegion(
-            min_boundary=56, max_boundary=64, color=red)
+            min_boundary=56, max_boundary=64, color=Color.red)
         self.addItem(self.band_cut)
 
     def connect_signals(self, signals, fft_stage=None):
