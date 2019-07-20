@@ -33,4 +33,7 @@ class Btn(QPushButton):
         if tip is not None:
             self.setToolTip(tip)
 
+    def change_color(self, color_btn):
+        self.setStyleSheet(f'background-color: {color_btn.color().name()}')
+
 

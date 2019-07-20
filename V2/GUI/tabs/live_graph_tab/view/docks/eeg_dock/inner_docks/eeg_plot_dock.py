@@ -61,13 +61,7 @@ class EegPlotDock(PlotDock):
 
     def create_color_button(self):
         """Create color button to change the color of the line"""
-        color_btn = ColorBtn(color=self.curve_color)
-        color_btn.sigColorChanged.connect(partial(self.change_line_color))
-        self.addWidget(color_btn, 3, 6)
+        self.color_btn = ColorBtn(color=self.curve_color)
+        self.addWidget(self.color_btn, 3, 6)
 
-    def change_line_color(self):
-        print('change color')
-        # color = color_btn.color()
-        # self.eeg_graphes[self.ch].curve.setPen(color)
-        # self.gv.curve_freq[self.ch].setPen(color)
-        # self.btns[self.ch].set_color(color)
+

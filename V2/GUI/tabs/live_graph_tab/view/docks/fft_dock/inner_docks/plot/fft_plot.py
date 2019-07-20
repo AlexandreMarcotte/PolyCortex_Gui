@@ -31,4 +31,7 @@ class FftPlot(ScrollPlotWidget):
     def _update(self):
         for i, signal in enumerate(self.signals):
             self.curves[i].setData(self.fft_stage.freq_range, signal)
-            # self.freq_curves[ch].setData(f_range, fft)   #############
+
+    def change_curves_color(self, ch=0, color_btn=None):
+        self.curves[ch].setPen(color_btn.color())
+

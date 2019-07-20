@@ -46,18 +46,24 @@ class ScrollPlotWidget(pg.PlotWidget, LivePlot):
             curves.append(curve)
         return curves
 
+    def change_curves_color(self, color_btn):
+        self.curves[0].setPen(color_btn.color())
+
     def _update(self):
         for curve, signal in zip(self.curves, self.signals):
             curve.setData(signal)
 
-    def scale_axis(self, txt, axis='y'):
+    def scale_axis(self, txt, axis='y', symetric=False):
         try:
             if txt == 'Auto':
                 self.enableAutoRange()
             else:
                 r = int(re.search(r'\d+', txt).group())
                 if axis == 'y':
-                    self.setYRange(-r, r)
+                    if symetric:
+                        self.setYRange(-r, r)
+                    else:
+                        self.setYRange(0, r)
                 elif axis == 'x':
                     self.setXRange(0, r)
         except AttributeError as e:

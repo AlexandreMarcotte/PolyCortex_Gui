@@ -22,7 +22,6 @@ from ..controller.controller import Controller
 class View(QWidget):
     def __init__(self, model: Model, controller: Controller):
         super().__init__()
-        Color.pen_colors[0] = 'b'
         self.model = model
         self.controller = controller
 
