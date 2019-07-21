@@ -10,14 +10,15 @@ from typing import Dict, List
 class FilterStage(PipelineStage):
     def __init__(self,
                  signal_collector,
-                 filters):
+                 filters,
+                 event=None):
         """filter : A list of filter"""
         super().__init__(len(signal_collector.input[0]), stream_period=0.01)
         # self.input = input
         # self.input = signal_collector.input
         self.signal_collector = signal_collector
-
         self.filters: Dict[str: Filter] = filters
+        self.event = event
 
         self.n_ch = len(self.signal_collector.input)
         # Variables to filter signal by chunks
@@ -31,10 +32,17 @@ class FilterStage(PipelineStage):
         self.filtered_data = [deque([]) for _ in range(self.n_ch)]
 
     def work(self):
+        self.event.wait()
+
+        # Warning
+        # This value is not always 1: This means that the synchronicity of the
+        # two thread (creator and filter) is not perfect
+        # Find a way to improve it. Maybe by using Queue instead of deque
         n_new_data = self.signal_collector.n_data_created - self.total_data_created
-        self.total_data_created = self.signal_collector.n_data_created
-        self.TEST_TOTAL += n_new_data
-        # print('new data', new_data)
+
+        # self.total_data_created = self.signal_collector.n_data_created
+        # self.TEST_TOTAL += n_new_data
+        # print('new data', n_new_data)
         # print('N_data_created', self.signal_collector.n_data_created)
         # print('TEST TOTAL ', self.TEST_TOTAL)
         self.filter_itt += 1
@@ -51,20 +59,24 @@ class FilterStage(PipelineStage):
                 self.filtered_data[ch] = self.signal_collector.input[ch]
                 for filter in self.filters.values():
                     filtered_data = filter.filter_signal(self.filtered_data[ch])
-                    filtered_data_chunk = filtered_data[-self.filter_once_every*3:]
+                    filtered_data_chunk = filtered_data[-self.filter_once_every:]
                     self.filtered_data[ch] = deque(filtered_data_chunk)
 
             try:
+                self.output[ch].append(self.filtered_data[ch].popleft())
                 # print(len(self.filtered_data[ch]))
-                for _ in range(n_new_data):
-                    self.output[ch].append(self.filtered_data[ch].popleft())
+                # for _ in range(n_new_data):
+                #     self.output[ch].append(self.filtered_data[ch].popleft())
                 # for i in range(len(self.output[ch])):
                 #     self.output[ch][i] = self.filtered_data[ch][i]  # - self.averages[ch]
             except IndexError:
                 print('List is empty')
-                # print(self.filter_itt)
+                print(self.signal_collector.n_data_created)
+            #     print(self.filter_itt)
                     # TODO: instead filter in chunk and append where there is a signal emited from the signal collector
                     # self.filtered_data[:70] = 0
+        self.event.clear()
+
         """
                 for i in range(len(self.output[ch])):
                     # Remove the mean of the signal

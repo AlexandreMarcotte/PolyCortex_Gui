@@ -1,6 +1,6 @@
 from threading import Thread
 from abc import abstractclassmethod
-from time import time
+from time import time, sleep
 # --My Packages--
 from V2.pipeline.signal_streamer.signal_collector import SignalCollector
 from .stream_frequency_adjustor import StreamFrequencyAdjustor
@@ -18,8 +18,8 @@ class Streamer(Thread):
         self.daemon = True
 
         self.desired_stream_period = self._stream_period(stream_freq)
-        self.real_stream_period = self.desired_stream_period
 
+        self.real_stream_period = self.desired_stream_period
         self.stream_freq_adjustor = StreamFrequencyAdjustor(
             desired_stream_period=self.desired_stream_period)
 
@@ -33,12 +33,13 @@ class Streamer(Thread):
         """Calculate period from frequency"""
         return 1 / stream_freq
 
-    def adjust_stream_period(self):
+    def adjusted_sleep(self):
         # TODO: ALEXM: Don't call at every iterations ??
         self.real_stream_period = \
             self.stream_freq_adjustor.adjust_real_stream_period(
                 current_t_stamp=time(),
                 real_stream_period=self.real_stream_period)
+        sleep(self.real_stream_period)
 
     def run(self):
         """Start the creation of the thread that create signal"""

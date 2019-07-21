@@ -32,9 +32,8 @@ class SyntheticStreamer(Streamer):
             for single_signal in self.input_signal:
                 self.signal_collector.fill_signal_queue(
                     single_signal, timestamp=self.time_stamp())
-                sleep(self.real_stream_period)
 
-                self.adjust_stream_period()
+                self.adjusted_sleep()
 
 
 

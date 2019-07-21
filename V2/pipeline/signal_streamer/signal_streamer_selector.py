@@ -20,10 +20,10 @@ class SignalStreamerSelector:
             base_path = os.getcwd()
             file_path = 'pipeline/signal_streamer/from_file/experiment_csv/pinch_close.csv'
             path = os.path.join(base_path, file_path)
-            # TODO: ALEXM: find a way to stream at the right frequency despite the delay
+
             streamer = FileStreamer(
                 file_name=path, signal_collector=signal_collector,
-                stream_freq=300)
+                stream_freq=250)
 
         elif stream_origin == 'OpenBci':
             streamer = SyntheticStreamer(

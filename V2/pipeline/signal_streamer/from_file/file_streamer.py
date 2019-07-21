@@ -27,7 +27,6 @@ class FileStreamer(Streamer):
                 timestamp = time() - t_init
                 self.signal_collector.fill_signal_queue(
                     signal, timestamp=timestamp)
-                sleep(self.stream_period)
 
-                self.adjust_stream_period()
+                self.adjusted_sleep()
 

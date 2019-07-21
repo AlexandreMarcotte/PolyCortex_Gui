@@ -18,7 +18,7 @@ class PipelineStage(Thread):
     def run(self):
         while self.run_stage:
             self.work()
-            time.sleep(self.stream_period)  # instead to it every time there is N new value
+            # time.sleep(self.stream_period)  # instead to it every time there is N new value
 
     @abstractclassmethod
     def work(self):
