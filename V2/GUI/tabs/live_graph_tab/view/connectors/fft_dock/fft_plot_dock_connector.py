@@ -30,7 +30,6 @@ class FftPlotsDockConnector:
             partial(
                 self._model.pipeline.filter_stage.filters[
                     'bandstop'].set_filter_coeff_from_filter_region,
-                    filter_region=bc)
-        )
+                    filter_region=bc))
 
 

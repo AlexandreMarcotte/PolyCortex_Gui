@@ -6,7 +6,7 @@ from V2.pipeline.pipeline_stages.pipeline_stage import PipelineStage
 
 class saver_stage(PipelineStage):
     def __init__(self, save_path, input, timestamps, stream_period):
-        super().__init__(input, stream_period=stream_period)
+        super().__init__(len(input[0]), stream_period=stream_period)
 
         self.save_path = save_path
         self.save_signal = deque()

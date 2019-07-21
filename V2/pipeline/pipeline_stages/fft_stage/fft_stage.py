@@ -5,7 +5,7 @@ from V2.pipeline.pipeline_stages.pipeline_stage import PipelineStage
 
 class FftStage(PipelineStage):
     def __init__(self, input, timestamps, remove_first_freq=1):
-        super().__init__(input)
+        super().__init__(len(input[0]))
         # The output needs to be half the length because of the fft
         self.output = [deque(input[0], maxlen=len(input[0])//2)
                        for _ in range(len(input))]

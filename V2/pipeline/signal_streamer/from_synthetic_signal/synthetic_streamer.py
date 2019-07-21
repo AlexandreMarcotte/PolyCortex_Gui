@@ -19,15 +19,15 @@ class SyntheticStreamer(Streamer):
     def __init__(self,
                  input_signal: List[List],
                  signal_collector: SignalCollector,
-                 stream_freq: int=250): # Need to stream at the length of the
+                 stream_freq:int=250): # Need to stream at the length of the
         # input for the frequency to correspond with the sin frequencies
         super().__init__(input_signal, signal_collector, stream_freq)
 
-        self.stream_signal = True
+        self._do_stream_signal = True
 
     def _stream_signal(self):
         """Loop over the array of data to send into the data collector"""
-        while self.stream_signal:
+        while self._do_stream_signal:
             # Loop over the input signal
             for single_signal in self.input_signal:
                 self.signal_collector.fill_signal_queue(

@@ -20,10 +20,14 @@ to be filter)
 
 
 TODO: NEW
+- Filter by chunk (to do so set a number of value acquired in the signalcollector and pass it set the same number of value in its list)
+- Add the ability to show the diffrent signal in a same plot dock in differents plot view
 
 
 
 
+
+(DONE)- remove the mean of the signal => No need filtering the low frequency act the same way
 
 (DONE)- Mettre le temps comme échelle du static graph
 (DONE)- Mettre les fichiers dans un repo séparé pour pas que ça soit aussi long a télécharger

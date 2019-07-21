@@ -2,14 +2,14 @@ from threading import Thread
 from collections import deque
 from abc import abstractclassmethod
 import time
+import numpy as np
 
 
 class PipelineStage(Thread):
-    def __init__(self, input, stream_period=0.04):
+    def __init__(self, signal_len, stream_period=0.01):
         super().__init__()
-        self.input = input
-        self.output = [deque(input[0], maxlen=len(input[0]))
-                       for _ in range(len(input))]
+        self.output = [deque(np.zeros(signal_len), maxlen=signal_len)
+                       for _ in range(8)]
 
         self.daemon = True
         self.run_stage = True

@@ -49,9 +49,9 @@ class Streamer(Thread):
         """Overload this function to loop over the array of data to send into
            the data collector"""
 
-    @abstractclassmethod
-    def work(self, single_signal):
-        """Override this function to fill the signal queue of the data
-            collector with every new signal that is received"""
+    # @abstractclassmethod
+    # def work(self, single_signal):
+    #     """Override this function to fill the signal queue of the data
+    #         collector with every new signal that is received"""
 
 
