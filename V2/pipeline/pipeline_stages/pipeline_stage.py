@@ -6,7 +6,7 @@ import numpy as np
 
 
 class PipelineStage(Thread):
-    def __init__(self, signal_len, stream_period=0.01):
+    def __init__(self, signal_len, stream_period=None):
         super().__init__()
         self.output = [deque(np.zeros(signal_len), maxlen=signal_len)
                        for _ in range(8)]
@@ -18,7 +18,8 @@ class PipelineStage(Thread):
     def run(self):
         while self.run_stage:
             self.work()
-            # time.sleep(self.stream_period)  # instead to it every time there is N new value
+            if self.stream_period:
+                time.sleep(self.stream_period)  # instead to it every time there is N new value
 
     @abstractclassmethod
     def work(self):

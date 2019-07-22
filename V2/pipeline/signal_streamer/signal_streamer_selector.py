@@ -14,7 +14,7 @@ class SignalStreamerSelector:
         if stream_origin == 'Synthetic data':
             streamer = SyntheticStreamer(
                 input_signal=SyntheticSignal(n_ch=8).signals,
-                signal_collector=signal_collector, stream_freq=250)
+                signal_collector=signal_collector)
 
         elif stream_origin == 'File':
             base_path = os.getcwd()
@@ -22,13 +22,10 @@ class SignalStreamerSelector:
             path = os.path.join(base_path, file_path)
 
             streamer = FileStreamer(
-                file_name=path, signal_collector=signal_collector,
-                stream_freq=250)
+                file_name=path, signal_collector=signal_collector)
 
         elif stream_origin == 'OpenBci':
-            streamer = SyntheticStreamer(
-                input_signal=SyntheticSignal().signal,
-                signal_collector=signal_collector, stream_freq=250)
+            streamer = None
 
         else:
             raise Exception('No streamer was selected or incorrect name of streamer')

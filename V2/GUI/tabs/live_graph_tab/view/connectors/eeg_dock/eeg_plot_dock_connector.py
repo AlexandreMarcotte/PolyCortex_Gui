@@ -1,5 +1,3 @@
-# --General Packages--
-from functools import partial
 # --My Packages--
 from V2.GUI.tabs.live_graph_tab.model.model import Model
 # from V2.GUI.tabs.live_graph_tab.view.view import View
@@ -43,8 +41,8 @@ class EegPlotsDockConnector:
 
     def _connect_plots_signals(self, ch):
         signals = [
-                   self.signal_collector.input[ch],
-                   # self._model.pipeline.signal_collector.input[0]]
+                   # self.signal_collector.input[ch],
+                   # self._model.pipeline.signal_collector.input[0],
                    self._model.pipeline.filter_stage.output[ch]
                   ]
         # TODO: ALEXM: pass signal in parameter instead ?
