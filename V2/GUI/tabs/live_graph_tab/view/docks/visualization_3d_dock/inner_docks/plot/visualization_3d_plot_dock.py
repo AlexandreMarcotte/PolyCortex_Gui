@@ -16,6 +16,14 @@ class Visualization3dPlotsDock(Dock):
         self._view.addItem(self.plane_z)
         self.addWidget(self._view)
 
+    @staticmethod
+    def _init_plot():
+        view = gl.GLViewWidget()
+        view.opts['distance'] = 370
+        view.opts['azimuth'] = 40
+        view.opts['elevation'] = 15
+        return view
+
     def _init_planes(self):
         self.plane_x = Plane(
             axis='x', mvt=np.array([1, 0, 0]), key=('j', 'k'),
@@ -27,10 +35,4 @@ class Visualization3dPlotsDock(Dock):
             axis='z', mvt=np.array([0, 0, 1]), key=('j', 'k'),
             color=(255, 0, 0, 4))
 
-    @staticmethod
-    def _init_plot():
-        view = gl.GLViewWidget()
-        view.opts['distance'] = 370
-        view.opts['azimuth'] = 40
-        view.opts['elevation'] = 15
-        return view
+

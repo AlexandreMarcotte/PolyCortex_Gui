@@ -4,7 +4,7 @@ from V2.pipeline.pipeline_stages.pipeline_stage import PipelineStage
 
 
 class FftStage(PipelineStage):
-    def __init__(self, input, timestamps, remove_first_freq=1):
+    def __init__(self, input, timestamps, remove_first_freq=1, n_ch=8):
         super().__init__(len(input[0]), stream_period=0.2)
         # The output needs to be half the length because of the fft
         self.output = [deque(input[0], maxlen=len(input[0])//2)
@@ -15,10 +15,16 @@ class FftStage(PipelineStage):
 
         self.freq_range = np.ones(len(input[0])//2)
 
+        self.N_T_MEMORY = 200
+        self.fft_over_time = [
+            deque(maxlen=self.N_T_MEMORY) for _ in range(n_ch)]
+
     def work(self):
         self.freq_range = self._get_freq_range(len(self.input[0]))
         for ch, input in enumerate(self.input):
             self.output[ch] = self._calcul_fft(input)
+            # keep track of fft values over time
+            self.fft_over_time[ch].append(self.output[ch])
 
     def _calcul_fft(self, queue):
         fft = np.fft.fft(queue)

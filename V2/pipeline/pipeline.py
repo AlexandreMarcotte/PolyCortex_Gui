@@ -14,6 +14,7 @@ class Pipeline:
         event = Event()
 
         self.QUEUE_LEN = 1500
+        self.N_CH = 8
 
         # Filter stage
         self.filter_stage = FilterStage(
@@ -29,14 +30,15 @@ class Pipeline:
 
         # Streamer
         self.streamer = SignalStreamerSelector(
-            stream_origin='File',  #'Synthetic data',
+            stream_origin='Synthetic',  #'Synthetic',
             signal_collector=self.signal_collector).streamer
 
         # FFT stage
         self.fft_stage = FftStage(
             # input=self.signal_collector.input,
             input=self.filter_stage.output,
-            timestamps=self.signal_collector.timestamps, remove_first_freq=1)
+            timestamps=self.signal_collector.timestamps, remove_first_freq=1,
+            n_ch=self.N_CH)
 
     def start(self):
         self.streamer.start()

@@ -1,19 +1,18 @@
 # --My packages--
-from V2.GUI.tabs.live_graph_tab.view.docks.fft_dock.inner_docks.filter_dock import FilterDock
-from V2.GUI.tabs.live_graph_tab.view.docks.fft_dock.inner_docks.fft_settings_dock import FftSettingsDock
-from V2.GUI.tabs.live_graph_tab.view.docks.inner_dock import InnerDock
-from V2.GUI.tabs.live_graph_tab.view.docks.fft_dock.inner_docks.plot.fft_plot import FftPlot
+from .inner_docks.filter_dock import FilterDock
+from .inner_docks.fft_settings_dock import FftSettingsDock
+from ..inner_dock import InnerDock
+from .inner_docks.plot.fft_plot import FftPlot
 from V2.GUI.tabs.live_graph_tab.plot_dock import PlotDock
 from V2.utils.colors import Color
 
 
 class FftDock(InnerDock):
-    def __init__(self, name='FFT', margin=(0, 0, 0, 0), external_layout=None):
+    def __init__(self, name='FFT'):
         super().__init__(
             name=name, toggle_btn=False, add_dock_area=True, set_scroll=True,
-            hide_title=False, margin=margin)
+            hide_title=False)
 
-        self.external_layout = external_layout
         self._add_all_dock_to_dock_area()
 
     def _add_all_dock_to_dock_area(self):

@@ -1,61 +1,41 @@
 import numpy as np
 from pyqtgraph.Qt import QtGui
 from PyQt5 import QtCore
-# -- My packages --
-from ... dock.dock import Dock
 import pyqtgraph as pg
-from app.pyqt_frequently_used import create_cmap
+from pyqtgraph.dockarea import Dock
+# -- My packages --
+from V2.utils.create_map import create_cmap
+from V2.utils.wave import waves
+from V2.pipeline.pipeline_stages.fft_stage.fft_stage import FftStage
 
 
-class Spectogram(Dock):
-    def __init__(self, gv, layout):
-
-        super().__init__(gv, 'fft', layout)
-        self.gv = gv
-        self.layout = layout
+class SpectrogramPlotDock(Dock):
+    def __init__(self):
+        super().__init__(name='', hideTitle=True)
 
         self.ch = 0
-
         pg_layout, self.img = self.init_img_view_box()
+        self.addWidget(pg_layout)
 
-        self.plot_d.layout.addWidget(pg_layout, 3, 0, 1, 2)
+        self.timer = QtCore.QTimer()
+        self.connect_timer()
 
-        self.init_choose_ch_combobox()
-        self.init_on_off_button()
-
-        self.timer.timeout.connect(self.update)
+    def start(self):
+        self.timer.start(20)
 
     def init_img_view_box(self):
         """"""
         vb = pg.ViewBox()
         vb.setAspectLocked()
-        # Add axisxScale = pg.AxisItem(orientation='bottom', linkView=vb)
-        # See ViewBox.py in pyqtgraph
-        # xScale = pg.AxisItem(orientation='bottom', linkView=vb)
-        # vb.addItem(xScale, (1, 1))
-        # yScale = pg.AxisItem(orientation='left', linkView=vb)
-        # vb.addItem(yScale, (0, 0))
 
-        # xlabelStyle = {'color': '#FFF', 'font-size': '1pt'}
-        #
-        # xScale.setLabel('This is the x axisss', units='V', **xlabelStyle)
-        # xfont = QtGui.QFont('Times', 10)
-        # xScale.setStyle(tickFont=xfont, tickTextWidth=1, tickTextHeight=1)
-        # tickTextWidth=1, tickTextHeight=1
-        # xScale.setLabel(text="<span style='color: #ff0000; font-size: 0.001pt; font-weight: bold'>X</span> <i>Axis</i>; ", units="s")
-        # yScale.setLabel('Y Axis', units='V')
-
-        # self.add_axis(vb, 'left', 200, '')
-        # self.add_axis(vb, 'bottom', 0, 'T')
-        # self.add_axis_name(vb)
         self.add_axis_name(
-                vb, name='Time (n of freq calculated)', pos=(100, 0), angle=0)
+            vb, name='Time (n of freq calculated)', pos=(100, 0), angle=0)
         self.add_axis_name(
             vb, name='Frequency (Hz - need to correct)', pos=(-10, 50),
             angle=90)
 
         # img of the spectrogram_dock
-        img = pg.ImageItem()                                                   # TODO: ALEXM: rotate so that it is in the right direction (longest with longest)
+        img = pg.ImageItem(border='w')                                                   # TODO: ALEXM: rotate so that it is in the right direction (longest with longest)
         vb.addItem(img)
         # grid
         g = pg.GridItem()
@@ -85,7 +65,7 @@ class Spectogram(Dock):
         # pen for lines
         pen = pg.mkPen(color=(255, 255, 255, 90), width=1)
         # brain wave freq text
-        for w_name, w in self.gv.waves.items():
+        for w_name, w in waves.items():
             w_freq_begin_pos = w.freq_range[0]
             # (vertical line) - Separation line between the different wave frequencies
             l = pg.InfiniteLine(w_freq_begin_pos, angle=0, pen=pen)
@@ -106,12 +86,17 @@ class Spectogram(Dock):
             vb.setXRange(-10, 200)
             vb.setYRange(-10, 110)
 
+    def connect_signal(self, fft_stage: FftStage):
+        self.fft_stage = fft_stage
+        self.fft_over_time = self.fft_stage.fft_over_time
+
     def update(self):
-        fft_over_t = np.array(self.gv.freq_calculator.fft_over_time[self.ch])
+        fft_over_t = np.array(self.fft_over_time[self.ch])
         fft_over_t = np.flip(fft_over_t, 0)  # Or should I rotate the image instead
         cmap = create_cmap(fft_over_t)  # The creation of cmap create quite
         # a lot more lag then the old version without it
         self.img.setImage(cmap)
+        # TODO: ALEXM: change the size of the img to have the right frequency
 
-
-
+    def connect_timer(self):
+        self.timer.timeout.connect(self.update)

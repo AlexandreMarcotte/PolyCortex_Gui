@@ -3,6 +3,7 @@ import pyqtgraph as pg
 from abc import abstractclassmethod
 from PyQt5.QtGui import QPixmap, QPainter, QFont, QColor, QPen
 # -- My Packages --
+from V2.utils.parameter_combobox import ParameterCombobox
 from V2.GUI.tabs.live_graph_tab.view.docks.inner_dock import InnerDock
 from V2.utils.btn import Btn
 
@@ -21,6 +22,11 @@ class SettingsDock(InnerDock):
         """Assign pushbutton for starting"""
         self.start_btn = Btn('Start', toggle=True)
         self.inner_layout.addWidget(self.start_btn, 0, 0)
+
+    def create_choose_channel_cb(self):
+        self.scale_freq_axis_cb = ParameterCombobox(
+            self.inner_layout, 'Channel', (0, 1), [str(i+1) for i in range(8)],
+            editable=False)
 
     @abstractclassmethod
     def _create_all_combobox(self):

@@ -41,7 +41,7 @@ class EegPlotsDockConnector:
 
     def _connect_plots_signals(self, ch):
         signals = [
-                   # self.signal_collector.input[ch],
+                   self.signal_collector.input[ch],
                    # self._model.pipeline.signal_collector.input[0],
                    self._model.pipeline.filter_stage.output[ch]
                   ]

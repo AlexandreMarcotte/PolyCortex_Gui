@@ -13,21 +13,22 @@ class SyntheticSignal:
 
         self.SIGNAL_LEN = 250
 
-        # self.signal = self._create_synthetic_signal()
-        self.signal = self._create_signal_to_test_filters()
+        self.signal = self._create_synthetic_signal()
+        # self.signal = self._create_signal_to_test_filters()
 
         self.signals = self.duplicate_signal_over_many_ch()
 
     def _create_synthetic_signal(self):
         sinus_signal = (SinusSignal(0.1, 4).array
                       + SinusSignal(2, 10).array
-                      + SinusSignal(8, 60).array)
+                      + SinusSignal(8, 60).array
+                      + SinusSignal(1, 80).array)
 
         if self.do_add_random_noise:
             sinus_signal += self._random_noise_signal(sinus_signal)
 
         if self.do_add_sum_of_sin:
-            sinus_signal += self._sum_of_sin_signals(1, 100)
+            sinus_signal += self._sum_of_sin_signals(10, 20)
 
         if self.do_add_impulsion:
             sinus_signal = self._add_impulsion_to_signal(sinus_signal)
@@ -38,7 +39,7 @@ class SyntheticSignal:
         return self._sum_of_sin_signals(1, 100) + 100
 
     def _sum_of_sin_signals(self, start, stop):
-        return sum(SinusSignal(4, freq).array for freq in range(start, stop))
+        return sum(SinusSignal(1, freq).array for freq in range(start, stop))
 
     def _random_noise_signal(self, sinus_signal):
         return np.random.random(len(sinus_signal)) * 6

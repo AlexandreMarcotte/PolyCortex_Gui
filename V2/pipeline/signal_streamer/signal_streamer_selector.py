@@ -11,7 +11,7 @@ class SignalStreamerSelector:
 
     @staticmethod
     def _select_streamer(stream_origin, signal_collector):
-        if stream_origin == 'Synthetic data':
+        if stream_origin == 'Synthetic':
             streamer = SyntheticStreamer(
                 input_signal=SyntheticSignal(n_ch=8).signals,
                 signal_collector=signal_collector)
