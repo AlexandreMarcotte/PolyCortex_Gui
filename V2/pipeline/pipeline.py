@@ -9,12 +9,11 @@ from .signal_streamer.signal_streamer_selector import SignalStreamerSelector
 
 
 class Pipeline:
-    def __init__(self, stream_origin='Synthetic data'):
+    def __init__(self, stream_origin='File'):
         super().__init__()
 
         self.QUEUE_LEN = 1500
         self.N_CH = 8
-        self.stream_origin = stream_origin
 
         # Filter stage
         self.filter_stage = FilterStage(
@@ -28,10 +27,7 @@ class Pipeline:
         self.signal_collector = SignalCollector(
             len=self.QUEUE_LEN, filter_stage=self.filter_stage)
 
-        # Streamer
-        self.streamer = SignalStreamerSelector(
-            stream_origin=self.stream_origin,
-            signal_collector=self.signal_collector).streamer
+        self.update_streamer(stream_origin)
 
         # FFT stage
         self.fft_stage = FftStage(
@@ -39,6 +35,14 @@ class Pipeline:
             input=self.filter_stage.output,
             timestamps=self.signal_collector.timestamps, remove_first_freq=1,
             n_ch=self.N_CH)
+
+
+    def update_streamer(self, stream_origin):
+        print('stremer is updateffd', stream_origin)
+        # Streamer
+        self.streamer = SignalStreamerSelector(
+            stream_origin=stream_origin,
+            signal_collector=self.signal_collector).streamer
 
     def start(self):
         self.streamer.start()

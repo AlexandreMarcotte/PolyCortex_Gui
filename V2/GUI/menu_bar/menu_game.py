@@ -1,9 +1,9 @@
-from game.main import RunGame
+from V2.game.main import RunGame
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import *
 
 
-class MenuGame(QMenu): ############################
+class MenuGame(QMenu):
     def __init__(self, gv, name):
         super().__init__()
         self.gv = gv

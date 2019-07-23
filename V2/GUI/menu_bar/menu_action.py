@@ -6,7 +6,7 @@ from app.pyqt_frequently_used import select_file
 
 class MenuAction(QtGui.QAction):
 
-    set_model = None
+    model = None
 
     def __init__(self, name, main_window=None, icon_path=None,
                  status_tip='', shortcut=None):
@@ -35,7 +35,7 @@ class MenuAction(QtGui.QAction):
 
     def connect_to_select_stream(self):
         self.triggered.connect(
-            partial(self.set_model.update_pipeline, self.name))
+            partial(self.model.pipeline.update_streamer, self.name))
 
         # self.triggered.connect(partial(self.set_selected_stream, self))
 

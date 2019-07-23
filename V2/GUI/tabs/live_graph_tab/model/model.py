@@ -10,6 +10,6 @@ class Model:
 
         self.board = None
 
-    def update_pipeline(self, stream_origin):
-        print('set stream origin', stream_origin)
-        self.pipeline = Pipeline(stream_origin)
+    # def update_pipeline(self, stream_origin):
+    #     print('set stream origin', stream_origin)
+    #     self.pipeline = Pipeline(stream_origin)
