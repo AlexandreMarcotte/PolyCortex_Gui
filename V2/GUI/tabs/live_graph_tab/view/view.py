@@ -12,6 +12,11 @@ from .docks.visualization_3d_dock.inner_docks.visualization_3d_settings_dock imp
 from .docks.visualization_3d_dock.inner_docks.plot.visualization_3d_plot_dock import Visualization3dPlotsDock
 # Spectrogram
 from .docks.spectrogram_dock.spectrogram_dock import SpectrogramDock
+# Spectrogram3D
+from .docks.spectrogram_3d_dock.spectrogram_3d_dock import Spectrogram3dDock
+# Power band
+from .docks.power_band_dock.power_band_dock import PowerBandDock
+
 #
 from .connectors.eeg_dock.eeg_plot_dock_connector import EegPlotsDockConnector
 from .connectors.eeg_dock.eeg_settings_dock_connector import EegSettingsDockConnector
@@ -61,7 +66,9 @@ class View(QWidget):
         self._init_eeg_dock()
         self._init_fft_dock()
         self._init_spectrogram_dock()
+        self._init_spectrogram_3d_dock()
         self._init_visualization_3D_dock()
+        self._init_power_band_dock()
         self.fft_dock.raiseDock()
 
     def _init_eeg_dock(self):
@@ -75,6 +82,14 @@ class View(QWidget):
     def _init_spectrogram_dock(self):
         self.spectrogram_dock = SpectrogramDock()
         self.area.addDock(self.spectrogram_dock, 'above', self.fft_dock)
+
+    def _init_spectrogram_3d_dock(self):
+        self.spectrogram_3d_dock = Spectrogram3dDock()
+        self.area.addDock(self.spectrogram_3d_dock, 'above', self.fft_dock)
+
+    def _init_power_band_dock(self):
+        self.power_band_dock = PowerBandDock()
+        self.area.addDock(self.power_band_dock, 'above', self.fft_dock)
 
     def _init_visualization_3D_dock(self):
         self.visualization_3D_dock = MainDock(name='Visualization 3D',

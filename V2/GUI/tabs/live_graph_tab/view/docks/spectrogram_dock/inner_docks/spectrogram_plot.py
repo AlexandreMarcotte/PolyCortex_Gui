@@ -5,11 +5,11 @@ import pyqtgraph as pg
 from pyqtgraph.dockarea import Dock
 # -- My packages --
 from V2.utils.create_map import create_cmap
-from V2.utils.wave import waves
+from V2.utils.waves import waves
 from V2.pipeline.pipeline_stages.fft_stage.fft_stage import FftStage
 
 
-class SpectrogramPlotDock(Dock):
+class SpectrogramPlot(Dock):
     def __init__(self):
         super().__init__(name='', hideTitle=True)
 
@@ -17,10 +17,17 @@ class SpectrogramPlotDock(Dock):
         pg_layout, self.img = self.init_img_view_box()
         self.addWidget(pg_layout)
 
-        self.timer = QtCore.QTimer()
-        self.connect_timer()
+        self._connect_timer()
 
-    def start(self):
+    def connect_signal(self, fft_stage: FftStage):
+        self.fft_stage = fft_stage
+        self.fft_over_time = self.fft_stage.fft_over_time
+
+    def _connect_timer(self):
+        self.timer = QtCore.QTimer()
+        self.timer.timeout.connect(self.update)
+
+    def start_timer(self):
         self.timer.start(20)
 
     def init_img_view_box(self):
@@ -86,10 +93,6 @@ class SpectrogramPlotDock(Dock):
             vb.setXRange(-10, 200)
             vb.setYRange(-10, 110)
 
-    def connect_signal(self, fft_stage: FftStage):
-        self.fft_stage = fft_stage
-        self.fft_over_time = self.fft_stage.fft_over_time
-
     def update(self):
         fft_over_t = np.array(self.fft_over_time[self.ch])
         fft_over_t = np.flip(fft_over_t, 0)  # Or should I rotate the image instead
@@ -97,6 +100,3 @@ class SpectrogramPlotDock(Dock):
         # a lot more lag then the old version without it
         self.img.setImage(cmap)
         # TODO: ALEXM: change the size of the img to have the right frequency
-
-    def connect_timer(self):
-        self.timer.timeout.connect(self.update)

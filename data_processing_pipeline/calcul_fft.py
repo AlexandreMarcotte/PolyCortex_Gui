@@ -71,6 +71,9 @@ class FreqCalculator:
              - self.gv.t_queue[self.gv.filter_min_bound]
 
 
+
+
+
 class FreqBandOverTime:
     def __init__(self, N_WAVE_TYPE, N_T_MEMORY):
         self.wave_type_data = [

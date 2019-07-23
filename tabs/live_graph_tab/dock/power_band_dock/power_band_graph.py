@@ -40,15 +40,6 @@ class PowerBandGraph(Dock):
 
         return brushes, x, width
 
-    def time_func(self):
-        # Timer(self.init_bar_braph_caract())
-        pass
-
-    # def add_head_img(self):
-    #     mne_head = QLabel()
-    #     mne_head.setPixmap(QtGui.QPixmap('./img/mne_head.png'))
-    #     self.layout.addWidget(mne_head, 2, 0)
-
     def update(self):
         self.plot.clear()
         bg = pg.BarGraphItem(

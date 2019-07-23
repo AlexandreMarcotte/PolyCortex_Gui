@@ -1,11 +1,11 @@
 # -- My packages --
 from V2.GUI.tabs.live_graph_tab.view.docks.inner_dock import InnerDock
-from .inner_docks.spectrogram_settings import SpectrogramSettings
-from .inner_docks.spectrogram_plot import SpectrogramPlot
+from .inner_docks.power_band_settings import PowerBandSettings
+from .inner_docks.power_band_plot import PowerBandPlot
 
 
-class SpectrogramDock(InnerDock):
-    def __init__(self, name='Spectrogram'):
+class PowerBandDock(InnerDock):
+    def __init__(self, name='Power band'):
         super().__init__(
             name=name, toggle_btn=False, add_dock_area=True, set_scroll=True,
             hide_title=False)
@@ -17,19 +17,10 @@ class SpectrogramDock(InnerDock):
         self._add_plot()
 
     def _add_settings_dock(self):
-        self.settings_dock = SpectrogramSettings(self.inner_layout)
+        self.settings_dock = PowerBandSettings(self.inner_layout)
         self.dock_area.addDock(self.settings_dock)
 
     def _add_plot(self):
-        self.plot = SpectrogramPlot()
+        self.plot = PowerBandPlot()
         self.dock_area.addDock(self.plot)
-
-    # TODO: ALEXM: connect inside instead
-    # def connect_start_btn(self):
-    #     self.settings_dock.start_btn.clicked.connect(
-    #         self.plot_dock.start())
-
-
-
-
 

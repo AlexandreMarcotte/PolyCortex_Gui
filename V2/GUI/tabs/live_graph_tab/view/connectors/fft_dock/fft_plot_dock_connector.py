@@ -12,12 +12,16 @@ class FftPlotsDockConnector:
         self._model = model
 
         self.fft_plot = self._view.fft_dock.plot_dock.plot
-        self.fft_over_time_plot = self._view.spectrogram_dock.plot_dock
+        self.spectrogram_plot = self._view.spectrogram_dock.plot
+        self.spectrogram_3d_plot = self._view.spectrogram_3d_dock.plot
+        self.power_band_plot = self._view.spectrogram_3d_dock.plot
 
     def connect(self):
         self._connect_fft_plot()
         self._connect_filters()
-        self._connect_fft_over_time_plot()
+        self._connect_spectrogram_plot()
+        self._connect_spectrogram_3d_plot()
+        # self._connect_power_band_plot()
 
     def _connect_fft_plot(self):
         self.fft_plot.connect_signals(
@@ -34,7 +38,15 @@ class FftPlotsDockConnector:
                     'bandstop'].set_filter_coeff_from_filter_region,
                     filter_region=bc))
 
-    def _connect_fft_over_time_plot(self):
-        self.fft_over_time_plot.connect_signal(
-            fft_over_time=self._model.pipeline.fft_stage)
+    def _connect_spectrogram_plot(self):
+        self.spectrogram_plot.connect_signal(
+            fft_stage=self._model.pipeline.fft_stage)
+
+    def _connect_spectrogram_3d_plot(self):
+        self.spectrogram_3d_plot.connect_signal(
+            fft_stage=self._model.pipeline.fft_stage)
+
+    def _connect_power_band_plot(self):
+        self.power_band_plot.connect_signal(
+            fft_stage=self._model.pipeline.fft_stage)
 

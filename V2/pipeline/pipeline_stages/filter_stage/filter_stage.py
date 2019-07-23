@@ -61,7 +61,7 @@ class FilterStage(PipelineStage):
                 self.output[ch].append(self.filter_chunks[ch].popleft())
 
             except IndexError:
-                print('List is empty')
+                pass
 
             """
             # Set output directly and completly from the filter process
