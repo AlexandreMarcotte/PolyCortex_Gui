@@ -14,14 +14,14 @@ class PowerBandPlot(Dock):
 
         self.plot = self.init_plot()
         self.addWidget(self.plot)
-        # self.brushes, self.x, self.width = self.init_bar_graph_caract()
+        self._brushes, self._x, self._width = self.init_bar_graph_caract()
         self.N_ELE = len(waves)
 
         self._connect_timer()
 
     def _connect_timer(self):
         self.timer = QtCore.QTimer()
-        # self.timer.timeout.connect(self._update)
+        self.timer.timeout.connect(self._update)
 
     def start_timer(self):
         self.timer.start(20)
@@ -37,7 +37,6 @@ class PowerBandPlot(Dock):
         plot.plotItem.setLabel(axis='bottom', text=waves_names)
         return plot
 
-    """
     def init_bar_graph_caract(self):
         brushes = [pg.mkBrush(i) for i in range(len(waves))]
         x = [w.get_half_pos() for w in waves.values()]
@@ -50,6 +49,5 @@ class PowerBandPlot(Dock):
         bg = pg.BarGraphItem(
             height=self.fft_stage.freq_per_band_all_ch[self.ch],              # put the function directly here
             # height=partial(self.gv.freq_calculator.get_avg_freq_per_band, 0),
-            x=self.x, width=self.width, brushes=self.brushes)
+            x=self._x, width=self._width, brushes=self._brushes)
         self.plot.addItem(bg)
-    """

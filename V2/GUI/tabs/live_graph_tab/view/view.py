@@ -16,6 +16,8 @@ from .docks.spectrogram_dock.spectrogram_dock import SpectrogramDock
 from .docks.spectrogram_3d_dock.spectrogram_3d_dock import Spectrogram3dDock
 # Power band
 from .docks.power_band_dock.power_band_dock import PowerBandDock
+# Power band over time
+from .docks.power_band_over_time_dock.power_band_over_time_dock import PowerBandOverTimeDock
 
 #
 from .connectors.eeg_dock.eeg_plot_dock_connector import EegPlotsDockConnector
@@ -39,7 +41,6 @@ class View(QWidget):
         """connect widgets to controller"""
         self._connect_eeg()
         self._connect_fft()
-
 
     def _connect_eeg(self):
         # Settings
@@ -69,6 +70,7 @@ class View(QWidget):
         self._init_spectrogram_3d_dock()
         self._init_visualization_3D_dock()
         self._init_power_band_dock()
+        self._init_power_band_over_time_dock()
         self.fft_dock.raiseDock()
 
     def _init_eeg_dock(self):
@@ -90,6 +92,10 @@ class View(QWidget):
     def _init_power_band_dock(self):
         self.power_band_dock = PowerBandDock()
         self.area.addDock(self.power_band_dock, 'above', self.fft_dock)
+
+    def _init_power_band_over_time_dock(self):
+        self.power_band_over_time_dock = PowerBandOverTimeDock()
+        self.area.addDock(self.power_band_over_time_dock, 'above', self.fft_dock)
 
     def _init_visualization_3D_dock(self):
         self.visualization_3D_dock = MainDock(name='Visualization 3D',

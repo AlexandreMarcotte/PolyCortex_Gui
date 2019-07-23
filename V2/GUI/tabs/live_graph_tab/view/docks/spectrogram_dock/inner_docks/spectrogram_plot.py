@@ -15,13 +15,18 @@ class SpectrogramPlot(Dock):
 
         self.ch = 0
         pg_layout, self.img = self.init_img_view_box()
+        # Scale the image to better fit the window
+        self.img.scale(2, 1)
         self.addWidget(pg_layout)
 
         self._connect_timer()
 
+        self.last_scale_factor = 1
+
     def connect_signal(self, fft_stage: FftStage):
         self.fft_stage = fft_stage
         self.fft_over_time = self.fft_stage.fft_over_time
+        self.DEQUE_LEN = len(self.fft_over_time[0])
 
     def _connect_timer(self):
         self.timer = QtCore.QTimer()
@@ -51,6 +56,7 @@ class SpectrogramPlot(Dock):
         self.add_wave_name_txt_label(vb)
 
         pg_layout = pg.GraphicsLayoutWidget()
+        # pg_layout.setXRange(0, 50)
         pg_layout.addItem(vb)
         return pg_layout, img
 
@@ -90,7 +96,8 @@ class SpectrogramPlot(Dock):
             w_name_item.setFont(font)
             w_name_item.setPos(0, w_freq_begin_pos)
             vb.addItem(w_name_item)
-            vb.setXRange(-10, 200)
+            # Doesnt work because dimensions need to be respected
+            vb.setXRange(40, 50, padding=0)
             vb.setYRange(-10, 110)
 
     def update(self):
@@ -99,4 +106,12 @@ class SpectrogramPlot(Dock):
         cmap = create_cmap(fft_over_t)  # The creation of cmap create quite
         # a lot more lag then the old version without it
         self.img.setImage(cmap)
-        # TODO: ALEXM: change the size of the img to have the right frequency
+
+        self._scale_img_to_have_proper_frequency()
+
+    def _scale_img_to_have_proper_frequency(self):
+        # Scale image to have the proper frequency
+        self.img.scale(1, 1/self.last_scale_factor)
+        scale_factor = self.fft_stage.freq_range[-1] / 750
+        self.img.scale(1, scale_factor)
+        self.last_scale_factor = scale_factor

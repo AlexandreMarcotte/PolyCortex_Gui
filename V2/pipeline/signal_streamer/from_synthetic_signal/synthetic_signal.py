@@ -36,7 +36,8 @@ class SyntheticSignal:
         return sinus_signal
 
     def _create_signal_to_test_filters(self):
-        return self._sum_of_sin_signals(1, 100) + 100
+        # return self._sum_of_sin_signals(1, 100) + 100
+        return self._sum_of_sin_signals(1, 100)
 
     def _sum_of_sin_signals(self, start, stop):
         return sum(SinusSignal(1, freq).array for freq in range(start, stop))

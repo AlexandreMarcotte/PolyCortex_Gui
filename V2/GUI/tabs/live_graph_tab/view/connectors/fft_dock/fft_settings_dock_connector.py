@@ -13,7 +13,8 @@ class FftSettingsDockConnector:
         self.settings_dock = self._view.fft_dock.settings_dock
         self.spectrogram_dock = self._view.spectrogram_dock
         self.spectrogram_3d_dock = self._view.spectrogram_3d_dock
-        # self.power_band_dock = self._view.power_band_dock
+        self.power_band_dock = self._view.power_band_dock
+        self.power_band_over_time_dock = self._view.power_band_over_time_dock
 
     def connect(self):
         self._connect_axis(cb=self.settings_dock.scale_freq_axis_cb, axis='x')
@@ -33,6 +34,11 @@ class FftSettingsDockConnector:
         # FFT dock
         self.settings_dock.start_btn.clicked.connect(
             partial(self.plot.connect_timers, t_interval=200))
+        # Power band over time
+        self.power_band_over_time_dock.settings_dock.start_btn.clicked.connect(
+            partial(self.power_band_over_time_dock.plot.plot.connect_timers,
+                    t_interval=200))
+
         # Spectrogram
         self.spectrogram_dock.settings_dock.start_btn.clicked.connect(
             self.spectrogram_dock.plot.start_timer)
@@ -40,5 +46,6 @@ class FftSettingsDockConnector:
         self.spectrogram_3d_dock.settings_dock.start_btn.clicked.connect(
             self.spectrogram_3d_dock.plot.start_timer)
         # Power band
-        # self.power_band_dock.settings_dock.start_btn.clicked.connect(
-        #     self.power_band_dock.plot.start_timer)
+        self.power_band_dock.settings_dock.start_btn.clicked.connect(
+            self.power_band_dock.plot.start_timer)
+

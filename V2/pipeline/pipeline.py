@@ -19,8 +19,8 @@ class Pipeline:
         # Filter stage
         self.filter_stage = FilterStage(
             filters={
-                'bandpass':
-                     Filter(cut_freq=(1, 116), filter_type='bandpass'),
+                # 'bandpass':
+                #      Filter(cut_freq=(2, 116), filter_type='bandpass'),
                 'bandstop':
                     Filter(cut_freq=(55, 65), filter_type='bandstop')
             }, event=event, queue_len=self.QUEUE_LEN)
@@ -30,7 +30,7 @@ class Pipeline:
 
         # Streamer
         self.streamer = SignalStreamerSelector(
-            stream_origin='Synthetic',  #'Synthetic',
+            stream_origin='File',  #'Synthetic',
             signal_collector=self.signal_collector).streamer
 
         # FFT stage

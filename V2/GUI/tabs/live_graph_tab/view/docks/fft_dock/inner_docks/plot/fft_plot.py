@@ -15,6 +15,14 @@ class FftPlot(ScrollPlotWidget):
         self.plotItem.setLabel(axis='left', text='Amplitude')
         self.plotItem.setLabel(axis='bottom', text='Frequency')
 
+    def connect_signals(self, signals, fft_stage=None):
+        super().connect_signals(signals)
+        self.fft_stage = fft_stage
+
+    def _update(self):
+        for i, signal in enumerate(self.signals):
+            self.curves[i].setData(self.fft_stage.freq_range, signal)
+
     def _add_filter_regions(self):
         # Bandpass
         # self.band_pass = FilterRegion(min_boundary=2, max_boundary=80)
@@ -23,14 +31,6 @@ class FftPlot(ScrollPlotWidget):
         self.band_cut = FilterRegion(
             min_boundary=56, max_boundary=64, color=Color.red)
         self.addItem(self.band_cut)
-
-    def connect_signals(self, signals, fft_stage=None):
-        super().connect_signals(signals)
-        self.fft_stage = fft_stage
-
-    def _update(self):
-        for i, signal in enumerate(self.signals):
-            self.curves[i].setData(self.fft_stage.freq_range, signal)
 
     def change_curves_color(self, ch=0, color_btn=None):
         self.curves[ch].setPen(color_btn.color())
