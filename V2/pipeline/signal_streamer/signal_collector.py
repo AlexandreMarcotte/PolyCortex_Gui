@@ -9,8 +9,7 @@ class SignalCollector(QObject):
 
     filled_new_data_into_queue = pyqtSignal()
 
-    def __init__(self, len=2000, use_reader=False, N_CH=8, event=None,
-                 filter_stage=None):
+    def __init__(self, len=2000, use_reader=False, N_CH=8, filter_stage=None):
         super().__init__()
 
         self.filter_stage = filter_stage

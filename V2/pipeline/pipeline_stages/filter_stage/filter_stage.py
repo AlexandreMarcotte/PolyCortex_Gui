@@ -9,15 +9,13 @@ from V2.pipeline.signal_streamer.signal_collector import SignalCollector
 class FilterStage(PipelineStage):
     def __init__(self,
                  queue_len,
-                 filters,
-                 event=None):
+                 filters):
         """filter : A list of filter"""
 
         super().__init__(queue_len)
 
         # self.signal_collector = signal_collector
         self.filters: Dict[str: Filter] = filters
-        self.event = event
 
         self.n_ch = 8
 

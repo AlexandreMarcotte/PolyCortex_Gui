@@ -4,7 +4,7 @@ from pyqtgraph.dockarea.Dock import DockLabel
 import sys
 # --My Packages--
 from V2.utils.update_style_patch import update_style_patched
-from .menu_bar import MenuBar
+from .menu_bar.menu_bar import MenuBar
 from .toolbar.toolbar import ToolBar
 from .tabs.table_widget import TableWidget
 
@@ -22,7 +22,7 @@ class MainWindow(QMainWindow):
         self.table_widget = TableWidget(self)
         self.setCentralWidget(self.table_widget)
         # MenuBar
-        self.setMenuBar(MenuBar())
+        self.setMenuBar(MenuBar(self))
         # Toolbar
         self.addToolBar(ToolBar(self))
         # Start Bar

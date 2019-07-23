@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import *
 from .menu_action import MenuAction
 from main_window.menu_bar.menu_file import MenuFile
 from .menu_game import MenuGame
+import os
 
 
 class MenuBar:
@@ -24,6 +25,7 @@ class MenuBar:
     def add_action_to_control_panel(self):
         ## Create menu action
         # OpenBCI
+        print('current path', os.getcwd())
         self.openbci_actn = MenuAction(
                 name='OpenBCI', gv=self.gv, icon_path='./img/openbci_logo.png',
                 status_tip='Stream data from Openbci...', shortcut='Ctrl+O' )
