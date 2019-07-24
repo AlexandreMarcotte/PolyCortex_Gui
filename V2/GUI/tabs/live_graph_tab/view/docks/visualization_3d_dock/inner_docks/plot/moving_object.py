@@ -6,8 +6,7 @@ from numpy import array as arr
 
 
 class MovingObject:
-    def __init__(self, gv, listening_process):
-        self.gv = gv
+    def __init__(self, listening_process):
         self.listening_process = listening_process
 
         self.pos = np.array([0, 0, 0], dtype='float64')                        #TODO: ALEXM: Changer pour un vector

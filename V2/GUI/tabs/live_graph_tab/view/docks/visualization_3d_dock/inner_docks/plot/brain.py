@@ -1,13 +1,10 @@
-# -- General Packages --
-from random import randrange
-from PyQt5 import QtCore
 # -- My Packages --
 from .put_nii_data_into_array import put_data_into_array
 from .create_3D_scatter_plot_from_3D_np_array import create_3D_scatter_plot_from_np_array
 from .create_3D_volume_from_3D_np_array import create_3D_volume_from_3D_np_array
 
 
-class Brain:   #######
+class Brain:
     def __init__(
             self, brain_nii_data, type='scatter', show_box=False,
             show_axis=False):

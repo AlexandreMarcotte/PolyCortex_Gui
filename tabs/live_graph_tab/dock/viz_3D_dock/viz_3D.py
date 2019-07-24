@@ -23,7 +23,7 @@ from tabs.live_graph_tab.dock.inner_dock import InnerDock
 from .read_nii_data import read_nii_data
 
 
-class Viz3D(Dock):
+class Viz3D(Dock):   ##############################
     def __init__(self, gv, layout):
         secondary_gr, secondary_layout = create_gr()
         super().__init__(gv, 'viz', secondary_layout)

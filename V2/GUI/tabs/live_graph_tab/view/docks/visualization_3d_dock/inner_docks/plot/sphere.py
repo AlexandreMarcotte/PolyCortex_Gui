@@ -5,12 +5,18 @@ import numpy as np
 from .moving_object import MovingObject
 
 
-class Sphere(MovingObject):################
+class Sphere(MovingObject, gl.GLMeshItem):
     def __init__(
-            self, gv, scaling_factor=48, rows=10, cols=10,
+            self, scaling_factor=48, rows=10, cols=10,
             listening_process=False, update_func_name='move_pointer'):
-        self.item = self.create_item(rows, cols, scaling_factor)
-        super().__init__(gv, listening_process)
+
+        MovingObject.__init__(self, listening_process)
+
+        gl.GLMeshItem.__init__(
+            self, meshdata=gl.MeshData.sphere(rows=rows, cols=cols),
+            smooth=True, color=(1, 0, 0, 0.2), shader='shaded', glOptions='opaque')
+        self.scale(scaling_factor, scaling_factor, scaling_factor)
+
         self.radius = 1
         self.radius *= scaling_factor
         update_funcs = {'move_pointer': self.move_pointer,
@@ -21,18 +27,10 @@ class Sphere(MovingObject):################
     def set_element_to_follow(self, ele_to_follow):
         self.ele_to_follow = ele_to_follow
 
-    def create_item(self, rows, cols, scaling_factor):
-        mesh = gl.MeshData.sphere(rows=rows, cols=cols)
-        item = gl.GLMeshItem(
-                meshdata=mesh, smooth=True, color=(1, 0, 0, 0.2),
-                shader='shaded', glOptions='opaque')
-        item.scale(scaling_factor, scaling_factor, scaling_factor)
-        return item
-
     def move_pointer(self):
         try:
             mvt = self.pointer_actn[self.key_pressed]
-            self.item.translate(mvt[0], mvt[1], mvt[2])
+            self.translate(mvt[0], mvt[1], mvt[2])
             self.pos += mvt
         except KeyError:
             pass
@@ -44,7 +42,7 @@ class Sphere(MovingObject):################
                                                                                # TODO: make a class that contain the tree planes
         mvt = np.array([x, y, z]) - self.pos
         self.pos += mvt
-        self.item.translate(*mvt)
+        self.translate(*mvt)
 
 
 
