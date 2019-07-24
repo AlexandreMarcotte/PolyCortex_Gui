@@ -11,7 +11,6 @@ class ParameterCombobox(QComboBox):
 
         self.txt_label = self._create_txt_label(name)
         self._create_combobox(param, editable, tip)
-        # self.QLineEdit.setAlignment(Qt.AlignCenter)
         self._add_to_layout(layout, pos, cols)
 
     def _create_combobox(self, param, editable, tip):
@@ -21,10 +20,7 @@ class ParameterCombobox(QComboBox):
         if tip is not None:
             self.setToolTip(tip)
         self.setStyleSheet('font-size: 10pt;')
-
-    # def connect_cb(self, conn_func):
-    #     self.conn_func = conn_func
-    #     self.activated[str].connect(self.conn_func)
+        # self.lineEdit().setAlignment(Qt.AlignCenter)
 
     def _add_to_layout(self, layout, pos, cols):
         layout.addWidget(self.txt_label, *pos)
@@ -44,4 +40,8 @@ class ParameterCombobox(QComboBox):
                                 background-color: {Color.combobox_grey}''')
             label.setMaximumHeight(26)
         return label
+
+    # def connect_cb(self, conn_func):
+    #     self.conn_func = conn_func
+    #     self.activated[str].connect(self.conn_func)
 

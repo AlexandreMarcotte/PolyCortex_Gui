@@ -1,5 +1,7 @@
+# --General Packages--
 from pyqtgraph.dockarea import *
 from PyQt5.QtWidgets import *
+from functools import partial
 # --My packages--
 from V2.utils.colors import Color
 from .docks.main_dock import MainDock
@@ -19,7 +21,6 @@ from .docks.power_band_dock.power_band_dock import PowerBandDock
 # Power band over time
 from .docks.power_band_over_time_dock.power_band_over_time_dock import PowerBandOverTimeDock
 
-#
 from .connectors.eeg_dock.eeg_plot_dock_connector import EegPlotsDockConnector
 from .connectors.eeg_dock.eeg_settings_dock_connector import EegSettingsDockConnector
 from V2.GUI.tabs.live_graph_tab.view.connectors.fft_dock.fft_settings_dock_connector import FftSettingsDockConnector
@@ -41,6 +42,7 @@ class View(QWidget):
         """connect widgets to controller"""
         self._connect_eeg()
         self._connect_fft()
+        self._connect_visualization_3d()
 
     def _connect_eeg(self):
         # Settings
@@ -56,6 +58,13 @@ class View(QWidget):
             n_ch=self.model.N_CH, view=self).connect()
         # Fft
         FftPlotsDockConnector(view=self, model=self.model).connect()
+
+    def _connect_visualization_3d(self):
+        self.visualization_3D_dock.settings_dock.start_btn.clicked.connect(
+            partial(self.visualization_3D_dock.plot_dock.connect_signals,
+                    self.model.pipeline.signal_collector.input))
+        self.visualization_3D_dock.settings_dock.start_btn.clicked.connect(
+            self.visualization_3D_dock.plot_dock.start)
 
     def _init_ui(self):
         self.area = DockArea()

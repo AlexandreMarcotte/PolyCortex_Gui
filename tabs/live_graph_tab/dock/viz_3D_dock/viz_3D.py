@@ -58,15 +58,15 @@ class Viz3D(Dock):   ##############################
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.update)
 
-    def show_3D_viz_b(self, layout):
+    def show_3D_viz_b(self, layout):###############
         btn('Show 3D', layout, (1, 0), func_conn=self.show_3D_viz, color=grey3,
             txt_color=white)
 
-    def show_3D_viz(self):
+    def show_3D_viz(self):   ###############
         self.create_head()
         self.create_total_brain()
 
-    def create_head(self):
+    def create_head(self):   ######
         path = mne.datasets.sample.data_path()
         print('path', path)
         surf = mne.read_bem_surfaces(
@@ -87,7 +87,7 @@ class Viz3D(Dock):   ##############################
 
         self.view.addItem(mesh_item)
 
-    def create_planes(self):
+    def create_planes(self):###############
         plane_x = Plane(
                 self.gv, axis='x', mvt=np.array([1, 0, 0]), key=('j', 'k'),
                 rotation=(90, 0, 1, 0), color=(0, 0, 255, 4),
@@ -102,7 +102,7 @@ class Viz3D(Dock):   ##############################
 
         return plane_x, plane_y, plane_z
 
-    def init_viz_layout(self):
+    def init_viz_layout(self):###############
         # viz_gr, viz_layout = create_gr()
         viz_d = InnerDock(self.layout, 'Visualization')
         self.view = self.init_view()
@@ -110,7 +110,7 @@ class Viz3D(Dock):   ##############################
         # self.layout.addWidget(self.view, 2, 0, 1, 9)
         self.dock_area.addDock(viz_d.dock)
 
-    def init_modify_curve_layout(self):
+    def init_modify_curve_layout(self):###############  Settings
         settings_d = InnerDock(
                 self.layout, 'Settings', toggle_button=True, size=(1, 1))
         # Stop/Start button
@@ -143,13 +143,13 @@ class Viz3D(Dock):   ##############################
 
         self.dock_area.addDock(settings_d.dock)
 
-    def init_color_button(self):
+    def init_color_button(self): ########
         color_b = pg.ColorButton(close_fit=True)
         # color_b.sigColorChanging.connect(self.print_shit)
         # color_b.sigColorChanged.connect(self.print_shit)
         return color_b
 
-    def print_shit(self):
+    def print_shit(self): ########
         print('shizzle')
 
     def change_pos_and_angle_of_signal(self, ch_to_move):
@@ -160,11 +160,23 @@ class Viz3D(Dock):   ##############################
         self.signals[int(ch_to_move)-1].move(
             location=(pos[0][0], pos[1][1], pos[2][2]))
 
-    def create_total_brain(self):
+    def create_total_brain(self): ########
         brain_data = read_nii_data(
             nii_path='tabs/live_graph_tab/dock/viz_3D_dock/inplane001.nii')
         self.brain = Brain(brain_data)
         self.view.addItem(self.brain.item)
+
+    def init_view(self): ########
+        """     """
+        view = gl.GLViewWidget()
+        view.opts['distance'] = 370
+        view.opts['azimuth'] = 40
+        view.opts['elevation'] = 15
+        return view
+
+    def init_on_off_button(self, layout=None): ########
+        btn('Start', layout, (0, 0), func_conn=self.start, max_width=100,
+            min_width=100, color=dark_blue_tab, toggle=True, txt_color=white)
 
     def create_plot_lines(self):
         for n in range(self.gv.N_CH):
@@ -174,14 +186,6 @@ class Viz3D(Dock):   ##############################
             self.signals[n].move(
                 location=(-self.len_sig - self.sphere.radius, 0, 0))
             self.signals[n].line.rotate(20*(n+1), 0, 1, 0)
-
-    def init_view(self):
-        """     """
-        view = gl.GLViewWidget()
-        view.opts['distance'] = 370
-        view.opts['azimuth'] = 40
-        view.opts['elevation'] = 15
-        return view
 
     def set_plot_data(self, name, points, color, width):
         self.signals[name].line.setData(pos=points, color=color, width=width)
@@ -196,10 +200,6 @@ class Viz3D(Dock):   ##############################
 
             self.set_plot_data(
                     name=ch, points=pts, color=pg.glColor((ch, 8)), width=1)
-
-    def init_on_off_button(self, layout=None):
-        btn('Start', layout, (0, 0), func_conn=self.start, max_width=100,
-            min_width=100, color=dark_blue_tab, toggle=True, txt_color=white)
 
     @QtCore.pyqtSlot(bool)
     def start(self, checked):

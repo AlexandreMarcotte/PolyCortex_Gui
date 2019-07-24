@@ -6,20 +6,21 @@ from .pipeline_stages.fft_stage.fft_stage import FftStage
 from ..pipeline.pipeline_stages.filter_stage.filter_stage import FilterStage
 from V2.pipeline.pipeline_stages.filter_stage.filter import Filter
 from .signal_streamer.signal_streamer_selector import SignalStreamerSelector
+from V2.general_settings import GeneralSettings
 
 
 class Pipeline:
     def __init__(self, stream_origin='File'):
         super().__init__()
 
-        self.QUEUE_LEN = 1500
-        self.N_CH = 8
+        self.QUEUE_LEN = GeneralSettings.QUEUE_LEN
+        self.N_CH = GeneralSettings.N_CH
 
         # Filter stage
         self.filter_stage = FilterStage(
             filters={
-                # 'bandpass':
-                #      Filter(cut_freq=(2, 116), filter_type='bandpass'),
+                'bandpass':
+                     Filter(cut_freq=(2, 116), filter_type='bandpass'),
                 'bandstop':
                     Filter(cut_freq=(55, 65), filter_type='bandstop')
             }, queue_len=self.QUEUE_LEN)

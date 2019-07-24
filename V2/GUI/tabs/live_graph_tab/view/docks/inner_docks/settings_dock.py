@@ -23,6 +23,9 @@ class SettingsDock(InnerDock):
         self.start_btn = Btn('Start', toggle=True)
         self.inner_layout.addWidget(self.start_btn, 0, 0)
 
+    def print_shizzle(self):
+        print('yooooooooooooooooooooooooooooooooo')
+
     def create_choose_channel_cb(self):
         self.scale_freq_axis_cb = ParameterCombobox(
             self.inner_layout, 'Channel', (0, 1), [str(i+1) for i in range(8)],
