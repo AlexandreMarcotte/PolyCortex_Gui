@@ -23,6 +23,5 @@ class MenuFileAction(MenuAction):
 
     def set_stream_path(self):
         f_name = select_file(self.main_window, open=True)
-        print('F_NAME', f_name)
         if f_name:
             GeneralSettings.file.stream_path = f_name

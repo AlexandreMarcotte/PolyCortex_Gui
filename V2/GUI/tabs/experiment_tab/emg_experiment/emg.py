@@ -7,13 +7,14 @@ from PyQt5 import QtGui, QtCore
 from functools import partial
 # -- My Packages --
 from .action import Action
-from ..experiment import Experiment
+from tabs.experiment_tab.experiment import Experiment
 
 
 class EmgDock(Experiment):
-    def __init__(self, area):
+    def __init__(self, area, gv):
         super().__init__()
         self.area = area
+        self.gv = gv
 
         self.actions = []
         self.action_name = 'ACTION'
@@ -76,8 +77,7 @@ class EmgDock(Experiment):
             action.y_pos -= 0.04
             # If the action text event is bellow the horiz. activation line
             if 0 <= action.y_pos <= 1.5 and action.wait:
-                print('experiment')
-                # self.gv.experiment_type = 1  # 1 meaning that an event happen
+                self.gv.experiment_type = 1  # 1 meaning that an event happen
                                              # (binary scenario)
                 action.activate_html()
                 action.wait = False

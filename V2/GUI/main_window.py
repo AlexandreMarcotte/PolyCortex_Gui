@@ -7,6 +7,7 @@ from V2.utils.update_style_patch import update_style_patched
 from .menu_bar.menu_bar import MenuBar
 from .toolbar.toolbar import ToolBar
 from .tabs.table_widget import TableWidget
+from V2.general_settings import GeneralSettings
 
 
 class MainWindow(QMainWindow):
@@ -30,6 +31,9 @@ class MainWindow(QMainWindow):
         # Start Bar
         self.intro_message = 'Running the experiment ...'
         self.statusBar().showMessage(self.intro_message)
+
+    def set_main_window_in_general_settings(self):
+        GeneralSettings.main_window = self
 
     def excec(self):
         QtGui.QApplication.instance().exec_()
