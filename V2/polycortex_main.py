@@ -1,3 +1,5 @@
+# When the file is named main I cannot import pygame
+# For any other names it work
 from pyqtgraph.Qt import QtGui
 from PyQt5.QtWidgets import *
 import sys
@@ -13,4 +15,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

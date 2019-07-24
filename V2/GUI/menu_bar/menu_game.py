@@ -4,9 +4,9 @@ from PyQt5.QtWidgets import *
 
 
 class MenuGame(QMenu):
-    def __init__(self, gv, name):
+    def __init__(self, name, main_window):
         super().__init__()
-        self.gv = gv
+        self.main_window = main_window
 
         self.setTitle(name)
 
@@ -21,5 +21,5 @@ class MenuGame(QMenu):
 
     def start_the_game(self):
         """Start the miniGame"""
-        run_game = RunGame(self.gv)
+        run_game = RunGame(test_mode=True, main_window=self.main_window)
         run_game.start()

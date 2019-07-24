@@ -22,9 +22,11 @@ class MainWindow(QMainWindow):
         self.table_widget = TableWidget(self)
         self.setCentralWidget(self.table_widget)
         # MenuBar
-        self.setMenuBar(MenuBar(self))
+        self.menu_bar = MenuBar(self)
+        self.setMenuBar(self.menu_bar)
         # Toolbar
-        self.addToolBar(ToolBar(self))
+        self.tool_bar = ToolBar(self)
+        self.addToolBar(self.tool_bar)
         # Start Bar
         self.intro_message = 'Running the experiment ...'
         self.statusBar().showMessage(self.intro_message)

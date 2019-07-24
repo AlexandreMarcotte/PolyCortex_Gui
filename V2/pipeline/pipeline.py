@@ -38,7 +38,6 @@ class Pipeline:
 
 
     def update_streamer(self, stream_origin):
-        print('stremer is updateffd', stream_origin)
         # Streamer
         self.streamer = SignalStreamerSelector(
             stream_origin=stream_origin,

@@ -1,18 +1,21 @@
 # Sprite classes for platform game
+# import pygame
 import pygame as pg
-from game.settings import *
+from V2.game.settings import *
+
+# import pygame as pg
 vec = pg.math.Vector2
 
 
 class Player(pg.sprite.Sprite):
-    def __init__(self, game, gv, test_mode=False):
+    def __init__(self, game, test_mode=False):
         pg.sprite.Sprite.__init__(self)
         self.game = game
-        self.gv = gv
         self.test_mode = test_mode
 
-        self.image = pg.Surface((30, 40))
-        self.image.fill(YELLOW)
+        self.image = pg.image.load('./GUI/img/polycortex_logo_game_character.png')
+        # self.image = pg.Surface((30, 40))
+        # self.image.fill(WHITE)
         self.rect = self.image.get_rect()
         self.rect.center = (WIDTH / 2, HEIGHT / 2)
         self.pos = vec(WIDTH / 2, HEIGHT / 2)
@@ -62,7 +65,7 @@ class Platform(pg.sprite.Sprite):
     def __init__(self, x, y, w, h):
         pg.sprite.Sprite.__init__(self)
         self.image = pg.Surface((w, h))
-        self.image.fill(GREEN)
+        self.image.fill(POLYCORTEX_BLUE)
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
