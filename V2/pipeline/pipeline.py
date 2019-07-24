@@ -37,7 +37,6 @@ class Pipeline:
             timestamps=self.signal_collector.timestamps, remove_first_freq=1,
             n_ch=self.N_CH)
 
-
     def update_streamer(self, stream_origin):
         # Streamer
         self.streamer = SignalStreamerSelector(

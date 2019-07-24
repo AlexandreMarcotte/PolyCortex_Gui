@@ -2,6 +2,7 @@ import os
 from .from_synthetic_signal.synthetic_streamer import SyntheticStreamer
 from .from_synthetic_signal.synthetic_signal import SyntheticSignal
 from .from_file.file_streamer import FileStreamer
+from V2.general_settings import GeneralSettings
 
 
 class SignalStreamerSelector:
@@ -18,8 +19,7 @@ class SignalStreamerSelector:
 
         elif self.stream_origin == 'File':
             base_path = os.getcwd()
-            file_path = 'pipeline/signal_streamer/from_file/experiment_csv/pinch_close.csv'
-            path = os.path.join(base_path, file_path)
+            path = os.path.join(base_path, GeneralSettings.file.stream_path)
 
             streamer = FileStreamer(
                 file_name=path, signal_collector=signal_collector)

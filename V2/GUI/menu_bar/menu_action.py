@@ -1,7 +1,6 @@
 from PyQt5.QtGui import QIcon
 from PyQt5 import QtGui
 from functools import partial
-from app.pyqt_frequently_used import select_file
 
 
 class MenuAction(QtGui.QAction):
@@ -37,20 +36,4 @@ class MenuAction(QtGui.QAction):
         self.triggered.connect(
             partial(self.model.pipeline.update_streamer, self.name))
 
-        # self.triggered.connect(partial(self.set_selected_stream, self))
 
-    # def print_shit(self, menu_action):
-    #     print('shittttt', menu_action.name)
-    #     print('name of the class',  self.NAME_CLS)
-
-    # def set_selected_stream(self, menu_action):
-    #     """Set the name of the button that was selected in the gv class"""
-    #     self.gv.stream_origin = menu_action.name
-    #
-    #     if menu_action.name == 'File':
-    #         self.set_stream_path()
-    #
-    # def set_stream_path(self):
-    #     f_name = select_file(self.main_window, open=True)
-    #     if f_name:
-    #         self.gv.stream_path = f_name

@@ -60,11 +60,15 @@ class View(QWidget):
         FftPlotsDockConnector(view=self, model=self.model).connect()
 
     def _connect_visualization_3d(self):
+        # Connect Start button
         self.visualization_3D_dock.settings_dock.start_btn.clicked.connect(
             partial(self.visualization_3D_dock.plot_dock.connect_signals,
-                    self.model.pipeline.signal_collector.input))
+                    self.model.pipeline.filter_stage.output))
         self.visualization_3D_dock.settings_dock.start_btn.clicked.connect(
             self.visualization_3D_dock.plot_dock.start)
+        self.visualization_3D_dock.settings_dock.show_3d_btn.clicked.connect(
+            self.visualization_3D_dock.plot_dock.show_3d)
+        # Connect show 3D button
 
     def _init_ui(self):
         self.area = DockArea()

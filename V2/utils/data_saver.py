@@ -32,22 +32,6 @@ class DataSaver:
         self.layout.addWidget(b, *pos, *size)
         return b
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     # def save_file_dialog(self):
     #     f_name = select_file(self.main_window, open=False, f_extension='.csv')
     #     if f_name:

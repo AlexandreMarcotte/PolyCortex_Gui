@@ -1,4 +1,4 @@
-from .menu_action import MenuAction
+from .menu_file_action import MenuFileAction
 from PyQt5.QtWidgets import QMenu
 
 
@@ -13,7 +13,8 @@ class MenuFile(QMenu):
         self.add_action(icon_path)
 
     def add_action(self, icon_path):
-        self._choose_file_action = MenuAction(
+        self._choose_file_action = MenuFileAction(
             name='File', main_window=self.main_window, icon_path=icon_path,
             status_tip='Choose the file from which you want to stream data...')
         self.addAction(self._choose_file_action)
+

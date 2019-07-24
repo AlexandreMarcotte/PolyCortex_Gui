@@ -23,3 +23,4 @@ class MenuFile(QMenu):
                 status_tip='Choose the file from which you want to stream data...')
         self.addAction(self.actn)
 
+

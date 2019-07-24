@@ -23,6 +23,7 @@ TODO: NEW
 - Filter by chunk (to do so set a number of value acquired in the signalcollector and pass it set the same number of value in its list)
 - Add the ability to show the diffrent signal in a same plot dock in differents plot view
 - Center the value inside of combobox
+- Set 2 plots in a the EEG docks
 
 
 

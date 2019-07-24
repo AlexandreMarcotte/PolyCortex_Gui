@@ -22,15 +22,17 @@ class Visualization3dPlotsDock(Dock):
 
         self.N_CH = GeneralSettings.N_CH
         self.QUEUE_LEN = GeneralSettings.QUEUE_LEN
-        self._init_planes()
-        self._init_sphere()
-        self._init_total_brain()
-        self._init_head()
         self._init_signals_line_item()
 
         self.addWidget(self._gl_view)
 
         self._init_timer()
+
+    def show_3d(self):
+        self._init_planes()
+        self._init_sphere()
+        self._init_total_brain()
+        self._init_head()
 
     def _init_signals_line_item(self):
         # Boundary sphere is use to place the distance of the signals
