@@ -2,16 +2,15 @@ from PyQt5.QtWidgets import *
 # --My Packages--
 from V2.utils.colors import Color
 from V2.utils.btn import Btn
-from save.write_to_file import write_to_file
 from V2.general_settings import GeneralSettings
 from V2.utils.select_file import select_file
-from V2.utils.write_to_file import write_to_file
+from functools import partial
 
 
 class DataSaver:
     def __init__(
             self, layout,
-            save_path='/home/alex/Documents/CODING/2019/PolyCortex_Gui/V2/pipeline/signal_streamer/from_file/experiment_csv',
+            save_path=GeneralSettings.save_path,
             pos=(0, 0)):
 
         self.layout = layout
@@ -42,8 +41,10 @@ class DataSaver:
     def _connect_choose_save_path_btn(self):
         self.choose_save_path_btn.clicked.connect(self._set_save_path)
 
-    # def _connect_save_btn(self):
-    #     self.save_data_now_btn.clicked.connect(write_to_file(None))
+    def connect_save_data_now_btn(self, dump_long_term_memory_into_file):
+        """Connect the button from the connectors"""
+        self.save_data_now_btn.clicked.connect(
+            dump_long_term_memory_into_file)
 
     def _set_save_path(self):
         save_path = select_file(GeneralSettings.main_window, open=True)

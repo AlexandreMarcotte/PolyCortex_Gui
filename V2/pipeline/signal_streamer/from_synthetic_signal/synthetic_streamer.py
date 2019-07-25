@@ -1,7 +1,7 @@
 from time import sleep
 from typing import List
 # --My Packages--
-from V2.pipeline.signal_streamer.signal_collector import SignalCollector
+from V2.pipeline.signal_streamer.signal_collector.signal_collector import SignalCollector
 from ..streamer import Streamer
 from time import time
 

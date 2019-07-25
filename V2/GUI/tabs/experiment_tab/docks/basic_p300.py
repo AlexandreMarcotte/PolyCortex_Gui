@@ -4,11 +4,9 @@ from PyQt5 import QtCore
 from functools import partial
 import numpy as np
 # Paint rectangles
-import random
-from time import sleep
 # -- My packages --
 from app.colors import *
-from .experiment import Experiment
+from V2.GUI.tabs.experiment_tab.docks.experiment import Experiment
 from app.draw_rectangle import SquareItem
 
 

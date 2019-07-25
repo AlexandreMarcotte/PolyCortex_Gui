@@ -1,6 +1,6 @@
 from threading import Event
 # --My Packages--
-from ..pipeline.signal_streamer.signal_collector import SignalCollector
+from ..pipeline.signal_streamer.signal_collector.signal_collector import SignalCollector
 # from ..pipeline.signal_streamer.from_open_bci.from_open_bci import SampleDataFromOpenBci
 from .pipeline_stages.fft_stage.fft_stage import FftStage
 from ..pipeline.pipeline_stages.filter_stage.filter_stage import FilterStage

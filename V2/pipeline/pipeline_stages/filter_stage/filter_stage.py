@@ -3,7 +3,6 @@ from collections import deque
 from ..pipeline_stage import PipelineStage
 from .filter import Filter
 from typing import Dict
-from V2.pipeline.signal_streamer.signal_collector import SignalCollector
 
 
 class FilterStage(PipelineStage):

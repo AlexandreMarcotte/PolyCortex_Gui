@@ -1,15 +1,11 @@
 # -- General packages --
 from PyQt5 import QtGui, QtCore
-from PyQt5.QtCore import Qt, pyqtSlot
-from PyQt5.QtWidgets import *
 
 import pyqtgraph as pg
-from pyqtgraph.dockarea import *
 
-from functools import partial
 from random import randint
 # -- My packages --
-from .experiment import Experiment
+from V2.GUI.tabs.experiment_tab.docks.experiment import Experiment
 
 
 class P300Dock(Experiment):

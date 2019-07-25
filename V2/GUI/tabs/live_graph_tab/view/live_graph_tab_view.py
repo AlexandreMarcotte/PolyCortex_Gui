@@ -3,7 +3,6 @@ from pyqtgraph.dockarea import *
 from PyQt5.QtWidgets import *
 from functools import partial
 # --My packages--
-from V2.utils.colors import Color
 from .docks.main_dock import MainDock
 # EEG
 from .docks.eeg_dock.eeg_dock import EegDock
@@ -21,15 +20,15 @@ from .docks.power_band_dock.power_band_dock import PowerBandDock
 # Power band over time
 from .docks.power_band_over_time_dock.power_band_over_time_dock import PowerBandOverTimeDock
 
-from .connectors.eeg_dock.eeg_plot_dock_connector import EegPlotsDockConnector
-from .connectors.eeg_dock.eeg_settings_dock_connector import EegSettingsDockConnector
-from V2.GUI.tabs.live_graph_tab.view.connectors.fft_dock.fft_settings_dock_connector import FftSettingsDockConnector
-from .connectors.fft_dock.fft_plot_dock_connector import FftPlotsDockConnector
-from ..model.model import Model
-from ..controller.controller import Controller
+from ..connectors.eeg_dock.eeg_plot_dock_connector import EegPlotsDockConnector
+from ..connectors.eeg_dock.eeg_settings_dock_connector import EegSettingsDockConnector
+from ..connectors.fft_dock.fft_settings_dock_connector import FftSettingsDockConnector
+from ..connectors.fft_dock.fft_plot_dock_connector import FftPlotsDockConnector
+from V2.GUI.tabs.model.model import Model
+from V2.GUI.tabs.controller.controller import Controller
 
 
-class View(QWidget):
+class LiveGraphTabView(QWidget):
     def __init__(self, model: Model, controller: Controller):
         super().__init__()
         self.model = model

@@ -1,5 +1,4 @@
 # --My Packages--
-from V2.GUI.tabs.live_graph_tab.model.model import Model
 # from V2.GUI.tabs.live_graph_tab.view.view import View
 
 

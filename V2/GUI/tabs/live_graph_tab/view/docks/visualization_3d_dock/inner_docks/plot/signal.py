@@ -27,7 +27,7 @@ class Signal(MovingObject):
         self.line.translate(*mvt)
 
     def rotate(self):
-        print('rotate')
+        pass
         # if self.key_pressed in self.keys and self.ch == self.ch_to_move:
         #     angle = self.keys[self.key_pressed] * 0.4
         #     mvt = self.rot_mvt[self.rotation_axis]

@@ -4,21 +4,32 @@ from PyQt5.QtWidgets import *
 from pyqtgraph.dockarea import *
 # -- My packages --
 from tabs.experiment_tab.emg_experiment.emg import EmgDock
-from .p300 import P300Dock
-from .N100 import N100Dock
-from .basic_p300 import BasicP300
-from .video import Video
+from V2.GUI.tabs.experiment_tab.docks.p300 import P300Dock
+from V2.GUI.tabs.experiment_tab.docks.basic_p300 import BasicP300
+from .connectors.experiment_connector import ExperimentConnector
 
 
-class ExperimentTab(QTableWidget):
-    def __init__(self):
+class ExperimentTabView(QWidget):
+    def __init__(self, model, controller):
         super().__init__()
+
+        self.model = model
+        self.controller = controller
+
+        self._init_ui()
+        self._connect()
+
+    def _connect(self):
+        self.experiment_connector = ExperimentConnector(
+            view=self, model=self.model)
+
+    def _init_ui(self):
         # The second tab that was created inside the main window object
         # Create the tab itself
-        self.create_tab()
-        self.create_docks()
+        self._init_tab()
+        self._init_docks()
 
-    def create_tab(self):
+    def _init_tab(self):
         # Insert the tab layout inside the main window frame
         self.layout = QHBoxLayout(self)
         # Add docs to the tab
@@ -27,7 +38,7 @@ class ExperimentTab(QTableWidget):
 
         self.setLayout(self.layout)
 
-    def create_docks(self):
+    def _init_docks(self):
         # EMG
         emg_dock = EmgDock(self.area)
         # Video

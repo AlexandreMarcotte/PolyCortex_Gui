@@ -1,11 +1,13 @@
 from functools import partial
-from V2.GUI.tabs.live_graph_tab.model.model import Model
-# from V2.GUI.tabs.live_graph_tab.view.view import View
+
+
+# from V2.GUI.tabs.live_graph_tab.view.live_graph_tab_view import LiveGraphTabView
+from V2.GUI.tabs.model.model import Model
 
 
 class EegSettingsDockConnector:
     def __init__(self, view, model):
-    # def __init__(self, view: View, model: Model):
+    # def __init__(self, view: LiveGraphTabView, model: Model):
         self._view = view
         self._model = model
 
@@ -13,8 +15,12 @@ class EegSettingsDockConnector:
         self.settings = self._view.eeg_dock.settings_dock
         self.start_btn = self._view.eeg_dock.settings_dock.start_btn
         self.time_dock = self._view.eeg_dock.plots_dock.time_dock
+        self.data_saver = self._view.eeg_dock.saving_dock.data_saver
 
         self._connect_start_btn()
+
+    def _connect_start_btn(self):
+        self.start_btn.clicked.connect(self._connect)
 
     def _connect(self):
         for ch in range(self._model.N_CH):
@@ -27,9 +33,7 @@ class EegSettingsDockConnector:
                 axis='y')
             self._connect_color_buttons(ch)
         self.connect_pins_settings_btn()
-
-    def _connect_start_btn(self):
-        self.start_btn.clicked.connect(self._connect)
+        self._connect_save_data_now_btn()
 
     def _connect_axis(self, plot, cb, axis='x'):
         scale_axis = plot.scale_axis
@@ -52,4 +56,10 @@ class EegSettingsDockConnector:
         # FFT
         self.plots[ch].color_btn.sigColorChanged.connect(
             partial(self._view.fft_dock.plot_dock.plot.change_curves_color, ch))
+
+    def _connect_save_data_now_btn(self):
+        self.data_saver.connect_save_data_now_btn(
+            self._model.pipeline.signal_collector.long_term_memory.dump_memory_into_file)
+
+
 
