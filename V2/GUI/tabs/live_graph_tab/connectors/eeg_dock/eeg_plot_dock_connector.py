@@ -26,9 +26,8 @@ class EegPlotsDockConnector:
     def _connect(self):
         self._model.pipeline.start()
         self._connect_plots()
+        self._connect_other_plots()
         self._connect_time_plot()
-        if self.plot_dock_list[0].other_plots:
-            self._connect_other_plots()
 
     def _connect_plots(self):
         for ch in range(self._model.N_CH):
@@ -40,7 +39,7 @@ class EegPlotsDockConnector:
 
     def _connect_plots_signals(self, ch):
         signals = [
-                   self.signal_collector.input[ch],
+                   # self.signal_collector.input[ch],
                    # self._model.pipeline.signal_collector.input[0],
                    self._model.pipeline.filter_stage.output[ch]
                   ]
@@ -50,15 +49,25 @@ class EegPlotsDockConnector:
     # ----- TODO: ALEXM: éviter cette répétition ----
     def _connect_other_plots(self):
         for ch in range(self._model.N_CH):
-            self._connect_other_plots_signals(ch)
-            self._connect_other_plots_timers(ch)
+            all_signals_list = [
+                # [self._model.pipeline.filter_stage.output[ch]]
+                # [self.signal_collector.input[ch]]
+                # [self.signal_collector.input[ch], self._model.pipeline.filter_stage.output[ch]]
+                # [self.signal_collector.timestamps]
+            ]
+            for signal_no, signals_list in enumerate(all_signals_list):
+                self._add_other_plot(ch)
+                self._connect_other_plots_signals(ch, signal_no, signals_list)
+                self._connect_other_plots_timers(ch, signal_no)
 
-    def _connect_other_plots_timers(self, ch):
-        self.plot_dock_list[ch].other_plots[0].connect_timers()
+    def _add_other_plot(self, ch):
+        self.plot_dock_list[ch].add_other_plot()
 
-    def _connect_other_plots_signals(self, ch):
-        self.plot_dock_list[ch].other_plots[0].connect_signals(
-            [self.signal_collector.timestamps])
+    def _connect_other_plots_timers(self, ch, signal_no):
+        self.plot_dock_list[ch].other_plots[signal_no].connect_timers()
+
+    def _connect_other_plots_signals(self, ch, signal_no, signals_list):
+        self.plot_dock_list[ch].other_plots[signal_no].connect_signals(signals_list)
     # --------------------------------------------------
 
     def _connect_time_plot(self):

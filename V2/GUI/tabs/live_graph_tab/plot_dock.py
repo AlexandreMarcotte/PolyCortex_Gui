@@ -2,21 +2,22 @@ from pyqtgraph.dockarea import Dock
 from PyQt5.QtGui import QPainter, QColor
 # --My packages--
 from .view.docks.fft_dock.inner_docks.plot.fft_plot import FftPlot
+from V2.utils.colors import Color
+from V2.GUI.tabs.live_graph_tab.view.plot_widgets.scroll_plot_widget import ScrollPlotWidget
 
 
 class PlotDock(Dock):
-    def __init__(self, plot:FftPlot=None, other_plots=[]):
+    def __init__(self, plot:ScrollPlotWidget=None):
         super().__init__(name='', hideTitle=True)
         self.plot = plot
-        self.other_plots = other_plots
+        self.other_plots = []
 
         self.addWidget(self.plot, 0, 1, 4, 5)
-        if self.other_plots:
-            for p in self.other_plots:
-                self.addWidget(p, 6, 1, 4, 5)
 
-    # def add_other_plots(self):
-
+    def add_other_plot(self):
+        other_plot = ScrollPlotWidget(Color.pen_colors)
+        self.other_plots.append(other_plot)
+        self.addWidget(other_plot, len(self.other_plots)*6, 1, 4, 5)
 
     def paintEvent(self, e):
         qp = QPainter()
