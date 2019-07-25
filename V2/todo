@@ -24,6 +24,7 @@ TODO: NEW
 - Add the ability to show the diffrent signal in a same plot dock in differents plot view
 - Center the value inside of combobox
 - Set 2 plots in a the EEG docks
+- Switch the PlotDock class to be inherited instead of having a plot as an attribute
 
 
 

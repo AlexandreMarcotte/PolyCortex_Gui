@@ -6,6 +6,7 @@ from V2.utils.colors import Color
 from V2.GUI.tabs.live_graph_tab.view.plot_widgets.scroll_plot_widget import ScrollPlotWidget
 
 
+# TODO: ALEXM: This class is ugly
 class PlotDock(Dock):
     def __init__(self, plot:ScrollPlotWidget=None):
         super().__init__(name='', hideTitle=True)

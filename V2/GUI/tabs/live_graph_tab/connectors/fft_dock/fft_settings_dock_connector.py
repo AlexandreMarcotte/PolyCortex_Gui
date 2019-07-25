@@ -20,6 +20,7 @@ class FftSettingsDockConnector:
         self._connect_axis(cb=self.settings_dock.scale_freq_axis_cb, axis='x')
         self._connect_axis(cb=self.settings_dock.max_microV_cb, axis='y')
         self._connect_log_axis()
+        self._connect_ch_on_btn()
         self._connect_start_btn()
 
     def _connect_axis(self, cb, axis='x'):
@@ -29,6 +30,10 @@ class FftSettingsDockConnector:
 
     def _connect_log_axis(self):
         self.settings_dock.log_cb.activated[str].connect(self.plot.set_log_mode)
+
+    def _connect_ch_on_btn(self):
+        self.settings_dock.ch_on_cb.activated[str].connect(
+            self.plot.update_ch_to_show)
 
     def _connect_start_btn(self):
         # FFT dock
