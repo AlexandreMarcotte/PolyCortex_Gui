@@ -7,11 +7,11 @@ from V2.GUI.tabs.live_graph_tab.view.docks.fft_dock.filter_region import FilterR
 
 class Filter:
     def __init__(self, cut_freq:[50, 70], stream_freq=250, order=5,
-                 filter_type='bandstop'):
+                 type='bandstop'):
         self.cut_freq = cut_freq
         self.stream_freq = stream_freq
         self.order = order
-        self.filter_type = filter_type
+        self.type = type
 
         self.coeff = self.set_filter_coeff(cut_freq)
 
@@ -23,7 +23,7 @@ class Filter:
         nyq = 0.5 * self.stream_freq
         normalized_cut_freq = [coeff/nyq for coeff in filter_bounds]
         coeff = butter(
-                N=self.order, Wn=normalized_cut_freq, btype=self.filter_type,
+                N=self.order, Wn=normalized_cut_freq, btype=self.type,
                 analog=False)
         return coeff
 

@@ -9,7 +9,8 @@ class FilterStage(PipelineStage):
     def __init__(self,
                  queue_len,
                  filters):
-        """filter : A list of filter"""
+        """filter : A dictionnaire of list of filter the key are the type of
+        filters and there is one list by filter type"""
 
         super().__init__(queue_len)
 
@@ -48,8 +49,10 @@ class FilterStage(PipelineStage):
                 # Set the filtered data to be the input so that both filter
                 # are applied on the data
                 self.filtered_data[ch] = input[ch]
-                for filter in self.filters.values():
-                    self.filtered_data[ch] = filter.filter_signal(self.filtered_data[ch])
+                for filter_list in self.filters.values():
+                    for filter in filter_list:
+                        self.filtered_data[ch] = filter.filter_signal(
+                            self.filtered_data[ch])
 
                 # Set output as chunk
                 filtered_data_chunk = self.filtered_data[ch][-self.filter_once_every:]

@@ -6,13 +6,25 @@ from V2.utils.colors import Color
 
 
 class FilterRegion(LinearRegionItem):
-    def __init__(self, min_boundary=0, max_boundary=10, color=Color.blue):
-        super().__init__(values=[min_boundary, max_boundary], brush=color)
-        self.color = color
+    def __init__(self, min_boundary=0, max_boundary=10, name='bandpass'):
+        self.color = self._select_color(name)
+        super().__init__(values=[min_boundary, max_boundary], brush=self.color)
+
         self.min_boundary = min_boundary
         self.max_boundary = max_boundary
+        self._name = name
 
         self.sigRegionChanged.connect(self._update_region_boundaries)
+
+    def _select_color(self, name):
+        if name == 'bandpass':
+            color = Color.blue
+        elif name == 'bandstop':
+            color = Color.red
+        else:
+            raise ValueError(f'No filter exist with the name {name}')
+        return color
+
 
     def _update_region_boundaries(self):
         self.min_boundary, self.max_boundary = self.getRegion()

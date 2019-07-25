@@ -19,7 +19,7 @@ class FftPlotsDockConnector:
 
     def connect(self):
         self._connect_fft_plot()
-        self._connect_filters()
+        self._create_filter_regions_from_pipeline_filter_stages()
         self._connect_spectrogram_plot()
         self._connect_spectrogram_3d_plot()
         self._connect_power_band_plot()
@@ -33,12 +33,26 @@ class FftPlotsDockConnector:
     def _connect_filters(self):
         # self.sigRegionChanged.connect(self._update_region_boundaries)
         # TODO: ALEXM: Use a dictionnary for the filters
-        bc = self.fft_plot.band_cut
-        bc.sigRegionChanged.connect(
-            partial(
-                self._model.pipeline.filter_stage.filters[
-                    'bandstop'].set_filter_coeff_from_filter_region,
-                filter_region=bc))
+        # Connect band cut filter
+        # bc = self.fft_plot.filters['bandstop'][0]
+        # self._connect_filter(bc, 'bandstop')
+        # Connect band pass filter
+        # bp = self.fft_plot.filters['bandpass'][0]
+        # self._connect_filter(bp, 'bandpass')
+        pass
+
+    def _create_filter_regions_from_pipeline_filter_stages(self):
+        for filter_list in self._model.pipeline.filter_stage.filters.values():
+            for filter in filter_list:
+                # Create filters
+                filter_region = self.fft_plot.create_filter_from_filter_stage(filter)
+                # Connect filter
+                self._connect_filter(filter_region, filter)
+
+    def _connect_filter(self, filter_region, filter):
+        filter_region.sigRegionChanged.connect(partial(
+            filter.set_filter_coeff_from_filter_region,
+            filter_region=filter_region))
 
     def _connect_power_band_over_time_plot(self):
         self.power_band_over_time_plot.plot.connect_signals(
