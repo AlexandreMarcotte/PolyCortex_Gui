@@ -1,4 +1,4 @@
-from app.colors import *
+from V2.utils.colors import Color
 import pyqtgraph as pg
 from abc import abstractclassmethod
 from PyQt5.QtGui import QPixmap, QPainter, QFont, QColor, QPen

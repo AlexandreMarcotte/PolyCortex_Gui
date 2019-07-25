@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt
-from app.colors import *
+from V2.utils.colors import Color
 
 
 class Label(QLabel):
@@ -11,6 +11,6 @@ class Label(QLabel):
         self.setLineWidth(1)
         self.setAlignment(Qt.AlignCenter)
         self.setStyleSheet(f"""font-weight: 420; 
-                            background-color: {label_grey}; 
+                            background-color: {Color.label_grey}; 
                             font-size: 10pt;""")
         self.setMaximumHeight(26)

@@ -5,9 +5,9 @@ from functools import partial
 import numpy as np
 # Paint rectangles
 # -- My packages --
-from app.colors import *
+from V2.utils.colors import Color
 from V2.GUI.tabs.experiment_tab.docks.experiment import Experiment
-from app.draw_rectangle import SquareItem
+# from app.draw_rectangle import SquareItem
 
 
 class BasicP300(Experiment):
