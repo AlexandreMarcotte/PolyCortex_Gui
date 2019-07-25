@@ -4,6 +4,8 @@ from V2.GUI.tabs.live_graph_tab.view.docks.inner_dock import InnerDock
 from .eeg_plot_dock import EegPlotDock
 from .time_plot import TimePlot
 from V2.GUI.tabs.live_graph_tab.plot_dock import PlotDock
+from V2.utils.colors import Color
+from V2.GUI.tabs.live_graph_tab.view.plot_widgets.scroll_plot_widget import ScrollPlotWidget
 
 
 class EegPlotsDock(InnerDock):
@@ -23,7 +25,14 @@ class EegPlotsDock(InnerDock):
     def _init_eeg_plots(self):
         self.plot_dock_list: List[EegPlotDock] = []
         for ch in range(self._N_CH):
-            plot_dock = EegPlotDock(ch)
+            curve_color = (Color.pen_colors[ch])
+
+            plot_dock = EegPlotDock(
+                ch, plot=ScrollPlotWidget(curve_color),
+                other_plots=[ScrollPlotWidget(curve_color)],
+                # other_plots=[],
+                curve_color=curve_color)
+
             self.plot_dock_list.append(plot_dock)
             self.dock_area.addDock(plot_dock)
 

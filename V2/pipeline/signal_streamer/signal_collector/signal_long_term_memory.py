@@ -7,7 +7,7 @@ from V2.utils.write_to_file import append_to_file
 
 # Could be set in memory all at once or once every number of data
 class SignalLongTermMemory:
-    def __init__(self, dump_every_n_values=2000):
+    def __init__(self, dump_every_n_values=2500):
 
         self.dump_every_n_values = dump_every_n_values
 
@@ -24,7 +24,6 @@ class SignalLongTermMemory:
         self.timestamp.append(timestamp)
         self.experiment_type.append(0)
 
-        print(len(self.timestamp))
         self.n_data_in_memory += 1
         if self.n_data_in_memory > self.dump_every_n_values:
             self.dump_memory_into_file()

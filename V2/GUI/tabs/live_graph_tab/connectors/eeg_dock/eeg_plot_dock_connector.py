@@ -1,10 +1,12 @@
 # --My Packages--
-# from V2.GUI.tabs.live_graph_tab.view.view import View
+# from V2.GUI.tabs.live_graph_tab.view.live_graph_tab_view import LiveGraphTabView
+from V2.GUI.tabs.model.model import Model
+
 
 
 class EegPlotsDockConnector:
     def __init__(self, view, model):
-    # def __init__(self, view: View, model: Model):
+    # def __init__(self, view: LiveGraphTabView, model: Model):
         self._view = view
         self._model = model
 
@@ -12,7 +14,7 @@ class EegPlotsDockConnector:
         self._connect_start_btn()
 
     def _init_variables(self, view, model):
-        self.plots = view.eeg_dock.plots_dock.plot_dock_list
+        self.plot_dock_list = view.eeg_dock.plots_dock.plot_dock_list
         self.settings = view.eeg_dock.settings_dock
         self.start_btn = view.eeg_dock.settings_dock.start_btn
         self.time_dock = view.eeg_dock.plots_dock.time_dock
@@ -25,26 +27,41 @@ class EegPlotsDockConnector:
         self._model.pipeline.start()
         self._connect_plots()
         self._connect_time_plot()
-
-    def _connect_time_plot(self):
-        self.time_dock.plot.curr_time = self.signal_collector.timestamps
-        self.time_dock.plot.timer.start(0)
+        if self.plot_dock_list[0].other_plots:
+            self._connect_other_plots()
 
     def _connect_plots(self):
         for ch in range(self._model.N_CH):
-            self._connect_plots_timers(ch)
             self._connect_plots_signals(ch)
+            self._connect_plots_timers(ch)
 
     def _connect_plots_timers(self, ch):
-        self.plots[ch].plot.connect_timers()
+        self.plot_dock_list[ch].plot.connect_timers()
 
     def _connect_plots_signals(self, ch):
         signals = [
-                   # self.signal_collector.input[ch],
+                   self.signal_collector.input[ch],
                    # self._model.pipeline.signal_collector.input[0],
                    self._model.pipeline.filter_stage.output[ch]
                   ]
         # TODO: ALEXM: pass signal in parameter instead ?
-        self.plots[ch].plot.connect_signals(signals)
+        self.plot_dock_list[ch].plot.connect_signals(signals)
 
+    # ----- TODO: ALEXM: éviter cette répétition ----
+    def _connect_other_plots(self):
+        for ch in range(self._model.N_CH):
+            self._connect_other_plots_signals(ch)
+            self._connect_other_plots_timers(ch)
+
+    def _connect_other_plots_timers(self, ch):
+        self.plot_dock_list[ch].other_plots[0].connect_timers()
+
+    def _connect_other_plots_signals(self, ch):
+        self.plot_dock_list[ch].other_plots[0].connect_signals(
+            [self.signal_collector.timestamps])
+    # --------------------------------------------------
+
+    def _connect_time_plot(self):
+        self.time_dock.plot.curr_time = self.signal_collector.timestamps
+        self.time_dock.plot.timer.start(0)
 

@@ -11,10 +11,11 @@ from V2.GUI.tabs.live_graph_tab.view.plot_widgets.scroll_plot_widget import Scro
 
 
 class EegPlotDock(PlotDock):
-    def __init__(self, ch):
+    def __init__(self, ch, plot: ScrollPlotWidget,
+                 other_plots:[ScrollPlotWidget], curve_color):
         self._ch = ch
-        self.curve_color = (Color.pen_colors[ch])
-        super().__init__(ScrollPlotWidget(self.curve_color))
+        self.curve_color = curve_color
+        super().__init__(plot=plot, other_plots=other_plots)
         self._add_all_btn()
 
     def _add_all_btn(self):

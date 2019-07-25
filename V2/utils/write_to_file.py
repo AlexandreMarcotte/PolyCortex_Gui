@@ -6,9 +6,7 @@ from V2.general_settings import GeneralSettings
 
 
 def append_to_file(
-        all_data=[], all_t=[],
-        all_experiment_val=[],
-        first_save=True,
+        all_data=[], all_t=[], all_experiment_val=[], first_save=True,
         save_path=GeneralSettings.save_path):
 
     all_data = np.array(all_data)
