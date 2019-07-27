@@ -1,5 +1,5 @@
 # -- My packages --
-from V2.GUI.tabs.live_graph_tab.view.docks.inner_dock import InnerDock
+from V2.GUI.tabs.inner_dock import InnerDock
 from .inner_docks.power_band_settings import PowerBandSettings
 from .inner_docks.power_band_plot import PowerBandPlot
 

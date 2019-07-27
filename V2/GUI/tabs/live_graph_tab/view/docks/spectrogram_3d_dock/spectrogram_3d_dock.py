@@ -1,5 +1,5 @@
 # -- My packages --
-from V2.GUI.tabs.live_graph_tab.view.docks.inner_dock import InnerDock
+from V2.GUI.tabs.inner_dock import InnerDock
 from .inner_docks.spectrogram_3d_settings import Spectrogram3dSettings
 from .inner_docks.spectrogram_3d_plot import Spectrogram3dPlot
 

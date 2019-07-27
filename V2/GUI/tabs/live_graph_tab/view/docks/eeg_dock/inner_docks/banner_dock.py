@@ -1,4 +1,4 @@
-from V2.GUI.tabs.live_graph_tab.view.docks.inner_dock import InnerDock
+from V2.GUI.tabs.inner_dock import InnerDock
 from PyQt5.QtWidgets import *
 from PyQt5 import QtGui
 

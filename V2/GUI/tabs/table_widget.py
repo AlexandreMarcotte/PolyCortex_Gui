@@ -1,8 +1,9 @@
 from PyQt5.QtWidgets import *
-from V2.GUI.tabs.experiment_tab.experiment_tab_view import ExperimentTabView
-from V2.GUI.tabs.model.model import Model
-from V2.GUI.tabs.live_graph_tab.view.live_graph_tab_view import LiveGraphTabView
-from V2.GUI.tabs.controller.controller import Controller
+from .experiment_tab.experiment_tab_view import ExperimentTabView
+from .live_graph_tab.view.live_graph_tab_view import LiveGraphTabView
+from V2.GUI.tabs.static_graph_tab.view.static_graph_tab_view import StaticGraphTabView
+from .model.model import Model
+from .controller.controller import Controller
 
 
 class TableWidget(QTabWidget):
@@ -12,13 +13,17 @@ class TableWidget(QTabWidget):
 
         self._model = Model()
         self.controller = Controller(self._model)
-        # View
+
+        self._create_tabs()
+        self._add_tabs()
+
+    def _create_tabs(self):
         self.live_graph_tab = LiveGraphTabView(self._model, self.controller)
         self.experiment_tab = ExperimentTabView(self._model, self.controller)
+        self.static_graph_tab = StaticGraphTabView(self._model, self.controller)
 
-        self.add_tabs()
-
-    def add_tabs(self):
-        self.addTab(self.live_graph_tab, 'Live graph')
+    def _add_tabs(self):
+        self.addTab(self.live_graph_tab, 'Live Graph')
         self.addTab(self.experiment_tab, 'Experiment')
+        self.addTab(self.static_graph_tab, 'Static Graph')
 

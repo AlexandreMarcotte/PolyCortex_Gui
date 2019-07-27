@@ -1,12 +1,12 @@
-from V2.GUI.tabs.live_graph_tab.view.docks.inner_dock import InnerDock
+from V2.GUI.tabs.inner_dock import InnerDock
 from .inner_docks.eeg_settings_dock import EegSettingsDock
 from .inner_docks.eeg_plots_dock import EegPlotsDock
 from .inner_docks.saving_dock import SavingDock
 from .inner_docks.banner_dock import BannerDock
 from .inner_docks.write_to_hardware_dock import WriteHardwareDock
-from PyQt5.QtWidgets import *
 from V2.utils.rotated_button import RotatedButton
 from V2.general_settings import GeneralSettings
+
 
 class EegDock(InnerDock):
     def __init__(self, name='EEG', external_layout=None):

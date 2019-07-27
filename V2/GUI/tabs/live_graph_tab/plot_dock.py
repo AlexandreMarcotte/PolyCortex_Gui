@@ -8,7 +8,7 @@ from V2.GUI.tabs.live_graph_tab.view.plot_widgets.scroll_plot_widget import Scro
 
 # TODO: ALEXM: This class is ugly
 class PlotDock(Dock):
-    def __init__(self, plot:ScrollPlotWidget=None):
+    def __init__(self, plot: ScrollPlotWidget=None):
         super().__init__(name='', hideTitle=True)
         self.plot = plot
         self.other_plots = []

@@ -1,9 +1,9 @@
-from PyQt5 import QtCore, QtGui
+from PyQt5 import QtGui
 from time import sleep
 # --My Packages--
 from V2.utils.btn import Btn
 from V2.utils.colors import Color
-from V2.GUI.tabs.live_graph_tab.view.docks.inner_dock import InnerDock
+from V2.GUI.tabs.inner_dock import InnerDock
 
 
 class WriteHardwareDock(InnerDock):

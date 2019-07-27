@@ -1,5 +1,5 @@
 # --General Packages--
-from pyqtgraph.dockarea import *
+from pyqtgraph.dockarea import DockArea
 from PyQt5.QtWidgets import *
 from functools import partial
 # --My packages--
@@ -67,7 +67,6 @@ class LiveGraphTabView(QWidget):
             self.visualization_3D_dock.plot_dock.start)
         self.visualization_3D_dock.settings_dock.show_3d_btn.clicked.connect(
             self.visualization_3D_dock.plot_dock.show_3d)
-        # Connect show 3D button
 
     def _init_ui(self):
         self.area = DockArea()

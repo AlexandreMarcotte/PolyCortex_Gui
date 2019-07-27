@@ -1,10 +1,8 @@
-from V2.utils.colors import Color
-import pyqtgraph as pg
 from abc import abstractclassmethod
-from PyQt5.QtGui import QPixmap, QPainter, QFont, QColor, QPen
+from PyQt5.QtGui import QColor
 # -- My Packages --
 from V2.utils.parameter_combobox import ParameterCombobox
-from V2.GUI.tabs.live_graph_tab.view.docks.inner_dock import InnerDock
+from V2.GUI.tabs.inner_dock import InnerDock
 from V2.utils.btn import Btn
 
 
@@ -15,16 +13,13 @@ class SettingsDock(InnerDock):
         self.external_layout = main_layout
 
     def _create_settings_dock(self):
-        # Stop/Start button
+        """Stop/Start button"""
         self._create_start_buttons()
 
     def _create_start_buttons(self):
         """Assign pushbutton for starting"""
         self.start_btn = Btn('Start', toggle=True)
         self.inner_layout.addWidget(self.start_btn, 0, 0)
-
-    def print_shizzle(self):
-        print('yooooooooooooooooooooooooooooooooo')
 
     def create_choose_channel_cb(self):
         self.scale_freq_axis_cb = ParameterCombobox(
@@ -35,24 +30,23 @@ class SettingsDock(InnerDock):
     def _create_all_combobox(self):
         """Overload this method to create the combobox to act on the dock graph"""
 
-    def paintEvent(self, e):
-        qp = QPainter()
-        qp.begin(self)
-        self._draw_grey_rectangle(qp)
-        qp.end()
-
-    def _draw_grey_rectangle(self, qp):
+    def _draw_background(self, qp):
         w = self.size().width()
         h = self.size().height()
+        self._draw_half_blue_background(qp, w)
+        self._draw_half_cream_background(qp, w, h)
+
+    def _draw_half_blue_background(self, qp, w):
         qp.setPen(QColor(210, 215, 255))
         qp.setBrush(QColor(210, 215, 255))
-        # Pale layout blue up
         qp.drawRect(0, 10, w, 26)
         qp.drawRoundedRect(
             0, 0, w, 15, 8, 8)
-        # Cream layout down
+
+    def _draw_half_cream_background(self, qp, w, h):
         qp.setPen(QColor(249, 248, 245))
         qp.setBrush(QColor(249, 248, 245))
         qp.drawRect(0, 38, w, 26)
-        qp.drawRoundedRect(
-            0, h-10, w, 10, 8, 8)
+        qp.drawRoundedRect(0, h-10, w, 10, 8, 8)
+
+

@@ -14,6 +14,7 @@ class EegPlotDock(PlotDock):
         self.curve_color = curve_color
         super().__init__(plot=plot)
         self._add_all_btn()
+        self.plot.plotItem.setYRange(-60000, 60000)
 
     def _add_all_btn(self):
         # Just for visualisation test at the moment

@@ -33,7 +33,8 @@ class PinSettings:
             # Save for further uses
             cb.setStyleSheet(
                 'QComboBox'
-                '{background-color: rgba(170, 170, 170, 200);'
+                # '{background-color: rgba(170, 170, 170, 200);'
+                '{background-color: rgba(60, 160, 210, 190);'
                 'color:white;'
                 'selection-background-color: darkblue;'
                 'border: 2px solid rgba(220, 220, 220, 100);}'

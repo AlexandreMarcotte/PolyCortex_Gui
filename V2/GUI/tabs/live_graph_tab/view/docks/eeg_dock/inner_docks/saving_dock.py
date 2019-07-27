@@ -1,6 +1,6 @@
 # --My Packages--
 from V2.utils.data_saver import DataSaver
-from V2.GUI.tabs.live_graph_tab.view.docks.inner_dock import InnerDock
+from V2.GUI.tabs.inner_dock import InnerDock
 
 
 class SavingDock(InnerDock):

@@ -1,6 +1,6 @@
 from typing import List
 # --My packages--
-from V2.GUI.tabs.live_graph_tab.view.docks.inner_dock import InnerDock
+from V2.GUI.tabs.inner_dock import InnerDock
 from .eeg_plot_dock import EegPlotDock
 from .time_plot import TimePlot
 from V2.GUI.tabs.live_graph_tab.plot_dock import PlotDock

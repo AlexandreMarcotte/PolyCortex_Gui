@@ -1,7 +1,7 @@
 # --My packages--
 from .inner_docks.filter_dock import FilterDock
 from .inner_docks.fft_settings_dock import FftSettingsDock
-from ..inner_dock import InnerDock
+from V2.GUI.tabs.inner_dock import InnerDock
 from .inner_docks.plot.fft_plot import FftPlot
 from V2.GUI.tabs.live_graph_tab.plot_dock import PlotDock
 from V2.utils.colors import Color

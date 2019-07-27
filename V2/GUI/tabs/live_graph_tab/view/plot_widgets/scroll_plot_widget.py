@@ -21,7 +21,6 @@ class ScrollPlotWidget(pg.PlotWidget, LivePlot):
         self.curves = []
         self.events_pos = None
         # Curve
-        # self.curves = self._init_curves()
         self._init_plot_appearance()
 
     def _init_plot_appearance(self):
@@ -71,21 +70,32 @@ class ScrollPlotWidget(pg.PlotWidget, LivePlot):
         if self.events_pos:
             for no, region in enumerate(self.regions):
                 if no < len(self.events_pos):
-                    pos = GeneralSettings.QUEUE_LEN - self.events_pos[no]
-                    left_pos = pos
-                    right_pos = pos + GeneralSettings.REGION_WIDTH
-                    # Make sure the event region doesn't get out of the plot
-                    # view on the right and left side
-                    if right_pos > GeneralSettings.QUEUE_LEN:
-                        right_pos = GeneralSettings.QUEUE_LEN
-                    elif left_pos < 0:
-                        left_pos = 0
+                    left_pos, right_pos = self._get_region_pos(no)
+                    left_pos, right_pos = self._decrease_region_size_when_enter_and_exit(
+                        left_pos, right_pos)
                     region.setRegion([left_pos, right_pos])
-                # Remove region if not used any more
                 else:
-                    left_bound, right_bound = region.getRegion()
-                    if left_bound != 0:
-                        region.setRegion([0, 0])
+                    self._remove_region_out_of_bound(region)
+
+    def _get_region_pos(self, no):
+        pos = GeneralSettings.QUEUE_LEN - self.events_pos[no]
+        left_pos = pos
+        right_pos = pos + GeneralSettings.REGION_WIDTH
+        return left_pos, right_pos
+
+    def _decrease_region_size_when_enter_and_exit(self, left_pos, right_pos):
+        # Make sure the event region doesn't get out of the plot
+        # view on the right and left side
+        if right_pos > GeneralSettings.QUEUE_LEN:
+            right_pos = GeneralSettings.QUEUE_LEN
+        elif left_pos < 0:
+            left_pos = 0
+        return left_pos, right_pos
+
+    def _remove_region_out_of_bound(self, region):
+        left_bound, right_bound = region.getRegion()
+        if left_bound != 0:
+            region.setRegion([0, 0])
 
     def scale_axis(self, txt, axis='y', symetric=False):
         try:
