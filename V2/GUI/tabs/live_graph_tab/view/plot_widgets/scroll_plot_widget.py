@@ -1,8 +1,12 @@
+# -- General Packages --
 import pyqtgraph as pg
 import re
+from pyqtgraph import LinearRegionItem
+from typing import List
 # --My Packages--
 from .live_plot import LivePlot
 from V2.utils.colors import Color
+from V2.general_settings import GeneralSettings
 
 
 class ScrollPlotWidget(pg.PlotWidget, LivePlot):
@@ -12,8 +16,10 @@ class ScrollPlotWidget(pg.PlotWidget, LivePlot):
 
         self.curve_color = curve_color
 
+        self.regions: List[LinearRegionItem] = []
         self.signals = [0]
         self.curves = []
+        self.events_pos = None
         # Curve
         # self.curves = self._init_curves()
         self._init_plot_appearance()
@@ -23,15 +29,22 @@ class ScrollPlotWidget(pg.PlotWidget, LivePlot):
         self.plotItem.setLabel(axis='left', units='v')
         self.plotItem.hideAxis('bottom')
         self.setBackground(Color.dark_grey)
+        for _ in range(5):
+            self.spawn_following_region()
 
     def connect_timers(self, t_interval=0):
         self.timer = self.init_timer()
         self.timer.start(t_interval)
 
     def connect_signals(self, signals):
+        """Connect in the connectors"""
         self.signals = signals
         self.curves = self._init_curves(signals)
         # Start the timer at the connection
+
+    def connect_events_pos(self, events_pos):
+        """Connect in the connectors"""
+        self.events_pos = events_pos
 
     def _init_curves(self, signals):
         curves = []
@@ -52,6 +65,23 @@ class ScrollPlotWidget(pg.PlotWidget, LivePlot):
     def _update(self):
         for curve, signal in zip(self.curves, self.signals):
             curve.setData(signal)
+        self._update_region()
+
+    def _update_region(self):
+        if self.events_pos:
+            for no, region in enumerate(self.regions):
+                if no < len(self.events_pos):
+                    pos = GeneralSettings.QUEUE_LEN - self.events_pos[no]
+                    left_pos = pos
+                    right_pos = pos + 200
+                    # Make sure the event region doesn't get out of the plot view
+                    if right_pos > GeneralSettings.QUEUE_LEN:
+                        right_pos = GeneralSettings.QUEUE_LEN
+                    region.setRegion([left_pos, right_pos])
+                else:
+                    left_bound, right_bound = region.getRegion()
+                    if left_bound != 0:
+                        region.setRegion([0, 0])
 
     def scale_axis(self, txt, axis='y', symetric=False):
         try:
@@ -71,5 +101,11 @@ class ScrollPlotWidget(pg.PlotWidget, LivePlot):
 
     def set_log_mode(self, is_log):
         self.setLogMode(y=eval(is_log))
+
+    def spawn_following_region(self):
+        queue_len = GeneralSettings.QUEUE_LEN
+        region = LinearRegionItem(values=[queue_len, queue_len])
+        self.addItem(region)
+        self.regions.append(region)
 
 

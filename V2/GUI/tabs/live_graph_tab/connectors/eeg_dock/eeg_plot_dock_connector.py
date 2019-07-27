@@ -32,6 +32,7 @@ class EegPlotsDockConnector:
         for ch in range(self._model.N_CH):
             self._connect_plots_signals(ch)
             self._connect_plots_timers(ch)
+            self._connect_plots_events_pos(ch)
 
     def _connect_plots_timers(self, ch):
         self.plot_dock_list[ch].plot.connect_timers()
@@ -45,10 +46,15 @@ class EegPlotsDockConnector:
         # TODO: ALEXM: pass signal in parameter instead ?
         self.plot_dock_list[ch].plot.connect_signals(signals)
 
+    def _connect_plots_events_pos(self, ch):
+        self.plot_dock_list[ch].plot.connect_events_pos(
+            self._model.pipeline.signal_collector.events_pos)
+
     # ----- TODO: ALEXM: éviter cette répétition ----
     def _connect_other_plots(self):
         for ch in range(self._model.N_CH):
             all_signals_list = [
+                # [self.signal_collector.experiments]
                 # [self._model.pipeline.filter_stage.output[ch]],
                 # [self.signal_collector.input[ch]]
                 # [self.signal_collector.input[ch], self._model.pipeline.filter_stage.output[ch]]

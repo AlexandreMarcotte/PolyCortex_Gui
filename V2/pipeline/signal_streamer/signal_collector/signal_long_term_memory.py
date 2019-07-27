@@ -18,11 +18,11 @@ class SignalLongTermMemory:
         self.timestamp = deque()
         self.experiment_type = deque()
 
-    def store_long_term_memory(self, signal, timestamp):
+    def store_long_term_memory(self, signal, timestamp, event):
         for ch, val in enumerate(signal):
             self.output[ch].append(val)
         self.timestamp.append(timestamp)
-        self.experiment_type.append(0)
+        self.experiment_type.append(event)
 
         self.n_data_in_memory += 1
         if self.n_data_in_memory > self.dump_every_n_values:

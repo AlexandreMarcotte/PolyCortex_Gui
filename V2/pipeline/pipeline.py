@@ -19,10 +19,9 @@ class Pipeline:
         # Filter stage
         self.filter_stage = FilterStage(
             filters={
-                'bandpass': [Filter(cut_freq=(2, 116), type='bandpass')],
-                'bandstop': [Filter(cut_freq=(55, 65), type='bandstop'),
-                             Filter(cut_freq=(10, 25), type='bandstop')]
-
+                # 'bandpass': [Filter(cut_freq=(2, 116), type='bandpass')],
+                'bandstop': [Filter(cut_freq=(55, 65), type='bandstop')]
+                             # Filter(cut_freq=(10, 25), type='bandstop')]
             }, queue_len=self.QUEUE_LEN)
 
         self.signal_collector = SignalCollector(

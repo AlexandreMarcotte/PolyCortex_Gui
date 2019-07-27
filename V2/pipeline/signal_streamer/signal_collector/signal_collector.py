@@ -23,7 +23,9 @@ class SignalCollector(QObject):
         self.input = [deque(np.zeros(len), maxlen=len)
                       for _ in range(GeneralSettings.N_CH)]
         self.timestamps = deque(np.zeros(len), maxlen=len)
-        self.experiment_type = deque(np.zeros(len))
+        self.experiments = deque(np.zeros(len), maxlen=len)
+        self.experiment_event = 0
+        self.events_pos = []
         # Reader
         self.use_reader = use_reader
         self.reader_queue = deque(np.zeros(len))
@@ -31,6 +33,7 @@ class SignalCollector(QObject):
     def fill_signal_queue(self, signal, timestamp=None):
         """Fill the signal queue with one new signal and its corresponding
         timestamp"""
+        self.experiments.append(self.experiment_event)
 
         self.n_data_created += 1
         for ch, val in enumerate(signal):
@@ -39,8 +42,23 @@ class SignalCollector(QObject):
         # Filter data
         self.filter_stage.work(self.input)
         # long term memory
-        self.long_term_memory.store_long_term_memory(signal, timestamp)
+        self.long_term_memory.store_long_term_memory(
+            signal, timestamp, self.experiment_event)
+        # Remove the event
+        if self.experiment_event:
+            # put a signal here !!!
+            self.experiment_event = 0
+            # add the position of the current event that was detected
+            self.events_pos.append(0)
+            print(self.events_pos)
 
+        # Update the pos to show the position of the regions event
+        for i in range(len(self.events_pos)):
+            self.events_pos[i] += 1
+
+        if self.events_pos:
+            if self.events_pos[0] > GeneralSettings.QUEUE_LEN-10:
+                del self.events_pos[0]
         self.timestamps.append(timestamp)
 
 

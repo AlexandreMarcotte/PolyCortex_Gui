@@ -10,12 +10,14 @@ from V2.GUI.tabs.experiment_tab.docks.experiment import Experiment
 
 class P300Dock(Experiment):
     def __init__(self, area, dock_above):
-        super().__init__()
-        self.area = area
-        self.dock_above = dock_above
+
+        plot_timer = QtCore.QTimer()
+        plot_timer.timeout.connect(self.update_p300)
+
+        super().__init__(area, dock_above, plot_timer)
+
         exp_name = 'P300'
 
-        self.plot_timer = QtCore.QTimer()
 
         self.p300_char = ['A', 'B', 'C', 'D', 'E', 'F',
                           'G', 'H', 'I', 'J', 'K', 'L',
@@ -29,7 +31,6 @@ class P300Dock(Experiment):
         self.plot = self.create_plot()
         self.layout.addWidget(self.plot, 1, 0, 1, 2)
         # Result label
-        self.plot_timer.timeout.connect(self.update_p300)
 
     def show_p300_result(self):
         result = QtGui.QLabel(f'Letter to look at: {"-G-"}')

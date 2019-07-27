@@ -12,7 +12,7 @@ from V2.GUI.tabs.experiment_tab.docks.experiment import Experiment
 
 class EmgDock(Experiment):
     def __init__(self, area):
-        super().__init__()
+        super().__init__(area)
         self.area = area
 
         self.actions = []
@@ -58,34 +58,34 @@ class EmgDock(Experiment):
     def update_spawn(self):
         # Stop spawning value when we reach the number of experiment events
         if self.action_itt < self.num_of_action:
-            # Create a new action:
-            action = Action(
-                    actn_txt=self.action_name, wait_txt='WAIT...', y_pos=6.5,
-                    x_pos=10)
-            # Plot this new action
-            self.plot.addItem(action.plot)
-            # Add it to the list of actions
-            self.actions.append(action)
-            self.action_itt += 1
+            if len(self.actions) < 4:
+                # Create a new action:
+                action = Action(
+                        actn_txt=self.action_name, wait_txt='WAIT...', y_pos=6.5,
+                        x_pos=10)
+                # Plot this new action
+                self.plot.addItem(action)
+                # Add it to the list of actions
+                self.actions.append(action)
+                self.action_itt += 1
         else:
             self.end_experiment = True
 
     def update_plot(self):
         for action in self.actions:
             # update the listed position of the action
-            action.y_pos -= 0.04
+            action.y_pos -= 0.2
             # If the action text event is bellow the horiz. activation line
             if 0 <= action.y_pos <= 1.5 and action.wait:
-                print('event happen')
-                # self.gv.experiment_type = 1  # 1 meaning that an event happen
-                                             # (binary scenario)
+                self.signal_collector.experiment_event = 1
                 action.activate_html()
                 action.wait = False
+                action.y_pos -= 0.2
             # update the position of the action
-            action.plot.setPos(action.x_pos, action.y_pos)
+            action.setPos(action.x_pos, action.y_pos)
             # If the action leave the screen remove it
             if action.y_pos < 0:
-                self.plot.removeItem(self.actions[0].plot)
+                self.plot.removeItem(self.actions[0])
                 self.actions.pop(0)
         # Stop spawning value when we reach the number of experiment events
         if self.actions == [] and self.end_experiment:
@@ -105,8 +105,8 @@ class EmgDock(Experiment):
 
     @pyqtSlot()
     def start(self):
-        self.plot_timer.start(30)
-        self.spawn_timer.start(1200)
+        self.plot_timer.start(200)
+        self.spawn_timer.start(1500)
 
     @pyqtSlot()
     def stop(self):

@@ -3,9 +3,10 @@
 from PyQt5.QtWidgets import *
 from pyqtgraph.dockarea import *
 # -- My packages --
-from V2.GUI.tabs.experiment_tab.docks.emg_experiment.emg import EmgDock
+from V2.GUI.tabs.experiment_tab.docks.emg_experiment.emg_dock import EmgDock
 from V2.GUI.tabs.experiment_tab.docks.p300 import P300Dock
 from V2.GUI.tabs.experiment_tab.docks.basic_p300 import BasicP300
+from V2.GUI.tabs.experiment_tab.docks.binary_experiment import BinaryExperimentDock
 from .connectors.experiment_connector import ExperimentConnector
 
 
@@ -40,9 +41,11 @@ class ExperimentTabView(QWidget):
 
     def _init_docks(self):
         # EMG
-        emg_dock = EmgDock(self.area)
+        # self.emg_dock = EmgDock(self.area)
         # P300
-        p300_dock = P300Dock(self.area, emg_dock.emg_dock)
+        # self.p300_dock = P300Dock(self.area, self.emg_dock.emg_dock)
+        # Binary experiment
+        self.binary_exp_dock = BinaryExperimentDock(self.area)
 
         # Video
         # video_dock = Video(self.area, emg_dock.emg_dock)

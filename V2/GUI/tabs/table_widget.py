@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import *
-from V2.GUI.tabs.experiment_tab.experiment_tab import ExperimentTabView
+from V2.GUI.tabs.experiment_tab.experiment_tab_view import ExperimentTabView
 from V2.GUI.tabs.model.model import Model
 from V2.GUI.tabs.live_graph_tab.view.live_graph_tab_view import LiveGraphTabView
 from V2.GUI.tabs.controller.controller import Controller
