@@ -57,7 +57,8 @@ class SignalCollector(QObject):
             self.events_pos[i] += 1
 
         if self.events_pos:
-            if self.events_pos[0] > GeneralSettings.QUEUE_LEN-10:
+            if self.events_pos[0] >\
+                    GeneralSettings.QUEUE_LEN + GeneralSettings.REGION_WIDTH:
                 del self.events_pos[0]
         self.timestamps.append(timestamp)
 

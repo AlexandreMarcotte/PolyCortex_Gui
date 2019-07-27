@@ -1,5 +1,3 @@
-from functools import partial
-from PyQt5.QtWidgets import *
 # --My packages--
 from V2.utils.btn import Btn
 from V2.utils.lable_btn import LabelBtn
@@ -20,7 +18,9 @@ class EegPlotDock(PlotDock):
     def _add_all_btn(self):
         # Just for visualisation test at the moment
         self.toggle_btn = self._add_toggle_on_off_btn()
+        self._create_action_btn()
         self._add_action_btn()
+        self._add_pin_setting_cb()
 
     def _add_toggle_on_off_btn(self):
         toggle_btn = Btn(
@@ -31,7 +31,7 @@ class EegPlotDock(PlotDock):
         self.addWidget(toggle_btn, 0, 0)
         return toggle_btn
 
-    def _add_action_btn(self):
+    def _create_action_btn(self):
         # Average btn
         self.avg_value_btn = LabelBtn(
             name='A', tip='Show average value of queue', conn_func='avg',
@@ -46,20 +46,20 @@ class EegPlotDock(PlotDock):
                 which the fft is calculated for all ch''')
         self.action_btns = [
             self.avg_value_btn, self.max_value_btn, self.fft_size_btn]
+
+        self._create_color_button()
+
+    def _add_action_btn(self):
         for no, btn in enumerate(self.action_btns):
             self.addWidget(btn, no, 6)
             self.addWidget(btn.label, no, 5)
 
-        self.create_color_button()
-
-        self.add_pin_setting_cb()
-
-    def add_pin_setting_cb(self):
+    def _add_pin_setting_cb(self):
         self.pins_settings = PinSettings()
         self.pins_settings.add_pin_settings_to_layout(self)
         self.pins_settings.hide_pins_settings()
 
-    def create_color_button(self):
+    def _create_color_button(self):
         """Create color button to change the color of the line"""
         self.color_btn = ColorBtn(color=self.curve_color)
         self.addWidget(self.color_btn, 3, 6)

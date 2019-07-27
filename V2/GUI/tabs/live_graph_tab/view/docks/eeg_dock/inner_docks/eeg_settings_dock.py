@@ -14,7 +14,6 @@ class EegSettingsDock(SettingsDock):
 
         self._create_settings_dock()
 
-
     def _create_settings_dock(self):
         super()._create_settings_dock()
         # Plot parameter

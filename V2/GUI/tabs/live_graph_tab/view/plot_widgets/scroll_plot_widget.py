@@ -29,7 +29,7 @@ class ScrollPlotWidget(pg.PlotWidget, LivePlot):
         self.plotItem.setLabel(axis='left', units='v')
         self.plotItem.hideAxis('bottom')
         self.setBackground(Color.dark_grey)
-        for _ in range(5):
+        for _ in range(8):
             self.spawn_following_region()
 
     def connect_timers(self, t_interval=0):
@@ -73,11 +73,15 @@ class ScrollPlotWidget(pg.PlotWidget, LivePlot):
                 if no < len(self.events_pos):
                     pos = GeneralSettings.QUEUE_LEN - self.events_pos[no]
                     left_pos = pos
-                    right_pos = pos + 200
-                    # Make sure the event region doesn't get out of the plot view
+                    right_pos = pos + GeneralSettings.REGION_WIDTH
+                    # Make sure the event region doesn't get out of the plot
+                    # view on the right and left side
                     if right_pos > GeneralSettings.QUEUE_LEN:
                         right_pos = GeneralSettings.QUEUE_LEN
+                    elif left_pos < 0:
+                        left_pos = 0
                     region.setRegion([left_pos, right_pos])
+                # Remove region if not used any more
                 else:
                     left_bound, right_bound = region.getRegion()
                     if left_bound != 0:

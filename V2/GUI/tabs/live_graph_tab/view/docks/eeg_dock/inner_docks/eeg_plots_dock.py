@@ -29,7 +29,6 @@ class EegPlotsDock(InnerDock):
 
             plot_dock = EegPlotDock(
                 ch, plot=ScrollPlotWidget(curve_color),
-                # other_plots=[],
                 curve_color=curve_color)
 
             self.plot_dock_list.append(plot_dock)

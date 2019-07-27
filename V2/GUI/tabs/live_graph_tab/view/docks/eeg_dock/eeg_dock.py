@@ -6,7 +6,7 @@ from .inner_docks.banner_dock import BannerDock
 from .inner_docks.write_to_hardware_dock import WriteHardwareDock
 from PyQt5.QtWidgets import *
 from V2.utils.rotated_button import RotatedButton
-
+from V2.general_settings import GeneralSettings
 
 class EegDock(InnerDock):
     def __init__(self, name='EEG', external_layout=None):
@@ -30,7 +30,7 @@ class EegDock(InnerDock):
         self.dock_area.addDock(self.settings_dock)
 
     def _add_plot_dock(self):
-        self.plots_dock = EegPlotsDock(N_CH=8)
+        self.plots_dock = EegPlotsDock(N_CH=GeneralSettings.N_CH)
         self.dock_area.addDock(self.plots_dock)
 
     def _add_saving_dock(self):

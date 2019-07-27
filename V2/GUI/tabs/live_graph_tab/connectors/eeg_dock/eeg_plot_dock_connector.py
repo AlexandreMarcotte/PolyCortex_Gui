@@ -1,6 +1,6 @@
 # --My Packages--
 # from V2.GUI.tabs.live_graph_tab.view.live_graph_tab_view import LiveGraphTabView
-from V2.GUI.tabs.model.model import Model
+# from V2.GUI.tabs.model.model import Model
 
 
 class EegPlotsDockConnector:
@@ -39,7 +39,7 @@ class EegPlotsDockConnector:
 
     def _connect_plots_signals(self, ch):
         signals = [
-                   self.signal_collector.input[ch],
+                   # self.signal_collector.input[ch],
                    # self._model.pipeline.signal_collector.input[0],
                    self._model.pipeline.filter_stage.output[ch]
                   ]

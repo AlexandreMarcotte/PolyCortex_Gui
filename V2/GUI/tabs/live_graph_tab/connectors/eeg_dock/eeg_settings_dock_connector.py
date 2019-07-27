@@ -37,7 +37,7 @@ class EegSettingsDockConnector:
 
     def _connect_axis(self, plot, cb, axis='x'):
         scale_axis = plot.scale_axis
-        cb.activated[str].connect(partial(scale_axis, axis=axis))
+        cb.activated[str].connect(partial(scale_axis, axis=axis, symetric=True))
 
     def _connect_toggle_btn(self, ch):
         self.plots[ch].toggle_btn.clicked.connect(
