@@ -1,9 +1,12 @@
+# -- General Packages --
 from PyQt5.QtWidgets import *
+# -- My Packages --
 from .experiment_tab.experiment_tab_view import ExperimentTabView
 from .live_graph_tab.view.live_graph_tab_view import LiveGraphTabView
 from V2.GUI.tabs.static_graph_tab.view.static_graph_tab_view import StaticGraphTabView
 from .model.model import Model
 from .controller.controller import Controller
+
 
 
 class TableWidget(QTabWidget):

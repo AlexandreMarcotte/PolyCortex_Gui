@@ -11,13 +11,15 @@ class InnerDock(Dock):
     def __init__(self, name='', size=(1, 1), external_layout=None,
                  b_checked=True, b_pos=None, toggle_btn=True, b_orientation=None,
                  set_scroll=False, add_dock_area=False, margin=(0, 0, 0, 0),
-                 hide_title=True, fixed_height=None, auto_orientation=False):
+                 hide_title=True, fixed_height=None, auto_orientation=False,
+                 background_color=(249, 248, 245)):
 
         super().__init__(
             name, size=size, hideTitle=hide_title,
             autoOrientation=auto_orientation)
 
         self.b_pos = b_pos
+        self.background_color = background_color
 
         self.inner_layout = pg.LayoutWidget()
 
@@ -74,11 +76,11 @@ class InnerDock(Dock):
     def _draw_background(self, qp):
         w = self.size().width()
         h = self.size().height()
-        self._draw_full_cream_background(qp, w, h)
+        self._draw_full_background(qp, w, h)
 
-    def _draw_full_cream_background(self, qp, w, h):
-        qp.setPen(QColor(249, 248, 245))
-        qp.setBrush(QColor(249, 248, 245))
+    def _draw_full_background(self, qp, w, h, ):
+        qp.setPen(QColor(*self.background_color))
+        qp.setBrush(QColor(*self.background_color))
         qp.drawRoundedRect(0, 0, w, h, 8, 8)
 
 

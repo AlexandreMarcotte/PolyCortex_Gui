@@ -7,7 +7,7 @@ from V2.GUI.tabs.experiment_tab.docks.experiment import Experiment
 
 class BinaryExperimentDock(Experiment):
     def __init__(self, area, dock_above=None):
-        super().__init__(area, name='Binary Experiment', dock_above=dock_above,
+        super().__init__(area, name='Binary', dock_above=dock_above,
                          timer_period=5)
 
         self._actions = ['PINCH', 'CLENCH', 'TAP']
@@ -17,7 +17,7 @@ class BinaryExperimentDock(Experiment):
         self._action_index = 0
 
         self.plot = self.create_plot()
-        self.layout.addWidget(self.plot, 1, 0, 1, 2)
+        self._pg_layout.addWidget(self.plot, 1, 0, 1, 2)
         self.create_experiment()
 
     def _create_vertical_curve(self):

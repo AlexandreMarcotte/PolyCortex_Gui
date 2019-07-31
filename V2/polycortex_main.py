@@ -1,6 +1,5 @@
 # When the file is named main I cannot import pygame
 # For any other names it work
-import pyqtgraph as pg
 # --My Packages--
 from V2.GUI.main_window import MainWindow
 

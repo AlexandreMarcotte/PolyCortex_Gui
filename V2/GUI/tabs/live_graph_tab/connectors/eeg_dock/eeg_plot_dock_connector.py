@@ -54,7 +54,7 @@ class EegPlotsDockConnector:
     def _connect_other_plots(self):
         for ch in range(self._model.N_CH):
             all_signals_list = [
-                [self.signal_collector.experiments],
+                # [self.signal_collector.experiments],
                 # [self._model.pipeline.filter_stage.output[ch]],
                 # [self.signal_collector.input[ch]],
                 # [self.signal_collector.input[ch], self._model.pipeline.filter_stage.output[ch]],

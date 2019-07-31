@@ -24,7 +24,7 @@ class ScrollPlotWidget(pg.PlotWidget, LivePlot):
         self._init_plot_appearance()
 
     def _init_plot_appearance(self):
-        self.plotItem.showGrid(x=True, y=True, alpha=0.2)
+        self.plotItem.showGrid(x=True, y=True, alpha=0.3)
         self.plotItem.setLabel(axis='left', units='v')
         self.plotItem.hideAxis('bottom')
         self.setBackground(Color.dark_grey)

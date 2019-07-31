@@ -42,11 +42,10 @@ class ExperimentTabView(QWidget):
     def _init_docks(self):
         # EMG
         # self.emg_dock = EmgDock(self.area)
-        # P300
-        # self.p300_dock = P300Dock(self.area, self.emg_dock.emg_dock)
         # Binary experiment
         self.binary_exp_dock = BinaryExperimentDock(self.area)
-
+        # P300
+        self.p300_dock = P300Dock(self.area, dock_above=self.binary_exp_dock)
         # Video
         # video_dock = Video(self.area, emg_dock.emg_dock)
         # N100

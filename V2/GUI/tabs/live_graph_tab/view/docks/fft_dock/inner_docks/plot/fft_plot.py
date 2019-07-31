@@ -21,6 +21,7 @@ class FftPlot(ScrollPlotWidget):
         self.setXRange(0, 125)
         self.plotItem.setLabel(axis='left', text='Amplitude')
         self.plotItem.setLabel(axis='bottom', text='Frequency')
+        self.plotItem.showGrid(x=True, y=True, alpha=0.3)
 
     def connect_signals(self, signals, fft_stage=None):
         super().connect_signals(signals)

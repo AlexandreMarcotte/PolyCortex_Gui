@@ -19,6 +19,7 @@ class FileStreamer(Streamer):
     def _stream_signal(self):
         t_init = time()
         print('Stream from: ', self.file_name)
+        # TODO: ALEXM: Read the complete data into a numpy array instead with np.genfromtxt() ?? would be faster?
         with open(self.file_name) as f:
             data = csv.reader(f)
             for line in data:

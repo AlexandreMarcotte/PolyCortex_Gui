@@ -1,11 +1,12 @@
 # -- General packages --
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import Qt
 from pyqtgraph.dockarea import DockArea
 # -- My packages --
 from .docks.full_graph_dock.full_graph_docks import FullGraphDocks
 from .docks.portion_graph_dock.portion_graph_docks import PortionGraphDocks
 from .docks.file_selector_dock.file_selector import FileSelectorDock
+from .docks.classification_graph_dock.classification_graph_docks import ClassificationGraphDocks
+from ..connectors.static_graph_dock_connector import StaticGraphDockConnector
 
 
 class StaticGraphTabView(QWidget):
@@ -16,30 +17,53 @@ class StaticGraphTabView(QWidget):
         self._controller = controller
 
         self._init_ui()
+        self._connect()
 
     def _init_ui(self):
-        self.area = DockArea()
-        self.layout = QHBoxLayout(self)
-        self.layout.addWidget(self.area)
-        self._init_docks()
-
-    def _init_docks(self):
+        self.layout = QGridLayout(self)
         self._init_file_selector_dock()
-        self._init_full_graph_docks()
-        self._init_portion_graph_docks()
 
-    def _init_full_graph_docks(self):
-        self._full_graph_docks = FullGraphDocks()
-        self.area.addDock(self._full_graph_docks)
+        # Init plot dock area
+        self._dock_area = DockArea()
+        # Set scroll area to the dock
+        self._scoll_area = self._create_scroll_area()
+        self.layout.addWidget(self._scoll_area, 1, 0, 1, 4)
+        self._scoll_area.setWidget(self._dock_area)
 
-    def _init_portion_graph_docks(self):
-        self._portion_graph_docks = PortionGraphDocks()
-        self.area.addDock(
-            self._portion_graph_docks, 'left', self._full_graph_docks)
+        self._init_plots_docks()
 
     def _init_file_selector_dock(self):
-        self._file_selector_dock = FileSelectorDock(external_layout=self.layout)
-        self.area.addDock(self._file_selector_dock)
+        self.file_selector_dock = FileSelectorDock(self.layout)
+
+    def _init_plots_docks(self):
+        # Add plot dock to it
+        self._init_classification_graph_docks()
+        self._init_portion_graph_docks()
+        self._init_full_graph_docks()
+
+    def _init_classification_graph_docks(self):
+        self.classification_graph_docks = ClassificationGraphDocks()
+        self._dock_area.addDock(
+            self.classification_graph_docks)
+
+    def _init_portion_graph_docks(self):
+        self.portion_graph_docks = PortionGraphDocks()
+        self._dock_area.addDock(
+            self.portion_graph_docks, 'right', self.classification_graph_docks)
+
+    def _init_full_graph_docks(self):
+        self.full_graph_docks = FullGraphDocks()
+        self._dock_area.addDock(
+            self.full_graph_docks, 'right', self.portion_graph_docks)
+
+    def _create_scroll_area(self):
+        scroll_area = QScrollArea()
+        scroll_area.setWidgetResizable(True)
+        return scroll_area
+
+    def _connect(self):
+        StaticGraphDockConnector(view=self, model=self._model)
+
     """
         self.init_tab()
 

@@ -10,14 +10,8 @@ from V2.GUI.tabs.experiment_tab.docks.experiment import Experiment
 
 class P300Dock(Experiment):
     def __init__(self, area, dock_above):
-
-        plot_timer = QtCore.QTimer()
-        plot_timer.timeout.connect(self.update_p300)
-
-        super().__init__(area, dock_above, plot_timer)
-
-        exp_name = 'P300'
-
+        super().__init__(
+            area, name='P300', dock_above=dock_above, timer_period=50)
 
         self.p300_char = ['A', 'B', 'C', 'D', 'E', 'F',
                           'G', 'H', 'I', 'J', 'K', 'L',
@@ -26,18 +20,18 @@ class P300Dock(Experiment):
                           'Y', 'Z', '1', '2', '3', '4',
                           '5', '6', '7', '8', '9', '0']
         self.show_p300 = True
-        self.create_dock(exp_name)
         # Plot
         self.plot = self.create_plot()
-        self.layout.addWidget(self.plot, 1, 0, 1, 2)
+        self._pg_layout.addWidget(self.plot, 1, 0, 1, 2)
         # Result label
+        self._show_p300_result()
 
-    def show_p300_result(self):
-        result = QtGui.QLabel(f'Letter to look at: {"-G-"}')
-        result.setFont(QtGui.QFont('SansSerif', pointSize=12))
-        self.dock.addWidget(result, 2, 0)
+    def _show_p300_result(self):
+        result = QtGui.QLabel(f'Letter to look at:     -G-    ')
+        result.setFont(QtGui.QFont('SansSerif', pointSize=15))
+        self._pg_layout.addWidget(result, 2, 0)
 
-    def update_p300(self):
+    def update(self):
         rand_row = randint(0, 5)
         rand_col = randint(0, 5)
         # clear the widget on the screen at every display to add a new batch
