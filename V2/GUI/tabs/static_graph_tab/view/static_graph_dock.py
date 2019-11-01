@@ -35,8 +35,8 @@ class StaticGraphDock(InnerDock):
         region = pg.LinearRegionItem(movable=movable)
         # region.setMovable(False)
         region.setRegion(bounds)
-        region.start_pos = bounds[0]
-        region.last_pos = bounds[0]
+        # region.start_pos = bounds[0]
+        # region.last_pos = bounds[0]
         plot.addItem(region)
         region.setBrush(brush_color)
         return region
